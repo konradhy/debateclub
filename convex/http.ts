@@ -238,6 +238,59 @@ http.route({
   }),
 });
 
+http.route({
+  path: "/vapi-webhook",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const body = await request.json();
+      const { message } = body;
+
+      console.log("Vapi webhook:", message.type);
+
+      switch (message.type) {
+        case "transcript": {
+          const debateId = message.call?.metadata?.debateId;
+          if (!debateId) {
+            console.warn("No debateId in transcript webhook");
+            return new Response(null, { status: 200 });
+          }
+
+          await ctx.runMutation(internal.debates.addTranscript, {
+            debateId: debateId as any,
+            speaker: message.role === "user" ? "user" : "assistant",
+            text: message.transcript || "",
+            timestamp: Date.now(),
+          });
+          break;
+        }
+
+        case "end-of-call-report": {
+          const debateId = message.call?.metadata?.debateId;
+          if (!debateId) {
+            console.warn("No debateId in end-of-call-report webhook");
+            return new Response(null, { status: 200 });
+          }
+
+          await ctx.runMutation(internal.debates.complete, {
+            debateId: debateId as any,
+            duration: message.call?.duration || 0,
+          });
+          break;
+        }
+
+        default:
+          console.log(`Unhandled Vapi webhook type: ${message.type}`);
+      }
+
+      return new Response(null, { status: 200 });
+    } catch (error) {
+      console.error("Vapi webhook error:", error);
+      return new Response(null, { status: 200 });
+    }
+  }),
+});
+
 auth.addHttpRoutes(http);
 
 export default http;

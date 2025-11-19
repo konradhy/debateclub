@@ -83,6 +83,27 @@ const schema = defineSchema({
   })
     .index("userId", ["userId"])
     .index("stripeId", ["stripeId"]),
+  debates: defineTable({
+    userId: v.id("users"),
+    topic: v.string(),
+    userPosition: v.string(),
+    aiPosition: v.string(),
+    status: v.union(
+      v.literal("active"),
+      v.literal("completed"),
+      v.literal("abandoned")
+    ),
+    startedAt: v.number(),
+    completedAt: v.optional(v.number()),
+    duration: v.optional(v.number()),
+    vapiCallId: v.optional(v.string()),
+  }).index("by_user", ["userId"]),
+  exchanges: defineTable({
+    debateId: v.id("debates"),
+    speaker: v.union(v.literal("user"), v.literal("assistant")),
+    text: v.string(),
+    timestamp: v.number(),
+  }).index("by_debate", ["debateId"]),
 });
 
 export default schema;

@@ -22,6 +22,7 @@ import { buttonVariants } from "@/ui/button-util";
 import { Logo } from "@/ui/logo";
 import { Link, useMatchRoute, useNavigate } from "@tanstack/react-router";
 import { Route as DashboardRoute } from "@/routes/_app/_auth/dashboard/_layout.index";
+import { Route as DebateRoute } from "@/routes/_app/_auth/dashboard/debate";
 import { Route as SettingsRoute } from "@/routes/_app/_auth/dashboard/_layout.settings.index";
 import { Route as BillingSettingsRoute } from "@/routes/_app/_auth/dashboard/_layout.settings.billing";
 import { User } from "~/types";
@@ -32,6 +33,7 @@ export function Navigation({ user }: { user: User }) {
   const matchRoute = useMatchRoute();
   const navigate = useNavigate();
   const isDashboardPath = matchRoute({ to: DashboardRoute.fullPath });
+  const isDebatePath = matchRoute({ to: DebateRoute.fullPath });
   const isSettingsPath = matchRoute({ to: SettingsRoute.fullPath });
   const isBillingPath = matchRoute({ to: BillingSettingsRoute.fullPath });
 
@@ -235,6 +237,21 @@ export function Navigation({ user }: { user: User }) {
             )}
           >
             Dashboard
+          </Link>
+        </div>
+        <div
+          className={cn(
+            `flex h-12 items-center border-b-2`,
+            isDebatePath ? "border-primary" : "border-transparent",
+          )}
+        >
+          <Link
+            to={DebateRoute.fullPath}
+            className={cn(
+              `${buttonVariants({ variant: "ghost", size: "sm" })} text-primary/80`,
+            )}
+          >
+            Debate
           </Link>
         </div>
         <div

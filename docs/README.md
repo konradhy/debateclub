@@ -1,137 +1,166 @@
-# Welcome to Convex SaaS Documentation
+# Win Every Argument - AI Debate Training Platform
 
-Convex SaaS is a lightweight, feature-rich, and production-ready starter for your next SaaS application.
+## Overview
 
-# Highlights
+**Win Every Argument** is a voice-based debate training platform that teaches users Mehdi Hasan's proven debate techniques through real-time practice with adaptive AI opponents. Users practice against AI that adapts to their skill level, uses specific talking points they provide, and receive immediate feedback on technique usage.
 
-- [Live Demo](https://convex-saas.netlify.app)
-- [Introduction](./guide/01-introduction.md)
-- [Getting Started](https://github.com/get-convex/convex-saas/tree/main/docs#getting-started)
-- [Production Deployment](./guide/09-deployment.md)
+## Project Information
 
-Check the [Guide](./guide) for full documentation.
+- **Version:** 1.0
+- **Date:** November 2024
+- **Based on:** "Win Every Argument" by Mehdi Hasan
 
-# Features
+## Tech Stack
 
-Features provided out of the box:
+- **Voice AI:** Vapi (handles all voice interactions, interruptions, transcription)
+- **Backend:** Convex (database, real-time sync, serverless functions)
+- **Authentication:** Convex Auth
+- **Frontend:** TanStack Start (React-based)
+- **Hosting:** Netlify
+- **AI/LLM:** OpenRouter (for AI opponent logic and analysis)
 
-- 🧩 **Convex**: A complete, reactive, typesafe backend with authentication and file storage.
-- ⚡ **Vite**: Next-Gen Frontend Tooling.
-- 🛍️ **Stripe**: Subscription Plans, Customer Portal, and more.
-- 🔑 **Authentication**: Email Code and Social Logins.
-- 🎨 **TailwindCSS**: Utility-First CSS Framework.
-- 📐 **ShadCN**: Composable React components.
-- 🌙 **Easy Theming**: Switch between Light and Dark modes with ease.
-- 🗺️ **TanStack Router**: Simple Route Definitions.
-- 📧 **Resend**: Email for Developers.
-- 💌 **React Email**: Customizable Emails with React.
-- 📋 **Conform**: Type-Safe Form Validation based on Web Fundamentals.
-- 📥 **File Uploads**: Profile Picture Uploads with Convex.
-- 🌐 **I18N**: Internationalization for your App.
-- 🧰 **TanStack Development Tools**: Enhanced Development Experience.
-- 💅 **Modern UI**: Carefully crafted UI with a Modern Design System.
-- 🏕 **Custom Pages**: Landing, Onboarding, Dashboard and Admin Pages.
-- 📱 **Responsive**: Works on all devices, from Mobile to Desktop.
+## Core Concept
 
-## [Live Demo](https://convex-saas.netlify.app)
+The platform teaches debate mastery through practice, not theory. Users engage in real-time voice debates with AI opponents that:
 
-> [!NOTE]
-> Try upgrading to Pro. Stripe is in test mode, you can use `4242 4242 4242
-4242` as a test card number, and any values for the rest.
+- Adapt difficulty based on performance
+- Use custom talking points you provide
+- Employ Mehdi Hasan's techniques strategically
+- Provide immediate feedback on technique usage
+- Generate comprehensive post-debate analysis
 
-# Getting Started
+## Key Features
 
-1. [Copy this template](https://github.com/new?template_name=convex-saas&template_owner=get-convex)
-2. Clone the repo
-3. Install dependencies and set up a new Convex project:
+### 1. Real-Time Voice Debates
+- Natural conversation flow with interruptions
+- Multiple AI personality types (Aggressive, Socratic, Academic, Political)
+- Adaptive difficulty adjustment
+- 5-15 minute debate sessions
 
-```sh
-# install dependencies
-npm install
+### 2. Technique Training
+- 11+ debate techniques from Mehdi Hasan's book
+- Real-time technique detection and scoring
+- Visual feedback during debates
+- Missed opportunity identification
 
-# set up a new Convex project
-npx convex dev --configure=new --once
+### 3. Opponent Preparation Mode
+- Configure AI with real opponent's talking points
+- Set opponent's debate style and personality
+- Practice against specific arguments you'll face
+- Test counter-arguments before the real debate
 
-# set up Convex Auth
-npx @convex-dev/auth
-```
+### 4. Performance Analysis
+- Full transcript with technique annotations
+- Effectiveness scores for each technique
+- Identification of key moments
+- Personalized improvement recommendations
+- Progress tracking over time
 
-# Environment
+## Quick Start
 
-## Email
+- **New to the project?** Start with [PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md) for a high-level overview
+- **Want to understand the techniques?** Read [TECHNIQUES.md](./TECHNIQUES.md)
+- **Ready to build?** See [PHASES.md](./PHASES.md) for the implementation roadmap
 
-[Resend](https://resend.com/) is a simple and easy-to-use email service for developers.
+## Documentation Structure
 
-1. Get your API Key by visiting the [Resend Dashboard](https://resend.com/api-keys).
-2. Add to your Convex dev deployment:
-   ```sh
-   npx convex env set AUTH_RESEND_KEY re_...
-   ```
+### For Everyone
 
-## Stripe
+- **[TECHNIQUES.md](./TECHNIQUES.md)** - Mehdi Hasan's debate techniques explained (non-technical)
+  - The Judo Moves (defensive techniques)
+  - Opening hooks and closings
+  - Offensive techniques
+  - Counter-tactics
+  - How the platform teaches these
+  
+- **[EXAMPLES.md](./EXAMPLES.md)** - Real debate flow examples and scenarios
+  - Complete annotated debate transcripts
+  - Technique usage examples
+  - AI feedback demonstrations
+  - Success and failure patterns
 
-In order to use Stripe Subscriptions and seed our database, we'll require to get the secret keys from our Stripe Dashboard.
+### For Developers
 
-1. Create a [Stripe Account](https://dashboard.stripe.com/login) or use an existing one.
-2. Set to test mode if desired.
-3. Visit the [API Keys](https://dashboard.stripe.com/test/apikeys) section and copy `Secret` key.
-4. Add to your Convex dev deployment:
-   ```sh
-   npx convex env set STRIPE_SECRET_KEY sk_test_...
-   ```
+- **[PHASES.md](./PHASES.md)** - Implementation roadmap and phased development plan
+  - 4-phase development approach
+  - MVP scope (Week 1)
+  - Feature priorities
+  - Timeline and milestones
+  
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Technical system architecture and design
+  - System overview and data flow
+  - Technology stack rationale
+  - Component details
+  - Performance considerations
+  
+- **[VAPI_ARCHITECTURE.md](./VAPI_ARCHITECTURE.md)** - How Vapi actually works (ESSENTIAL READING)
+  - Complete explanation of Vapi as a managed service
+  - STT → LLM → TTS pipeline
+  - Orchestration layer (endpointing, interruptions, filtering)
+  - What API keys you actually need
+  - Cost structure and optimization
+  
+- **[VAPI_INTEGRATION.md](./VAPI_INTEGRATION.md)** - Vapi voice platform integration guide
+  - Complete assistant configuration
+  - Function calling implementation
+  - Webhook integration
+  - Development workflow
+  
+- **[DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md)** - Convex database schema and data model
+  - All table definitions
+  - Relationships and indexes
+  - Common queries
+  - Migration strategies
 
-## Stripe Webhook
+- **[USER_STORIES.md](./USER_STORIES.md)** - Feature specifications and user stories
+  - Detailed acceptance criteria
+  - Implementation guidance
+  - User experience flows
+  - Priority matrix
 
-Stripe sends webhook events when your users update or delete their subscriptions.
+## Quick Start
 
-1. Install the [Stripe CLI](https://stripe.com/docs/stripe-cli)
-2. Run the local webhook server:
+### For Users
+1. Create an account
+2. Click "Start Practice Debate"
+3. Speak naturally - the AI will respond
+4. Review your performance analysis
+5. Practice recommended techniques
 
-```sh
-stripe listen --forward-to $(npx convex env get CONVEX_SITE_URL)/stripe/webhook
-```
+### For Developers
+See [PHASES.md](./PHASES.md) for development setup and implementation phases.
 
-4. After running the first time, you may be prompted to authenticate. If so, after
-   authenticating, rerun the command.
-5. The CLI will print a webhook secret key and begin listening for events.
-6. Add the webhook secret key to your Convex dev deployment:
-   ```sh
-   npx convex env set STRIPE_WEBHOOK_SECRET whsec_...
-   ```
+## Success Metrics
 
-> [!IMPORTANT]
-> This command should be running in your console during local development if testing or handling Stripe Events.
+### User Engagement
+- Average debates per week per user
+- Completion rate of debates (not abandoned)
+- Time spent in app
+- Return rate after first debate
 
-# Development Server
+### Skill Development
+- Technique usage frequency over time
+- Effectiveness scores improving
+- Variety of techniques used
+- Successful defense against Gish Gallop
 
-Connect to your Convex development deployment and serve your frontend with a single command:
+### Platform Performance
+- Voice latency < 500ms
+- Accurate technique detection > 85%
+- User satisfaction > 4.5/5
+- Word-of-mouth referrals
 
-```sh
-npm start
-```
+## Cost Estimates
 
-You should be able to access your app at [http://localhost:5173](http://localhost:5173) 🎉
+Based on Vapi pricing model:
+- 10-minute debate: ~$1.00-$3.00 total cost
+- 100 active users × 30 min/week = $600-$900/week
+- See [VAPI_INTEGRATION.md](./VAPI_INTEGRATION.md) for detailed breakdown
 
-# Deployment
+## License
 
-## Stripe Webhook - Production
+[Your License Here]
 
-To get started, we'll require to get our Stripe Production Webhook API Key. This key will be required to set up the `STRIPE_WEBHOOK_ENDPOINT` variable in our `.env` file.
+## Contact
 
-1. Visit the [Stripe Webhook](https://dashboard.stripe.com/test/webhooks) section.
-2. Create a new Webhook Endpoint.
-3. Set the name of your future deployed app as the Webhook URL input. _(Check Notes)_
-4. Select the latest Stripe API version from `API version` selector.
-5. Select the following events to listen on: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`.
-6. Add the Endpoint and reveal the `Signing Secret` value that has been provided from Stripe Webhook page.
-7. Set this new secret as `STRIPE_WEBHOOK_SECRET` variable into your `.env` file.
-
-Done! Now we can start receiving Stripe Events to your deployed app.
-
-## Netlify Deployment
-
-Follow the Convex guide for Netlify deployment: https://docs.convex.dev/production/hosting/netlify
-
-## Done! 🎉
-
-That's it! You've successfully deployed your Convex SaaS application.
+[Your Contact Information]
