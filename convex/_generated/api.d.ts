@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as analysis from "../analysis.js";
 import type * as app from "../app.js";
 import type * as auth from "../auth.js";
 import type * as debates from "../debates.js";
@@ -16,8 +17,12 @@ import type * as email_templates_subscriptionEmail from "../email/templates/subs
 import type * as env from "../env.js";
 import type * as http from "../http.js";
 import type * as init from "../init.js";
+import type * as lib_openrouter from "../lib/openrouter.js";
+import type * as lib_scoring from "../lib/scoring.js";
+import type * as opponents from "../opponents.js";
 import type * as otp_ResendOTP from "../otp/ResendOTP.js";
 import type * as otp_VerificationCodeEmail from "../otp/VerificationCodeEmail.js";
+import type * as prepMaterials from "../prepMaterials.js";
 import type * as stripe from "../stripe.js";
 
 import type {
@@ -27,6 +32,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  analysis: typeof analysis;
   app: typeof app;
   auth: typeof auth;
   debates: typeof debates;
@@ -35,8 +41,12 @@ declare const fullApi: ApiFromModules<{
   env: typeof env;
   http: typeof http;
   init: typeof init;
+  "lib/openrouter": typeof lib_openrouter;
+  "lib/scoring": typeof lib_scoring;
+  opponents: typeof opponents;
   "otp/ResendOTP": typeof otp_ResendOTP;
   "otp/VerificationCodeEmail": typeof otp_VerificationCodeEmail;
+  prepMaterials: typeof prepMaterials;
   stripe: typeof stripe;
 }>;
 

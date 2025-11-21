@@ -232,6 +232,7 @@ http.route({
 ```typescript
 import { useState, useEffect, useRef } from "react";
 import Vapi from "@vapi-ai/web";
+
 import { useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 
@@ -329,37 +330,37 @@ Debate naturally and conversationally. Make compelling arguments but allow the u
 ### Deliverables
 
 #### 2.1 Technique Detection System
-- [ ] Implement OpenRouter analysis function
-- [ ] Function calling from Vapi to Convex
-- [ ] Real-time technique identification
-- [ ] Effectiveness scoring (1-10)
+- [x] Implement OpenRouter analysis function
+- [x] Function calling from Vapi to Convex (Replaced with Transcript Webhook -> Analysis workflow)
+- [x] Real-time technique identification
+- [x] Effectiveness scoring (1-10)
 
 #### 2.2 Expanded Database Schema
-- [ ] Techniques table
-- [ ] Analyses table
+- [x] Techniques table
+- [x] Analyses table
 - [ ] Progress tracking table
 
 #### 2.3 Three Core Techniques (Start Simple)
 Focus on these three most common techniques:
-- [ ] **Concession & Pivot** - Most important defensive technique
-- [ ] **Receipts** - Evidence deployment
-- [ ] **Zinger** - Memorable one-liners
+- [x] **Concession & Pivot** - Most important defensive technique
+- [x] **Receipts** - Evidence deployment
+- [x] **Zinger** - Memorable one-liners
 
 #### 2.4 Live Feedback UI
-- [ ] Technique badges appear when detected
-- [ ] Effectiveness score display
+- [x] Technique badges appear when detected
+- [x] Effectiveness score display
 - [ ] Running tally of techniques used
 - [ ] Visual highlighting during debate
 
 #### 2.5 Post-Debate Analysis
-- [ ] Full transcript with annotations
-- [ ] Technique usage summary
-- [ ] Basic effectiveness scores
-- [ ] One actionable improvement tip
+- [x] Full transcript with annotations
+- [x] Technique usage summary
+- [x] Basic effectiveness scores
+- [x] One actionable improvement tip
 
 #### 2.6 Enhanced AI Opponent
-- [ ] AI uses the three core techniques
-- [ ] AI calls logTechnique function
+- [x] AI uses the three core techniques
+- [x] AI calls logTechnique function (AI focus on debate, backend handles logging)
 - [ ] More sophisticated debate logic
 
 ### Technical Implementation
@@ -395,17 +396,19 @@ Focus on these three most common techniques:
 ### Deliverables
 
 #### 3.1 Opponent Profile System
-- [ ] Create opponent profile form
+- [ ] Create opponent profile form. Manual or AI mode
 - [ ] Talking points input interface
 - [ ] Priority ranking for arguments
 - [ ] Style notes configuration
 - [ ] Save/load opponent profiles
 
 #### 3.2 Custom Debate Configuration
-- [ ] Topic selection
+- [ ] Topic selection (ability to give a general topic and a fast AI spits out several options)
 - [ ] Position selection (pro/con)
+- [ ] AI generated CheatSheet, Opening Statement, and Debate notes togable on analysis page
+- [ ] Option to upload documents or text for context for AI to use in creating the topic, and other stuff
 - [ ] Difficulty setting
-- [ ] AI personality types:
+- [ ] Debate AI personality types:
   - Aggressive
   - Socratic
   - Academic
@@ -430,7 +433,7 @@ Implement remaining techniques:
 - [ ] Comprehensive improvement tips
 - [ ] Example of how to use missed techniques
 
-#### 3.5 Progress Tracking
+#### 3.5 Progress Tracking **WRONG NOT DOING THIS**
 - [ ] Technique mastery levels
 - [ ] Historical performance
 - [ ] Recommended practice areas
@@ -455,6 +458,20 @@ Implement remaining techniques:
 - Enhanced analysis: 1 day
 - Progress tracking: 1 day
 - **Total: 6 days**
+
+
+
+
+---
+
+
+NEW PHASE
+1. Use firecrawl to scrape the web to grab articles during "research mode"
+2. Save these articles and US AI To summarize and grab the main points of it. Along with the source. A TLDR designed to help you understand the content
+3. This should be available in to view in a folder, and stored with the oponent
+4. The articles the firecrawl scrapes can also be fed into the AI to help come up with arguments
+
+
 
 ---
 

@@ -13,6 +13,11 @@ import {
 } from "@cvx/email/templates/subscriptionEmail";
 import Stripe from "stripe";
 import { Doc } from "@cvx/_generated/dataModel";
+import {
+  scoreConcessionPivot,
+  scoreReceipts,
+  scoreZinger,
+} from "./lib/scoring";
 
 const http = httpRouter();
 
@@ -250,32 +255,138 @@ http.route({
 
       switch (message.type) {
         case "transcript": {
-          const debateId = message.call?.metadata?.debateId;
-          if (!debateId) {
-            console.warn("No debateId in transcript webhook");
+          // Only process final transcripts to avoid duplicates/spam
+          if (message.transcriptType !== "final") {
             return new Response(null, { status: 200 });
           }
 
-          await ctx.runMutation(internal.debates.addTranscript, {
-            debateId: debateId as any,
-            speaker: message.role === "user" ? "user" : "assistant",
-            text: message.transcript || "",
-            timestamp: Date.now(),
-          });
+          // Try to get debateId from metadata or query params
+          let debateId = message.call?.metadata?.debateId;
+          if (!debateId) {
+            const url = new URL(request.url);
+            debateId = url.searchParams.get("debateId");
+          }
+
+          if (!debateId) {
+            console.warn(
+              "[transcript] No debateId in metadata or query params. Metadata:",
+              JSON.stringify(message.call?.metadata),
+            );
+            return new Response(null, { status: 200 });
+          }
+
+          const transcriptText = message.transcript || "";
+          const speaker = message.role === "user" ? "user" : "assistant";
+          
+          console.log(`[transcript] Storing: ${speaker} - "${transcriptText.substring(0, 50)}..."`);
+
+          // Store transcript
+          try {
+            await ctx.runMutation(internal.debates.addTranscript, {
+              debateId: debateId as any,
+              speaker: speaker,
+              text: transcriptText,
+              timestamp: Date.now(),
+            });
+            console.log(`[transcript] Successfully stored exchange for debate ${debateId}`);
+
+            // Trigger post-exchange analysis (non-blocking)
+            // Schedule analysis after a short delay to allow exchange pair to complete
+            await ctx.scheduler.runAfter(2000, internal.analysis.analyzeExchangePostHoc, {
+              debateId: debateId as any,
+            });
+            console.log(`[transcript] Scheduled analysis for debate ${debateId}`);
+          } catch (error) {
+            console.error(`[transcript] Error storing transcript:`, error);
+          }
+
           break;
         }
 
-        case "end-of-call-report": {
+        case "tool-calls": {
           const debateId = message.call?.metadata?.debateId;
           if (!debateId) {
-            console.warn("No debateId in end-of-call-report webhook");
+            console.warn("No debateId in tool-calls webhook");
             return new Response(null, { status: 200 });
           }
 
+          // Handle function calls from Vapi
+          const toolCalls = message.toolCallList || [];
+          const results = [];
+
+          for (const toolCall of toolCalls) {
+            if (toolCall.name === "logTechnique") {
+              const params = toolCall.parameters || {};
+              
+              // Score the technique using rule-based scoring
+              let effectiveness = 5; // Default score
+              const text = params.text || "";
+              
+              switch (params.technique) {
+                case "concession_pivot":
+                  effectiveness = scoreConcessionPivot(text);
+                  break;
+                case "receipts":
+                  effectiveness = scoreReceipts(text);
+                  break;
+                case "zinger":
+                  effectiveness = scoreZinger(text);
+                  break;
+              }
+
+              // Store technique - logTechnique is a public mutation, need to call via api
+              // But we're in httpAction, so we need an internal mutation wrapper
+              await ctx.runMutation(internal.analysis.logTechniqueInternal, {
+                debateId: debateId as any,
+                exchangeId: undefined, // Will be linked later if needed
+                speaker: params.speaker === "user" ? "user" : "assistant",
+                technique: params.technique || "",
+                text: text,
+                effectiveness: effectiveness,
+                context: params.context,
+              });
+
+              results.push({
+                toolCallId: toolCall.id,
+                result: "Technique logged successfully",
+              });
+            }
+          }
+
+          // Return results to Vapi (must respond within 7.5s)
+          return new Response(
+            JSON.stringify({ results }),
+            {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            },
+          );
+        }
+
+        case "end-of-call-report": {
+          // Try to get debateId from metadata or query params
+          let debateId = message.call?.metadata?.debateId;
+          if (!debateId) {
+            const url = new URL(request.url);
+            debateId = url.searchParams.get("debateId");
+          }
+
+          if (!debateId) {
+            console.warn("[end-of-call-report] No debateId in metadata or query params");
+            return new Response(null, { status: 200 });
+          }
+
+          // Mark debate as complete
           await ctx.runMutation(internal.debates.complete, {
             debateId: debateId as any,
             duration: message.call?.duration || 0,
           });
+
+          // Trigger full analysis generation (non-blocking)
+          await ctx.scheduler.runAfter(1000, internal.analysis.generateFullAnalysis, {
+            debateId: debateId as any,
+          });
+
           break;
         }
 
