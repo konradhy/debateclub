@@ -229,7 +229,7 @@ function Debate() {
       const userPosition = aiPosition === "con" ? "pro" : "con"; // Simple inversion for now
       const style = opponent?.style || "aggressive";
       const difficulty = opponent?.difficulty || "medium";
-      const talkingPoints = opponent?.talkingPoints || [
+      const talkingPoints = [
         "Innocent until proven guilty: She never failed a drug test.",
         "Extraordinary talent: Her form and technique were flawless.",
         "Speculation isn't evidence: Rumors about appearance or early death aren't proof.",
@@ -402,11 +402,10 @@ BEHAVIORAL RULES:
               {/* Speaking Indicators */}
               <div className="flex gap-4">
                 <div
-                  className={`flex items-center gap-2 rounded-lg px-4 py-2 ${
-                    isListening
-                      ? "bg-green-500/20 text-green-700 dark:text-green-400"
-                      : "bg-secondary text-primary/60"
-                  }`}
+                  className={`flex items-center gap-2 rounded-lg px-4 py-2 ${isListening
+                    ? "bg-green-500/20 text-green-700 dark:text-green-400"
+                    : "bg-secondary text-primary/60"
+                    }`}
                 >
                   {isListening ? (
                     <Mic className="h-5 w-5" />
@@ -416,11 +415,10 @@ BEHAVIORAL RULES:
                   <span className="text-sm font-medium">You</span>
                 </div>
                 <div
-                  className={`flex items-center gap-2 rounded-lg px-4 py-2 ${
-                    isSpeaking
-                      ? "bg-blue-500/20 text-blue-700 dark:text-blue-400"
-                      : "bg-secondary text-primary/60"
-                  }`}
+                  className={`flex items-center gap-2 rounded-lg px-4 py-2 ${isSpeaking
+                    ? "bg-blue-500/20 text-blue-700 dark:text-blue-400"
+                    : "bg-secondary text-primary/60"
+                    }`}
                 >
                   {isSpeaking ? (
                     <div className="h-5 w-5 animate-pulse rounded-full bg-blue-500" />
@@ -551,9 +549,8 @@ BEHAVIORAL RULES:
 
       {/* Floating Prep Materials Button */}
       {opponent &&
-        (opponent.userCheatSheet ||
-          opponent.userOpeningStatement ||
-          opponent.userDebateNotes) && (
+        (opponent.openingOptions ||
+          opponent.argumentFrames) && (
           <button
             onClick={() => setIsPrepPanelOpen(!isPrepPanelOpen)}
             className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-110 active:scale-95"
@@ -567,9 +564,7 @@ BEHAVIORAL RULES:
       <PrepPanel
         isOpen={isPrepPanelOpen}
         onClose={() => setIsPrepPanelOpen(false)}
-        cheatSheet={opponent?.userCheatSheet}
-        openingStatement={opponent?.userOpeningStatement}
-        debateNotes={opponent?.userDebateNotes}
+        opponent={opponent}
       />
     </div>
   );

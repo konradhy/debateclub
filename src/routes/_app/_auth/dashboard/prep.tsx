@@ -1,12 +1,20 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
+import { useAction } from "convex/react";
 import { api } from "@cvx/_generated/api";
 import { Id } from "@cvx/_generated/dataModel";
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import siteConfig from "~/site.config";
-import { Swords, Edit, Save } from "lucide-react";
+import { Swords, Brain, Loader2, ChevronDown, ChevronUp, Heart, BookOpen, Zap, Target, ShieldAlert, ExternalLink, Eye, AlertTriangle } from "lucide-react";
+import { cn } from "@/utils/misc";
+import { Checkbox } from "@/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/ui/radio-group";
+import { Label } from "@/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
+import { ScrollArea } from "@/ui/scroll-area";
 
 export const Route = createFileRoute("/_app/_auth/dashboard/prep")({
   component: PrepScreen,
@@ -33,38 +41,76 @@ function PrepScreen() {
     ),
   );
 
-  const { mutateAsync: updateOpponent } = useMutation({
-    mutationFn: useConvexMutation(api.opponents.update),
-  });
+  const { data: research } = useQuery(
+    convexQuery(
+      api.research.get,
+      opponentId ? { opponentId: opponentId as Id<"opponents"> } : "skip",
+    ),
+  );
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [openingStatement, setOpeningStatement] = useState("");
-  const [debateNotes, setDebateNotes] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
+  const generateStrategy = useAction(api.actions.prep.generateStrategy);
+  const updateSelection = useConvexMutation(api.opponents.updateSelection);
 
-  // Initialize state when opponent loads
-  useEffect(() => {
-    if (opponent) {
-      setOpeningStatement(opponent.userOpeningStatement || "");
-      setDebateNotes(opponent.userDebateNotes || "");
-    }
-  }, [opponent]);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationStep, setGenerationStep] = useState("");
 
-  const handleSave = async () => {
+  // UI State
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+
+  const toggleExpand = (id: string) => {
+    setExpandedItems(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleSelectionUpdate = async (updates: any) => {
+    if (!opponentId) return;
+    await updateSelection({
+      opponentId: opponentId as Id<"opponents">,
+      ...updates
+    });
+  };
+
+  const toggleFrame = (id: string) => {
+    const current = opponent?.selectedFrameIds || [];
+    const updated = current.includes(id)
+      ? current.filter(x => x !== id)
+      : [...current, id];
+    handleSelectionUpdate({ selectedFrameIds: updated });
+  };
+
+  const toggleZinger = (id: string) => {
+    const current = opponent?.selectedZingerIds || [];
+    const updated = current.includes(id)
+      ? current.filter(x => x !== id)
+      : [...current, id];
+    handleSelectionUpdate({ selectedZingerIds: updated });
+  };
+
+  const toggleCounter = (id: string) => {
+    const current = opponent?.selectedCounterIds || [];
+    const updated = current.includes(id)
+      ? current.filter(x => x !== id)
+      : [...current, id];
+    handleSelectionUpdate({ selectedCounterIds: updated });
+  };
+
+  const handleGenerateStrategy = async () => {
     if (!opponent) return;
-
-    setIsSaving(true);
+    setIsGenerating(true);
     try {
-      await updateOpponent({
+      setGenerationStep("Researching topic & generating options...");
+
+      await generateStrategy({
         opponentId: opponent._id,
-        userOpeningStatement: openingStatement,
-        userDebateNotes: debateNotes,
+        topic: opponent.topic,
+        position: opponent.position === "con" ? "pro" : "con", // User's position
       });
-      setIsEditing(false);
+
+      setGenerationStep("Done!");
     } catch (error) {
-      console.error("Error saving changes:", error);
+      console.error("Error generating strategy:", error);
+      setGenerationStep("Error occurred.");
     } finally {
-      setIsSaving(false);
+      setIsGenerating(false);
     }
   };
 
@@ -73,6 +119,28 @@ function PrepScreen() {
       to: "/dashboard/debate",
       search: { opponentId },
     });
+  };
+
+  // Group receipts by category
+  const groupedReceipts = useMemo(() => {
+    if (!opponent?.receipts) return {};
+    return opponent.receipts.reduce((acc, receipt) => {
+      if (!acc[receipt.category]) acc[receipt.category] = [];
+      acc[receipt.category].push(receipt);
+      return acc;
+    }, {} as Record<string, typeof opponent.receipts>);
+  }, [opponent?.receipts]);
+
+  // Helper to render complex fields
+  const renderComplex = (val: any) => {
+    if (typeof val === 'string') return val;
+    if (typeof val === 'object' && val !== null) {
+      // Try to extract meaningful text from known structures
+      if (val.timing) return `${val.timing} - ${val.setup}`;
+      if (val.trigger) return `When: ${val.trigger}`;
+      return JSON.stringify(val);
+    }
+    return String(val);
   };
 
   if (!opponent) {
@@ -84,6 +152,21 @@ function PrepScreen() {
   }
 
   const userPosition = opponent.position === "con" ? "pro" : "con";
+  const hasStrategy = !!opponent.openingOptions && opponent.openingOptions.length > 0;
+
+  // Helper to get selected content
+  const selectedOpening = opponent.openingOptions?.find(o => o.id === opponent.selectedOpeningId);
+  const selectedClosing = opponent.closingOptions?.find(c => c.id === opponent.selectedClosingId);
+  const selectedFrames = opponent.argumentFrames?.filter(f => opponent.selectedFrameIds?.includes(f.id)) || [];
+  const selectedZingers = opponent.zingers?.filter(z => opponent.selectedZingerIds?.includes(z.id)) || [];
+
+  // Get selected counters
+  const selectedCounters = opponent.opponentIntel?.flatMap(intel =>
+    intel.counters.filter(c => opponent.selectedCounterIds?.includes(c.id)).map(c => ({
+      ...c,
+      argument: intel.argument
+    }))
+  ) || [];
 
   return (
     <div className="flex h-full w-full bg-secondary px-6 py-8 dark:bg-black">
@@ -111,16 +194,24 @@ function PrepScreen() {
                   </span>
                 </p>
               </div>
-              {!isEditing && (
-                <Button
-                  onClick={() => setIsEditing(true)}
-                  variant="outline"
-                  size="sm"
-                >
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit Materials
+              <div className="flex gap-2">
+                {!hasStrategy && !isGenerating && (
+                  <Button onClick={handleGenerateStrategy}>
+                    <Brain className="mr-2 h-4 w-4" />
+                    Generate Strategy
+                  </Button>
+                )}
+                {isGenerating && (
+                  <Button disabled>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {generationStep}
+                  </Button>
+                )}
+                <Button onClick={handleStartDebate} variant={hasStrategy ? "default" : "outline"}>
+                  <Swords className="mr-2 h-4 w-4" />
+                  Start Debate
                 </Button>
-              )}
+              </div>
             </div>
           </div>
 
@@ -128,124 +219,497 @@ function PrepScreen() {
             <div className="w-full border-b border-border" />
           </div>
 
-          {/* Prep Materials */}
-          <div className="flex w-full flex-col gap-6 p-6 overflow-y-auto">
-            {/* CheatSheet */}
-            {opponent.userCheatSheet && (
-              <div className="flex flex-col gap-2">
-                <h3 className="text-lg font-medium text-primary">
-                  Your Technique CheatSheet
-                </h3>
-                <p className="text-sm text-primary/60">
-                  Guide on which techniques to use for this debate
-                </p>
-                <div className="rounded-lg border border-border bg-secondary p-4 text-sm text-primary/80 whitespace-pre-wrap max-h-80 overflow-y-auto">
-                  {opponent.userCheatSheet}
+          {/* Content */}
+          <div className="flex-1 p-6 overflow-hidden">
+            {hasStrategy ? (
+              <Tabs defaultValue="study" className="h-full flex flex-col">
+                <TabsList className="grid w-full grid-cols-3 mb-4">
+                  <TabsTrigger value="study">Study Mode (Select Options)</TabsTrigger>
+                  <TabsTrigger value="quickref">Quick Reference (Preview)</TabsTrigger>
+                  <TabsTrigger value="research">Research Data</TabsTrigger>
+                </TabsList>
+
+                <div className="flex-1 overflow-y-auto pr-2">
+
+                  {/* STUDY MODE TAB */}
+                  <TabsContent value="study" className="space-y-8 pb-10">
+
+                    {/* Opening Statements */}
+                    <section className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                          <BookOpen className="h-5 w-5 text-blue-500" />
+                          Opening Statements
+                        </h3>
+                        <span className="text-xs text-muted-foreground uppercase tracking-wider">Pick One</span>
+                      </div>
+                      <RadioGroup
+                        value={opponent.selectedOpeningId || ""}
+                        onValueChange={(val) => handleSelectionUpdate({ selectedOpeningId: val })}
+                      >
+                        <div className="grid gap-4">
+                          {opponent.openingOptions?.map((option) => (
+                            <div key={option.id} className={cn(
+                              "relative flex flex-col space-y-2 rounded-lg border p-4 transition-all",
+                              opponent.selectedOpeningId === option.id ? "border-primary bg-primary/5" : "border-border hover:bg-secondary/50"
+                            )}>
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value={option.id} id={option.id} />
+                                  <Label htmlFor={option.id} className="font-medium cursor-pointer">
+                                    {option.type}
+                                  </Label>
+                                </div>
+                                <Button variant="ghost" size="sm" onClick={() => toggleExpand(option.id)} className="h-6 w-6 p-0">
+                                  {expandedItems[option.id] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                </Button>
+                              </div>
+                              <div className="pl-6">
+                                <p className="text-sm text-muted-foreground italic mb-2">"{option.hook}"</p>
+                                {expandedItems[option.id] && (
+                                  <div className="mt-2 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <p className="text-sm leading-relaxed">{option.content}</p>
+                                    <div className="text-xs bg-secondary p-2 rounded text-secondary-foreground flex gap-2">
+                                      <span className="font-semibold">Guidance:</span> {option.deliveryGuidance}
+                                    </div>
+                                    <div className="text-xs text-muted-foreground text-right">{option.wordCount} words</div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </RadioGroup>
+                    </section>
+
+                    {/* Argument Frames */}
+                    <section className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                          <Target className="h-5 w-5 text-green-500" />
+                          Argument Frames
+                        </h3>
+                        <span className="text-xs text-muted-foreground uppercase tracking-wider">Select Multiple</span>
+                      </div>
+                      <div className="grid gap-4">
+                        {opponent.argumentFrames?.map((frame) => (
+                          <div key={frame.id} className={cn(
+                            "relative flex flex-col space-y-2 rounded-lg border p-4 transition-all",
+                            opponent.selectedFrameIds?.includes(frame.id) ? "border-primary bg-primary/5" : "border-border hover:bg-secondary/50"
+                          )}>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={frame.id}
+                                  checked={opponent.selectedFrameIds?.includes(frame.id)}
+                                  onCheckedChange={() => toggleFrame(frame.id)}
+                                />
+                                <Label htmlFor={frame.id} className="font-medium cursor-pointer">
+                                  {frame.label}
+                                </Label>
+                              </div>
+                              <Button variant="ghost" size="sm" onClick={() => toggleExpand(frame.id)} className="h-6 w-6 p-0">
+                                {expandedItems[frame.id] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                              </Button>
+                            </div>
+                            <div className="pl-6">
+                              <p className="text-sm text-muted-foreground mb-2">{frame.summary}</p>
+                              {expandedItems[frame.id] && (
+                                <div className="mt-2 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                                  <p className="text-sm leading-relaxed font-medium">{frame.content}</p>
+                                  <div className="p-3 bg-secondary/30 rounded-md border border-border">
+                                    <p className="text-sm text-muted-foreground leading-relaxed">{frame.detailedContent}</p>
+                                  </div>
+                                  <div className="text-xs bg-secondary p-2 rounded text-secondary-foreground">
+                                    <span className="font-semibold">Deploy when:</span> {frame.deploymentGuidance}
+                                  </div>
+                                  <div className="space-y-1">
+                                    <p className="text-xs font-semibold text-muted-foreground">Available Evidence:</p>
+                                    {frame.evidenceIds.map(eid => {
+                                      // Find evidence in receipts arsenal
+                                      const receipt = opponent.receipts?.find(r => r.id === eid);
+                                      return receipt ? (
+                                        <div key={eid} className="text-xs border-l-2 border-primary/30 pl-2 py-1 flex items-center gap-2">
+                                          <span className="font-medium">{receipt.source}:</span>
+                                          <span>{receipt.content}</span>
+                                          {receipt.url && (
+                                            <a href={receipt.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline flex items-center">
+                                              <ExternalLink className="h-3 w-3 ml-1" />
+                                            </a>
+                                          )}
+                                        </div>
+                                      ) : null;
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+
+                    {/* Opponent Intelligence */}
+                    <section className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                          <Eye className="h-5 w-5 text-red-500" />
+                          Opponent Intelligence
+                        </h3>
+                        <span className="text-xs text-muted-foreground uppercase tracking-wider">Select Counters</span>
+                      </div>
+                      <div className="grid gap-4">
+                        {opponent.opponentIntel?.map((intel) => (
+                          <Card key={intel.id} className="border-red-500/20 bg-red-500/5">
+                            <CardHeader className="pb-2 pt-4">
+                              <div className="flex items-center justify-between">
+                                <CardTitle className="text-base font-medium text-red-700 dark:text-red-400">
+                                  Prediction: "{intel.argument}"
+                                </CardTitle>
+                                <span className="text-xs font-bold uppercase px-2 py-1 bg-red-100 text-red-700 rounded dark:bg-red-900/30 dark:text-red-400">
+                                  {intel.likelihood} Likelihood
+                                </span>
+                              </div>
+                            </CardHeader>
+                            <CardContent className="space-y-3 pb-4">
+                              <div className="text-sm text-muted-foreground flex gap-2 items-start">
+                                <AlertTriangle className="h-4 w-4 text-orange-500 shrink-0 mt-0.5" />
+                                <div>
+                                  <span className="font-semibold text-foreground">Their Evidence:</span> {intel.evidence}
+                                  <div className="mt-1 text-green-600 dark:text-green-400">
+                                    <span className="font-semibold">Weakness:</span> {intel.weakness}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="space-y-2 mt-2">
+                                <p className="text-xs font-semibold uppercase text-muted-foreground">Available Counters (Select to Equip):</p>
+                                {intel.counters.map((counter) => (
+                                  <div key={counter.id} className="flex items-start space-x-2 p-2 rounded hover:bg-background/50 transition-colors">
+                                    <Checkbox
+                                      id={counter.id}
+                                      checked={opponent.selectedCounterIds?.includes(counter.id)}
+                                      onCheckedChange={() => toggleCounter(counter.id)}
+                                    />
+                                    <div className="grid gap-1.5 leading-none">
+                                      <Label htmlFor={counter.id} className="text-sm font-medium cursor-pointer">
+                                        {counter.label}
+                                      </Label>
+                                      <p className="text-sm text-muted-foreground">
+                                        {counter.text}
+                                      </p>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </section>
+
+                    {/* Receipts Arsenal */}
+                    <section className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                          <ShieldAlert className="h-5 w-5 text-orange-500" />
+                          Receipts Arsenal
+                        </h3>
+                        <span className="text-xs text-muted-foreground uppercase tracking-wider">Review Only</span>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {Object.entries(groupedReceipts).map(([category, receipts]) => (
+                          <Card key={category} className="bg-secondary/20">
+                            <CardHeader className="pb-2">
+                              <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground">{category}</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-3 text-sm">
+                              {receipts?.map((receipt) => (
+                                <div key={receipt.id} className="space-y-1">
+                                  <div className="flex items-center justify-between">
+                                    <div className="font-medium text-primary">{receipt.source}</div>
+                                    {receipt.url && (
+                                      <a href={receipt.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600">
+                                        <ExternalLink className="h-3 w-3" />
+                                      </a>
+                                    )}
+                                  </div>
+                                  <div className="text-muted-foreground">{receipt.content}</div>
+                                  <div className="text-xs text-primary/60 italic">Use: {renderComplex(receipt.deployment)}</div>
+                                </div>
+                              ))}
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </section>
+
+                    {/* Zinger Bank */}
+                    <section className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                          <Zap className="h-5 w-5 text-yellow-500" />
+                          Zinger Bank
+                        </h3>
+                        <span className="text-xs text-muted-foreground uppercase tracking-wider">Favorite Your Top Picks</span>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {opponent.zingers?.map((zinger) => (
+                          <div
+                            key={zinger.id}
+                            className={cn(
+                              "cursor-pointer group relative flex flex-col justify-between rounded-lg border p-4 transition-all hover:border-yellow-500/50",
+                              opponent.selectedZingerIds?.includes(zinger.id) ? "border-yellow-500 bg-yellow-500/10" : "border-border bg-card"
+                            )}
+                            onClick={() => toggleZinger(zinger.id)}
+                          >
+                            <div className="absolute top-3 right-3">
+                              <Heart className={cn("h-5 w-5 transition-colors", opponent.selectedZingerIds?.includes(zinger.id) ? "fill-red-500 text-red-500" : "text-muted-foreground group-hover:text-red-400")} />
+                            </div>
+                            <p className="text-sm font-medium pr-6 mb-3">"{zinger.text}"</p>
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide">Use when: {renderComplex(zinger.context)}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+
+                    {/* Closing Statements */}
+                    <section className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                          <BookOpen className="h-5 w-5 text-purple-500" />
+                          Closing Statements
+                        </h3>
+                        <span className="text-xs text-muted-foreground uppercase tracking-wider">Pick One</span>
+                      </div>
+                      <RadioGroup
+                        value={opponent.selectedClosingId || ""}
+                        onValueChange={(val) => handleSelectionUpdate({ selectedClosingId: val })}
+                      >
+                        <div className="grid gap-4">
+                          {opponent.closingOptions?.map((option) => (
+                            <div key={option.id} className={cn(
+                              "relative flex flex-col space-y-2 rounded-lg border p-4 transition-all",
+                              opponent.selectedClosingId === option.id ? "border-primary bg-primary/5" : "border-border hover:bg-secondary/50"
+                            )}>
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value={option.id} id={option.id} />
+                                  <Label htmlFor={option.id} className="font-medium cursor-pointer">
+                                    {option.type}
+                                  </Label>
+                                </div>
+                                <Button variant="ghost" size="sm" onClick={() => toggleExpand(option.id)} className="h-6 w-6 p-0">
+                                  {expandedItems[option.id] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                </Button>
+                              </div>
+                              <div className="pl-6">
+                                <p className="text-sm text-muted-foreground italic mb-2">"{option.preview}"</p>
+                                {expandedItems[option.id] && (
+                                  <div className="mt-2 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <p className="text-sm leading-relaxed">{option.content}</p>
+                                    <div className="text-xs text-muted-foreground text-right">{option.wordCount} words</div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </RadioGroup>
+                    </section>
+
+                  </TabsContent>
+
+                  {/* QUICK REFERENCE TAB */}
+                  <TabsContent value="quickref" className="h-full">
+                    <div className="grid grid-cols-12 gap-6 h-full">
+                      {/* Left Column: Opening & Closing */}
+                      <div className="col-span-4 space-y-6">
+                        <Card className="h-auto">
+                          <CardHeader className="py-3 bg-blue-500/10">
+                            <CardTitle className="text-sm font-bold text-blue-600">OPENING</CardTitle>
+                          </CardHeader>
+                          <CardContent className="py-4">
+                            {selectedOpening ? (
+                              <div className="space-y-2">
+                                <span className="text-xs font-semibold text-muted-foreground uppercase">{selectedOpening.type}</span>
+                                <p className="text-sm leading-relaxed">{selectedOpening.content}</p>
+                              </div>
+                            ) : (
+                              <p className="text-sm text-muted-foreground italic">No opening selected.</p>
+                            )}
+                          </CardContent>
+                        </Card>
+
+                        <Card className="h-auto">
+                          <CardHeader className="py-3 bg-purple-500/10">
+                            <CardTitle className="text-sm font-bold text-purple-600">CLOSING</CardTitle>
+                          </CardHeader>
+                          <CardContent className="py-4">
+                            {selectedClosing ? (
+                              <div className="space-y-2">
+                                <span className="text-xs font-semibold text-muted-foreground uppercase">{selectedClosing.type}</span>
+                                <p className="text-sm leading-relaxed">{selectedClosing.content}</p>
+                              </div>
+                            ) : (
+                              <p className="text-sm text-muted-foreground italic">No closing selected.</p>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      {/* Middle Column: Arguments & Zingers */}
+                      <div className="col-span-4 space-y-6">
+                        <Card className="h-auto">
+                          <CardHeader className="py-3 bg-green-500/10">
+                            <CardTitle className="text-sm font-bold text-green-600">CORE ARGUMENTS</CardTitle>
+                          </CardHeader>
+                          <CardContent className="py-4 space-y-4">
+                            {selectedFrames.length > 0 ? (
+                              selectedFrames.map(frame => (
+                                <div key={frame.id} className="space-y-1">
+                                  <div className="font-semibold text-sm">{frame.label}</div>
+                                  <p className="text-xs text-muted-foreground">{frame.summary}</p>
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-sm text-muted-foreground italic">No arguments selected.</p>
+                            )}
+                          </CardContent>
+                        </Card>
+
+                        <Card className="h-auto">
+                          <CardHeader className="py-3 bg-yellow-500/10">
+                            <CardTitle className="text-sm font-bold text-yellow-600">ZINGERS</CardTitle>
+                          </CardHeader>
+                          <CardContent className="py-4 space-y-3">
+                            {selectedZingers.length > 0 ? (
+                              selectedZingers.map(zinger => (
+                                <div key={zinger.id} className="p-2 bg-yellow-500/5 rounded border border-yellow-500/20">
+                                  <p className="text-sm font-medium">"{zinger.text}"</p>
+                                  <p className="text-[10px] text-muted-foreground uppercase mt-1">{renderComplex(zinger.context)}</p>
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-sm text-muted-foreground italic">No zingers favorited.</p>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      {/* Right Column: Receipts & Counters */}
+                      <div className="col-span-4 space-y-6">
+                        <Card className="h-auto">
+                          <CardHeader className="py-3 bg-red-500/10">
+                            <CardTitle className="text-sm font-bold text-red-600">COUNTERS</CardTitle>
+                          </CardHeader>
+                          <CardContent className="py-4">
+                            <ScrollArea className="h-[200px] pr-4">
+                              <div className="space-y-3">
+                                {selectedCounters.length > 0 ? (
+                                  selectedCounters.map(counter => (
+                                    <div key={counter.id} className="space-y-1 border-b border-border pb-2 last:border-0">
+                                      <div className="text-xs font-semibold text-red-500 uppercase">Vs: {counter.argument}</div>
+                                      <div className="font-medium text-sm">{counter.label}</div>
+                                      <p className="text-xs text-muted-foreground">{counter.text}</p>
+                                    </div>
+                                  ))
+                                ) : (
+                                  <p className="text-sm text-muted-foreground italic">No counters equipped.</p>
+                                )}
+                              </div>
+                            </ScrollArea>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="h-auto">
+                          <CardHeader className="py-3 bg-orange-500/10">
+                            <CardTitle className="text-sm font-bold text-orange-600">RECEIPTS</CardTitle>
+                          </CardHeader>
+                          <CardContent className="py-4">
+                            <ScrollArea className="h-[200px] pr-4">
+                              <div className="space-y-4">
+                                {Object.entries(groupedReceipts).map(([category, receipts]) => (
+                                  <div key={category}>
+                                    <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">{category}</h4>
+                                    <div className="space-y-2">
+                                      {receipts?.map(receipt => (
+                                        <div key={receipt.id} className="text-xs border-l-2 border-orange-500/30 pl-2">
+                                          <div className="flex items-center gap-2">
+                                            <span className="font-bold">{receipt.source}:</span>
+                                            {receipt.url && (
+                                              <a href={receipt.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600">
+                                                <ExternalLink className="h-3 w-3" />
+                                              </a>
+                                            )}
+                                          </div>
+                                          <div>{receipt.content}</div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </ScrollArea>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  {/* RESEARCH TAB */}
+                  <TabsContent value="research" className="space-y-4">
+                    {research ? (
+                      <div className="space-y-4">
+                        {research.articles.map((article, i) => (
+                          <Card key={i}>
+                            <CardHeader className="pb-2">
+                              <CardTitle className="text-base font-medium">
+                                <a href={article.url} target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-2">
+                                  {article.title}
+                                  <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                                </a>
+                              </CardTitle>
+                              <div className="text-sm text-muted-foreground flex gap-2">
+                                <span>{article.source}</span>
+                                {article.publishedDate && <span>• {article.publishedDate}</span>}
+                              </div>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="text-sm text-muted-foreground mb-2">{article.summary}</p>
+                              <div className="text-xs bg-secondary p-2 rounded max-h-32 overflow-y-auto">
+                                {article.content}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-4 rounded-lg border border-dashed border-border text-center text-sm text-muted-foreground">
+                        Research articles and raw data will appear here after generation.
+                      </div>
+                    )}
+                  </TabsContent>
                 </div>
-              </div>
-            )}
-
-            {/* Opening Statement */}
-            {opponent.userOpeningStatement && (
-              <div className="flex flex-col gap-2">
-                <h3 className="text-lg font-medium text-primary">
-                  Your Opening Statement
-                </h3>
-                <p className="text-sm text-primary/60">
-                  Suggested 30-second opener {isEditing && "- edit as needed"}
-                </p>
-                {isEditing ? (
-                  <textarea
-                    value={openingStatement}
-                    onChange={(e) => setOpeningStatement(e.target.value)}
-                    rows={4}
-                    className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  />
-                ) : (
-                  <div className="rounded-lg border border-border bg-secondary p-4 text-sm text-primary/80 whitespace-pre-wrap">
-                    {opponent.userOpeningStatement}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Debate Notes */}
-            {opponent.userDebateNotes && (
-              <div className="flex flex-col gap-2">
-                <h3 className="text-lg font-medium text-primary">
-                  Your Debate Notes
-                </h3>
-                <p className="text-sm text-primary/60">
-                  Research, stats, and talking points{" "}
-                  {isEditing && "- edit as needed"}
-                </p>
-                {isEditing ? (
-                  <textarea
-                    value={debateNotes}
-                    onChange={(e) => setDebateNotes(e.target.value)}
-                    rows={10}
-                    className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  />
-                ) : (
-                  <div className="rounded-lg border border-border bg-secondary p-4 text-sm text-primary/80 whitespace-pre-wrap max-h-96 overflow-y-auto">
-                    {opponent.userDebateNotes}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* No prep materials message */}
-            {!opponent.userCheatSheet &&
-              !opponent.userOpeningStatement &&
-              !opponent.userDebateNotes && (
-                <div className="flex flex-col items-center justify-center gap-4 py-12">
-                  <p className="text-sm text-primary/60">
-                    No prep materials generated for this opponent yet.
-                  </p>
-                  <p className="text-sm text-primary/60">
-                    You can still start the debate, or go back and generate prep
-                    materials.
-                  </p>
-                </div>
-              )}
-          </div>
-
-          {/* Actions */}
-          <div className="flex gap-3 border-t border-border p-6">
-            {isEditing ? (
-              <>
-                <Button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="flex-1"
-                >
-                  <Save className="mr-2 h-4 w-4" />
-                  {isSaving ? "Saving..." : "Save Changes"}
-                </Button>
-                <Button
-                  onClick={() => {
-                    setIsEditing(false);
-                    setOpeningStatement(opponent.userOpeningStatement || "");
-                    setDebateNotes(opponent.userDebateNotes || "");
-                  }}
-                  variant="outline"
-                >
-                  Cancel
-                </Button>
-              </>
+              </Tabs>
             ) : (
-              <>
-                <Button onClick={handleStartDebate} className="flex-1">
-                  <Swords className="mr-2 h-4 w-4" />
-                  Start Debate
+              <div className="flex flex-col items-center justify-center h-64 text-center">
+                <Brain className="h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-medium mb-2">No Strategy Generated Yet</h3>
+                <p className="text-sm text-muted-foreground max-w-md mb-6">
+                  Click "Generate Strategy" to research the topic and create a winning plan using advanced debate techniques.
+                </p>
+                <Button onClick={handleGenerateStrategy} disabled={isGenerating}>
+                  {isGenerating ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {generationStep}
+                    </>
+                  ) : (
+                    "Generate Strategy"
+                  )}
                 </Button>
-                <Button
-                  onClick={() => navigate({ to: "/dashboard" })}
-                  variant="outline"
-                >
-                  Back to Dashboard
-                </Button>
-              </>
+              </div>
             )}
           </div>
         </div>

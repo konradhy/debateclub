@@ -116,17 +116,107 @@ const schema = defineSchema({
   })
     .index("by_debate", ["debateId"])
     .index("by_exchange", ["exchangeId"]),
+  research: defineTable({
+    opponentId: v.id("opponents"),
+    query: v.string(),
+    articles: v.array(v.object({
+      title: v.string(),
+      url: v.string(),
+      content: v.string(),
+      summary: v.string(),
+      source: v.string(),
+      publishedDate: v.optional(v.string()),
+    })),
+    timestamp: v.number(),
+  }).index("by_opponent", ["opponentId"]),
   opponents: defineTable({
     userId: v.id("users"),
     name: v.string(),
     topic: v.string(),
     position: v.string(), // "pro" or "con"
     style: v.string(),
-    talkingPoints: v.array(v.string()),
     difficulty: v.string(),
-    userCheatSheet: v.optional(v.string()),
-    userOpeningStatement: v.optional(v.string()),
-    userDebateNotes: v.optional(v.string()),
+    // New structured prep fields
+    // Buffet-Style Prep Data
+    openingOptions: v.optional(v.array(v.object({
+      id: v.string(),
+      type: v.string(),
+      hook: v.string(),
+      content: v.string(),
+      wordCount: v.number(),
+      deliveryGuidance: v.string(),
+    }))),
+    selectedOpeningId: v.optional(v.string()),
+
+    argumentFrames: v.optional(v.array(v.object({
+      id: v.string(),
+      label: v.string(),
+      summary: v.string(),
+      content: v.string(),
+      detailedContent: v.string(),
+      evidenceIds: v.array(v.string()),
+      evidenceNeeded: v.optional(v.array(v.string())),
+      emotionalCore: v.optional(v.string()),
+      deploymentGuidance: v.string(),
+    }))),
+    selectedFrameIds: v.optional(v.array(v.string())),
+
+    receipts: v.optional(v.array(v.object({
+      id: v.string(),
+      category: v.string(),
+      type: v.optional(v.string()), // Added
+      source: v.string(),
+      sourceCredibility: v.optional(v.string()), // Added
+      url: v.optional(v.string()),
+      year: v.optional(v.string()), // Added
+      content: v.string(),
+      context: v.optional(v.string()), // Added
+      deployment: v.any(), // Changed to any to accept object
+      vulnerabilities: v.optional(v.string()), // Added
+    }))),
+    // No selection for receipts (they are all available in Quick Ref)
+
+    zingers: v.optional(v.array(v.object({
+      id: v.string(),
+      text: v.string(),
+      type: v.optional(v.string()), // Added
+      context: v.any(), // Changed to any to accept object
+      tone: v.optional(v.string()), // Added
+      riskLevel: v.optional(v.string()), // Added
+      riskMitigation: v.optional(v.string()), // Added
+    }))),
+    selectedZingerIds: v.optional(v.array(v.string())),
+
+    closingOptions: v.optional(v.array(v.object({
+      id: v.string(),
+      type: v.string(),
+      preview: v.string(),
+      content: v.string(),
+      wordCount: v.number(),
+      quoteSource: v.optional(v.string()), // Added
+      storyConnection: v.optional(v.string()), // Added
+      actionRequested: v.optional(v.string()), // Added
+      deliveryGuidance: v.optional(v.string()), // Added
+      emotionalArc: v.optional(v.string()), // Added
+    }))),
+    selectedClosingId: v.optional(v.string()),
+
+    opponentIntel: v.optional(v.array(v.object({
+      id: v.string(),
+      argument: v.string(),
+      likelihood: v.string(),
+      evidence: v.string(),
+      rhetoricalStyle: v.optional(v.string()), // Added
+      weakness: v.string(),
+      counters: v.array(v.object({
+        id: v.string(),
+        judoMove: v.optional(v.string()), // Added
+        label: v.string(),
+        text: v.string(),
+        deliveryNote: v.optional(v.string()), // Added
+      })),
+    }))),
+    selectedCounterIds: v.optional(v.array(v.string())),
   }).index("by_user", ["userId"]),
   analyses: defineTable({
     debateId: v.id("debates"),

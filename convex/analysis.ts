@@ -346,7 +346,7 @@ Detect which techniques were used.`;
     ];
 
     try {
-      const siteUrl = process.env.SITE_URL || "https://oratorprep.com";
+      const siteUrl = process.env.SITE_URL || "https://debatclub.com";
       const response = await callOpenRouter(
         apiKey,
         messages,
