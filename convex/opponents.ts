@@ -175,3 +175,117 @@ export const updateSelection = mutation({
     await ctx.db.patch(args.opponentId, patch);
   },
 });
+
+// Generic mutations for editing prep materials
+export const updateOpponentField = mutation({
+  args: {
+    opponentId: v.id("opponents"),
+    field: v.union(
+      v.literal("openingOptions"),
+      v.literal("argumentFrames"),
+      v.literal("receipts"),
+      v.literal("zingers"),
+      v.literal("closingOptions"),
+      v.literal("opponentIntel")
+    ),
+    itemId: v.string(),
+    updates: v.any(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const opponent = await ctx.db.get(args.opponentId);
+    if (!opponent || opponent.userId !== userId) throw new Error("Not found");
+
+    const items = opponent[args.field] || [];
+    const updatedItems = items.map((item: any) =>
+      item.id === args.itemId ? { ...item, ...args.updates } : item
+    );
+
+    await ctx.db.patch(args.opponentId, {
+      [args.field]: updatedItems,
+    });
+  },
+});
+
+export const addOpponentFieldItem = mutation({
+  args: {
+    opponentId: v.id("opponents"),
+    field: v.union(
+      v.literal("openingOptions"),
+      v.literal("argumentFrames"),
+      v.literal("receipts"),
+      v.literal("zingers"),
+      v.literal("closingOptions"),
+      v.literal("opponentIntel")
+    ),
+    item: v.any(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const opponent = await ctx.db.get(args.opponentId);
+    if (!opponent || opponent.userId !== userId) throw new Error("Not found");
+
+    const items = opponent[args.field] || [];
+    const newItem = {
+      ...args.item,
+      id: args.item.id || `custom_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    };
+
+    await ctx.db.patch(args.opponentId, {
+      [args.field]: [...items, newItem],
+    });
+
+    return newItem.id;
+  },
+});
+
+export const deleteOpponentFieldItem = mutation({
+  args: {
+    opponentId: v.id("opponents"),
+    field: v.union(
+      v.literal("openingOptions"),
+      v.literal("argumentFrames"),
+      v.literal("receipts"),
+      v.literal("zingers"),
+      v.literal("closingOptions"),
+      v.literal("opponentIntel")
+    ),
+    itemId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const opponent = await ctx.db.get(args.opponentId);
+    if (!opponent || opponent.userId !== userId) throw new Error("Not found");
+
+    const items = opponent[args.field] || [];
+    const updatedItems = items.filter((item: any) => item.id !== args.itemId);
+
+    // Clean up selections if the deleted item was selected
+    const patch: any = { [args.field]: updatedItems };
+
+    if (args.field === "openingOptions" && opponent.selectedOpeningId === args.itemId) {
+      patch.selectedOpeningId = undefined;
+    } else if (args.field === "argumentFrames" && opponent.selectedFrameIds?.includes(args.itemId)) {
+      patch.selectedFrameIds = opponent.selectedFrameIds.filter(id => id !== args.itemId);
+    } else if (args.field === "zingers" && opponent.selectedZingerIds?.includes(args.itemId)) {
+      patch.selectedZingerIds = opponent.selectedZingerIds.filter(id => id !== args.itemId);
+    } else if (args.field === "closingOptions" && opponent.selectedClosingId === args.itemId) {
+      patch.selectedClosingId = undefined;
+    } else if (args.field === "opponentIntel") {
+      // Clean up selected counters from this intel
+      const deletedIntel = items.find((item: any) => item.id === args.itemId);
+      if (deletedIntel && "counters" in deletedIntel && opponent.selectedCounterIds) {
+        const counterIds = (deletedIntel as any).counters?.map((c: any) => c.id) || [];
+        patch.selectedCounterIds = opponent.selectedCounterIds.filter(id => !counterIds.includes(id));
+      }
+    }
+
+    await ctx.db.patch(args.opponentId, patch);
+  },
+});

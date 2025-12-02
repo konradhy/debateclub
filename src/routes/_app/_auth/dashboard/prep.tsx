@@ -15,6 +15,7 @@ import { RadioGroup, RadioGroupItem } from "@/ui/radio-group";
 import { Label } from "@/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { ScrollArea } from "@/ui/scroll-area";
+import { InlineEdit, AddButton } from "@/ui/inline-edit";
 
 export const Route = createFileRoute("/_app/_auth/dashboard/prep")({
   component: PrepScreen,
@@ -50,12 +51,17 @@ function PrepScreen() {
 
   const generateStrategy = useAction(api.actions.prep.generateStrategy);
   const updateSelection = useConvexMutation(api.opponents.updateSelection);
+  const updateField = useConvexMutation(api.opponents.updateOpponentField);
+  const addFieldItem = useConvexMutation(api.opponents.addOpponentFieldItem);
+  const deleteFieldItem = useConvexMutation(api.opponents.deleteOpponentFieldItem);
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStep, setGenerationStep] = useState("");
 
   // UI State
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [addingType, setAddingType] = useState<string | null>(null);
 
   const toggleExpand = (id: string) => {
     setExpandedItems(prev => ({ ...prev, [id]: !prev[id] }));
@@ -141,6 +147,38 @@ function PrepScreen() {
       return JSON.stringify(val);
     }
     return String(val);
+  };
+
+  // Generic handlers for edit/add/delete
+  const handleEdit = async (field: string, itemId: string, updates: any) => {
+    if (!opponentId) return;
+    await updateField({
+      opponentId: opponentId as Id<"opponents">,
+      field: field as any,
+      itemId,
+      updates,
+    });
+    setEditingId(null);
+  };
+
+  const handleAdd = async (field: string, item: any) => {
+    if (!opponentId) return;
+    await addFieldItem({
+      opponentId: opponentId as Id<"opponents">,
+      field: field as any,
+      item,
+    });
+    setAddingType(null);
+  };
+
+  const handleDelete = async (field: string, itemId: string) => {
+    if (!opponentId) return;
+    if (!confirm("Are you sure you want to delete this item?")) return;
+    await deleteFieldItem({
+      opponentId: opponentId as Id<"opponents">,
+      field: field as any,
+      itemId,
+    });
   };
 
   if (!opponent) {
@@ -249,35 +287,71 @@ function PrepScreen() {
                       >
                         <div className="grid gap-4">
                           {opponent.openingOptions?.map((option) => (
-                            <div key={option.id} className={cn(
-                              "relative flex flex-col space-y-2 rounded-lg border p-4 transition-all",
-                              opponent.selectedOpeningId === option.id ? "border-primary bg-primary/5" : "border-border hover:bg-secondary/50"
-                            )}>
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2">
-                                  <RadioGroupItem value={option.id} id={option.id} />
-                                  <Label htmlFor={option.id} className="font-medium cursor-pointer">
-                                    {option.type}
-                                  </Label>
-                                </div>
-                                <Button variant="ghost" size="sm" onClick={() => toggleExpand(option.id)} className="h-6 w-6 p-0">
-                                  {expandedItems[option.id] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                </Button>
-                              </div>
-                              <div className="pl-6">
-                                <p className="text-sm text-muted-foreground italic mb-2">"{option.hook}"</p>
-                                {expandedItems[option.id] && (
-                                  <div className="mt-2 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                                    <p className="text-sm leading-relaxed">{option.content}</p>
-                                    <div className="text-xs bg-secondary p-2 rounded text-secondary-foreground flex gap-2">
-                                      <span className="font-semibold">Guidance:</span> {option.deliveryGuidance}
-                                    </div>
-                                    <div className="text-xs text-muted-foreground text-right">{option.wordCount} words</div>
+                            <InlineEdit
+                              key={option.id}
+                              isEditing={editingId === option.id}
+                              onEdit={() => setEditingId(option.id)}
+                              onDelete={() => handleDelete("openingOptions", option.id)}
+                              onSave={(data) => handleEdit("openingOptions", option.id, data)}
+                              onCancel={() => setEditingId(null)}
+                              initialData={option}
+                              formFields={[
+                                { name: "type", label: "Type", type: "select", options: ["Personal Story", "Provocative Question", "Bold Statement"], required: true },
+                                { name: "hook", label: "Hook", type: "text", required: true },
+                                { name: "content", label: "Content", type: "textarea", required: true, rows: 6 },
+                                { name: "deliveryGuidance", label: "Delivery Guidance", type: "textarea", rows: 2 },
+                              ]}
+                            >
+                              <div className={cn(
+                                "relative flex flex-col space-y-2 rounded-lg border p-4 transition-all",
+                                opponent.selectedOpeningId === option.id ? "border-primary bg-primary/5" : "border-border hover:bg-secondary/50"
+                              )}>
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value={option.id} id={option.id} />
+                                    <Label htmlFor={option.id} className="font-medium cursor-pointer">
+                                      {option.type}
+                                    </Label>
                                   </div>
-                                )}
+                                  <Button variant="ghost" size="sm" onClick={() => toggleExpand(option.id)} className="h-6 w-6 p-0">
+                                    {expandedItems[option.id] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                  </Button>
+                                </div>
+                                <div className="pl-6">
+                                  <p className="text-sm text-muted-foreground italic mb-2">"{option.hook}"</p>
+                                  {expandedItems[option.id] && (
+                                    <div className="mt-2 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                                      <p className="text-sm leading-relaxed">{option.content}</p>
+                                      <div className="text-xs bg-secondary p-2 rounded text-secondary-foreground flex gap-2">
+                                        <span className="font-semibold">Guidance:</span> {option.deliveryGuidance}
+                                      </div>
+                                      <div className="text-xs text-muted-foreground text-right">{option.wordCount} words</div>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
+                            </InlineEdit>
                           ))}
+                          {addingType === "opening" && (
+                            <InlineEdit
+                              isEditing={false}
+                              isAdding={true}
+                              onEdit={() => { }}
+                              onSave={(data) => handleAdd("openingOptions", { ...data, wordCount: data.content?.trim().split(/\s+/).length || 0 })}
+                              onCancel={() => setAddingType(null)}
+                              formFields={[
+                                { name: "type", label: "Type", type: "select", options: ["Personal Story", "Provocative Question", "Bold Statement"], required: true },
+                                { name: "hook", label: "Hook", type: "text", required: true },
+                                { name: "content", label: "Content", type: "textarea", required: true, rows: 6 },
+                                { name: "deliveryGuidance", label: "Delivery Guidance", type: "textarea", rows: 2 },
+                              ]}
+                            >
+                              <div />
+                            </InlineEdit>
+                          )}
+                          {addingType !== "opening" && (
+                            <AddButton onClick={() => setAddingType("opening")} label="Add Opening Statement" />
+                          )}
                         </div>
                       </RadioGroup>
                     </section>
@@ -293,59 +367,100 @@ function PrepScreen() {
                       </div>
                       <div className="grid gap-4">
                         {opponent.argumentFrames?.map((frame) => (
-                          <div key={frame.id} className={cn(
-                            "relative flex flex-col space-y-2 rounded-lg border p-4 transition-all",
-                            opponent.selectedFrameIds?.includes(frame.id) ? "border-primary bg-primary/5" : "border-border hover:bg-secondary/50"
-                          )}>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-2">
-                                <Checkbox
-                                  id={frame.id}
-                                  checked={opponent.selectedFrameIds?.includes(frame.id)}
-                                  onCheckedChange={() => toggleFrame(frame.id)}
-                                />
-                                <Label htmlFor={frame.id} className="font-medium cursor-pointer">
-                                  {frame.label}
-                                </Label>
-                              </div>
-                              <Button variant="ghost" size="sm" onClick={() => toggleExpand(frame.id)} className="h-6 w-6 p-0">
-                                {expandedItems[frame.id] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                              </Button>
-                            </div>
-                            <div className="pl-6">
-                              <p className="text-sm text-muted-foreground mb-2">{frame.summary}</p>
-                              {expandedItems[frame.id] && (
-                                <div className="mt-2 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
-                                  <p className="text-sm leading-relaxed font-medium">{frame.content}</p>
-                                  <div className="p-3 bg-secondary/30 rounded-md border border-border">
-                                    <p className="text-sm text-muted-foreground leading-relaxed">{frame.detailedContent}</p>
-                                  </div>
-                                  <div className="text-xs bg-secondary p-2 rounded text-secondary-foreground">
-                                    <span className="font-semibold">Deploy when:</span> {frame.deploymentGuidance}
-                                  </div>
-                                  <div className="space-y-1">
-                                    <p className="text-xs font-semibold text-muted-foreground">Available Evidence:</p>
-                                    {frame.evidenceIds.map(eid => {
-                                      // Find evidence in receipts arsenal
-                                      const receipt = opponent.receipts?.find(r => r.id === eid);
-                                      return receipt ? (
-                                        <div key={eid} className="text-xs border-l-2 border-primary/30 pl-2 py-1 flex items-center gap-2">
-                                          <span className="font-medium">{receipt.source}:</span>
-                                          <span>{receipt.content}</span>
-                                          {receipt.url && (
-                                            <a href={receipt.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline flex items-center">
-                                              <ExternalLink className="h-3 w-3 ml-1" />
-                                            </a>
-                                          )}
-                                        </div>
-                                      ) : null;
-                                    })}
-                                  </div>
+                          <InlineEdit
+                            key={frame.id}
+                            isEditing={editingId === frame.id}
+                            onEdit={() => setEditingId(frame.id)}
+                            onDelete={() => handleDelete("argumentFrames", frame.id)}
+                            onSave={(data) => handleEdit("argumentFrames", frame.id, { ...data, evidenceIds: frame.evidenceIds })}
+                            onCancel={() => setEditingId(null)}
+                            initialData={frame}
+                            formFields={[
+                              { name: "label", label: "Label", type: "text", required: true },
+                              { name: "summary", label: "Summary", type: "textarea", required: true, rows: 2 },
+                              { name: "content", label: "Content", type: "textarea", required: true, rows: 3 },
+                              { name: "detailedContent", label: "Detailed Content", type: "textarea", required: true, rows: 4 },
+                              { name: "deploymentGuidance", label: "Deployment Guidance", type: "textarea", required: true, rows: 2 },
+                              { name: "evidenceNeeded", label: "Evidence Needed (optional)", type: "textarea", rows: 2 },
+                              { name: "emotionalCore", label: "Emotional Core (optional)", type: "text" },
+                            ]}
+                          >
+                            <div className={cn(
+                              "relative flex flex-col space-y-2 rounded-lg border p-4 transition-all",
+                              opponent.selectedFrameIds?.includes(frame.id) ? "border-primary bg-primary/5" : "border-border hover:bg-secondary/50"
+                            )}>
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                  <Checkbox
+                                    id={frame.id}
+                                    checked={opponent.selectedFrameIds?.includes(frame.id)}
+                                    onCheckedChange={() => toggleFrame(frame.id)}
+                                  />
+                                  <Label htmlFor={frame.id} className="font-medium cursor-pointer">
+                                    {frame.label}
+                                  </Label>
                                 </div>
-                              )}
+                                <Button variant="ghost" size="sm" onClick={() => toggleExpand(frame.id)} className="h-6 w-6 p-0">
+                                  {expandedItems[frame.id] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                </Button>
+                              </div>
+                              <div className="pl-6">
+                                <p className="text-sm text-muted-foreground mb-2">{frame.summary}</p>
+                                {expandedItems[frame.id] && (
+                                  <div className="mt-2 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <p className="text-sm leading-relaxed font-medium">{frame.content}</p>
+                                    <div className="p-3 bg-secondary/30 rounded-md border border-border">
+                                      <p className="text-sm text-muted-foreground leading-relaxed">{frame.detailedContent}</p>
+                                    </div>
+                                    <div className="text-xs bg-secondary p-2 rounded text-secondary-foreground">
+                                      <span className="font-semibold">Deploy when:</span> {frame.deploymentGuidance}
+                                    </div>
+                                    <div className="space-y-1">
+                                      <p className="text-xs font-semibold text-muted-foreground">Available Evidence:</p>
+                                      {frame.evidenceIds.map(eid => {
+                                        const receipt = opponent.receipts?.find(r => r.id === eid);
+                                        return receipt ? (
+                                          <div key={eid} className="text-xs border-l-2 border-primary/30 pl-2 py-1 flex items-center gap-2">
+                                            <span className="font-medium">{receipt.source}:</span>
+                                            <span>{receipt.content}</span>
+                                            {receipt.url && (
+                                              <a href={receipt.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline flex items-center">
+                                                <ExternalLink className="h-3 w-3 ml-1" />
+                                              </a>
+                                            )}
+                                          </div>
+                                        ) : null;
+                                      })}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
+                          </InlineEdit>
                         ))}
+                        {addingType === "frame" && (
+                          <InlineEdit
+                            isEditing={false}
+                            isAdding={true}
+                            onEdit={() => { }}
+                            onSave={(data) => handleAdd("argumentFrames", { ...data, evidenceIds: [] })}
+                            onCancel={() => setAddingType(null)}
+                            formFields={[
+                              { name: "label", label: "Label", type: "text", required: true },
+                              { name: "summary", label: "Summary", type: "textarea", required: true, rows: 2 },
+                              { name: "content", label: "Content", type: "textarea", required: true, rows: 3 },
+                              { name: "detailedContent", label: "Detailed Content", type: "textarea", required: true, rows: 4 },
+                              { name: "deploymentGuidance", label: "Deployment Guidance", type: "textarea", required: true, rows: 2 },
+                              { name: "evidenceNeeded", label: "Evidence Needed (optional)", type: "textarea", rows: 2 },
+                              { name: "emotionalCore", label: "Emotional Core (optional)", type: "text" },
+                            ]}
+                          >
+                            <div />
+                          </InlineEdit>
+                        )}
+                        {addingType !== "frame" && (
+                          <AddButton onClick={() => setAddingType("frame")} label="Add Argument Frame" />
+                        )}
                       </div>
                     </section>
 
@@ -425,23 +540,63 @@ function PrepScreen() {
                             </CardHeader>
                             <CardContent className="space-y-3 text-sm">
                               {receipts?.map((receipt) => (
-                                <div key={receipt.id} className="space-y-1">
-                                  <div className="flex items-center justify-between">
-                                    <div className="font-medium text-primary">{receipt.source}</div>
-                                    {receipt.url && (
-                                      <a href={receipt.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600">
-                                        <ExternalLink className="h-3 w-3" />
-                                      </a>
-                                    )}
+                                <InlineEdit
+                                  key={receipt.id}
+                                  isEditing={editingId === receipt.id}
+                                  onEdit={() => setEditingId(receipt.id)}
+                                  onDelete={() => handleDelete("receipts", receipt.id)}
+                                  onSave={(data) => handleEdit("receipts", receipt.id, data)}
+                                  onCancel={() => setEditingId(null)}
+                                  initialData={receipt}
+                                  formFields={[
+                                    { name: "category", label: "Category", type: "select", options: ["Statistics", "Quotes", "Case Studies", "Historical Precedent", "Scientific Studies"], required: true },
+                                    { name: "source", label: "Source", type: "text", required: true },
+                                    { name: "content", label: "Content", type: "textarea", required: true, rows: 3 },
+                                    { name: "deployment", label: "Deployment", type: "textarea", required: true, rows: 2 },
+                                    { name: "url", label: "URL (optional)", type: "text" },
+                                    { name: "year", label: "Year (optional)", type: "text" },
+                                  ]}
+                                >
+                                  <div className="space-y-1 relative p-2 rounded-md hover:bg-background/50 transition-colors">
+                                    <div className="flex items-center justify-between">
+                                      <div className="font-medium text-primary">{receipt.source}</div>
+                                      {receipt.url && (
+                                        <a href={receipt.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600">
+                                          <ExternalLink className="h-3 w-3" />
+                                        </a>
+                                      )}
+                                    </div>
+                                    <div className="text-muted-foreground">{receipt.content}</div>
+                                    <div className="text-xs text-primary/60 italic">Use: {renderComplex(receipt.deployment)}</div>
                                   </div>
-                                  <div className="text-muted-foreground">{receipt.content}</div>
-                                  <div className="text-xs text-primary/60 italic">Use: {renderComplex(receipt.deployment)}</div>
-                                </div>
+                                </InlineEdit>
                               ))}
                             </CardContent>
                           </Card>
                         ))}
                       </div>
+                      {addingType === "receipt" && (
+                        <InlineEdit
+                          isEditing={false}
+                          isAdding={true}
+                          onEdit={() => { }}
+                          onSave={(data) => handleAdd("receipts", data)}
+                          onCancel={() => setAddingType(null)}
+                          formFields={[
+                            { name: "category", label: "Category", type: "select", options: ["Statistics", "Quotes", "Case Studies", "Historical Precedent", "Scientific Studies"], required: true },
+                            { name: "source", label: "Source", type: "text", required: true },
+                            { name: "content", label: "Content", type: "textarea", required: true, rows: 3 },
+                            { name: "deployment", label: "Deployment", type: "textarea", required: true, rows: 2 },
+                            { name: "url", label: "URL (optional)", type: "text" },
+                            { name: "year", label: "Year (optional)", type: "text" },
+                          ]}
+                        >
+                          <div />
+                        </InlineEdit>
+                      )}
+                      {addingType !== "receipt" && (
+                        <AddButton onClick={() => setAddingType("receipt")} label="Add Receipt" />
+                      )}
                     </section>
 
                     {/* Zinger Bank */}
@@ -455,21 +610,63 @@ function PrepScreen() {
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {opponent.zingers?.map((zinger) => (
-                          <div
+                          <InlineEdit
                             key={zinger.id}
-                            className={cn(
-                              "cursor-pointer group relative flex flex-col justify-between rounded-lg border p-4 transition-all hover:border-yellow-500/50",
-                              opponent.selectedZingerIds?.includes(zinger.id) ? "border-yellow-500 bg-yellow-500/10" : "border-border bg-card"
-                            )}
-                            onClick={() => toggleZinger(zinger.id)}
+                            isEditing={editingId === zinger.id}
+                            onEdit={() => setEditingId(zinger.id)}
+                            onDelete={() => handleDelete("zingers", zinger.id)}
+                            onSave={(data) => handleEdit("zingers", zinger.id, data)}
+                            onCancel={() => setEditingId(null)}
+                            initialData={zinger}
+                            formFields={[
+                              { name: "text", label: "Zinger Text", type: "textarea", required: true, rows: 2 },
+                              { name: "context", label: "Context/Usage", type: "textarea", required: true, rows: 2 },
+                              { name: "type", label: "Type (optional)", type: "text" },
+                              { name: "tone", label: "Tone (optional)", type: "text" },
+                            ]}
                           >
-                            <div className="absolute top-3 right-3">
-                              <Heart className={cn("h-5 w-5 transition-colors", opponent.selectedZingerIds?.includes(zinger.id) ? "fill-red-500 text-red-500" : "text-muted-foreground group-hover:text-red-400")} />
+                            <div
+                              className={cn(
+                                "cursor-pointer group relative flex flex-col justify-between rounded-lg border p-4 transition-all hover:border-yellow-500/50",
+                                opponent.selectedZingerIds?.includes(zinger.id) ? "border-yellow-500 bg-yellow-500/10" : "border-border bg-card"
+                              )}
+                              onClick={() => toggleZinger(zinger.id)}
+                            >
+                              <div className="mb-2">
+                                <p className="font-bold text-lg leading-tight text-primary">"{zinger.text}"</p>
+                              </div>
+                              <div className="flex items-end justify-between">
+                                <p className="text-xs text-muted-foreground italic max-w-[85%]">
+                                  {renderComplex(zinger.context)}
+                                </p>
+                                <Heart className={cn(
+                                  "h-5 w-5 transition-colors",
+                                  opponent.selectedZingerIds?.includes(zinger.id) ? "fill-yellow-500 text-yellow-500" : "text-muted-foreground group-hover:text-yellow-500"
+                                )} />
+                              </div>
                             </div>
-                            <p className="text-sm font-medium pr-6 mb-3">"{zinger.text}"</p>
-                            <p className="text-xs text-muted-foreground uppercase tracking-wide">Use when: {renderComplex(zinger.context)}</p>
-                          </div>
+                          </InlineEdit>
                         ))}
+                        {addingType === "zinger" && (
+                          <InlineEdit
+                            isEditing={false}
+                            isAdding={true}
+                            onEdit={() => { }}
+                            onSave={(data) => handleAdd("zingers", data)}
+                            onCancel={() => setAddingType(null)}
+                            formFields={[
+                              { name: "text", label: "Zinger Text", type: "textarea", required: true, rows: 2 },
+                              { name: "context", label: "Context/Usage", type: "textarea", required: true, rows: 2 },
+                              { name: "type", label: "Type (optional)", type: "text" },
+                              { name: "tone", label: "Tone (optional)", type: "text" },
+                            ]}
+                          >
+                            <div />
+                          </InlineEdit>
+                        )}
+                        {addingType !== "zinger" && (
+                          <AddButton onClick={() => setAddingType("zinger")} label="Add Zinger" />
+                        )}
                       </div>
                     </section>
 
@@ -488,32 +685,68 @@ function PrepScreen() {
                       >
                         <div className="grid gap-4">
                           {opponent.closingOptions?.map((option) => (
-                            <div key={option.id} className={cn(
-                              "relative flex flex-col space-y-2 rounded-lg border p-4 transition-all",
-                              opponent.selectedClosingId === option.id ? "border-primary bg-primary/5" : "border-border hover:bg-secondary/50"
-                            )}>
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2">
-                                  <RadioGroupItem value={option.id} id={option.id} />
-                                  <Label htmlFor={option.id} className="font-medium cursor-pointer">
-                                    {option.type}
-                                  </Label>
-                                </div>
-                                <Button variant="ghost" size="sm" onClick={() => toggleExpand(option.id)} className="h-6 w-6 p-0">
-                                  {expandedItems[option.id] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                </Button>
-                              </div>
-                              <div className="pl-6">
-                                <p className="text-sm text-muted-foreground italic mb-2">"{option.preview}"</p>
-                                {expandedItems[option.id] && (
-                                  <div className="mt-2 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                                    <p className="text-sm leading-relaxed">{option.content}</p>
-                                    <div className="text-xs text-muted-foreground text-right">{option.wordCount} words</div>
+                            <InlineEdit
+                              key={option.id}
+                              isEditing={editingId === option.id}
+                              onEdit={() => setEditingId(option.id)}
+                              onDelete={() => handleDelete("closingOptions", option.id)}
+                              onSave={(data) => handleEdit("closingOptions", option.id, data)}
+                              onCancel={() => setEditingId(null)}
+                              initialData={option}
+                              formFields={[
+                                { name: "type", label: "Type", type: "select", options: ["Call to Action", "Emotional Appeal", "Summary of Wins"], required: true },
+                                { name: "preview", label: "Preview/Hook", type: "text", required: true },
+                                { name: "content", label: "Content", type: "textarea", required: true, rows: 6 },
+                                { name: "deliveryGuidance", label: "Delivery Guidance", type: "textarea", rows: 2 },
+                              ]}
+                            >
+                              <div className={cn(
+                                "relative flex flex-col space-y-2 rounded-lg border p-4 transition-all",
+                                opponent.selectedClosingId === option.id ? "border-primary bg-primary/5" : "border-border hover:bg-secondary/50"
+                              )}>
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value={option.id} id={option.id} />
+                                    <Label htmlFor={option.id} className="font-medium cursor-pointer">
+                                      {option.type}
+                                    </Label>
                                   </div>
-                                )}
+                                  <Button variant="ghost" size="sm" onClick={() => toggleExpand(option.id)} className="h-6 w-6 p-0">
+                                    {expandedItems[option.id] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                  </Button>
+                                </div>
+                                <div className="pl-6">
+                                  <p className="text-sm text-muted-foreground italic mb-2">"{option.preview}"</p>
+                                  {expandedItems[option.id] && (
+                                    <div className="mt-2 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                                      <p className="text-sm leading-relaxed">{option.content}</p>
+                                      <div className="text-xs text-muted-foreground text-right">{option.wordCount} words</div>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
+                            </InlineEdit>
                           ))}
+                          {addingType === "closing" && (
+                            <InlineEdit
+                              isEditing={false}
+                              isAdding={true}
+                              onEdit={() => { }}
+                              onSave={(data) => handleAdd("closingOptions", { ...data, wordCount: data.content?.trim().split(/\s+/).length || 0 })}
+                              onCancel={() => setAddingType(null)}
+                              formFields={[
+                                { name: "type", label: "Type", type: "select", options: ["Call to Action", "Emotional Appeal", "Summary of Wins"], required: true },
+                                { name: "preview", label: "Preview/Hook", type: "text", required: true },
+                                { name: "content", label: "Content", type: "textarea", required: true, rows: 6 },
+                                { name: "deliveryGuidance", label: "Delivery Guidance", type: "textarea", rows: 2 },
+                              ]}
+                            >
+                              <div />
+                            </InlineEdit>
+                          )}
+                          {addingType !== "closing" && (
+                            <AddButton onClick={() => setAddingType("closing")} label="Add Closing Statement" />
+                          )}
                         </div>
                       </RadioGroup>
                     </section>
