@@ -19,6 +19,7 @@ import { Route as AppLoginLayoutIndexRouteImport } from './routes/_app/login/_la
 import { Route as AppAuthOnboardingLayoutRouteImport } from './routes/_app/_auth/onboarding/_layout'
 import { Route as AppAuthDashboardPrepRouteImport } from './routes/_app/_auth/dashboard/prep'
 import { Route as AppAuthDashboardOpponentProfileRouteImport } from './routes/_app/_auth/dashboard/opponent-profile'
+import { Route as AppAuthDashboardHistoryRouteImport } from './routes/_app/_auth/dashboard/history'
 import { Route as AppAuthDashboardDebateRouteImport } from './routes/_app/_auth/dashboard/debate'
 import { Route as AppAuthDashboardAnalysisRouteImport } from './routes/_app/_auth/dashboard/analysis'
 import { Route as AppAuthDashboardLayoutRouteImport } from './routes/_app/_auth/dashboard/_layout'
@@ -85,6 +86,11 @@ const AppAuthDashboardOpponentProfileRoute =
     path: '/opponent-profile',
     getParentRoute: () => AppAuthDashboardRoute,
   } as any)
+const AppAuthDashboardHistoryRoute = AppAuthDashboardHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => AppAuthDashboardRoute,
+} as any)
 const AppAuthDashboardDebateRoute = AppAuthDashboardDebateRouteImport.update({
   id: '/debate',
   path: '/debate',
@@ -143,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AppAuthDashboardLayoutRouteWithChildren
   '/dashboard/analysis': typeof AppAuthDashboardAnalysisRoute
   '/dashboard/debate': typeof AppAuthDashboardDebateRoute
+  '/dashboard/history': typeof AppAuthDashboardHistoryRoute
   '/dashboard/opponent-profile': typeof AppAuthDashboardOpponentProfileRoute
   '/dashboard/prep': typeof AppAuthDashboardPrepRoute
   '/onboarding': typeof AppAuthOnboardingLayoutRouteWithChildren
@@ -160,6 +167,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AppAuthDashboardLayoutIndexRoute
   '/dashboard/analysis': typeof AppAuthDashboardAnalysisRoute
   '/dashboard/debate': typeof AppAuthDashboardDebateRoute
+  '/dashboard/history': typeof AppAuthDashboardHistoryRoute
   '/dashboard/opponent-profile': typeof AppAuthDashboardOpponentProfileRoute
   '/dashboard/prep': typeof AppAuthDashboardPrepRoute
   '/onboarding': typeof AppAuthOnboardingLayoutRouteWithChildren
@@ -179,6 +187,7 @@ export interface FileRoutesById {
   '/_app/_auth/dashboard/_layout': typeof AppAuthDashboardLayoutRouteWithChildren
   '/_app/_auth/dashboard/analysis': typeof AppAuthDashboardAnalysisRoute
   '/_app/_auth/dashboard/debate': typeof AppAuthDashboardDebateRoute
+  '/_app/_auth/dashboard/history': typeof AppAuthDashboardHistoryRoute
   '/_app/_auth/dashboard/opponent-profile': typeof AppAuthDashboardOpponentProfileRoute
   '/_app/_auth/dashboard/prep': typeof AppAuthDashboardPrepRoute
   '/_app/_auth/onboarding': typeof AppAuthOnboardingRouteWithChildren
@@ -199,6 +208,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/analysis'
     | '/dashboard/debate'
+    | '/dashboard/history'
     | '/dashboard/opponent-profile'
     | '/dashboard/prep'
     | '/onboarding'
@@ -216,6 +226,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/analysis'
     | '/dashboard/debate'
+    | '/dashboard/history'
     | '/dashboard/opponent-profile'
     | '/dashboard/prep'
     | '/onboarding'
@@ -234,6 +245,7 @@ export interface FileRouteTypes {
     | '/_app/_auth/dashboard/_layout'
     | '/_app/_auth/dashboard/analysis'
     | '/_app/_auth/dashboard/debate'
+    | '/_app/_auth/dashboard/history'
     | '/_app/_auth/dashboard/opponent-profile'
     | '/_app/_auth/dashboard/prep'
     | '/_app/_auth/onboarding'
@@ -329,6 +341,13 @@ declare module '@tanstack/react-router' {
       path: '/opponent-profile'
       fullPath: '/dashboard/opponent-profile'
       preLoaderRoute: typeof AppAuthDashboardOpponentProfileRouteImport
+      parentRoute: typeof AppAuthDashboardRoute
+    }
+    '/_app/_auth/dashboard/history': {
+      id: '/_app/_auth/dashboard/history'
+      path: '/history'
+      fullPath: '/dashboard/history'
+      preLoaderRoute: typeof AppAuthDashboardHistoryRouteImport
       parentRoute: typeof AppAuthDashboardRoute
     }
     '/_app/_auth/dashboard/debate': {
@@ -438,6 +457,7 @@ interface AppAuthDashboardRouteChildren {
   AppAuthDashboardLayoutRoute: typeof AppAuthDashboardLayoutRouteWithChildren
   AppAuthDashboardAnalysisRoute: typeof AppAuthDashboardAnalysisRoute
   AppAuthDashboardDebateRoute: typeof AppAuthDashboardDebateRoute
+  AppAuthDashboardHistoryRoute: typeof AppAuthDashboardHistoryRoute
   AppAuthDashboardOpponentProfileRoute: typeof AppAuthDashboardOpponentProfileRoute
   AppAuthDashboardPrepRoute: typeof AppAuthDashboardPrepRoute
 }
@@ -446,6 +466,7 @@ const AppAuthDashboardRouteChildren: AppAuthDashboardRouteChildren = {
   AppAuthDashboardLayoutRoute: AppAuthDashboardLayoutRouteWithChildren,
   AppAuthDashboardAnalysisRoute: AppAuthDashboardAnalysisRoute,
   AppAuthDashboardDebateRoute: AppAuthDashboardDebateRoute,
+  AppAuthDashboardHistoryRoute: AppAuthDashboardHistoryRoute,
   AppAuthDashboardOpponentProfileRoute: AppAuthDashboardOpponentProfileRoute,
   AppAuthDashboardPrepRoute: AppAuthDashboardPrepRoute,
 }

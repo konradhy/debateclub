@@ -6,120 +6,350 @@ import { prepAgent } from "../agents";
 import { z } from "zod";
 
 interface Strategy {
-    openingOptions: any;
-    argumentFrames: any;
-    receipts: any;
-    zingers: any;
-    closingOptions: any;
-    opponentIntel: any;
+  openingOptions: any;
+  argumentFrames: any;
+  receipts: any;
+  zingers: any;
+  closingOptions: any;
+  opponentIntel: any;
+}
+
+interface ProcessedResearch {
+  extractedArguments: Array<{
+    id: string;
+    claim: string;
+    supportingPoints: string[];
+    source?: string;
+    strength: string;
+  }>;
+  extractedReceipts: Array<{
+    id: string;
+    type: string;
+    content: string;
+    source?: string;
+    useCase: string;
+  }>;
+  extractedCounterArguments: Array<{
+    id: string;
+    argument: string;
+    suggestedResponse: string;
+  }>;
+  potentialOpeners: Array<{
+    id: string;
+    type: string;
+    content: string;
+    hook: string;
+  }>;
+  potentialZingers: Array<{
+    id: string;
+    text: string;
+    context: string;
+  }>;
+  summary: string;
 }
 
 export const generateStrategy = action({
-    args: {
-        opponentId: v.id("opponents"),
-        topic: v.string(),
-        position: v.string(), // "pro" or "con"
-    },
-    returns: v.any(),
-    handler: async (ctx, args): Promise<Strategy> => {
-        const { thread } = await prepAgent.createThread(ctx);
+  args: {
+    opponentId: v.id("opponents"),
+    topic: v.string(),
+    position: v.string(), // "pro" or "con"
+  },
+  returns: v.any(),
+  handler: async (ctx, args): Promise<Strategy> => {
+    console.log("[generateStrategy] Starting for topic:", args.topic);
 
-        // 1. Research Phase
-        const researchPrompt = `
+    // Start progress tracking
+    await ctx.runMutation(internal.prepProgress.startProgress, {
+      opponentId: args.opponentId,
+    });
+
+    const updateProgress = async (
+      status:
+        | "researching"
+        | "extracting"
+        | "synthesizing"
+        | "generating_openings"
+        | "generating_frames"
+        | "generating_receipts"
+        | "generating_zingers"
+        | "generating_closings"
+        | "generating_intel"
+        | "storing"
+        | "complete"
+        | "error",
+      error?: string,
+    ) => {
+      await ctx.runMutation(internal.prepProgress.updateProgress, {
+        opponentId: args.opponentId,
+        status,
+        error,
+      });
+    };
+
+    let thread;
+    try {
+      const result = await prepAgent.createThread(ctx);
+      thread = result.thread;
+      console.log("[generateStrategy] Thread created");
+    } catch (error) {
+      console.error("[generateStrategy] Failed to create thread:", error);
+      await updateProgress("error", `Failed to create prep agent: ${error}`);
+      throw new Error(`Failed to create prep agent thread: ${error}`);
+    }
+
+    // 1. Research Phase
+    const researchPrompt = `
       Topic: ${args.topic}
       My Position: ${args.position}
 
       Research this topic thoroughly using your search tool. 
-      Focus on finding "Receipts" (hard stats), "Opponent Intel" (common arguments), and "Stories".
+      Focus on finding "Receipts" (hard stats), "Opponent Intel" (common arguments), and "Stories". We are in the year 2025. 
     `;
 
-        await thread.generateText({ prompt: researchPrompt });
+    try {
+      console.log("[generateStrategy] Starting research phase");
+      await thread.generateText({ prompt: researchPrompt });
+      console.log("[generateStrategy] Research phase complete");
+    } catch (error) {
+      console.error("[generateStrategy] Research phase failed:", error);
+      await updateProgress("error", `Research phase failed: ${error}`);
+      throw new Error(`Research phase failed: ${error}`);
+    }
 
-        // 2. Extract Research Data
-        const { object: researchData } = await thread.generateObject({
-            prompt: "Summarize your research into a structured list of key findings and sources. Include a summary for each article.",
-            schema: z.object({
-                articles: z.array(z.object({
-                    title: z.string(),
-                    source: z.string(),
-                    content: z.string(),
-                    summary: z.string(),
-                    url: z.string().default(""),
-                    publishedDate: z.string().optional(),
-                })),
+    // 2. Extract Research Data
+    await updateProgress("extracting");
+    let research: Array<{
+      title: string;
+      source: string;
+      content: string;
+      summary: string;
+      url: string;
+      publishedDate?: string;
+    }>;
+    try {
+      console.log("[generateStrategy] Extracting research data");
+      const { object: researchData } = await thread.generateObject({
+        prompt:
+          "Summarize your research into a structured list of key findings and sources. Include a summary for each article.",
+        schema: z.object({
+          articles: z.array(
+            z.object({
+              title: z.string(),
+              source: z.string(),
+              content: z.string(),
+              summary: z.string(),
+              url: z.string().default(""),
+              publishedDate: z.string().optional(),
             }),
-        });
+          ),
+        }),
+      });
+      research = researchData.articles;
+      console.log(
+        "[generateStrategy] Extracted",
+        research.length,
+        "research articles",
+      );
+    } catch (error) {
+      console.error("[generateStrategy] Extract research data failed:", error);
+      await updateProgress("error", `Extract research data failed: ${error}`);
+      throw new Error(`Extract research data failed: ${error}`);
+    }
 
-        const research = researchData.articles;
+    // 3. Generate Research Synthesis
+    await updateProgress("synthesizing");
+    let researchSynthesis;
+    try {
+      console.log("[generateStrategy] Generating research synthesis");
+      researchSynthesis = await ctx.runAction(
+        internal.actions.prepGeneration.generateResearchSynthesis,
+        { topic: args.topic, position: args.position, research },
+      );
+      console.log("[generateStrategy] Research synthesis complete");
+    } catch (error) {
+      console.error("[generateStrategy] Research synthesis failed:", error);
+      // Don't fail the whole process for synthesis - it's optional
+      researchSynthesis = null;
+    }
 
-        // 3. Parallel Generation Phase
-        // Explicitly cast to any[] to avoid inference issues with Promise.all
-        const [
-            openingOptions,
-            argumentFrames,
-            receipts,
-            zingers,
-            closingOptions,
-            opponentIntel
-        ] = await Promise.all([
-            ctx.runAction(internal.actions.prepGeneration.generateOpenings, {
-                topic: args.topic,
-                position: args.position,
-            }),
-            ctx.runAction(internal.actions.prepGeneration.generateFrames, {
-                topic: args.topic,
-                position: args.position,
-                research,
-            }),
-            ctx.runAction(internal.actions.prepGeneration.generateReceipts, {
-                topic: args.topic,
-                position: args.position,
-                research,
-            }),
-            ctx.runAction(internal.actions.prepGeneration.generateZingers, {
-                topic: args.topic,
-                position: args.position,
-                research,
-            }),
-            ctx.runAction(internal.actions.prepGeneration.generateClosings, {
-                topic: args.topic,
-                position: args.position,
-            }),
-            ctx.runAction(internal.actions.prepGeneration.generateOpponentIntel, {
-                topic: args.topic,
-                position: args.position,
-                research,
-            }),
-        ]);
+    // 4. Sequential Generation Phase for better progress tracking
+    console.log("[generateStrategy] Starting generation phase");
 
-        const strategy: Strategy = {
-            openingOptions,
-            argumentFrames,
-            receipts,
-            zingers,
-            closingOptions,
-            opponentIntel,
-        };
+    let openingOptions,
+      argumentFrames,
+      receipts,
+      zingers,
+      closingOptions,
+      opponentIntel;
 
-        // Post-process argumentFrames to ensure evidenceIds exists
-        strategy.argumentFrames = strategy.argumentFrames.map((frame: any) => ({
-            ...frame,
-            evidenceIds: frame.evidenceIds || [],
-        }));
+    try {
+      // Generate openings
+      await updateProgress("generating_openings");
+      openingOptions = await ctx.runAction(
+        internal.actions.prepGeneration.generateOpenings,
+        { topic: args.topic, position: args.position },
+      );
 
-        // 4. Store the generated strategy and research
-        await Promise.all([
-            ctx.runMutation(internal.opponents.updateStrategy, {
-                opponentId: args.opponentId,
-                strategy,
-            }),
-            ctx.runMutation(internal.research.store, {
-                opponentId: args.opponentId,
-                query: `Debate topic: ${args.topic}`,
-                articles: research,
-            }),
-        ]);
+      // Generate frames
+      await updateProgress("generating_frames");
+      argumentFrames = await ctx.runAction(
+        internal.actions.prepGeneration.generateFrames,
+        { topic: args.topic, position: args.position, research },
+      );
 
-        return strategy;
-    },
+      // Generate receipts
+      await updateProgress("generating_receipts");
+      receipts = await ctx.runAction(
+        internal.actions.prepGeneration.generateReceipts,
+        { topic: args.topic, position: args.position, research },
+      );
+
+      // Generate zingers
+      await updateProgress("generating_zingers");
+      zingers = await ctx.runAction(
+        internal.actions.prepGeneration.generateZingers,
+        { topic: args.topic, position: args.position, research },
+      );
+
+      // Generate closings
+      await updateProgress("generating_closings");
+      closingOptions = await ctx.runAction(
+        internal.actions.prepGeneration.generateClosings,
+        { topic: args.topic, position: args.position },
+      );
+
+      // Generate opponent intel
+      await updateProgress("generating_intel");
+      opponentIntel = await ctx.runAction(
+        internal.actions.prepGeneration.generateOpponentIntel,
+        { topic: args.topic, position: args.position, research },
+      );
+
+      console.log("[generateStrategy] Generation phase complete");
+    } catch (error) {
+      console.error("[generateStrategy] Generation phase failed:", error);
+      await updateProgress("error", `Generation failed: ${error}`);
+      throw error;
+    }
+
+    const strategy: Strategy = {
+      openingOptions,
+      argumentFrames,
+      receipts,
+      zingers,
+      closingOptions,
+      opponentIntel,
+    };
+
+    // Post-process argumentFrames to ensure evidenceIds exists
+    strategy.argumentFrames = strategy.argumentFrames.map((frame: any) => ({
+      ...frame,
+      evidenceIds: frame.evidenceIds || [],
+    }));
+
+    // 5. Store the generated strategy, research, and synthesis
+    await updateProgress("storing");
+    await Promise.all([
+      ctx.runMutation(internal.opponents.updateStrategy, {
+        opponentId: args.opponentId,
+        strategy,
+        researchSynthesis: researchSynthesis
+          ? { ...researchSynthesis, generatedAt: Date.now() }
+          : undefined,
+      }),
+      ctx.runMutation(internal.research.store, {
+        opponentId: args.opponentId,
+        query: `Debate topic: ${args.topic}`,
+        articles: research,
+      }),
+    ]);
+
+    await updateProgress("complete");
+    return strategy;
+  },
+});
+
+/**
+ * Processes user-provided research text and extracts valuable debate content.
+ * Returns extracted arguments, receipts, potential openers, zingers, and counter-arguments.
+ */
+export const processResearchText = action({
+  args: {
+    opponentId: v.id("opponents"),
+    topic: v.string(),
+    position: v.string(),
+    researchText: v.string(),
+  },
+  returns: v.object({
+    extractedArguments: v.array(
+      v.object({
+        id: v.string(),
+        claim: v.string(),
+        supportingPoints: v.array(v.string()),
+        source: v.optional(v.string()),
+        strength: v.string(),
+      }),
+    ),
+    extractedReceipts: v.array(
+      v.object({
+        id: v.string(),
+        type: v.string(),
+        content: v.string(),
+        source: v.optional(v.string()),
+        useCase: v.string(),
+      }),
+    ),
+    extractedCounterArguments: v.array(
+      v.object({
+        id: v.string(),
+        argument: v.string(),
+        suggestedResponse: v.string(),
+      }),
+    ),
+    potentialOpeners: v.array(
+      v.object({
+        id: v.string(),
+        type: v.string(),
+        content: v.string(),
+        hook: v.string(),
+      }),
+    ),
+    potentialZingers: v.array(
+      v.object({
+        id: v.string(),
+        text: v.string(),
+        context: v.string(),
+      }),
+    ),
+    summary: v.string(),
+  }),
+  handler: async (ctx, args): Promise<ProcessedResearch> => {
+    // Call the internal action to process the research
+    const result = await ctx.runAction(
+      internal.actions.prepGeneration.processUserResearch,
+      {
+        topic: args.topic,
+        position: args.position,
+        researchText: args.researchText,
+      },
+    );
+
+    // Store the processed research as an article for reference
+    await ctx.runMutation(internal.research.store, {
+      opponentId: args.opponentId,
+      query: "User-provided research material",
+      articles: [
+        {
+          title: "User Research Notes",
+          url: "",
+          content: args.researchText.substring(0, 5000), // Store truncated version
+          summary: result.summary,
+          source: "User Input",
+          publishedDate: new Date().toISOString().split("T")[0],
+        },
+      ],
+    });
+
+    return result;
+  },
 });

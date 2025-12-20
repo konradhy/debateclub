@@ -8,7 +8,9 @@
  * @module
  */
 
+import type * as actions_analysisAction from "../actions/analysisAction.js";
 import type * as actions_prep from "../actions/prep.js";
+import type * as actions_prepChatAction from "../actions/prepChatAction.js";
 import type * as actions_prepGeneration from "../actions/prepGeneration.js";
 import type * as actions_research from "../actions/research.js";
 import type * as agents from "../agents.js";
@@ -21,6 +23,7 @@ import type * as email_templates_subscriptionEmail from "../email/templates/subs
 import type * as env from "../env.js";
 import type * as http from "../http.js";
 import type * as init from "../init.js";
+import type * as lib_aiConfig from "../lib/aiConfig.js";
 import type * as lib_firecrawl from "../lib/firecrawl.js";
 import type * as lib_openrouter from "../lib/openrouter.js";
 import type * as lib_promptTemplates from "../lib/promptTemplates.js";
@@ -28,6 +31,9 @@ import type * as lib_scoring from "../lib/scoring.js";
 import type * as opponents from "../opponents.js";
 import type * as otp_ResendOTP from "../otp/ResendOTP.js";
 import type * as otp_VerificationCodeEmail from "../otp/VerificationCodeEmail.js";
+import type * as prepChat from "../prepChat.js";
+import type * as prepProgress from "../prepProgress.js";
+import type * as r2 from "../r2.js";
 import type * as research from "../research.js";
 import type * as stripe from "../stripe.js";
 
@@ -38,7 +44,9 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "actions/analysisAction": typeof actions_analysisAction;
   "actions/prep": typeof actions_prep;
+  "actions/prepChatAction": typeof actions_prepChatAction;
   "actions/prepGeneration": typeof actions_prepGeneration;
   "actions/research": typeof actions_research;
   agents: typeof agents;
@@ -51,6 +59,7 @@ declare const fullApi: ApiFromModules<{
   env: typeof env;
   http: typeof http;
   init: typeof init;
+  "lib/aiConfig": typeof lib_aiConfig;
   "lib/firecrawl": typeof lib_firecrawl;
   "lib/openrouter": typeof lib_openrouter;
   "lib/promptTemplates": typeof lib_promptTemplates;
@@ -58,6 +67,9 @@ declare const fullApi: ApiFromModules<{
   opponents: typeof opponents;
   "otp/ResendOTP": typeof otp_ResendOTP;
   "otp/VerificationCodeEmail": typeof otp_VerificationCodeEmail;
+  prepChat: typeof prepChat;
+  prepProgress: typeof prepProgress;
+  r2: typeof r2;
   research: typeof research;
   stripe: typeof stripe;
 }>;
@@ -2938,6 +2950,130 @@ export declare const components: {
           null
         >;
       };
+    };
+  };
+  r2: {
+    lib: {
+      deleteMetadata: FunctionReference<
+        "mutation",
+        "internal",
+        { bucket: string; key: string },
+        null
+      >;
+      deleteObject: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          accessKeyId: string;
+          bucket: string;
+          endpoint: string;
+          key: string;
+          secretAccessKey: string;
+        },
+        null
+      >;
+      deleteR2Object: FunctionReference<
+        "action",
+        "internal",
+        {
+          accessKeyId: string;
+          bucket: string;
+          endpoint: string;
+          key: string;
+          secretAccessKey: string;
+        },
+        null
+      >;
+      getMetadata: FunctionReference<
+        "query",
+        "internal",
+        {
+          accessKeyId: string;
+          bucket: string;
+          endpoint: string;
+          key: string;
+          secretAccessKey: string;
+        },
+        {
+          bucket: string;
+          bucketLink: string;
+          contentType?: string;
+          key: string;
+          lastModified: string;
+          link: string;
+          sha256?: string;
+          size?: number;
+          url: string;
+        } | null
+      >;
+      listMetadata: FunctionReference<
+        "query",
+        "internal",
+        {
+          accessKeyId: string;
+          bucket: string;
+          cursor?: string;
+          endpoint: string;
+          limit?: number;
+          secretAccessKey: string;
+        },
+        {
+          continueCursor: string;
+          isDone: boolean;
+          page: Array<{
+            bucket: string;
+            bucketLink: string;
+            contentType?: string;
+            key: string;
+            lastModified: string;
+            link: string;
+            sha256?: string;
+            size?: number;
+            url: string;
+          }>;
+          pageStatus?: null | "SplitRecommended" | "SplitRequired";
+          splitCursor?: null | string;
+        }
+      >;
+      store: FunctionReference<
+        "action",
+        "internal",
+        {
+          accessKeyId: string;
+          bucket: string;
+          endpoint: string;
+          secretAccessKey: string;
+          url: string;
+        },
+        any
+      >;
+      syncMetadata: FunctionReference<
+        "action",
+        "internal",
+        {
+          accessKeyId: string;
+          bucket: string;
+          endpoint: string;
+          key: string;
+          onComplete?: string;
+          secretAccessKey: string;
+        },
+        null
+      >;
+      upsertMetadata: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          bucket: string;
+          contentType?: string;
+          key: string;
+          lastModified: string;
+          link: string;
+          sha256?: string;
+          size?: number;
+        },
+        { isNew: boolean }
+      >;
     };
   };
 };

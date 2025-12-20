@@ -1,277 +1,256 @@
 # Project Map
 
-**Living document tracking patterns, features, and system knowledge.**
+**Current architecture and codebase structure. Updated as features are added.**
 
 ---
 
-## Patterns & Conventions
+## How This Connects
 
-| Pattern | Description | Established In |
-|---------|-------------|----------------|
-| Convex Function Syntax | Use new function syntax with explicit `args` and `returns` validators | Pre-docs |
-| Internal vs Public Functions | `internalQuery/Mutation/Action` for private, `query/mutation/action` for public API | Pre-docs |
-| HTTP Webhook Pattern | Webhooks defined in `convex/http.ts` using `httpAction` decorator | Pre-docs |
-| Index Naming | All index fields included in name (e.g., `by_user`, `by_debate`) | Pre-docs |
-| File-Based Routing | TanStack Router routes in `src/routes/` mirror URL structure | Pre-docs |
-| Component File Naming | React components use kebab-case files (e.g., `prep-panel.tsx`) | Pre-docs |
-| UI Component Pattern | Reusable UI in `src/ui/`, page routes in `src/routes/` | Pre-docs |
-| OpenRouter Wrapper | AI calls go through `convex/lib/openrouter.ts` abstraction | Pre-docs |
-| Technique Scoring | Scoring logic centralized in `convex/lib/scoring.ts` | Pre-docs |
-| Auth Guard Pattern | Routes under `_auth/` require authentication | Pre-docs |
-| Real-time Subscriptions | Use Convex `useQuery` for live data updates | Pre-docs |
+- **PROJECT_MAP.md** (this file) = what currently exists
+- **DEV_JOURNAL.md** = how we got here
+- **ROADMAP.md** = where we're going
 
 ---
 
-## Things We Should Know
+## Directory Structure
 
-### Inferred from Sessions
-
-| Insight | Source |
-|---------|--------|
-| N/A - documentation system just initialized | Chapter 0 |
-
-### Manually Noted
-
-| Insight | Context | Added |
-|---------|---------|-------|
-| claude-3-opus was causing high costs | Default model was expensive; switched to claude-sonnet-4.5 for analysis | Pre-docs |
-| GPT-4o used for prep materials | Quality matters for user-facing prep content | Pre-docs |
-| Vapi webhooks require fast response | Must respond within 7.5s; use actions for heavy processing | Pre-docs |
-| Debate techniques are from Mehdi Hasan's book | "Win Every Argument" - 11 techniques implemented | Pre-docs |
-| Convex SaaS template base | Project started from get-convex/convex-saas template | Pre-docs |
-
----
-
-## Features
-
-### Voice Debate System
-
-**Marketing Description**
-Practice debates anytime with an AI opponent that uses proven debate techniques. Speak naturally, interrupt, and be interrupted just like a real debate.
-
-**Technical Description**  
-Integrates Vapi Web SDK for voice AI orchestration. User speech → Deepgram STT → OpenRouter LLM → ElevenLabs TTS. Webhooks send transcripts to Convex for storage and analysis.
-
-**Relevant Files**
-- `src/routes/_app/_auth/dashboard/debate.tsx` — Main debate interface with Vapi integration
-- `convex/http.ts` — Vapi webhook handler (`/vapi-webhook`)
-- `convex/debates.ts` — Debate CRUD operations
-- `convex/analysis.ts` — Technique detection and analysis
-
-**Key Functions**
-- `debates.create()` — Create new debate record
-- `debates.addTranscript()` — Store conversation exchanges
-- `debates.complete()` — Mark debate finished
-
-**User Journey Steps**: 1, 2, 3
-
----
-
-### Technique Detection
-
-**Marketing Description**
-Get real-time feedback on your debate techniques. See when you use Concession & Pivot, deploy Receipts, or land a Zinger.
-
-**Technical Description**  
-Analyzes transcript exchanges via OpenRouter (Claude Sonnet) to detect 11 debate techniques with effectiveness scores (1-10).
-
-**Relevant Files**
-- `convex/analysis.ts` — Analysis logic and queries
-- `convex/lib/scoring.ts` — Individual technique scoring functions
-- `convex/lib/promptTemplates.ts` — LLM prompts for detection
-
-**Key Functions**
-- `analysis.analyzeTranscript()` — Detect techniques in exchange
-- `analysis.generateFullAnalysis()` — Post-debate comprehensive analysis
-- Scoring functions for each technique (concession_pivot, receipts, zinger, etc.)
-
-**User Journey Steps**: 3, 4
+```
+orator/
+├── convex/                    # Backend (Convex functions)
+│   ├── _generated/            # Auto-generated Convex types
+│   ├── actions/               # External API calls (Node.js runtime)
+│   │   ├── analysisAction.ts  # Post-debate analysis generation
+│   │   ├── prep.ts            # Prep material orchestration
+│   │   ├── prepGeneration.ts  # AI content generation
+│   │   └── research.ts        # Firecrawl web research
+│   ├── lib/                   # Shared utilities
+│   │   ├── aiConfig.ts        # Centralized AI model configuration
+│   │   ├── firecrawl.ts       # Firecrawl v2 API client
+│   │   ├── openrouter.ts      # OpenRouter API client
+│   │   ├── promptTemplates.ts # AI prompt templates
+│   │   └── scoring.ts         # Hasan score calculation
+│   ├── analysis.ts            # Analysis queries and mutations
+│   ├── auth.config.ts         # Convex Auth configuration
+│   ├── convex.config.ts       # App config (components registration)
+│   ├── debates.ts             # Debate CRUD and queries
+│   ├── http.ts                # HTTP endpoints (Vapi webhooks)
+│   ├── opponents.ts           # Opponent profile management
+│   ├── prepChat.ts            # RAG chatbot for prep
+│   ├── prepProgress.ts        # Generation progress tracking
+│   ├── r2.ts                  # Cloudflare R2 recording storage
+│   ├── research.ts            # Research storage
+│   ├── schema.ts              # Database schema (SOURCE OF TRUTH)
+│   └── *.ts                   # Other queries/mutations
+├── src/
+│   ├── routes/                # TanStack Router pages
+│   │   └── _app/_auth/dashboard/
+│   │       ├── _layout.index.tsx  # Dashboard home (opponent list)
+│   │       ├── analysis.tsx       # Post-debate analysis view
+│   │       ├── debate.tsx         # Live debate interface
+│   │       ├── history.tsx        # Debate history & performance
+│   │       └── prep.tsx           # Prep materials & research
+│   ├── ui/                    # Reusable UI components
+│   └── main.tsx               # App entry point
+├── rules/                     # AI documentation system
+│   ├── dev_journal.md         # Session-by-session development log
+│   ├── directive.md           # AI behavior guidelines
+│   ├── project_map.md         # This file
+│   └── roadmap.md             # Feature roadmap
+└── docs/                      # Additional documentation
+```
 
 ---
 
-### Opponent Profile System
+## Database Schema
 
-**Marketing Description**
-Prepare for real debates by configuring AI with your opponent's actual talking points, style, and difficulty level.
+**Source of Truth**: `convex/schema.ts`
 
-**Technical Description**  
-Stores opponent configurations with structured prep materials (openings, arguments, receipts, zingers, closings, opponent intel). AI-generated via GPT-4o.
+### Core Tables
 
-**Relevant Files**
-- `src/routes/_app/_auth/dashboard/opponent-profile.tsx` — Profile management
-- `convex/opponents.ts` — Opponent CRUD and field updates
-- `convex/actions/prep.ts` — Prep materials generation
-- `convex/actions/prepGeneration.ts` — AI generation logic
+| Table | Purpose | Key Fields |
+|-------|---------|------------|
+| `users` | User accounts | `email`, `subscriptionId`, `subscriptionTier` |
+| `debates` | Debate sessions | `userId`, `topic`, `status`, `vapiCallId`, `recordingKey` |
+| `exchanges` | Turn-by-turn transcript | `debateId`, `speaker`, `text`, `timestamp` |
+| `analyses` | Post-debate analysis | `debateId`, `hasanScores`, `executiveSummary`, `missedOpportunities` |
+| `opponents` | Opponent profiles | `userId`, `name`, `topic`, `userPosition`, `aiPosition`, `style`, `difficulty` |
+| `prep` | Generated prep materials | `opponentId`, `openings`, `arguments`, `receipts`, `zingers`, `closings`, `opponentIntel` |
+| `research` | Web research articles | `opponentId`, `title`, `source`, `summary`, `content` |
+| `prepProgress` | Generation progress tracking | `opponentId`, `status`, `completedSteps` |
+| `prepChat` | RAG chatbot messages | `opponentId`, `role`, `content` |
 
-**Key Functions**
-- `opponents.create()` — Create opponent profile
-- `opponents.updateStrategy()` — Save AI-generated prep materials
-- `opponents.updateSelection()` — Track user's selected materials
+### Key Indexes
 
-**User Journey Steps**: 5, 6
-
----
-
-### Prep Materials Panel
-
-**Marketing Description**
-Access your prepared materials during live debates with a floating toggle panel. Review openings, arguments, and counters in real-time.
-
-**Technical Description**  
-Bottom sheet component (`PrepPanel`) accessible via floating button during debates. Displays user's selected prep materials organized by category.
-
-**Relevant Files**
-- `src/ui/prep-panel.tsx` — Panel component with tabs
-- `src/routes/_app/_auth/dashboard/prep.tsx` — Pre-debate prep screen
-
-**Key Functions**
-- `PrepPanel` — React component for materials display
-
-**User Journey Steps**: 6, 3
+- `debates.by_user` — List user's debates
+- `exchanges.by_debate` — Get debate transcript
+- `analyses.by_debate` — Get analysis for debate
+- `opponents.by_user` — List user's opponents
+- `prep.by_opponent` — Get prep for opponent
+- `research.by_opponent` — Get research for opponent
 
 ---
 
-### Post-Debate Analysis
+## External Services
 
-**Marketing Description**
-Get comprehensive feedback after each debate: technique usage, effectiveness scores, missed opportunities, and personalized improvement tips.
-
-**Technical Description**  
-Generates full analysis via Claude after debate ends. Stores summaries, technique breakdowns, key moments, and winner determination.
-
-**Relevant Files**
-- `src/routes/_app/_auth/dashboard/analysis.tsx` — Analysis display page
-- `convex/analysis.ts` — Analysis generation and queries
-
-**Key Functions**
-- `analysis.generateFullAnalysis()` — Create comprehensive report
-- `analysis.getAnalysis()` — Retrieve analysis for display
-
-**User Journey Steps**: 4
+| Service | Purpose | Integration Point |
+|---------|---------|-------------------|
+| **Vapi** | Voice AI for debates | `convex/http.ts` webhooks, frontend SDK |
+| **OpenRouter** | LLM API (Claude, GPT-4o) | `convex/lib/openrouter.ts` |
+| **Firecrawl** | Web scraping/search | `convex/lib/firecrawl.ts` |
+| **Cloudflare R2** | Recording storage | `convex/r2.ts` via `@convex-dev/r2` |
+| **Stripe** | Subscriptions | Convex SaaS template integration |
+| **Resend** | Email | Convex SaaS template integration |
 
 ---
 
-### Authentication & Billing
+## AI Model Usage
 
-**Marketing Description**
-Secure login with email verification and flexible subscription plans powered by Stripe.
+**Configuration**: `convex/lib/aiConfig.ts`
 
-**Technical Description**  
-Convex Auth for authentication (email OTP, social logins). Stripe integration for subscriptions with webhook handling.
-
-**Relevant Files**
-- `convex/auth.ts` — Auth configuration
-- `convex/stripe.ts` — Stripe webhook handling
-- `convex/schema.ts` — users, plans, subscriptions tables
-- `src/routes/_app/login/` — Login flow
-
-**Key Functions**
-- `auth.getUserId()` — Get authenticated user
-- Stripe webhook handlers for subscription lifecycle
-
-**User Journey Steps**: 0 (prerequisite)
+| Use Case | Model | Location |
+|----------|-------|----------|
+| Prep generation | `openai/gpt-4o` | `prepGeneration.ts` |
+| Post-debate analysis | `anthropic/claude-sonnet-4.5` | `analysisAction.ts` |
+| Technique detection | `anthropic/claude-sonnet-4.5` | Real-time during debate |
+| Article summarization | `openai/gpt-4o-mini` | `research.ts` |
+| User research processing | `openai/gpt-4o` | `prepGeneration.ts` |
+| Prep chatbot | `openai/gpt-4o` | `prepChat.ts` |
 
 ---
 
-### Research Mode
+## Key Patterns
 
-**Marketing Description**
-Automatically research your debate topic with web scraping. Get relevant articles and evidence to strengthen your arguments.
+### 1. Schema is Source of Truth
 
-**Technical Description**  
-Uses Firecrawl v2 API to search and scrape web articles based on debate topic. Articles are stored with opponent profile and displayed in the Research tab during prep.
+The database schema (`convex/schema.ts`) defines the contract. Frontend must adapt to schema, not vice versa. See Chapter 3 for lesson learned.
 
-**Relevant Files**
-- `convex/lib/firecrawl.ts` — Firecrawl v2 API wrapper (`searchAndScrape`)
-- `convex/research.ts` — Research storage (`get`, `store`)
-- `convex/actions/research.ts` — `gatherEvidence` action
-- `src/routes/_app/_auth/dashboard/prep.tsx` — Research tab display
+### 2. Node.js vs Edge Runtime
 
-**Key Functions**
-- `searchAndScrape()` — Search Firecrawl and scrape top results
-- `gatherEvidence()` — Action that searches, scrapes, and stores articles
-- `research.get()` — Query to retrieve research for opponent
-- `research.store()` — Mutation to save research articles
+- **Queries/Mutations**: Run on Convex edge runtime (no `"use node"`)
+- **Actions**: Can use Node.js runtime with `"use node"` directive
+- Actions are in `convex/actions/` directory
 
-**User Journey Steps**: 5, 6
+### 3. Vapi Webhook Flow
 
----
+```
+Vapi Call → transcript event → Store exchange
+         → end-of-call-report → Store recording (R2)
+                              → Trigger analysis
+```
 
-## User Journey
+### 4. Opponent → Prep → Debate Flow
 
-| Step | Name | Description |
-|------|------|-------------|
-| 0 | Authentication | User signs up or logs in |
-| 1 | Dashboard | User sees debate history and options |
-| 2 | Start Debate | User clicks to begin a practice debate |
-| 3 | Live Debate | Real-time voice conversation with AI opponent |
-| 4 | Analysis | User reviews post-debate performance feedback |
-| 5 | Opponent Setup | User configures opponent with topic, position, style |
-| 6 | Prep Review | User reviews/edits generated prep materials |
-| 7 | Challenge | User initiates debate against configured opponent |
+```
+Create Opponent → Generate Prep (with progress tracking)
+              → Research (Firecrawl)
+              → Start Debate → Analysis → History
+```
 
----
+### 5. Cascade Deletion
 
-## Feature-to-Journey Map
+When deleting an opponent, related data is cascade-deleted:
+- `research` documents
+- `prepProgress` documents
+- `prepChat` documents
+- `prep` documents (implicit via opponent reference)
 
-| Feature | Journey Steps |
-|---------|---------------|
-| Voice Debate System | 1, 2, 3 |
-| Technique Detection | 3, 4 |
-| Opponent Profile System | 5, 6 |
-| Prep Materials Panel | 3, 6 |
-| Post-Debate Analysis | 4 |
-| Authentication & Billing | 0 |
-| Research Mode | 5 |
+### 6. OpenRouter Structured Outputs
 
----
+For reliable AI JSON responses, use structured outputs instead of basic JSON mode:
 
-## Architecture Notes
+```typescript
+import { callOpenRouter, JsonSchema } from "../lib/openrouter";
 
-### Tech Stack
-- **Framework**: Vite + React + TanStack Router
-- **Backend**: Convex (serverless functions + real-time database)
-- **Voice AI**: Vapi (orchestrates Deepgram STT, OpenRouter LLM, ElevenLabs TTS)
-- **AI/LLM**: OpenRouter (Claude Sonnet for analysis, GPT-4o for generation)
-- **Auth**: Convex Auth (email OTP, social logins)
-- **Payments**: Stripe (subscriptions)
-- **Hosting**: Netlify (static frontend)
-- **Styling**: TailwindCSS + shadcn/ui
+const schema: JsonSchema = {
+  name: "response_name",
+  strict: true,
+  schema: {
+    type: "object",
+    properties: {
+      field1: { type: "string", description: "Description" },
+      field2: { type: "number" },
+    },
+    required: ["field1", "field2"],
+    additionalProperties: false,
+  },
+};
 
-### Integration Points
+// Pass schema instead of `true` for jsonMode
+const response = await callOpenRouter(
+  apiKey, messages, siteUrl, 3, model, maxTokens, schema
+);
+```
 
-| Service | Purpose | Config Location |
-|---------|---------|-----------------|
-| Vapi | Voice AI pipeline | VITE_VAPI_PUBLIC_API_KEY |
-| OpenRouter | LLM access | OPENROUTER_API_KEY (Convex env) |
-| Stripe | Payments | STRIPE_SECRET_KEY (Convex env) |
-| Resend | Email | RESEND_API_KEY (Convex env) |
-| Firecrawl | Web scraping | FIRECRAWL_API_KEY (Convex env) |
+This guarantees the AI returns valid JSON matching the schema. See Chapter 5.1 for migration from Zod validation.
 
-### Key Architectural Decisions
+### 7. Vapi Artifact Structure
 
-| Decision | Reasoning | Chapter |
-|----------|-----------|---------|
-| Vapi over custom voice pipeline | Faster to market, handles interruptions/turn-taking | Pre-docs |
-| Convex over traditional backend | Real-time subscriptions, serverless, TypeScript | Pre-docs |
-| OpenRouter over direct LLM APIs | Flexibility to switch models, unified API | Pre-docs |
-| Transient Vapi assistants | Dynamic configuration per debate, no dashboard assistant needed | Pre-docs |
-| Claude Sonnet for analysis | Cost optimization (10x cheaper than Opus) | Pre-docs |
-| GPT-4o for prep generation | Quality matters for user-facing content | Pre-docs |
-| Webhook-based transcript analysis | Decouples LLM from Vapi call, allows heavier processing | Pre-docs |
+Recording URL in `end-of-call-report` webhook is at `message.artifact.recording`, NOT `message.call.recordingUrl`:
+
+```typescript
+const artifact = message.artifact;
+const recordingUrl = 
+  artifact?.recording?.mono?.combinedUrl ||
+  artifact?.recording?.stereoUrl ||
+  artifact?.recording;
+```
 
 ---
 
-## Database Tables
+## Environment Variables
 
-| Table | Purpose | Key Indexes |
-|-------|---------|-------------|
-| users | User accounts with auth data | by_email, by_customerId |
-| debates | Debate sessions | by_user |
-| exchanges | Turn-by-turn transcript | by_debate |
-| techniques | Detected technique instances | by_debate, by_exchange |
-| analyses | Post-debate analysis reports | by_debate |
-| opponents | Opponent profiles with prep | by_user |
-| research | Web research for opponents | by_opponent |
-| plans | Subscription plans | by_key, by_stripeId |
-| subscriptions | User subscriptions | by_userId, by_stripeId |
+### Frontend (Vite)
+
+| Variable | Purpose |
+|----------|---------|
+| `VITE_CONVEX_URL` | Convex deployment URL |
+| `VITE_VAPI_PUBLIC_API_KEY` | Vapi public key |
+
+### Backend (Convex Dashboard)
+
+| Variable | Purpose |
+|----------|---------|
+| `OPENROUTER_API_KEY` | OpenRouter API access |
+| `FIRECRAWL_API_KEY` | Firecrawl API access |
+| `STRIPE_SECRET_KEY` | Stripe billing |
+| `RESEND_API_KEY` | Email sending |
+| `R2_BUCKET` | Cloudflare R2 bucket name |
+| `R2_ACCESS_KEY_ID` | R2 access key |
+| `R2_SECRET_ACCESS_KEY` | R2 secret key |
+| `R2_ENDPOINT` | R2 endpoint URL |
+
+---
+
+## Dev Commands
+
+```bash
+# Start development
+npm run dev          # Frontend (Vite)
+npx convex dev       # Backend (Convex)
+
+# Type checking
+npx tsc -p convex/tsconfig.json --noEmit  # Check Convex types
+
+# Deploy
+npx convex deploy    # Deploy backend
+# Frontend auto-deploys via Netlify
+```
+
+---
+
+## Recent Changes
+
+| Date | Change | Chapter |
+|------|--------|---------|
+| Dec 20, 2024 | OpenRouter structured outputs for analysis | Ch.5.1 |
+| Dec 20, 2024 | Fixed Vapi recording URL extraction | Ch.5.1 |
+| Dec 20, 2024 | Added artifactPlan.recordingEnabled | Ch.5.1 |
+| Dec 20, 2024 | Opponent deletion with cascade | Ch.5 |
+| Dec 20, 2024 | R2 recording storage | Ch.5 |
+| Dec 20, 2024 | Debate history page with charts | Ch.5 |
+| Dec 19, 2024 | Fixed hardcoded debate topics | Ch.4 |
+| Dec 19, 2024 | Analysis page restoration | Ch.4 |
+| Dec 2, 2024 | AI config centralization | Ch.1 |
+| Dec 2, 2024 | Progress tracking system | Ch.2 |
+| Dec 2, 2024 | RAG prep chatbot | Ch.2 |
+

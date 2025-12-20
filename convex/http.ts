@@ -13,11 +13,6 @@ import {
 } from "@cvx/email/templates/subscriptionEmail";
 import Stripe from "stripe";
 import { Doc } from "@cvx/_generated/dataModel";
-import {
-  scoreConcessionPivot,
-  scoreReceipts,
-  scoreZinger,
-} from "./lib/scoring";
 
 const http = httpRouter();
 
@@ -280,7 +275,7 @@ http.route({
           
           console.log(`[transcript] Storing: ${speaker} - "${transcriptText.substring(0, 50)}..."`);
 
-          // Store transcript
+          // Store transcript (no real-time analysis - full analysis happens at end of debate)
           try {
             await ctx.runMutation(internal.debates.addTranscript, {
               debateId: debateId as any,
@@ -289,78 +284,11 @@ http.route({
               timestamp: Date.now(),
             });
             console.log(`[transcript] Successfully stored exchange for debate ${debateId}`);
-
-            // Trigger post-exchange analysis (non-blocking)
-            // Schedule analysis after a short delay to allow exchange pair to complete
-            await ctx.scheduler.runAfter(2000, internal.analysis.analyzeExchangePostHoc, {
-              debateId: debateId as any,
-            });
-            console.log(`[transcript] Scheduled analysis for debate ${debateId}`);
           } catch (error) {
             console.error(`[transcript] Error storing transcript:`, error);
           }
 
           break;
-        }
-
-        case "tool-calls": {
-          const debateId = message.call?.metadata?.debateId;
-          if (!debateId) {
-            console.warn("No debateId in tool-calls webhook");
-            return new Response(null, { status: 200 });
-          }
-
-          // Handle function calls from Vapi
-          const toolCalls = message.toolCallList || [];
-          const results = [];
-
-          for (const toolCall of toolCalls) {
-            if (toolCall.name === "logTechnique") {
-              const params = toolCall.parameters || {};
-              
-              // Score the technique using rule-based scoring
-              let effectiveness = 5; // Default score
-              const text = params.text || "";
-              
-              switch (params.technique) {
-                case "concession_pivot":
-                  effectiveness = scoreConcessionPivot(text);
-                  break;
-                case "receipts":
-                  effectiveness = scoreReceipts(text);
-                  break;
-                case "zinger":
-                  effectiveness = scoreZinger(text);
-                  break;
-              }
-
-              // Store technique - logTechnique is a public mutation, need to call via api
-              // But we're in httpAction, so we need an internal mutation wrapper
-              await ctx.runMutation(internal.analysis.logTechniqueInternal, {
-                debateId: debateId as any,
-                exchangeId: undefined, // Will be linked later if needed
-                speaker: params.speaker === "user" ? "user" : "assistant",
-                technique: params.technique || "",
-                text: text,
-                effectiveness: effectiveness,
-                context: params.context,
-              });
-
-              results.push({
-                toolCallId: toolCall.id,
-                result: "Technique logged successfully",
-              });
-            }
-          }
-
-          // Return results to Vapi (must respond within 7.5s)
-          return new Response(
-            JSON.stringify({ results }),
-            {
-              status: 200,
-              headers: { "Content-Type": "application/json" },
-            },
-          );
         }
 
         case "end-of-call-report": {
@@ -382,8 +310,34 @@ http.route({
             duration: message.call?.duration || 0,
           });
 
+          // Log the full message structure to understand where recording URL is
+          console.log(`[end-of-call-report] Full message keys:`, Object.keys(message));
+          console.log(`[end-of-call-report] message.artifact:`, JSON.stringify(message.artifact, null, 2));
+          
+          // According to Vapi docs, artifact might be at message.artifact (not message.call.artifact)
+          // Recording URL is at artifact.recording or artifact.recordingUrl
+          const artifact = message.artifact;
+          const recordingUrl = 
+            artifact?.recording?.mono?.combinedUrl ||
+            artifact?.recording?.stereoUrl ||
+            artifact?.recording ||
+            artifact?.recordingUrl ||
+            message.call?.artifact?.recording ||
+            message.call?.recordingUrl ||
+            message.recordingUrl;
+          
+          if (recordingUrl && typeof recordingUrl === 'string') {
+            console.log(`[end-of-call-report] Storing recording for debate ${debateId}: ${recordingUrl}`);
+            await ctx.scheduler.runAfter(0, internal.r2.storeRecording, {
+              debateId: debateId as any,
+              recordingUrl,
+            });
+          } else {
+            console.warn(`[end-of-call-report] No recordingUrl found for debate ${debateId}`);
+          }
+
           // Trigger full analysis generation (non-blocking)
-          await ctx.scheduler.runAfter(1000, internal.analysis.generateFullAnalysis, {
+          await ctx.scheduler.runAfter(1000, internal.actions.analysisAction.generateFullAnalysis, {
             debateId: debateId as any,
           });
 

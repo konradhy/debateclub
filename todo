@@ -1,0 +1,16 @@
+1. Login with passwords or something easier than email OTP
+2. New debate style, aimed at casual conversations with friends, family etc. 
+3. I want to be able to write into an llm some context after research generation. LLM will take this context, along with the prior generated items and redo all the fields. 
+4. I want a list of other points to consider for the debate
+5. MAJOR - The evidence for the argument frames is currently empty. This is important, and should be fleshed out with sources when possible. Perhaps it might need an expandable tab so that things can fit
+6. argument frame should also show an example quote of the frame work in action. 
+7. A need to pause mid debate. Or to have a toggle so that the ai doesn't interrupt, so that the user can think about what to say.
+8. Ability to add a text description of the audience as well as the opponent before hand. This might include things such as demographics, past statements, theories, etc 
+Opponent intelligence should have a supporting evidence section as well. Both for their argument as well as my counters to them... this needs to be done carefully.
+10. I need to be able to edit opponent intelligence. I should ask, why this wasn't originally included. That might be important. 
+11. Receipts should include examples of how to deploy in action. 
+
+LONG TERM
+1. Story Mode (homework for life, drills from book, auto sorting)
+2. Legal Mode that follows the rules of Jamaican court
+3. Podcast Mode (back and forth communication about a topic)

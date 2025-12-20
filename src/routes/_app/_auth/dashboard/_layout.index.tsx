@@ -1,11 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, Users, Swords } from "lucide-react";
+import { Plus, Users, Swords, Trash2, MoreVertical, History } from "lucide-react";
 import siteConfig from "~/site.config";
-import { useQuery } from "@tanstack/react-query";
-import { convexQuery } from "@convex-dev/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { api } from "@cvx/_generated/api";
 import { Button } from "@/ui/button";
 import { Id } from "@cvx/_generated/dataModel";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/ui/dropdown-menu";
+import { useState } from "react";
 
 interface Opponent {
   _id: Id<"opponents">;
@@ -29,9 +36,34 @@ export const Route = createFileRoute("/_app/_auth/dashboard/_layout/")({
 });
 
 export default function Dashboard() {
+  const queryClient = useQueryClient();
   const { data: opponents = [] } = useQuery(
     convexQuery(api.opponents.list, {}),
   );
+
+  const deleteOpponent = useMutation({
+    mutationFn: useConvexMutation(api.opponents.deleteOpponent),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [["opponents", "list"]] });
+    },
+  });
+
+  const handleDelete = async (opponentId: Id<"opponents">, name: string) => {
+    if (
+      !confirm(
+        `Are you sure you want to delete "${name}"? This will also delete all associated research, prep materials, and chat history. This action cannot be undone.`,
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await deleteOpponent.mutateAsync({ opponentId });
+    } catch (error) {
+      console.error("Error deleting opponent:", error);
+      alert("Failed to delete opponent. Please try again.");
+    }
+  };
 
   return (
     <div className="flex h-full w-full bg-secondary px-6 py-8 dark:bg-black">
@@ -47,12 +79,20 @@ export default function Dashboard() {
                   Create and manage your debate opponents.
                 </p>
               </div>
-              <Link to="/dashboard/opponent-profile">
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Opponent
-                </Button>
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link to="/dashboard/history">
+                  <Button variant="outline">
+                    <History className="mr-2 h-4 w-4" />
+                    History
+                  </Button>
+                </Link>
+                <Link to="/dashboard/opponent-profile">
+                  <Button>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create Opponent
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
 
@@ -107,6 +147,30 @@ export default function Dashboard() {
                       </p>
                     </div>
                   </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        className="text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(opponent._id, opponent.name);
+                        }}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
                 <p className="line-clamp-2 text-sm text-primary/80">
                   Topic: {opponent.topic}

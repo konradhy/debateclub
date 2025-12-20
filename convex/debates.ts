@@ -5,6 +5,8 @@ import {
   query,
 } from "./_generated/server";
 import { v } from "convex/values";
+import { auth } from "./auth";
+import { r2 } from "./r2";
 
 export const create = mutation({
   args: {
@@ -109,4 +111,265 @@ export const getInternal = internalQuery({
     return await ctx.db.get(args.debateId);
   },
 });
+
+export const updateRecordingKey = internalMutation({
+  args: {
+    debateId: v.id("debates"),
+    recordingKey: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.debateId, {
+      recordingKey: args.recordingKey,
+    });
+  },
+});
+
+export const listUserDebates = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) {
+      return [];
+    }
+
+    const debates = await ctx.db
+      .query("debates")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .order("desc")
+      .collect();
+
+    // Get analyses for each debate
+    const debatesWithAnalysis = await Promise.all(
+      debates.map(async (debate) => {
+        const analysis = await ctx.db
+          .query("analyses")
+          .withIndex("by_debate", (q) => q.eq("debateId", debate._id))
+          .first();
+
+        // Get recording URL if available
+        let recordingUrl: string | null = null;
+        if (debate.recordingKey) {
+          recordingUrl = await r2.getUrl(debate.recordingKey, {
+            expiresIn: 60 * 60 * 24, // 24 hours
+          });
+        }
+
+        return {
+          ...debate,
+          analysis: analysis
+            ? {
+                hasanScores: analysis.hasanScores,
+                executiveSummary: analysis.executiveSummary,
+              }
+            : null,
+          recordingUrl,
+        };
+      }),
+    );
+
+    return debatesWithAnalysis;
+  },
+});
+
+export const getDebateWithAnalysis = query({
+  args: {
+    debateId: v.id("debates"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) {
+      return null;
+    }
+
+    const debate = await ctx.db.get(args.debateId);
+    if (!debate || debate.userId !== userId) {
+      return null;
+    }
+
+    const analysis = await ctx.db
+      .query("analyses")
+      .withIndex("by_debate", (q) => q.eq("debateId", args.debateId))
+      .first();
+
+    const exchanges = await ctx.db
+      .query("exchanges")
+      .withIndex("by_debate", (q) => q.eq("debateId", args.debateId))
+      .order("asc")
+      .collect();
+
+    // Get recording URL if available
+    let recordingUrl: string | null = null;
+    if (debate.recordingKey) {
+      recordingUrl = await r2.getUrl(debate.recordingKey, {
+        expiresIn: 60 * 60 * 24, // 24 hours
+      });
+    }
+
+    return {
+      debate,
+      analysis,
+      exchanges,
+      recordingUrl,
+    };
+  },
+});
+
+export const getPerformanceStats = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) {
+      return {
+        totalDebates: 0,
+        averageScore: 0,
+        improvementPercent: 0,
+        recentDebates: [],
+        categoryAverages: {
+          fundamentals: 0,
+          tricksOfTrade: 0,
+          behindTheScenes: 0,
+          grandFinale: 0,
+        },
+      };
+    }
+
+    const debates = await ctx.db
+      .query("debates")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .order("desc")
+      .collect();
+
+    const totalDebates = debates.length;
+
+    if (totalDebates === 0) {
+      return {
+        totalDebates: 0,
+        averageScore: 0,
+        improvementPercent: 0,
+        recentDebates: [],
+        categoryAverages: {
+          fundamentals: 0,
+          tricksOfTrade: 0,
+          behindTheScenes: 0,
+          grandFinale: 0,
+        },
+      };
+    }
+
+    // Get all analyses for these debates
+    const analyses = await Promise.all(
+      debates.map(async (debate) => {
+        const analysis = await ctx.db
+          .query("analyses")
+          .withIndex("by_debate", (q) => q.eq("debateId", debate._id))
+          .first();
+        return analysis;
+      }),
+    );
+
+    const completedAnalyses = analyses.filter(
+      (a): a is NonNullable<typeof a> => a !== null,
+    );
+
+    if (completedAnalyses.length === 0) {
+      return {
+        totalDebates,
+        averageScore: 0,
+        improvementPercent: 0,
+        recentDebates: [],
+        categoryAverages: {
+          fundamentals: 0,
+          tricksOfTrade: 0,
+          behindTheScenes: 0,
+          grandFinale: 0,
+        },
+      };
+    }
+
+    // Calculate average score
+    const totalScore = completedAnalyses.reduce(
+      (sum, a) => sum + a.hasanScores.total,
+      0,
+    );
+    const averageScore = Math.round((totalScore / completedAnalyses.length) * 10) / 10;
+
+    // Calculate improvement percent (compare first half vs second half)
+    let improvementPercent = 0;
+    if (completedAnalyses.length >= 2) {
+      const midpoint = Math.floor(completedAnalyses.length / 2);
+      const firstHalf = completedAnalyses.slice(midpoint);
+      const secondHalf = completedAnalyses.slice(0, midpoint);
+
+      const firstHalfAvg =
+        firstHalf.reduce((sum, a) => sum + a.hasanScores.total, 0) /
+        firstHalf.length;
+      const secondHalfAvg =
+        secondHalf.reduce((sum, a) => sum + a.hasanScores.total, 0) /
+        secondHalf.length;
+
+      if (firstHalfAvg > 0) {
+        improvementPercent =
+          Math.round(
+            ((secondHalfAvg - firstHalfAvg) / firstHalfAvg) * 100 * 10,
+          ) / 10;
+      }
+    }
+
+    // Calculate category averages
+    const categoryTotals = {
+      fundamentals: 0,
+      tricksOfTrade: 0,
+      behindTheScenes: 0,
+      grandFinale: 0,
+    };
+
+    completedAnalyses.forEach((a) => {
+      categoryTotals.fundamentals += a.hasanScores.fundamentals;
+      categoryTotals.tricksOfTrade += a.hasanScores.tricksOfTrade;
+      categoryTotals.behindTheScenes += a.hasanScores.behindTheScenes;
+      categoryTotals.grandFinale += a.hasanScores.grandFinale;
+    });
+
+    const categoryAverages = {
+      fundamentals:
+        Math.round(
+          (categoryTotals.fundamentals / completedAnalyses.length) * 10,
+        ) / 10,
+      tricksOfTrade:
+        Math.round(
+          (categoryTotals.tricksOfTrade / completedAnalyses.length) * 10,
+        ) / 10,
+      behindTheScenes:
+        Math.round(
+          (categoryTotals.behindTheScenes / completedAnalyses.length) * 10,
+        ) / 10,
+      grandFinale:
+        Math.round(
+          (categoryTotals.grandFinale / completedAnalyses.length) * 10,
+        ) / 10,
+    };
+
+    // Get recent debates (last 10) with scores
+    const recentDebates = debates.slice(0, 10).map((debate) => {
+      const analysis = completedAnalyses.find(
+        (a) => a.debateId === debate._id,
+      );
+      return {
+        _id: debate._id,
+        topic: debate.topic,
+        date: debate.completedAt || debate.startedAt,
+        score: analysis?.hasanScores.total || null,
+      };
+    });
+
+    return {
+      totalDebates,
+      averageScore,
+      improvementPercent,
+      recentDebates,
+      categoryAverages,
+    };
+  },
+});
+
 

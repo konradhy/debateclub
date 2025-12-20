@@ -5,7 +5,7 @@ import { api } from "@cvx/_generated/api";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/ui/button";
 import Vapi from "@vapi-ai/web";
-import { Mic, MicOff, Sparkles, BarChart3, FileText } from "lucide-react";
+import { Mic, MicOff, BarChart3, FileText } from "lucide-react";
 import siteConfig from "~/site.config";
 import { Id } from "@cvx/_generated/dataModel";
 import { PrepPanel } from "@/ui/prep-panel";
@@ -19,15 +19,10 @@ export const Route = createFileRoute("/_app/_auth/dashboard/debate")({
   }),
 });
 
-const DEBATE_TOPIC =
-  "Should Florence Griffith-Joyner's (Flo Jo) world records be removed?";
-const USER_POSITION = "pro"; // Pro: Records should be removed
-const AI_POSITION = "con"; // Con: Records should stay
 const VAPI_PUBLIC_API_KEY = import.meta.env.VITE_VAPI_PUBLIC_API_KEY || "";
 const CONVEX_URL = import.meta.env.VITE_CONVEX_URL || "";
 // Construct the HTTP Actions URL (replace .cloud with .site if needed)
 const CONVEX_SITE_URL = CONVEX_URL.replace(".convex.cloud", ".convex.site");
-// Note: VAPI_ASSISTANT_ID no longer needed - we're using dynamic assistant config
 
 function Debate() {
   const navigate = useNavigate();
@@ -51,11 +46,6 @@ function Debate() {
   const [selectedModel, setSelectedModel] = useState("gpt-4o");
   const [isPrepPanelOpen, setIsPrepPanelOpen] = useState(false);
 
-  // Query techniques for current debate
-  const { data: techniques = [] } = useQuery(
-    convexQuery(api.analysis.getTechniques, { debateId: debateId ?? null }),
-  );
-
   const { opponentId } = Route.useSearch();
   const { data: opponent } = useQuery(
     convexQuery(
@@ -63,6 +53,11 @@ function Debate() {
       opponentId ? { opponentId: opponentId as any } : "skip",
     ),
   );
+
+  // Dynamic Debate Settings
+  const topic = opponent?.topic || "General Debate Practice";
+  const aiPosition = opponent?.position || "con";
+  const userPosition = aiPosition === "con" ? "pro" : "con";
 
   useEffect(() => {
     if (!VAPI_PUBLIC_API_KEY) {
@@ -175,12 +170,12 @@ function Debate() {
     }
 
     try {
-      // Create debate record
+      // Create debate record with dynamic values
       const newDebateId = await createDebate({
         userId: user._id,
-        topic: DEBATE_TOPIC,
-        userPosition: USER_POSITION,
-        aiPosition: AI_POSITION,
+        topic: topic,
+        userPosition: userPosition,
+        aiPosition: aiPosition,
       });
 
       setDebateId(newDebateId);
@@ -198,7 +193,7 @@ function Debate() {
         return;
       }
 
-      console.log("Starting Vapi call with topic:", DEBATE_TOPIC);
+      console.log("Starting Vapi call with topic:", topic);
       console.log(
         "Webhook URL:",
         CONVEX_SITE_URL ? `${CONVEX_SITE_URL}/vapi-webhook` : "NOT SET",
@@ -223,18 +218,14 @@ function Debate() {
       const selectedConfig =
         modelConfigs[selectedModel as keyof typeof modelConfigs];
 
-      // Determine debate settings
-      const topic = opponent?.topic || DEBATE_TOPIC;
-      const aiPosition = opponent?.position || AI_POSITION;
-      const userPosition = aiPosition === "con" ? "pro" : "con"; // Simple inversion for now
+      // Determine debate settings (already calculated above)
       const style = opponent?.style || "aggressive";
       const difficulty = opponent?.difficulty || "medium";
-      const talkingPoints = [
-        "Innocent until proven guilty: She never failed a drug test.",
-        "Extraordinary talent: Her form and technique were flawless.",
-        "Speculation isn't evidence: Rumors about appearance or early death aren't proof.",
-        "Dangerous precedent: Removing records based on suspicion undermines the sport.",
-        "Testing was present: She passed all tests administered at the time.",
+      // Use configured talking points if available, otherwise generic defaults
+      const talkingPoints = opponent?.talkingPoints || [
+        `I support the ${aiPosition} position on ${topic}.`,
+        "I will use facts and logic to support my case.",
+        "I will point out logical fallacies in your arguments.",
       ];
 
       // Build dynamic assistant configuration
@@ -310,6 +301,10 @@ BEHAVIORAL RULES:
           "status-update",
           "speech-update",
         ] as any,
+        // Enable recording to get recordingUrl in end-of-call-report webhook
+        artifactPlan: {
+          recordingEnabled: true,
+        },
       };
 
       console.log(
@@ -365,10 +360,10 @@ BEHAVIORAL RULES:
                 Practice Debate
               </h2>
               <p className="text-sm font-normal text-primary/60">
-                Topic: {DEBATE_TOPIC}
+                Topic: {topic}
               </p>
               <p className="text-sm font-normal text-primary/60">
-                Your position: {USER_POSITION} | AI position: {AI_POSITION}
+                Your position: {userPosition} | AI position: {aiPosition}
               </p>
 
               {/* Model Switcher */}
@@ -402,10 +397,11 @@ BEHAVIORAL RULES:
               {/* Speaking Indicators */}
               <div className="flex gap-4">
                 <div
-                  className={`flex items-center gap-2 rounded-lg px-4 py-2 ${isListening
-                    ? "bg-green-500/20 text-green-700 dark:text-green-400"
-                    : "bg-secondary text-primary/60"
-                    }`}
+                  className={`flex items-center gap-2 rounded-lg px-4 py-2 ${
+                    isListening
+                      ? "bg-green-500/20 text-green-700 dark:text-green-400"
+                      : "bg-secondary text-primary/60"
+                  }`}
                 >
                   {isListening ? (
                     <Mic className="h-5 w-5" />
@@ -415,10 +411,11 @@ BEHAVIORAL RULES:
                   <span className="text-sm font-medium">You</span>
                 </div>
                 <div
-                  className={`flex items-center gap-2 rounded-lg px-4 py-2 ${isSpeaking
-                    ? "bg-blue-500/20 text-blue-700 dark:text-blue-400"
-                    : "bg-secondary text-primary/60"
-                    }`}
+                  className={`flex items-center gap-2 rounded-lg px-4 py-2 ${
+                    isSpeaking
+                      ? "bg-blue-500/20 text-blue-700 dark:text-blue-400"
+                      : "bg-secondary text-primary/60"
+                  }`}
                 >
                   {isSpeaking ? (
                     <div className="h-5 w-5 animate-pulse rounded-full bg-blue-500" />
@@ -428,61 +425,6 @@ BEHAVIORAL RULES:
                   <span className="text-sm font-medium">AI</span>
                 </div>
               </div>
-
-              {/* Techniques Display */}
-              {techniques.length > 0 && (
-                <div className="flex w-full flex-col gap-3">
-                  <h3 className="text-sm font-medium text-primary/80">
-                    Techniques Detected
-                  </h3>
-                  <div className="flex flex-col gap-2">
-                    {techniques.map((tech) => {
-                      const techniqueNames: Record<string, string> = {
-                        concession_pivot: "Concession & Pivot",
-                        receipts: "Receipts",
-                        zinger: "Zinger",
-                      };
-                      const techniqueName =
-                        techniqueNames[tech.technique] || tech.technique;
-                      const effectivenessColor =
-                        tech.effectiveness >= 7
-                          ? "bg-green-500/20 text-green-700 dark:text-green-400"
-                          : tech.effectiveness >= 5
-                            ? "bg-yellow-500/20 text-yellow-700 dark:text-yellow-400"
-                            : "bg-red-500/20 text-red-700 dark:text-red-400";
-
-                      return (
-                        <div
-                          key={tech._id}
-                          className={`flex flex-col gap-1 rounded-lg p-3 ${effectivenessColor}`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <Sparkles className="h-3 w-3" />
-                            <span className="text-xs font-medium">
-                              {techniqueName} (
-                              {tech.speaker === "user" ? "You" : "AI"})
-                            </span>
-                            <span className="text-xs opacity-75">
-                              {tech.effectiveness}/10
-                            </span>
-                          </div>
-                          {tech.text && (
-                            <p className="text-xs opacity-90 italic">
-                              "{tech.text}"
-                            </p>
-                          )}
-                          {tech.context && (
-                            <div className="mt-1 rounded bg-black/5 p-2 text-xs opacity-90 dark:bg-white/10">
-                              <span className="font-semibold">Context:</span>{" "}
-                              {tech.context}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
 
               {/* Control Buttons */}
               <div className="flex gap-4">
@@ -548,17 +490,15 @@ BEHAVIORAL RULES:
       </div>
 
       {/* Floating Prep Materials Button */}
-      {opponent &&
-        (opponent.openingOptions ||
-          opponent.argumentFrames) && (
-          <button
-            onClick={() => setIsPrepPanelOpen(!isPrepPanelOpen)}
-            className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-110 active:scale-95"
-            aria-label="Toggle prep materials"
-          >
-            <FileText className="h-6 w-6" />
-          </button>
-        )}
+      {opponent && (opponent.openingOptions || opponent.argumentFrames) && (
+        <button
+          onClick={() => setIsPrepPanelOpen(!isPrepPanelOpen)}
+          className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-110 active:scale-95"
+          aria-label="Toggle prep materials"
+        >
+          <FileText className="h-6 w-6" />
+        </button>
+      )}
 
       {/* Prep Materials Panel */}
       <PrepPanel

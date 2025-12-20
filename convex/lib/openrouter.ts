@@ -25,6 +25,16 @@ export interface OpenRouterResponse {
 }
 
 /**
+ * JSON Schema for structured outputs
+ * When provided, OpenRouter enforces the schema at the model level
+ */
+export interface JsonSchema {
+  name: string;
+  strict: boolean;
+  schema: Record<string, unknown>;
+}
+
+/**
  * Calls OpenRouter API with retry logic
  *
  * @param apiKey - OpenRouter API key
@@ -33,6 +43,7 @@ export interface OpenRouterResponse {
  * @param maxRetries - Maximum number of retry attempts
  * @param model - Optional model override (defaults to anthropic/claude-sonnet-4.5)
  * @param maxTokens - Optional max tokens limit
+ * @param jsonMode - true for basic JSON mode, JsonSchema for structured outputs, false for no JSON
  * @returns API response
  */
 export async function callOpenRouter(
@@ -42,8 +53,22 @@ export async function callOpenRouter(
   maxRetries: number = 3,
   model: string = "anthropic/claude-sonnet-4.5",
   maxTokens?: number,
+  jsonMode: boolean | JsonSchema = true,
 ): Promise<OpenRouterResponse> {
   let lastError: Error | null = null;
+
+  // Build response_format based on jsonMode type
+  const getResponseFormat = () => {
+    if (jsonMode === false) return {};
+    if (jsonMode === true) return { response_format: { type: "json_object" } };
+    // JsonSchema object - use structured outputs
+    return {
+      response_format: {
+        type: "json_schema",
+        json_schema: jsonMode,
+      },
+    };
+  };
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -58,7 +83,7 @@ export async function callOpenRouter(
         body: JSON.stringify({
           model,
           messages,
-          response_format: { type: "json_object" },
+          ...getResponseFormat(),
           ...(maxTokens ? { max_tokens: maxTokens } : {}),
         }),
       });

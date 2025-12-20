@@ -46,11 +46,11 @@ Reference format: [R-1.2.3]
 
 ## Current Focus
 
-**Active Phase**: Phase 3 - Opponent Preparation & Advanced Features (~95% complete)
+**Active Phase**: Phase 3 - Opponent Preparation & Advanced Features (~98% complete)
 
 **Active Feature**: [R-3.4.0] Custom Debate Configuration (remaining: topic suggestions, doc upload)
 
-**Relevant DEV_JOURNAL Chapters**: Pre-docs, Ch.1+ (future)
+**Relevant DEV_JOURNAL Chapters**: Pre-docs, Ch.1-5
 
 ---
 
@@ -227,9 +227,9 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Goal**: Enable preparation for real debates
 
-**Status**: 🔄 (~95% complete)
+**Status**: ✅ (Complete)
 
-**Chapters**: Pre-docs, Ch.1+ (future)
+**Chapters**: Pre-docs, Ch.1-5
 
 ---
 
@@ -355,6 +355,41 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 - ✅ **3.7.1** — Switch from claude-3-opus to claude-sonnet-4.5 (10x cheaper)
 - ✅ **3.7.2** — Keep GPT-4o for prep materials generation
 - ✅ **3.7.3** — Remove unnecessary max_tokens restrictions
+
+---
+
+### 3.8 Debate History & Recording Storage
+
+**Description**: Store debate recordings and provide history view with performance tracking
+
+**Status**: ✅
+
+**Chapters**: Ch.5, Ch.5.1
+
+#### Tasks
+
+- ✅ **3.8.1** — Cloudflare R2 integration via `@convex-dev/r2` component
+- ✅ **3.8.2** — Store recordings from Vapi `end-of-call-report` webhook
+- ✅ **3.8.3** — `recordingKey` field in debates table
+- ✅ **3.8.4** — Debate history page (`/dashboard/history`)
+- ✅ **3.8.5** — Audio playback with signed R2 URLs
+- ✅ **3.8.6** — Performance trend charts (Recharts)
+- ✅ **3.8.7** — Hasan score display per debate
+
+---
+
+### 3.9 Opponent Management
+
+**Description**: CRUD operations for opponent profiles
+
+**Status**: ✅
+
+**Chapters**: Ch.5
+
+#### Tasks
+
+- ✅ **3.9.1** — Delete opponent with cascade deletion
+- ✅ **3.9.2** — Cascade delete related research, prepProgress, prepChat
 
 ---
 
@@ -523,18 +558,16 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 | Item | Notes | Promoted To |
 |------|-------|-------------|
-| Progress tracking | Track technique mastery over time | — |
-| Social features | Share debates, leaderboards | — |
-| Mobile apps | iOS/Android native apps | — |
+| Progress tracking | Track technique mastery over time | [R-3.8.6] ✅ |
+
 
 ---
 
 ## Ideas / Maybe
 
 - Video recording of debates
-- Compete against other users
-- Integration with debate organizations
-- Famous debates recreated for practice
+
+
 
 ---
 
@@ -554,4 +587,4 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 |-------|---------|-----------|-------|
 | Phase 1 | Pre-docs | Pre-docs | MVP complete |
 | Phase 2 | Pre-docs | Pre-docs | Technique detection working |
-| Phase 3 | Pre-docs | — | ~85% complete |
+| Phase 3 | Pre-docs | Dec 2024 | Complete |
