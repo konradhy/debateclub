@@ -171,49 +171,6 @@ export const listUserDebates = query({
   },
 });
 
-export const getDebateWithAnalysis = query({
-  args: {
-    debateId: v.id("debates"),
-  },
-  handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
-    if (!userId) {
-      return null;
-    }
-
-    const debate = await ctx.db.get(args.debateId);
-    if (!debate || debate.userId !== userId) {
-      return null;
-    }
-
-    const analysis = await ctx.db
-      .query("analyses")
-      .withIndex("by_debate", (q) => q.eq("debateId", args.debateId))
-      .first();
-
-    const exchanges = await ctx.db
-      .query("exchanges")
-      .withIndex("by_debate", (q) => q.eq("debateId", args.debateId))
-      .order("asc")
-      .collect();
-
-    // Get recording URL if available
-    let recordingUrl: string | null = null;
-    if (debate.recordingKey) {
-      recordingUrl = await r2.getUrl(debate.recordingKey, {
-        expiresIn: 60 * 60 * 24, // 24 hours
-      });
-    }
-
-    return {
-      debate,
-      analysis,
-      exchanges,
-      recordingUrl,
-    };
-  },
-});
-
 export const getPerformanceStats = query({
   args: {},
   handler: async (ctx) => {

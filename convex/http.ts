@@ -310,30 +310,18 @@ http.route({
             duration: message.call?.duration || 0,
           });
 
-          // Log the full message structure to understand where recording URL is
-          console.log(`[end-of-call-report] Full message keys:`, Object.keys(message));
-          console.log(`[end-of-call-report] message.artifact:`, JSON.stringify(message.artifact, null, 2));
-          
-          // According to Vapi docs, artifact might be at message.artifact (not message.call.artifact)
-          // Recording URL is at artifact.recording or artifact.recordingUrl
+          // Extract recording URL from Vapi artifact
+          // Recording is at message.artifact.recording (mono.combinedUrl for mono recordings)
           const artifact = message.artifact;
           const recordingUrl = 
             artifact?.recording?.mono?.combinedUrl ||
-            artifact?.recording?.stereoUrl ||
-            artifact?.recording ||
-            artifact?.recordingUrl ||
-            message.call?.artifact?.recording ||
-            message.call?.recordingUrl ||
-            message.recordingUrl;
+            artifact?.recording?.stereoUrl;
           
-          if (recordingUrl && typeof recordingUrl === 'string') {
-            console.log(`[end-of-call-report] Storing recording for debate ${debateId}: ${recordingUrl}`);
+          if (recordingUrl) {
             await ctx.scheduler.runAfter(0, internal.r2.storeRecording, {
               debateId: debateId as any,
               recordingUrl,
             });
-          } else {
-            console.warn(`[end-of-call-report] No recordingUrl found for debate ${debateId}`);
           }
 
           // Trigger full analysis generation (non-blocking)
