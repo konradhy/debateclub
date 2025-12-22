@@ -141,6 +141,48 @@ const schema = defineSchema({
     difficulty: v.string(),
     talkingPoints: v.optional(v.array(v.string())),
 
+    // ==========================================
+    // AUDIENCE CONTEXT (Chapter 1: Know Your Audience)
+    // ==========================================
+    audienceDescription: v.optional(v.string()), // Free-form description of the audience
+    audienceType: v.optional(v.string()), // General, Academic, Professional, Political, Legal
+    audienceSize: v.optional(v.string()), // One-on-one, Small group, Large, Broadcast
+    audienceDisposition: v.optional(v.string()), // Friendly, Neutral, Skeptical, Hostile
+    debateFormat: v.optional(v.string()), // Formal debate, Panel, Interview, Town hall
+
+    // ==========================================
+    // OPPONENT PROFILE (Chapters 4, 10, 15: Three C's, Traps, Homework)
+    // ==========================================
+    opponentDescription: v.optional(v.string()), // Background, role, who they are
+    opponentOrganization: v.optional(v.string()), // Their affiliation
+    opponentCredentials: v.optional(v.string()), // Claimed expertise, degrees, positions
+    credentialWeaknesses: v.optional(v.string()), // Gaps in credentials, areas they lack
+
+    opponentPastStatements: v.optional(v.string()), // Quotes, positions on record (for traps)
+    opponentContradictions: v.optional(v.string()), // Known contradictions
+    opponentTrackRecord: v.optional(v.string()), // Wrong predictions, debunked claims
+
+    opponentDebateStyle: v.optional(v.string()), // Gish Galloper, Academic, Emotional, etc.
+    opponentRhetoricalTendencies: v.optional(v.string()), // Patterns, how they argue
+    opponentTriggers: v.optional(v.string()), // Topics that get them emotional/defensive
+
+    opponentStrongestArguments: v.optional(v.string()), // Steelmanned best case
+    opponentBestEvidence: v.optional(v.string()), // Their best proof
+    opponentLikelyCritiques: v.optional(v.string()), // How they'll attack you
+
+    opponentCharacterIssues: v.optional(v.string()), // Conflicts of interest, bias
+
+    // ==========================================
+    // USER CONTEXT (Your research & directives)
+    // ==========================================
+    userResearch: v.optional(v.string()), // Notes, articles, data
+    keyPointsToMake: v.optional(v.string()), // Arguments to emphasize
+    thingsToAvoid: v.optional(v.string()), // Topics/approaches to avoid
+    toneDirectives: v.optional(v.string()), // How you want to come across
+
+    // ==========================================
+    // AI-Generated Prep Materials (Buffet-Style)
+    // ==========================================
     // New structured prep fields
     // Buffet-Style Prep Data
     openingOptions: v.optional(

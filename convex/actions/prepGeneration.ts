@@ -57,13 +57,17 @@ async function generateWithPrompt(
 }
 
 export const generateOpenings = internalAction({
-  args: { topic: v.string(), position: v.string() },
+  args: {
+    topic: v.string(),
+    position: v.string(),
+    strategicBrief: v.optional(v.string()),
+  },
   returns: v.array(v.any()),
   handler: async (ctx, args) => {
     const prompt = OPENING_STATEMENT_PROMPT.replace(
-      "{topic}",
-      args.topic,
-    ).replace("{position}", args.position);
+      "{strategicBrief}",
+      args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
+    );
 
     const data = await generateWithPrompt(prompt);
     return data.openings || [];
@@ -71,13 +75,19 @@ export const generateOpenings = internalAction({
 });
 
 export const generateFrames = internalAction({
-  args: { topic: v.string(), position: v.string(), research: v.array(v.any()) },
+  args: {
+    topic: v.string(),
+    position: v.string(),
+    research: v.array(v.any()),
+    strategicBrief: v.optional(v.string()),
+  },
   returns: v.array(v.any()),
   handler: async (ctx, args) => {
     const researchContext = JSON.stringify(args.research);
-    const prompt = ARGUMENT_FRAMES_PROMPT.replace("{topic}", args.topic)
-      .replace("{position}", args.position)
-      .replace("{research}", researchContext);
+    const prompt = ARGUMENT_FRAMES_PROMPT.replace(
+      "{strategicBrief}",
+      args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
+    ).replace("{research}", researchContext);
 
     const data = await generateWithPrompt(prompt);
     return data.frames || [];
@@ -85,13 +95,19 @@ export const generateFrames = internalAction({
 });
 
 export const generateReceipts = internalAction({
-  args: { topic: v.string(), position: v.string(), research: v.array(v.any()) },
+  args: {
+    topic: v.string(),
+    position: v.string(),
+    research: v.array(v.any()),
+    strategicBrief: v.optional(v.string()),
+  },
   returns: v.array(v.any()),
   handler: async (ctx, args) => {
     const researchContext = JSON.stringify(args.research);
-    const prompt = RECEIPTS_ARSENAL_PROMPT.replace("{topic}", args.topic)
-      .replace("{position}", args.position)
-      .replace("{research}", researchContext);
+    const prompt = RECEIPTS_ARSENAL_PROMPT.replace(
+      "{strategicBrief}",
+      args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
+    ).replace("{research}", researchContext);
 
     const data = await generateWithPrompt(prompt);
     return data.receipts || [];
@@ -99,13 +115,19 @@ export const generateReceipts = internalAction({
 });
 
 export const generateZingers = internalAction({
-  args: { topic: v.string(), position: v.string(), research: v.array(v.any()) },
+  args: {
+    topic: v.string(),
+    position: v.string(),
+    research: v.array(v.any()),
+    strategicBrief: v.optional(v.string()),
+  },
   returns: v.array(v.any()),
   handler: async (ctx, args) => {
     const researchContext = JSON.stringify(args.research);
-    const prompt = ZINGER_BANK_PROMPT.replace("{topic}", args.topic)
-      .replace("{position}", args.position)
-      .replace("{research}", researchContext);
+    const prompt = ZINGER_BANK_PROMPT.replace(
+      "{strategicBrief}",
+      args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
+    ).replace("{research}", researchContext);
 
     const data = await generateWithPrompt(prompt);
     return data.zingers || [];
@@ -113,13 +135,17 @@ export const generateZingers = internalAction({
 });
 
 export const generateClosings = internalAction({
-  args: { topic: v.string(), position: v.string() },
+  args: {
+    topic: v.string(),
+    position: v.string(),
+    strategicBrief: v.optional(v.string()),
+  },
   returns: v.array(v.any()),
   handler: async (ctx, args) => {
     const prompt = CLOSING_STATEMENT_PROMPT.replace(
-      "{topic}",
-      args.topic,
-    ).replace("{position}", args.position);
+      "{strategicBrief}",
+      args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
+    );
 
     const data = await generateWithPrompt(prompt);
     return data.closings || [];
@@ -127,13 +153,19 @@ export const generateClosings = internalAction({
 });
 
 export const generateOpponentIntel = internalAction({
-  args: { topic: v.string(), position: v.string(), research: v.array(v.any()) },
+  args: {
+    topic: v.string(),
+    position: v.string(),
+    research: v.array(v.any()),
+    strategicBrief: v.optional(v.string()),
+  },
   returns: v.array(v.any()),
   handler: async (ctx, args) => {
     const researchContext = JSON.stringify(args.research);
-    const prompt = OPPONENT_INTEL_PROMPT.replace("{topic}", args.topic)
-      .replace("{position}", args.position)
-      .replace("{research}", researchContext);
+    const prompt = OPPONENT_INTEL_PROMPT.replace(
+      "{strategicBrief}",
+      args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
+    ).replace("{research}", researchContext);
 
     const data = await generateWithPrompt(prompt);
     return data.opponentIntel || [];
@@ -235,6 +267,7 @@ export const generateResearchSynthesis = internalAction({
     topic: v.string(),
     position: v.string(),
     research: v.array(v.any()),
+    strategicBrief: v.optional(v.string()),
   },
   returns: v.object({
     overview: v.string(),
@@ -281,9 +314,10 @@ export const generateResearchSynthesis = internalAction({
       )
       .join("\n\n---\n\n");
 
-    const prompt = RESEARCH_SYNTHESIS_PROMPT.replace("{topic}", args.topic)
-      .replace("{position}", args.position)
-      .replace("{research}", researchSummary);
+    const prompt = RESEARCH_SYNTHESIS_PROMPT.replace(
+      "{strategicBrief}",
+      args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
+    ).replace("{research}", researchSummary);
 
     const data = await generateWithPrompt(prompt, AI_MODELS.PREP_GENERATION);
 

@@ -18,7 +18,7 @@
 
 ### TL;DR
 
-This chapter establishes the baseline for the AI documentation system. It captures the state of the OratorPrep project as of December 2, 2024 when structured documentation began. All prior work is referenced as "Pre-docs" throughout the system.
+This chapter establishes the baseline for the AI documentation system. It captures the state of the OratorPrep project as of December 17, 2025 when structured documentation began. All prior work is referenced as "Pre-docs" throughout the system.
 
 **Roadmap Items Advanced**: N/A — baseline establishment
 
@@ -26,12 +26,10 @@ This chapter establishes the baseline for the AI documentation system. It captur
 
 ### Project State at Initialization
 
-**Date**: December 2, 2024
-
-**Initialized by**: AI (Claude) with Human
+**Date**: December 17, 2025
 
 **Reason for adding documentation system**: 
-Project has grown significantly with multiple phases complete. Need structured context for future AI sessions to maintain consistency, avoid re-learning the codebase, and track progress systematically.
+Project has grown significantly with multiple phases complete. Need structured context for future sessions to maintain consistency, avoid re-learning the codebase, and track progress systematically.
 
 ---
 
@@ -118,8 +116,8 @@ Patterns that may need review:
 **Roadmap Status**: See ROADMAP.md for current state markers
 
 **Open Questions**: 
-- Should topic suggestions use web search or just LLM generation?
-- What document formats should be supported for upload?
+- Topic suggestions: web search or just LLM generation?
+- Which document formats to support for upload?
 - How sophisticated should missed opportunity detection be?
 
 ---
@@ -246,7 +244,7 @@ npx convex deploy    # Deploy backend
 
 ## Chapter 0.1: Corrections — Baseline Audit
 
-**Date**: December 2, 2024
+**Date**: December 17, 2025
 
 **Issue**: Chapter 0 incorrectly marked several features as incomplete based on outdated PHASES.md rather than actual code inspection.
 
@@ -282,8 +280,8 @@ Created centralized AI model configuration, added AI-powered article summarizati
 ---
 
 ### Session Context
-**Date**: December 2, 2024
-**Starting Point**: User requested AI config file, Firecrawl summarization, research text input, and analysis improvements
+**Date**: December 17, 2025
+**Starting Point**: Needed centralized AI config, better article summarization, research text input, and improved analysis display
 **Ending Point**: All four features implemented and linting passes
 
 ---
@@ -362,8 +360,8 @@ Created centralized AI model configuration, added AI-powered article summarizati
 **Blockers**: None
 
 **Open Questions**: 
-- Should extracted research content be auto-added to prep materials?
-- Should there be a "regenerate with my research" option that uses user research as context?
+- Auto-add extracted research content to prep materials?
+- Add "regenerate with my research" option?
 
 ---
 
@@ -371,19 +369,17 @@ Created centralized AI model configuration, added AI-powered article summarizati
 
 ### TL;DR
 
-Added real-time progress tracking during strategy generation and a RAG-powered chatbot for querying research materials. Users can now see exactly which phase of generation is active, and ask questions about their debate research in a conversational interface.
+Added real-time progress tracking during strategy generation and a RAG-powered chatbot for querying research materials. Progress now shows exactly which phase of generation is active. The chatbot enables conversational queries about debate research.
 
 **Roadmap Items Advanced**: None explicitly defined - feature enhancements
 
 ---
 
-### Session Details
+### Session Context
 
-**Date**: December 2, 2024
-
-**Started By**: AI (Claude) at user request
-
-**Goal**: Add progress indicator for strategy generation and RAG chatbot for research
+**Date**: December 18, 2025
+**Starting Point**: Strategy generation felt like a black box — no visibility into progress. Also needed a way to query research materials conversationally.
+**Ending Point**: Real-time progress tracking with 9 phases, plus RAG chatbot for research queries.
 
 ---
 
@@ -484,8 +480,8 @@ Added real-time progress tracking during strategy generation and a RAG-powered c
 **Blockers**: None
 
 **Open Questions**: 
-- Should chat history persist across sessions or be cleared on new generation?
-- Should chatbot have ability to modify prep materials based on conversation?
+- Persist chat history across sessions, or clear on new generation?
+- Let chatbot modify prep materials based on conversation?
 
 ---
 
@@ -501,7 +497,7 @@ Resolved a critical system failure caused by a schema misalignment between the b
 
 ### Session Context
 
-**Date**: December 19, 2024
+**Date**: December 19, 2025
 **Starting Point**: The Analysis page was crashing with "Objects are not valid as a React child" because the application code had drifted from the database schema.
 **Ending Point**: Frontend `analysis.tsx` is now fully aligned with `convex/schema.ts`. Legacy fields removed.
 
@@ -558,7 +554,7 @@ Fixed a critical bug where debate topics and positions were hardcoded to "Floren
 
 ### Session Context
 
-**Date**: December 19, 2024  
+**Date**: December 19, 2025  
 **Starting Point**: Debates always used hardcoded "Flo Jo" topic regardless of opponent selection. Analysis page was blank.  
 **Ending Point**: Debates now dynamically use opponent configuration. Analysis page restored with improved UX.
 
@@ -605,7 +601,7 @@ Fixed a critical bug where debate topics and positions were hardcoded to "Floren
 |----------|-----------|------------------------|
 | Move logic before mutation | Ensures database gets correct data from the start | Adding post-mutation update |
 | Rebuild analysis.tsx from scratch | File was completely wiped; faster than debugging | Attempting git recovery |
-| Keep dot indicators | User specifically requested to preserve this UX element | Using progress bars |
+| Keep dot indicators | The dot pattern works well and was worth preserving | Using progress bars |
 | Color-coded training priorities | Makes urgency immediately scannable | Text-only labels |
 
 ---
@@ -632,7 +628,7 @@ Fixed a critical bug where debate topics and positions were hardcoded to "Floren
 
 **Status**: Complete
 
-**Next Action**: User testing of dynamic debate topics and refined analysis page.
+**Next Action**: Test dynamic debate topics and refined analysis page.
 
 ---
 
@@ -648,8 +644,8 @@ Added ability to delete opponents with cascade deletion of related data, integra
 
 ### Session Context
 
-**Date**: December 20, 2024  
-**Starting Point**: Users had no way to delete opponents, recordings were not persisted, and no historical view of past debates existed.  
+**Date**: December 20, 2025  
+**Starting Point**: No way to delete opponents, recordings weren't persisted, and no historical view of past debates.  
 **Ending Point**: Full opponent deletion with cascade, R2 recording storage triggered by Vapi webhooks, and history page with audio playback and performance charts.
 
 ---
@@ -768,9 +764,9 @@ New R2 variables needed in Convex environment:
 **Blockers**: R2 credentials need to be configured before recording storage works
 
 **Open Questions**: 
-- Should old recordings be auto-deleted after a retention period?
-- Should users be able to download recordings?
-- Should performance charts include rolling averages or trend lines?
+- Auto-delete old recordings after retention period?
+- Add recording download feature?
+- Add rolling averages or trend lines to performance charts?
 
 ---
 
@@ -786,7 +782,7 @@ Fixed recording URL extraction from Vapi webhooks and migrated to OpenRouter str
 
 ### Session Context
 
-**Date**: December 20, 2024  
+**Date**: December 20, 2025  
 **Starting Point**: Recording URL not being found in Vapi webhook, analysis failing with Zod validation errors.  
 **Ending Point**: Recording storage working, analysis using OpenRouter structured outputs for guaranteed schema compliance.
 
@@ -898,6 +894,7 @@ const response = await callOpenRouter(apiKey, messages, siteUrl, 3, model, maxTo
 
 This guarantees the AI returns valid JSON matching the schema.
 
+
 ---
 
 ### Session Handoff
@@ -916,3 +913,691 @@ This guarantees the AI returns valid JSON matching the schema.
 1. ✅ Delete opponents - cascade deletion implemented
 2. ✅ Relisten to recordings - R2 storage + playback working
 3. ✅ Review old debates - history page with performance charts
+
+---
+
+## Chapter 6: Password Authentication Migration
+
+### TL;DR
+
+Replaced passwordless OTP authentication with traditional email/password authentication. Sign up now requires a password, email verification, and supports password reset. GitHub OAuth remains as an alternative login method.
+
+**Roadmap Items Advanced**: UX improvement, Security enhancement
+
+---
+
+### Session Context
+
+**Date**: December 21, 2025  
+**Starting Point**: App used passwordless OTP (magic link style) for authentication. OTP was annoying — everyone hates checking email for a code every login.  
+**Ending Point**: Full password authentication with email verification and password reset flows working.
+
+---
+
+### Work Completed
+
+#### 1. Backend: Password Provider Configuration
+
+**Created**: `convex/otp/ResendPasswordReset.ts`
+- Email provider for password reset flow
+- Sends 8-digit OTP codes via Resend
+- 20-minute expiration window
+- Reuses existing email template infrastructure
+
+**Modified**: `convex/auth.ts`
+- Replaced `ResendOTP` provider with `Password` provider
+- Configured with `reset: ResendPasswordReset` for password resets
+- Configured with `verify: ResendOTP` for email verification
+- Kept GitHub OAuth as alternative method
+
+**Modified**: `convex/otp/VerificationCodeEmail.tsx`
+- Added `purpose` parameter to support both sign-in and password reset contexts
+- Dynamic subject lines: "Sign in to OratorPrep" vs "Reset your OratorPrep password"
+- Updated branding from "Convex SaaS" to "OratorPrep"
+
+#### 2. Frontend: Complete Login Page Rebuild
+
+**Modified**: `src/routes/_app/login/_layout.index.tsx`
+
+Implemented four distinct authentication flows:
+
+**Sign-In Flow**:
+- Email + password input fields
+- "Forgot password?" link
+- Toggle to switch to sign-up
+- GitHub OAuth button
+- Client-side validation (8+ character password)
+
+**Sign-Up Flow**:
+- Email + password input fields
+- Automatic redirect to email verification after submission
+- Toggle to switch to sign-in
+- Password requirements enforced
+
+**Email Verification Flow**:
+- Shown after sign-up
+- 8-digit code entry
+- Cancel option to return to sign-in
+- Clear instructions with target email displayed
+
+**Password Reset Flow** (two steps):
+1. **Request Reset**: Enter email → system sends code
+2. **Reset Password**: Enter code + new password
+
+#### 3. Bug Fix: Sign-Up Redirect
+
+**Problem**: After sign-up, the verification email was sent but there was no redirect to the code entry form.
+
+**Cause**: Code checked `if (!result)` to determine verification need, but `signIn` return value was ambiguous for sign-ups.
+
+**Solution**: For `flow === "signUp"`, always redirect to verification form after `signIn` call, since email verification is required for new accounts.
+
+---
+
+### Technical Decisions
+
+| Decision | Reasoning | Alternatives Considered |
+|----------|-----------|-------------------------|
+| Password over OTP | OTP is annoying — checking email every login is friction | Keep OTP, add both options |
+| Email verification required | Prevents accidental/malicious wrong email usage | Optional verification, no verification |
+| Reuse ResendOTP for verification | Already configured, same code generation logic | Create separate provider |
+| 8-character minimum | Balance security with usability | Longer requirement, complexity rules |
+| Always verify on sign-up | Clear UX, no conditional logic needed | Check if verification needed |
+
+---
+
+### Code Changes Summary
+
+| File | Change Type | Description |
+|------|-------------|-------------|
+| convex/otp/ResendPasswordReset.ts | Created | Password reset email provider |
+| convex/otp/VerificationCodeEmail.tsx | Modified | Added purpose parameter for dynamic messaging |
+| convex/auth.ts | Modified | Replaced ResendOTP with Password provider |
+| src/routes/_app/login/_layout.index.tsx | Rebuilt | Complete rewrite with 4 auth flows |
+
+---
+
+### Authentication Flows
+
+#### New User Journey
+1. Click "Sign up"
+2. Enter email + password (8+ chars)
+3. Redirected to verification screen
+4. Check email for 8-digit code
+5. Enter code
+6. Access dashboard
+
+#### Returning User Journey
+1. Enter email + password
+2. Click "Sign in"
+3. Access dashboard (no verification needed)
+
+#### Forgot Password Journey
+1. Click "Forgot password?"
+2. Enter email
+3. Check email for reset code
+4. Enter code + new password
+5. Sign in with new password
+
+---
+
+### Breaking Changes
+
+⚠️ **Existing accounts cannot use old OTP method**
+- Accounts created with OTP will need to use "Forgot password?" to set a password
+- Or sign in with GitHub if previously linked
+
+---
+
+### Security Features
+
+- Passwords hashed with bcrypt (handled by Convex Auth)
+- Rate limiting on failed attempts (built-in)
+- OTP codes expire after 20 minutes
+- Codes are single-use
+- Email verification prevents account hijacking
+
+---
+
+### Session Handoff
+
+**Status**: Complete ✅
+
+**Next Action**: Monitor new authentication flow in production
+
+**Blockers**: None
+
+**Open Questions**: 
+- Should we add password strength requirements (uppercase, numbers, special chars)?
+- Should we show password strength indicator during sign-up?
+- Should we add "Remember me" functionality?
+
+---
+
+## Chapter 7: Enhanced Opponent Profile with Strategic Brief Pattern
+
+### TL;DR
+
+Implemented comprehensive opponent profile enhancement with fields for audience context, opponent intelligence, and personal research directives. Created a "Strategic Brief" pattern that synthesizes all context into a flowing narrative (like Hasan would write) rather than mechanical conditional sections. This brief is used across all AI generation for context-aware prep materials.
+
+**Roadmap Items Advanced**: [R-3.4.3] (Document context), [Audience context], [Opponent intelligence]
+
+---
+
+### Session Context
+
+**Date**: December 21, 2025  
+**Starting Point**: Prep materials were generic — no way to tell the AI about the specific audience or opponent. Needed structured input for audience context (who am I persuading?) and opponent intelligence (who am I debating?). Mehdi Hasan's methodology emphasizes knowing both.  
+**Ending Point**: Full implementation with 23 new optional fields, strategic brief builder, updated prompts, collapsible form sections, and prep chat integration.
+
+---
+
+### Work Completed
+
+#### 1. Schema Extension (`convex/schema.ts`)
+
+Added 23 new optional fields to the `opponents` table organized into three categories:
+
+**Audience Context** (Chapter 1: Winning Over an Audience):
+- `audienceDescription` — Free-form description
+- `audienceType` — General, Academic, Professional, Political, Legal
+- `audienceSize` — One-on-one, Small group, Large, Broadcast
+- `audienceDisposition` — Friendly, Neutral, Skeptical, Hostile
+- `debateFormat` — Formal debate, Panel, Interview, Town hall
+
+**Opponent Profile** (Chapters 4, 10, 15: Three C's, Traps, Homework):
+- `opponentDescription` — Background, role
+- `opponentOrganization` — Affiliation
+- `opponentCredentials` — Claimed expertise
+- `credentialWeaknesses` — Gaps in credentials
+- `opponentPastStatements` — Quotes on record (for traps)
+- `opponentContradictions` — Known contradictions
+- `opponentTrackRecord` — Wrong predictions, debunked claims
+- `opponentDebateStyle` — Gish Galloper, Academic, Emotional, etc.
+- `opponentRhetoricalTendencies` — Patterns, habits
+- `opponentTriggers` — Topics that set them off
+- `opponentStrongestArguments` — Steelmanned best case
+- `opponentBestEvidence` — Their best proof
+- `opponentLikelyCritiques` — How they'll attack you
+- `opponentCharacterIssues` — Conflicts of interest, bias
+
+**User Context**:
+- `userResearch` — Notes, articles, data
+- `keyPointsToMake` — Arguments to emphasize
+- `thingsToAvoid` — Topics/approaches to avoid
+- `toneDirectives` — Desired tone
+
+#### 2. Strategic Brief Builder (`convex/lib/strategicBrief.ts`)
+
+Created a new module implementing the "Strategic Brief" pattern — synthesizes all context into a flowing narrative rather than mechanical conditional sections.
+
+**Core Functions**:
+- `buildStrategicBrief(opponent)` — Main function composing full brief
+- `buildAudienceNarrative(opponent)` — Synthesizes audience with strategic implications
+- `buildOpponentNarrative(opponent)` — Builds opponent intel including credentials, style, traps
+- `buildUserDirectives(opponent)` — Formats debater's preferences and directives
+
+**Helper Functions for Strategic Implications**:
+- `getAudienceSizeImplications()` — Maps size to tactical advice
+- `getDispositionStrategy()` — Maps disposition to approach
+- `getDebateStyleDescription()` — Expands style to counter-strategy
+
+**Example Output**:
+```
+Your debater is arguing FOR the motion: "Universal Basic Income should be implemented."
+
+They'll be presenting to a skeptical professional audience at a panel discussion. 
+Expect resistance. Acknowledge their concerns early, use judo moves to concede valid 
+points, then pivot to your strongest arguments.
+
+Their opponent is Dr. James Morrison from the Cato Institute. They have credentials 
+in labor economics, but their track record shows: predicted UBI would destroy work 
+ethic, later contradicted by supporting veteran cash transfers — this is trap-worthy. 
+Their debate style is Gish Gallop — expect rapid-fire dubious claims. Use the 
+Pick-Your-Battle strategy: demolish one claim thoroughly rather than chasing all of them.
+
+STEELMANNING THEIR CASE:
+Their strongest argument will likely be: inflation concerns and labor disincentives.
+Their best evidence includes: CBO studies on deficit impact.
+
+THE DEBATER'S STRATEGIC PREFERENCES:
+They want to emphasize: automation and job displacement framing.
+AVOID: inflation debates where they feel less prepared.
+Desired tone: confident but not dismissive.
+```
+
+#### 3. Prompt Template Updates (`convex/lib/promptTemplates.ts`)
+
+Updated all 7 generation prompts to use `{strategicBrief}` placeholder with contextual usage guidance:
+
+**Updated Prompts**:
+- `OPENING_STATEMENT_PROMPT` — Tailor hooks to audience
+- `ARGUMENT_FRAMES_PROMPT` — Prioritize frames for specific audience values
+- `RECEIPTS_ARSENAL_PROMPT` — Turn opponent statements into trap receipts
+- `ZINGER_BANK_PROMPT` — Craft zingers using opponent's own words
+- `CLOSING_STATEMENT_PROMPT` — Address specific audience concerns
+- `OPPONENT_INTEL_PROMPT` — Use steelmanned arguments for predictions
+- `RESEARCH_SYNTHESIS_PROMPT` — Highlight findings for audience/opponent context
+
+**Pattern**: Each prompt includes a "USING THE STRATEGIC BRIEF" section explaining HOW to use the context, not just including it.
+
+#### 4. Generation Pipeline Integration
+
+**`convex/actions/prepGeneration.ts`**:
+- All 7 generation functions now accept `strategicBrief: v.optional(v.string())`
+- Fallback to basic brief if none provided (backwards compatible)
+- Prompt injection via simple string replacement
+
+**`convex/actions/prep.ts`**:
+- Fetches full opponent document at start
+- Builds strategic brief once with `buildStrategicBrief(opponent)`
+- Passes brief to all generation functions
+- Enhanced research prompt includes opponent context for targeted searches
+
+#### 5. Frontend Form Rebuild (`src/routes/_app/_auth/dashboard/opponent-profile.tsx`)
+
+Complete rebuild with progressive disclosure using collapsible sections:
+
+**Section 1: Basic Info** (Required, always visible)
+- Opponent Name, Topic, Position, Style, Difficulty
+
+**Section 2: About Your Opponent** (Collapsed)
+- Background, Organization, Credentials, Weaknesses
+- Debate Style dropdown, Rhetorical Tendencies, Triggers
+- Character Issues
+
+**Section 3: Opponent's Record** (Collapsed)
+- Past Statements, Contradictions, Track Record
+- Helper text references Chapter 10: Booby Traps
+
+**Section 4: Steelmanning Their Case** (Collapsed)
+- Strongest Arguments, Best Evidence, Likely Critiques
+- Helper text references Chapter 15: Do Your Homework
+
+**Section 5: Your Audience** (Collapsed)
+- Description, Type, Size, Disposition, Format dropdowns
+- Helper text references Chapter 1: Winning Over an Audience
+
+**Section 6: Your Context & Directives** (Collapsed)
+- User Research, Key Points, Things to Avoid, Tone
+
+**UI Components Created**:
+- `CollapsibleSection` — Native `<details>` element with styling
+- `LabeledTextarea` — Textarea with label and helper text
+- `LabeledSelect` — Select dropdown with label and helper text
+
+#### 6. Prep Chat Integration (`convex/actions/prepChatAction.ts`)
+
+Updated RAG chatbot to include strategic brief in system prompt:
+- Chatbot now has awareness of audience, opponent intel, and debater preferences
+- Can give tailored advice based on full context
+- System prompt explicitly instructs to use strategic context
+
+---
+
+### The Strategic Brief Pattern — Design Decision
+
+**The Problem**: With 23 optional context fields, how should they integrate into AI prompts?
+
+**Option A (Rejected)**: Mechanical conditional sections
+```
+## AUDIENCE CONTEXT
+{if audienceDescription}{audienceDescription}{endif}
+{if audienceType}Type: {audienceType}{endif}
+
+## OPPONENT INTEL  
+{if opponentPastStatements}Past Statements: {opponentPastStatements}{endif}
+```
+Problems: Clumsy, AI sees fragmented data, awkward absences when fields empty.
+
+**Option B (Chosen)**: Strategic Brief — Synthesized Narrative
+```typescript
+function buildStrategicBrief(opponent): string {
+  // Synthesize all context into flowing prose
+  // Only include sections if fields are populated
+  // Add strategic implications inline
+  return narrative;
+}
+```
+Benefits:
+1. **Reads like actual prep** — AI gets context the way Hasan would brief someone
+2. **No awkward absences** — Empty fields mean shorter brief, not missing sections
+3. **Synthesis happens once** — Brief built once, reused across all generations
+4. **Strategic implications inline** — "Skeptical audience → acknowledge concerns early"
+5. **Maintainable** — One builder to update, not 7 prompts with conditional logic
+
+**Hasan Alignment**: This mirrors how Hasan describes prep — know your audience, know your opponent, have your game plan ready. Not a checklist, but a strategic understanding.
+
+---
+
+### Technical Decisions
+
+| Decision | Reasoning | Alternatives Considered |
+|----------|-----------|------------------------|
+| 23 structured fields over single textarea | Structured input enables targeted brief sections | Single "context" field (less organized) |
+| Strategic Brief pattern | Narrative synthesis > mechanical conditionals | Per-prompt conditional sections |
+| Native `<details>` for collapsibles | No library needed, accessible, works everywhere | Radix Collapsible, custom accordion |
+| All fields optional | Flexibility — provide as much or little as needed | Required minimum fields |
+| Build brief in prep.ts once | Efficiency, consistency across generations | Build per-generator (redundant) |
+| Include brief in prepChat | Enables context-aware chat responses | Separate chatbot context |
+
+---
+
+### Code Changes Summary
+
+| File | Change Type | Description |
+|------|-------------|-------------|
+| convex/schema.ts | Modified | Added 23 optional fields to opponents table |
+| convex/opponents.ts | Modified | Updated create mutation to accept all fields |
+| convex/lib/strategicBrief.ts | **Created** | Strategic brief builder with narrative synthesis |
+| convex/lib/promptTemplates.ts | Modified | Added {strategicBrief} + usage guidance to 7 prompts |
+| convex/actions/prepGeneration.ts | Modified | All generators accept strategicBrief parameter |
+| convex/actions/prep.ts | Modified | Build brief once, pass to all generators |
+| convex/actions/prepChatAction.ts | Modified | Include brief in chatbot system prompt |
+| src/routes/_app/_auth/dashboard/opponent-profile.tsx | Rebuilt | 6 collapsible sections, 23 input fields |
+
+---
+
+### Hasan Methodology Integration
+
+**Chapter 1: Winning Over an Audience**
+- Audience fields capture who the debater is trying to persuade
+- Disposition determines strategic approach (friendly → reinforce, hostile → stay calm)
+- Size/format affects delivery style guidance
+
+**Chapter 4: Play the Ball... AND the Man**
+- Three C's captured: Character (issues), Credentials (weaknesses), Claims (track record)
+- Opponent description informs credibility attacks
+
+**Chapter 10: Setting Booby Traps**
+- Past statements field explicitly designed for trap setup
+- Contradictions field for "Earlier you said X, now you're saying Y"
+
+**Chapter 15: Do Your Homework**
+- Steelmanning section: Strongest arguments, best evidence
+- Know opponent's best case to prepare counters
+
+---
+
+### Testing Verification
+
+- ✅ TypeScript compilation passes (`npx tsc --noEmit`)
+- ✅ No linter errors in any modified files
+- ✅ Form state management for all 23 fields
+- ✅ Optional fields correctly passed as `undefined` when empty
+- ✅ Backwards compatible — existing opponents without new fields still work
+
+---
+
+### Session Handoff
+
+**Status**: Complete ✅
+
+**Features Delivered**:
+1. ✅ Audience context capture (5 fields)
+2. ✅ Opponent intelligence capture (14 fields)  
+3. ✅ User context/directives capture (4 fields)
+4. ✅ Strategic brief synthesis for AI prompts
+5. ✅ Collapsible form UI with progressive disclosure
+6. ✅ Prep chat awareness of full context
+
+**Next Actions**:
+1. Test with real debate prep scenarios
+2. Consider adding "Edit Opponent" page to modify context after creation
+3. Consider showing strategic brief preview before generation
+
+**Open Questions**: 
+- Add "Edit Opponent" page to modify context after creation?
+- Show strategic brief preview before generation?
+- Allow copying opponent profiles as templates?
+
+---
+
+## Chapter 7: Database Cleanup Cron Jobs
+
+### TL;DR
+
+Implemented comprehensive automated cleanup system using Convex's built-in cron jobs. System cleans up both application data (old exchanges, abandoned debates, prep errors) and Convex Auth tables (expired sessions, verification codes, refresh tokens, OAuth verifiers, rate limits). Uses native `crons.ts` approach for reliability and simplicity.
+
+**Roadmap Items Advanced**: Infrastructure maintenance, Database optimization, Security hygiene
+
+---
+
+### Session Context
+
+**Date**: December 21, 2025  
+**Starting Point**: No automated cleanup; database tables growing indefinitely with expired/stale records.  
+**Ending Point**: 9 automated cleanup jobs running on schedules, cleaning both app and auth data.
+
+---
+
+### Work Completed
+
+#### 1. Research: Convex Cron Methods Analysis
+
+**Two Methods Available**:
+
+**Method 1: Component (`@convex-dev/crons`)**
+- Dynamic registration at runtime
+- Database-backed cron definitions
+- CRUD operations on crons
+- Requires npm package and component setup
+
+**Method 2: Built-in (`crons.ts` file)**
+- Native Convex feature
+- Static definitions in code
+- No extra dependencies
+- Version controlled
+
+**Decision**: Chose **Method 2 (Built-in)** because:
+- Cleanup jobs are infrastructure tasks with fixed schedules
+- Simpler setup, no extra dependencies
+- More reliable (no database state to manage)
+- Easier to audit (all crons visible in one file)
+- Version controlled changes
+
+#### 2. Convex Auth Tables Research
+
+Researched Convex Auth documentation and source code to identify auth tables created by `authTables`:
+
+**Auth Tables Identified**:
+1. `authSessions` - Active user sessions (30-day expiration)
+2. `authAccounts` - Provider accounts (no cleanup needed)
+3. `authRefreshTokens` - JWT refresh tokens (30-day expiration)
+4. `authVerificationCodes` - OTP/magic link codes (20-minute expiration in our app)
+5. `authVerifiers` - PKCE verifiers for OAuth flows
+6. `authRateLimits` - Sign-in rate limiting records
+
+**Key Finding**: Convex Auth does NOT automatically clean up expired records. Tables grow indefinitely without manual intervention.
+
+#### 3. Cleanup Requirements Identified
+
+**Application Data** (4 cleanup jobs):
+- `exchanges` - Old exchanges from completed debates (90+ days)
+- `debates` - Mark active debates as abandoned (24+ hours)
+- `prepProgress` - Error records (7+ days)
+- `prepChat` - Trim to last 100 messages per opponent
+
+**Auth Data** (5 cleanup jobs):
+- `authSessions` - Expired sessions
+- `authRefreshTokens` - Expired refresh tokens
+- `authVerificationCodes` - Expired OTP codes
+- `authVerifiers` - Old OAuth verifiers (24+ hours)
+- `authRateLimits` - Old rate limit records (7+ days)
+
+#### 4. Implementation
+
+**Created**: `convex/crons.ts`
+- Defines 9 cron jobs using built-in `cronJobs()` API
+- Mix of `crons.cron()` (cron syntax) and `crons.interval()` (time-based)
+- Schedules staggered to avoid resource contention
+- Clear naming and documentation
+
+**Created**: `convex/cleanup.ts`
+- 9 internal mutations for cleanup operations
+- Comprehensive docstrings explaining purpose and schedule
+- Console logging for monitoring
+- Efficient queries using indexes
+
+**Cron Schedules**:
+| Job | Frequency | Time (UTC) | Retention Policy |
+|-----|-----------|------------|------------------|
+| Old exchanges | Daily | 3:00 AM | 90 days |
+| Abandoned debates | Hourly | - | 24 hours |
+| Prep errors | Daily | 4:00 AM | 7 days |
+| Prep chat trim | Weekly | Sun 2:00 AM | Last 100 msgs |
+| Expired sessions | Daily | 5:00 AM | Past expiration |
+| Verification codes | Every 6h | - | Past expiration |
+| Refresh tokens | Daily | 6:00 AM | Past expiration |
+| OAuth verifiers | Every 12h | - | 24 hours |
+| Rate limits | Daily | 7:00 AM | 7 days |
+
+---
+
+### Technical Decisions
+
+| Decision | Reasoning | Alternatives Considered |
+|----------|-----------|------------------------|
+| Built-in crons over component | Infrastructure tasks, simpler, no dependencies | @convex-dev/crons component |
+| Staggered schedules | Avoid resource contention | All at same time |
+| 90-day exchange retention | Balance storage vs. history | 30/60/180 days |
+| 100 message chat limit | Reasonable context window | 50/200 messages |
+| 6-hour verification code cleanup | Frequent enough for security | Daily cleanup |
+| Console logging | Easy monitoring in dashboard | Separate logging table |
+
+---
+
+### Code Changes Summary
+
+| File | Change Type | Description |
+|------|-------------|-------------|
+| convex/crons.ts | Created | 9 cron job definitions |
+| convex/cleanup.ts | Created | 9 cleanup mutation functions |
+
+---
+
+### Cron Job Details
+
+#### Application Data Cleanup
+
+**cleanupOldExchanges**
+- Deletes exchanges from debates completed 90+ days ago
+- Prevents unbounded growth of conversation history
+- Preserves recent debates for user reference
+
+**markAbandonedDebates**
+- Marks debates stuck in "active" status for 24+ hours
+- Prevents UI confusion from stale active debates
+- Runs hourly for quick cleanup
+
+**cleanupPrepProgressErrors**
+- Removes prep generation error records after 7 days
+- Keeps recent errors for debugging
+- Prevents error log accumulation
+
+**trimPrepChatHistory**
+- Keeps only last 100 messages per opponent
+- Maintains reasonable context window
+- Runs weekly as chat grows slowly
+
+#### Auth Tables Cleanup
+
+**cleanupExpiredSessions**
+- Removes sessions past their expiration time
+- Default 30-day session duration
+- Critical for security hygiene
+
+**cleanupExpiredVerificationCodes**
+- Removes expired OTP/magic link codes
+- App uses 20-minute expiration
+- Runs every 6 hours for security
+
+**cleanupExpiredRefreshTokens**
+- Removes expired refresh tokens
+- Default 30-day token duration
+- Prevents token table bloat
+
+**cleanupOldOAuthVerifiers**
+- Removes PKCE verifiers after 24 hours
+- OAuth flows complete in minutes
+- Runs every 12 hours
+
+**cleanupOldRateLimits**
+- Removes rate limit records after 7 days
+- Rate limits reset after 1 hour
+- Daily cleanup sufficient
+
+---
+
+### Monitoring & Verification
+
+**Deployment**:
+- Cron jobs deployed automatically with `npm run dev`
+- Visible in Convex Dashboard cron jobs view
+- Execution logs visible in dashboard logs
+
+**Initial Execution Observed**:
+```
+[Auth Cleanup] Deleted 0 expired verification codes
+[Auth Cleanup] Deleted 3 old OAuth verifiers
+[Cleanup] Marked 0 debates as abandoned
+```
+
+**Monitoring Approach**:
+- Check Convex Dashboard logs for execution
+- Monitor console.log output for cleanup counts
+- Review cron job history in dashboard
+- Alert on repeated failures
+
+---
+
+### Security Considerations
+
+**Auth Table Cleanup Importance**:
+- Expired sessions can be security risk if not cleaned
+- Verification codes should be removed after use
+- Rate limit records prevent memory leaks
+- Per Convex Auth docs: "In case of security breach, you can delete all existing sessions by clearing the authSessions table"
+
+**Retention Policies**:
+- Auth data: Clean immediately after expiration
+- Debate data: Longer retention (90 days) for reference
+- Error logs: 7-day retention for debugging
+
+---
+
+### Performance Impact
+
+**Expected Load**:
+- Most cleanup jobs run daily during low-traffic hours (2-7 AM UTC)
+- Frequent jobs (hourly, 6h, 12h) process small datasets
+- All queries use indexes for efficiency
+- Staggered schedules prevent resource spikes
+
+**Scalability**:
+- Cleanup time scales with data volume
+- May need batching for very large datasets
+- Consider pagination if single job times out
+
+---
+
+### Session Handoff
+
+**Status**: Complete ✅
+
+**Next Action**: Monitor cron job execution over next week to verify effectiveness
+
+**Blockers**: None
+
+**Future Enhancements**:
+1. Add metrics tracking (cleanup counts over time)
+2. Add alerting for cleanup failures
+3. Consider adding manual cleanup triggers for admins
+4. Add cleanup dry-run mode for testing
+
+**Open Questions**: 
+- Add dashboard view showing cleanup statistics?
+- Make retention policies configurable per tier?
+- Notify before deleting old debates/exchanges?
+
+---

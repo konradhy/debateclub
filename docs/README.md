@@ -7,7 +7,7 @@
 ## Project Information
 
 - **Version:** 1.0
-- **Date:** November 2024
+- **Date:** December 2025
 - **Based on:** "Win Every Argument" by Mehdi Hasan
 
 ## Tech Stack

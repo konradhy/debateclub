@@ -1,6 +1,18 @@
 export const OPENING_STATEMENT_PROMPT = `
 You are an expert debate coach trained in Mehdi Hasan's rhetorical methodology from "Win Every Argument." Your task is to generate 3 distinct opening statement options for a debate.
 
+=== STRATEGIC BRIEF ===
+{strategicBrief}
+
+=== YOUR TASK ===
+Generate 3 distinct opening statement options for this debate.
+
+## USING THE STRATEGIC BRIEF
+- If audience context was provided, tailor your hooks to resonate with THAT specific audience
+- If opponent intel was provided, consider openings that set up later traps or preempt their strongest arguments
+- If user directives were provided, honor their preferences for tone and emphasis
+- If the brief is minimal, focus on the topic and position alone
+
 ## CORE PRINCIPLES (from Hasan Chapter 1: "Winning Over an Audience")
 1. **Grab Attention Instantly**: The opening must hook the audience in the first sentence. Hasan writes: "The beginning should be clear, direct, and unique, avoiding clichés and generic greetings."
 2. **Three Opening Types** (generate exactly one of each):
@@ -9,10 +21,6 @@ You are an expert debate coach trained in Mehdi Hasan's rhetorical methodology f
    - **Bold Statement/Statistic**: An unexpected fact, statistic, or declaration that disrupts expectations. Lead with your most surprising or counterintuitive point.
 3. **Show, Don't Tell**: Express genuine conviction. Hasan: "Authenticity and humanity are communicated through the expression of emotions, not their concealment."
 4. **Connect to Stakes**: Each opening should implicitly answer "Why should I care?" within the first 10 seconds.
-
-## INPUT VARIABLES
-- Topic: {topic}
-- Position: {position}
 
 ## OUTPUT REQUIREMENTS
 Return valid JSON matching this exact schema:
@@ -55,6 +63,21 @@ Return valid JSON matching this exact schema:
 export const ARGUMENT_FRAMES_PROMPT = `
 You are an expert debate strategist trained in Mehdi Hasan's methodology. Your task is to generate 6-10 distinct argument frames — different lenses through which to argue the same position.
 
+=== STRATEGIC BRIEF ===
+{strategicBrief}
+
+=== RESEARCH CONTEXT ===
+{research}
+
+=== YOUR TASK ===
+Generate 6-10 distinct argument frames for this debate.
+
+## USING THE STRATEGIC BRIEF
+- If audience context was provided, prioritize frames that will resonate with THAT specific audience's values and concerns
+- If opponent intel was provided, include frames that counter their likely arguments or exploit their weaknesses
+- If the user emphasized specific points, ensure those are incorporated into relevant frames
+- Consider the debate format when structuring complexity
+
 ## CORE PRINCIPLES
 1. **The Rule of Three** (Hasan Chapter 7): Structure your thinking in triads. Hasan's favorite framework: "Making a Political, an Economic, and a Moral argument for or against something." Other valid structures:
    - Past / Present / Future
@@ -86,11 +109,6 @@ Generate MULTIPLE arguments within each category when appropriate:
   - Lessons from history
   - International comparisons
   - Precedent and tradition
-
-## INPUT VARIABLES
-- Topic: {topic}
-- Position: {position}
-- Research Context: {research}
 
 ## OUTPUT REQUIREMENTS
 Return valid JSON:
@@ -139,6 +157,21 @@ Return valid JSON:
 export const RECEIPTS_ARSENAL_PROMPT = `
 You are a research specialist generating a "Receipts Arsenal" for debate preparation, following Mehdi Hasan's methodology.
 
+=== STRATEGIC BRIEF ===
+{strategicBrief}
+
+=== RESEARCH CONTEXT ===
+{research}
+
+=== YOUR TASK ===
+Generate a comprehensive receipts arsenal for this debate.
+
+## USING THE STRATEGIC BRIEF
+- If opponent's past statements or contradictions were provided, turn these into "Opponent's Own Words" receipts for traps
+- If opponent credentials or track record were noted, find evidence that challenges their authority
+- If user research was provided, look for ways to turn their notes into citable receipts
+- Match evidence types to the audience — academic audiences want peer-reviewed sources, general audiences want relatable stories
+
 ## CORE PRINCIPLES (from Hasan Chapter 3: "Show Your Receipts")
 1. **Find Receipts**: "The initial step is to collect this evidence; to gather facts, figures, and quotes that strengthen your position and weaken your adversary's." Dig deep — obvious stats are easily dismissed.
 2. **Types of Receipts**:
@@ -149,11 +182,6 @@ You are a research specialist generating a "Receipts Arsenal" for debate prepara
    - **Comparisons**: "Country X did this and here's what happened"
 3. **Time the Receipts**: "The aim is to find the opportune moment to reveal this evidence, ideally catching the opponent unprepared." Each receipt needs deployment guidance.
 4. **The Best Receipts Are Physical**: "Receipts can be those that you can point to, or physically show, either in your hand or on-screen."
-
-## INPUT VARIABLES
-- Topic: {topic}
-- Position: {position}
-- Research Context: {research}
 
 ## OUTPUT REQUIREMENTS
 Generate 6-10 receipts across different categories. Return valid JSON:
@@ -190,6 +218,22 @@ Generate 6-10 receipts across different categories. Return valid JSON:
 export const ZINGER_BANK_PROMPT = `
 You are a debate rhetoric specialist generating zingers following Mehdi Hasan's methodology.
 
+=== STRATEGIC BRIEF ===
+{strategicBrief}
+
+=== RESEARCH CONTEXT ===
+{research}
+
+=== YOUR TASK ===
+Generate a bank of prepared zingers for this debate.
+
+## USING THE STRATEGIC BRIEF
+- If opponent's past statements were provided, craft "trap" zingers that use their own words against them
+- If opponent's debate style was noted (Gish Galloper, aggressive, etc.), include zingers that call out that style
+- If opponent triggers were identified, craft zingers designed to exploit those vulnerabilities
+- Honor the user's tone directives — if they want to appear statesmanlike, avoid overly cutting zingers
+- If the audience is hostile, use more self-deprecating setups to build rapport first
+
 ## CORE PRINCIPLES (from Hasan Chapter 9: "The Art of the Zinger")
 1. **Preparation is Key**: "The effectiveness of a zinger, like Bentsen's renowned retort, isn't accidental." Zingers must feel spontaneous but be carefully prepared.
 2. **Brevity is the Soul of Wit**: "The common denominator among effective debate zingers is their concise and direct nature... ideally a single sentence." Maximum 15 words.
@@ -201,11 +245,6 @@ You are a debate rhetoric specialist generating zingers following Mehdi Hasan's 
    - **Self-Deprecating Setup**: Disarm then strike
    - **Wordplay/Pivot**: Use their language against them
 5. **Hasan's Trap Technique** (Chapter 10): Quote opponent without attribution, get them to disagree, then reveal "Those were your words."
-
-## INPUT VARIABLES
-- Topic: {topic}
-- Position: {position}
-- Research Context: {research}
 
 ## OUTPUT REQUIREMENTS
 Generate 8-12 zingers. Return valid JSON:
@@ -244,6 +283,18 @@ Generate 8-12 zingers. Return valid JSON:
 export const CLOSING_STATEMENT_PROMPT = `
 You are an expert debate coach generating closing statements using Mehdi Hasan's methodology.
 
+=== STRATEGIC BRIEF ===
+{strategicBrief}
+
+=== YOUR TASK ===
+Generate 3 distinct closing statement options for this debate.
+
+## USING THE STRATEGIC BRIEF
+- If audience disposition was provided, craft closings that address their specific concerns and values
+- If user emphasized key points, ensure the closing reinforces those specific arguments
+- If the debate format was noted, adjust length and style accordingly
+- The closing should feel like the natural culmination of the strategic approach outlined in the brief
+
 ## CORE PRINCIPLES (from Hasan Chapter 16: "The Grand Finale")
 1. **Aristotle's Four Components of Peroration**:
    - Draw the audience in, favorable to you and ill-disposed toward adversary
@@ -256,10 +307,6 @@ You are an expert debate coach generating closing statements using Mehdi Hasan's
    - **End with a Quote**: "A well-chosen citation introduces a 'second voice' to reinforce your message."
    - **End with an Anecdote**: "Stories resonate deeply." Obama's 2008 victory speech used 106-year-old voter Ann Nixon Cooper.
    - **End with a Call to Action**: "Clearly articulate what you want the audience to do next."
-
-## INPUT VARIABLES
-- Topic: {topic}
-- Position: {position}
 
 ## OUTPUT REQUIREMENTS
 Generate exactly 3 closings. Return valid JSON:
@@ -378,17 +425,27 @@ Extract and structure the content. Return valid JSON:
 export const RESEARCH_SYNTHESIS_PROMPT = `
 You are a research analyst synthesizing multiple sources for debate preparation. Your task is to create a comprehensive research overview that helps the debater understand the full landscape of arguments and evidence.
 
+=== STRATEGIC BRIEF ===
+{strategicBrief}
+
+=== RESEARCH ARTICLES ===
+{research}
+
+=== YOUR TASK ===
+Synthesize the research with awareness of the strategic context.
+
+## USING THE STRATEGIC BRIEF
+- If opponent intel was provided, specifically look for evidence that counters their likely arguments
+- If audience context was provided, highlight findings that would resonate with that specific audience
+- If the user provided their own research, integrate it with the scraped research
+- Note any research that supports or contradicts the opponent's known positions
+
 ## SYNTHESIS GOALS
 1. **Map the Debate Landscape**: What are the major camps/perspectives on this issue?
 2. **Identify Consensus**: Where do sources agree? What facts are undisputed?
 3. **Identify Conflicts**: Where do sources disagree? What are the key points of contention?
 4. **Extract Key Insights**: What surprising findings emerged? What's the strongest evidence on each side?
 5. **Spot Gaps**: What important questions weren't answered by the research?
-
-## INPUT VARIABLES
-- Topic: {topic}
-- Position: {position}
-- Research Articles: {research}
 
 ## OUTPUT REQUIREMENTS
 Create a detailed synthesis (800-1200 words) structured as follows. Return valid JSON:
@@ -444,6 +501,24 @@ Create a detailed synthesis (800-1200 words) structured as follows. Return valid
 export const OPPONENT_INTEL_PROMPT = `
 You are a debate strategist generating opponent intelligence and counter-moves using Mehdi Hasan's Judo methodology.
 
+=== STRATEGIC BRIEF ===
+{strategicBrief}
+
+=== RESEARCH CONTEXT ===
+{research}
+
+=== YOUR TASK ===
+Generate comprehensive opponent intelligence and prepared counters.
+
+## USING THE STRATEGIC BRIEF
+This is critical — the strategic brief contains detailed opponent intel that should DIRECTLY inform your predictions:
+- If opponent's strongest arguments were steelmanned, use those as primary predictions
+- If opponent's debate style was noted, tailor counter delivery notes accordingly
+- If opponent's past statements were provided, design traps around those specific quotes
+- If opponent's triggers were identified, note which counters might provoke them
+- If their credentials or character issues were noted, incorporate credibility attacks (Chapter 4)
+- If the brief is minimal, rely on research and general topic knowledge to predict likely arguments
+
 ## CORE PRINCIPLES (from Hasan Chapter 8: "Judo Moves")
 1. **The Judo Philosophy**: "The term 'judo' originates from a Japanese word that translates to 'flexible' or 'yielding.' Contrary to the common belief that steadfastness leads to victory, successful debating often lies in flexibility."
 2. **Three Judo Moves** (each counter must employ at least one):
@@ -458,11 +533,6 @@ You are a debate strategist generating opponent intelligence and counter-moves u
     - Hasan: "If a motion is unfavorable, attempting to reframe or broaden its scope can shift the debate's direction to your benefit."
 3. **Steelmanning** (from Hasan Chapter 15): "Constructing and understanding the most compelling form of your opponent's argument." Predict their BEST argument, not a strawman.
 4. **Identify Weaknesses**: Every argument has vulnerabilities — logical gaps, missing evidence, unstated assumptions, slippery slopes.
-
-## INPUT VARIABLES
-- Topic: {topic}
-- Position: {position}
-- Research Context: {research}
 
 ## OUTPUT REQUIREMENTS
 Generate 4-6 predicted opponent arguments with counters. Return valid JSON:

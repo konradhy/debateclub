@@ -11,21 +11,25 @@ import {
 export function VerificationCodeEmail({
   code,
   expires,
+  purpose = "sign in",
 }: {
   code: string;
   expires: Date;
+  purpose?: string;
 }) {
+  const isPwdReset = purpose === "password reset";
   return (
     <Html>
       <Tailwind>
         <Head />
         <Container className="container px-20 font-sans">
           <Heading className="text-xl font-bold mb-4">
-            {/* TODO: Update with your app name */}
-            Sign in to Convex SaaS
+            {isPwdReset ? "Reset your OratorPrep password" : "Sign in to OratorPrep"}
           </Heading>
           <Text className="text-sm">
-            Please enter the following code on the sign in page.
+            {isPwdReset
+              ? "Please enter the following code to reset your password."
+              : "Please enter the following code on the sign in page."}
           </Text>
           <Section className="text-center">
             <Text className="font-semibold">Verification code</Text>

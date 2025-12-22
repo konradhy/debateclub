@@ -46,11 +46,11 @@ Reference format: [R-1.2.3]
 
 ## Current Focus
 
-**Active Phase**: Phase 3 - Opponent Preparation & Advanced Features (~98% complete)
+**Active Phase**: Phase 3 - Opponent Preparation & Advanced Features (✅ Complete)
 
-**Active Feature**: [R-3.4.0] Custom Debate Configuration (remaining: topic suggestions, doc upload)
+**Next Up**: Phase 4 - Polish, Optimization & Launch
 
-**Relevant DEV_JOURNAL Chapters**: Pre-docs, Ch.1-5
+**Relevant DEV_JOURNAL Chapters**: Pre-docs, Ch.1-7
 
 ---
 
@@ -393,6 +393,26 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 ---
 
+### 3.10 Enhanced Opponent Profile & Strategic Brief
+
+**Description**: Comprehensive context capture for audience, opponent, and user preferences with Strategic Brief pattern for AI prompt integration
+
+**Status**: ✅
+
+**Chapters**: Ch.7
+
+#### Tasks
+
+- ✅ **3.10.1** — Audience context fields (5 fields: description, type, size, disposition, format)
+- ✅ **3.10.2** — Opponent intelligence fields (14 fields: background, credentials, style, statements, contradictions, triggers, steelmanning)
+- ✅ **3.10.3** — User context fields (4 fields: research, key points, avoidance, tone)
+- ✅ **3.10.4** — Strategic Brief builder (`convex/lib/strategicBrief.ts`)
+- ✅ **3.10.5** — Prompt template integration with usage guidance
+- ✅ **3.10.6** — Collapsible form UI with progressive disclosure
+- ✅ **3.10.7** — Prep chat awareness of strategic context
+
+---
+
 ## Phase 4: Polish, Optimization & Launch
 
 **Goal**: Production-ready platform
@@ -587,4 +607,4 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 |-------|---------|-----------|-------|
 | Phase 1 | Pre-docs | Pre-docs | MVP complete |
 | Phase 2 | Pre-docs | Pre-docs | Technique detection working |
-| Phase 3 | Pre-docs | Dec 2024 | Complete |
+| Phase 3 | Pre-docs | Dec 2025 | Complete |

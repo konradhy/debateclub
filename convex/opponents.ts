@@ -5,11 +5,41 @@ import { auth } from "./auth";
 
 export const create = mutation({
   args: {
+    // Required fields
     name: v.string(),
     topic: v.string(),
     position: v.string(),
     style: v.string(),
     difficulty: v.string(),
+
+    // Audience context (optional)
+    audienceDescription: v.optional(v.string()),
+    audienceType: v.optional(v.string()),
+    audienceSize: v.optional(v.string()),
+    audienceDisposition: v.optional(v.string()),
+    debateFormat: v.optional(v.string()),
+
+    // Opponent profile (optional)
+    opponentDescription: v.optional(v.string()),
+    opponentOrganization: v.optional(v.string()),
+    opponentCredentials: v.optional(v.string()),
+    credentialWeaknesses: v.optional(v.string()),
+    opponentPastStatements: v.optional(v.string()),
+    opponentContradictions: v.optional(v.string()),
+    opponentTrackRecord: v.optional(v.string()),
+    opponentDebateStyle: v.optional(v.string()),
+    opponentRhetoricalTendencies: v.optional(v.string()),
+    opponentTriggers: v.optional(v.string()),
+    opponentStrongestArguments: v.optional(v.string()),
+    opponentBestEvidence: v.optional(v.string()),
+    opponentLikelyCritiques: v.optional(v.string()),
+    opponentCharacterIssues: v.optional(v.string()),
+
+    // User context (optional)
+    userResearch: v.optional(v.string()),
+    keyPointsToMake: v.optional(v.string()),
+    thingsToAvoid: v.optional(v.string()),
+    toneDirectives: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await auth.getUserId(ctx);

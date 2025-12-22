@@ -4,6 +4,7 @@ import { v } from "convex/values";
 import { internal } from "../_generated/api";
 import { callOpenRouter, type OpenRouterMessage } from "../lib/openrouter";
 import { AI_MODELS } from "../lib/aiConfig";
+import { buildStrategicBrief } from "../lib/strategicBrief";
 
 const SITE_URL = "https://orator.app";
 
@@ -100,13 +101,16 @@ export const sendMessage = action({
         .join("\n");
     }
 
-    // Build system prompt
-    const systemPrompt = `You are a debate research assistant helping prepare for a debate. You have access to research materials and prep content.
+    // Build strategic brief from all user-provided context
+    const strategicBrief = buildStrategicBrief(opponent);
 
-## Debate Context
-- Topic: ${opponent.topic}
-- User's Position: ${opponent.position === "con" ? "pro" : "con"}
-- Opponent's Position: ${opponent.position}
+    // Build system prompt
+    const systemPrompt = `You are a debate research assistant helping prepare for a debate. You have access to research materials, prep content, and strategic context.
+
+## Strategic Brief
+${strategicBrief}
+
+## Additional Debate Details
 - Opponent Style: ${opponent.style}
 - Difficulty: ${opponent.difficulty}
 
@@ -119,13 +123,15 @@ ${prepContext || "No prep materials generated yet."}
 ## Your Role
 - Answer questions about the research and debate topic
 - Help find specific evidence or quotes from the research
-- Suggest arguments, counter-arguments, and strategies
-- Help refine talking points
+- Suggest arguments, counter-arguments, and strategies based on the strategic brief
+- Help refine talking points with awareness of the audience context
+- Use opponent intel from the strategic brief to suggest traps and counter-strategies
+- Honor the user's preferences for tone and emphasis when giving advice
 - Be concise but thorough
 - Cite sources when referencing specific research
 - If you don't have information on something, say so honestly
 
-Always be helpful and focus on strengthening the user's debate preparation.`;
+Always be helpful and focus on strengthening the user's debate preparation. Use the full strategic context provided above to give tailored advice.`;
 
     // Build messages array
     const messages: OpenRouterMessage[] = [

@@ -4,6 +4,7 @@ import { v } from "convex/values";
 import { internal } from "../_generated/api";
 import { prepAgent } from "../agents";
 import { z } from "zod";
+import { buildStrategicBrief } from "../lib/strategicBrief";
 
 interface Strategy {
   openingOptions: any;
@@ -58,6 +59,22 @@ export const generateStrategy = action({
   handler: async (ctx, args): Promise<Strategy> => {
     console.log("[generateStrategy] Starting for topic:", args.topic);
 
+    // Fetch the opponent document with all context fields
+    const opponent = await ctx.runQuery(internal.opponents.getInternal, {
+      opponentId: args.opponentId,
+    });
+
+    if (!opponent) {
+      throw new Error("Opponent not found");
+    }
+
+    // Build the strategic brief once - this synthesizes all user-provided context
+    const strategicBrief = buildStrategicBrief(opponent);
+    console.log(
+      "[generateStrategy] Strategic brief built:",
+      strategicBrief.substring(0, 200) + "...",
+    );
+
     // Start progress tracking
     await ctx.runMutation(internal.prepProgress.startProgress, {
       opponentId: args.opponentId,
@@ -97,13 +114,14 @@ export const generateStrategy = action({
       throw new Error(`Failed to create prep agent thread: ${error}`);
     }
 
-    // 1. Research Phase
+    // Build a more context-aware research prompt using the strategic brief
     const researchPrompt = `
-      Topic: ${args.topic}
-      My Position: ${args.position}
+      ${strategicBrief}
 
       Research this topic thoroughly using your search tool. 
-      Focus on finding "Receipts" (hard stats), "Opponent Intel" (common arguments), and "Stories". We are in the year 2025. 
+      Focus on finding "Receipts" (hard stats), "Opponent Intel" (common arguments), and "Stories". We are in the year 2025.
+      ${opponent.opponentPastStatements ? `Also look for information about statements made by or about this opponent: ${opponent.opponentPastStatements}` : ""}
+      ${opponent.userResearch ? `The debater has provided this research context to consider: ${opponent.userResearch.substring(0, 1000)}...` : ""}
     `;
 
     try {
@@ -163,7 +181,7 @@ export const generateStrategy = action({
       console.log("[generateStrategy] Generating research synthesis");
       researchSynthesis = await ctx.runAction(
         internal.actions.prepGeneration.generateResearchSynthesis,
-        { topic: args.topic, position: args.position, research },
+        { topic: args.topic, position: args.position, research, strategicBrief },
       );
       console.log("[generateStrategy] Research synthesis complete");
     } catch (error) {
@@ -173,6 +191,7 @@ export const generateStrategy = action({
     }
 
     // 4. Sequential Generation Phase for better progress tracking
+    // All generation functions receive the strategicBrief for context-aware generation
     console.log("[generateStrategy] Starting generation phase");
 
     let openingOptions,
@@ -187,42 +206,42 @@ export const generateStrategy = action({
       await updateProgress("generating_openings");
       openingOptions = await ctx.runAction(
         internal.actions.prepGeneration.generateOpenings,
-        { topic: args.topic, position: args.position },
+        { topic: args.topic, position: args.position, strategicBrief },
       );
 
       // Generate frames
       await updateProgress("generating_frames");
       argumentFrames = await ctx.runAction(
         internal.actions.prepGeneration.generateFrames,
-        { topic: args.topic, position: args.position, research },
+        { topic: args.topic, position: args.position, research, strategicBrief },
       );
 
       // Generate receipts
       await updateProgress("generating_receipts");
       receipts = await ctx.runAction(
         internal.actions.prepGeneration.generateReceipts,
-        { topic: args.topic, position: args.position, research },
+        { topic: args.topic, position: args.position, research, strategicBrief },
       );
 
       // Generate zingers
       await updateProgress("generating_zingers");
       zingers = await ctx.runAction(
         internal.actions.prepGeneration.generateZingers,
-        { topic: args.topic, position: args.position, research },
+        { topic: args.topic, position: args.position, research, strategicBrief },
       );
 
       // Generate closings
       await updateProgress("generating_closings");
       closingOptions = await ctx.runAction(
         internal.actions.prepGeneration.generateClosings,
-        { topic: args.topic, position: args.position },
+        { topic: args.topic, position: args.position, strategicBrief },
       );
 
       // Generate opponent intel
       await updateProgress("generating_intel");
       opponentIntel = await ctx.runAction(
         internal.actions.prepGeneration.generateOpponentIntel,
-        { topic: args.topic, position: args.position, research },
+        { topic: args.topic, position: args.position, research, strategicBrief },
       );
 
       console.log("[generateStrategy] Generation phase complete");

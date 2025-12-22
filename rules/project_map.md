@@ -21,6 +21,7 @@ orator/
 │   ├── actions/               # External API calls (Node.js runtime)
 │   │   ├── analysisAction.ts  # Post-debate analysis generation
 │   │   ├── prep.ts            # Prep material orchestration
+│   │   ├── prepChatAction.ts  # RAG chatbot action
 │   │   ├── prepGeneration.ts  # AI content generation
 │   │   └── research.ts        # Firecrawl web research
 │   ├── lib/                   # Shared utilities
@@ -28,14 +29,15 @@ orator/
 │   │   ├── firecrawl.ts       # Firecrawl v2 API client
 │   │   ├── openrouter.ts      # OpenRouter API client
 │   │   ├── promptTemplates.ts # AI prompt templates
-│   │   └── scoring.ts         # Hasan score calculation
+│   │   ├── scoring.ts         # Hasan score calculation
+│   │   └── strategicBrief.ts  # Strategic Brief builder (Ch.7)
 │   ├── analysis.ts            # Analysis queries and mutations
 │   ├── auth.config.ts         # Convex Auth configuration
 │   ├── convex.config.ts       # App config (components registration)
 │   ├── debates.ts             # Debate CRUD and queries
 │   ├── http.ts                # HTTP endpoints (Vapi webhooks)
 │   ├── opponents.ts           # Opponent profile management
-│   ├── prepChat.ts            # RAG chatbot for prep
+│   ├── prepChat.ts            # RAG chatbot queries/mutations
 │   ├── prepProgress.ts        # Generation progress tracking
 │   ├── r2.ts                  # Cloudflare R2 recording storage
 │   ├── research.ts            # Research storage
@@ -73,11 +75,27 @@ orator/
 | `debates` | Debate sessions | `userId`, `topic`, `status`, `vapiCallId`, `recordingKey` |
 | `exchanges` | Turn-by-turn transcript | `debateId`, `speaker`, `text`, `timestamp` |
 | `analyses` | Post-debate analysis | `debateId`, `hasanScores`, `executiveSummary`, `missedOpportunities` |
-| `opponents` | Opponent profiles | `userId`, `name`, `topic`, `userPosition`, `aiPosition`, `style`, `difficulty` |
+| `opponents` | Opponent profiles | `userId`, `name`, `topic`, `position`, `style`, `difficulty`, + 23 optional context fields (Ch.7) |
 | `prep` | Generated prep materials | `opponentId`, `openings`, `arguments`, `receipts`, `zingers`, `closings`, `opponentIntel` |
 | `research` | Web research articles | `opponentId`, `title`, `source`, `summary`, `content` |
 | `prepProgress` | Generation progress tracking | `opponentId`, `status`, `completedSteps` |
 | `prepChat` | RAG chatbot messages | `opponentId`, `role`, `content` |
+
+### Opponent Context Fields (Ch.7)
+
+The `opponents` table includes 23 optional fields for strategic context:
+
+**Audience Context** (5 fields):
+- `audienceDescription`, `audienceType`, `audienceSize`, `audienceDisposition`, `debateFormat`
+
+**Opponent Intel** (14 fields):
+- `opponentDescription`, `opponentOrganization`, `opponentCredentials`, `credentialWeaknesses`
+- `opponentPastStatements`, `opponentContradictions`, `opponentTrackRecord`
+- `opponentDebateStyle`, `opponentRhetoricalTendencies`, `opponentTriggers`
+- `opponentStrongestArguments`, `opponentBestEvidence`, `opponentLikelyCritiques`, `opponentCharacterIssues`
+
+**User Context** (4 fields):
+- `userResearch`, `keyPointsToMake`, `thingsToAvoid`, `toneDirectives`
 
 ### Key Indexes
 
@@ -195,6 +213,39 @@ const recordingUrl =
   artifact?.recording;
 ```
 
+### 8. Strategic Brief Pattern (Ch.7)
+
+For AI prompt integration with optional user context, use the Strategic Brief pattern. Instead of mechanical conditional sections:
+
+```typescript
+// ❌ Don't do this
+## AUDIENCE
+{if audienceDescription}{audienceDescription}{endif}
+## OPPONENT
+{if opponentPastStatements}{opponentPastStatements}{endif}
+```
+
+Synthesize into a flowing narrative:
+
+```typescript
+// ✅ Do this
+import { buildStrategicBrief } from "../lib/strategicBrief";
+
+const opponent = await ctx.runQuery(internal.opponents.getInternal, { opponentId });
+const strategicBrief = buildStrategicBrief(opponent);
+
+// Pass to all generation functions
+const openings = await generateOpenings({ strategicBrief, ... });
+```
+
+The `buildStrategicBrief()` function:
+1. Reads like actual debate prep (Hasan-style)
+2. Only includes sections for populated fields
+3. Adds strategic implications inline
+4. Built once, reused across all generations
+
+See `convex/lib/strategicBrief.ts` for implementation.
+
 ---
 
 ## Environment Variables
@@ -242,15 +293,21 @@ npx convex deploy    # Deploy backend
 
 | Date | Change | Chapter |
 |------|--------|---------|
-| Dec 20, 2024 | OpenRouter structured outputs for analysis | Ch.5.1 |
-| Dec 20, 2024 | Fixed Vapi recording URL extraction | Ch.5.1 |
-| Dec 20, 2024 | Added artifactPlan.recordingEnabled | Ch.5.1 |
-| Dec 20, 2024 | Opponent deletion with cascade | Ch.5 |
-| Dec 20, 2024 | R2 recording storage | Ch.5 |
-| Dec 20, 2024 | Debate history page with charts | Ch.5 |
-| Dec 19, 2024 | Fixed hardcoded debate topics | Ch.4 |
-| Dec 19, 2024 | Analysis page restoration | Ch.4 |
-| Dec 2, 2024 | AI config centralization | Ch.1 |
-| Dec 2, 2024 | Progress tracking system | Ch.2 |
-| Dec 2, 2024 | RAG prep chatbot | Ch.2 |
+| Dec 21, 2025 | Enhanced opponent profile with 23 context fields | Ch.7 |
+| Dec 21, 2025 | Strategic Brief pattern for AI prompt integration | Ch.7 |
+| Dec 21, 2025 | Collapsible form UI with progressive disclosure | Ch.7 |
+| Dec 21, 2025 | Prep chat integration with strategic context | Ch.7 |
+| Dec 21, 2025 | Password authentication migration | Ch.6 |
+| Dec 20, 2025 | OpenRouter structured outputs for analysis | Ch.5.1 |
+| Dec 20, 2025 | Fixed Vapi recording URL extraction | Ch.5.1 |
+| Dec 20, 2025 | Added artifactPlan.recordingEnabled | Ch.5.1 |
+| Dec 20, 2025 | Opponent deletion with cascade | Ch.5 |
+| Dec 20, 2025 | R2 recording storage | Ch.5 |
+| Dec 20, 2025 | Debate history page with charts | Ch.5 |
+| Dec 19, 2025 | Fixed hardcoded debate topics | Ch.4 |
+| Dec 19, 2025 | Analysis page restoration | Ch.4 |
+| Dec 19, 2025 | Frontend schema alignment fix | Ch.3 |
+| Dec 18, 2025 | Progress tracking system | Ch.2 |
+| Dec 18, 2025 | RAG prep chatbot | Ch.2 |
+| Dec 17, 2025 | AI config centralization | Ch.1 |
 
