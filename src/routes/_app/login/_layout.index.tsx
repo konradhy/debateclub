@@ -24,6 +24,38 @@ type Step =
   | "forgotPassword"
   | { email: string; flow: "resetPassword" };
 
+/**
+ * Map auth error messages to user-friendly text.
+ * Convex auth errors come as server errors containing internal codes like "InvalidSecret".
+ */
+function getAuthErrorMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+
+  if (message.includes("InvalidSecret")) {
+    return "Invalid email or password";
+  }
+  if (
+    message.includes("InvalidAccountId") ||
+    message.includes("account was not found")
+  ) {
+    return "No account found with this email";
+  }
+  if (message.includes("InvalidCode") || message.includes("invalid code")) {
+    return "Invalid verification code";
+  }
+  if (message.includes("TooManyFailedAttempts")) {
+    return "Too many failed attempts. Please try again later";
+  }
+  if (
+    message.includes("EmailAlreadyInUse") ||
+    message.includes("already exists")
+  ) {
+    return "An account with this email already exists";
+  }
+
+  return "Authentication failed. Please try again";
+}
+
 function Login() {
   const [step, setStep] = useState<Step>("signIn");
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -125,7 +157,7 @@ function SignInForm({
           }
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Authentication failed");
+        setError(getAuthErrorMessage(err));
       } finally {
         setIsSubmitting(false);
       }
@@ -172,9 +204,10 @@ function SignInForm({
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                className={`bg-transparent ${field.state.meta?.errors.length > 0 &&
+                className={`bg-transparent ${
+                  field.state.meta?.errors.length > 0 &&
                   "border-destructive focus-visible:ring-destructive"
-                  }`}
+                }`}
               />
             )}
           />
@@ -208,9 +241,10 @@ function SignInForm({
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                className={`bg-transparent ${field.state.meta?.errors.length > 0 &&
+                className={`bg-transparent ${
+                  field.state.meta?.errors.length > 0 &&
                   "border-destructive focus-visible:ring-destructive"
-                  }`}
+                }`}
               />
             )}
           />
@@ -327,7 +361,7 @@ function VerifyEmailForm({
 
         await signIn("password", formData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Verification failed");
+        setError(getAuthErrorMessage(err));
       } finally {
         setIsSubmitting(false);
       }
@@ -370,9 +404,10 @@ function VerifyEmailForm({
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                className={`bg-transparent ${field.state.meta?.errors.length > 0 &&
+                className={`bg-transparent ${
+                  field.state.meta?.errors.length > 0 &&
                   "border-destructive focus-visible:ring-destructive"
-                  }`}
+                }`}
               />
             )}
           />
@@ -438,7 +473,7 @@ function ForgotPasswordForm({
         await signIn("password", formData);
         onCodeSent(value.email);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to send reset code");
+        setError(getAuthErrorMessage(err));
       } finally {
         setIsSubmitting(false);
       }
@@ -481,9 +516,10 @@ function ForgotPasswordForm({
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                className={`bg-transparent ${field.state.meta?.errors.length > 0 &&
+                className={`bg-transparent ${
+                  field.state.meta?.errors.length > 0 &&
                   "border-destructive focus-visible:ring-destructive"
-                  }`}
+                }`}
               />
             )}
           />
@@ -506,7 +542,11 @@ function ForgotPasswordForm({
         )}
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? <Loader2 className="animate-spin" /> : "Send Reset Code"}
+          {isSubmitting ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            "Send Reset Code"
+          )}
         </Button>
 
         <Button
@@ -551,7 +591,7 @@ function ResetPasswordForm({
 
         await signIn("password", formData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Password reset failed");
+        setError(getAuthErrorMessage(err));
       } finally {
         setIsSubmitting(false);
       }
@@ -592,9 +632,10 @@ function ResetPasswordForm({
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                className={`bg-transparent ${field.state.meta?.errors.length > 0 &&
+                className={`bg-transparent ${
+                  field.state.meta?.errors.length > 0 &&
                   "border-destructive focus-visible:ring-destructive"
-                  }`}
+                }`}
               />
             )}
           />
@@ -628,9 +669,10 @@ function ResetPasswordForm({
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                className={`bg-transparent ${field.state.meta?.errors.length > 0 &&
+                className={`bg-transparent ${
+                  field.state.meta?.errors.length > 0 &&
                   "border-destructive focus-visible:ring-destructive"
-                  }`}
+                }`}
               />
             )}
           />
@@ -653,7 +695,11 @@ function ResetPasswordForm({
         )}
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? <Loader2 className="animate-spin" /> : "Reset Password"}
+          {isSubmitting ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            "Reset Password"
+          )}
         </Button>
 
         <Button

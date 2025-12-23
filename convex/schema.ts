@@ -331,6 +331,18 @@ const schema = defineSchema({
         generatedAt: v.number(),
       }),
     ),
+
+    // ==========================================
+    // GEMINI DEEP RESEARCH (System B)
+    // ==========================================
+    geminiResearchReport: v.optional(v.string()),
+    geminiResearchMetadata: v.optional(
+      v.object({
+        generatedAt: v.number(),
+        sourcesCount: v.number(),
+        reportLength: v.number(),
+      }),
+    ),
   }).index("by_user", ["userId"]),
   prepProgress: defineTable({
     opponentId: v.id("opponents"),
@@ -451,6 +463,23 @@ const schema = defineSchema({
 
     generatedAt: v.number(),
   }).index("by_debate", ["debateId"]),
+  geminiResearchProgress: defineTable({
+    opponentId: v.id("opponents"),
+    status: v.union(
+      v.literal("deep_research_planning"),
+      v.literal("deep_research_searching"),
+      v.literal("deep_research_complete"),
+      v.literal("gemini_agent_searching"),
+      v.literal("generating"),
+      v.literal("storing"),
+      v.literal("complete"),
+      v.literal("error")
+    ),
+    message: v.string(),
+    startedAt: v.number(),
+    completedAt: v.optional(v.number()),
+    error: v.optional(v.string()),
+  }).index("by_opponent", ["opponentId"]),
 });
 
 export default schema;

@@ -66,6 +66,29 @@ This document governs how AI assistants should operate within this project. It e
 - [ ] **Data Consistency Boundary Violations** — Same logical data stored/managed in multiple places
 - [ ] **Negative Filtering** — Blacklist approaches prone to timing issues (prefer whitelists)
 
+
+### Don't Break Functionality to Satisfy the Compiler
+
+**The problem:** When you encounter type errors, compilation errors, or linter warnings, the temptation is to "fix" them by removing the feature, casting to `any`, or disabling checks. This trades working functionality for clean compilation.
+
+**Common instances where this happens:**
+- SDK doesn't match TypeScript definitions → you remove the SDK feature instead of finding correct usage
+- Type mismatch between API response and types → you cast to `any` instead of handling correctly
+- Linter complains about pattern → you disable the rule instead of understanding why it's flagged
+- Feature works but types conflict → you delete the feature instead of fixing the implementation
+
+**What NOT to do:**
+- [ ] **Type-Driven Deletion** — Removing working functionality to silence type errors
+- [ ] **Safety Bypass** — Adding `any` casts or `@ts-ignore` to hide problems
+- [ ] **Linter Suppression** — Disabling rules instead of understanding warnings
+- [ ] **Feature Degradation** — Stripping capabilities to satisfy static analysis
+
+**What TO do instead:**
+1. **Read the error** — Understand what the type system is telling you
+2. **Research correct usage** — Check SDK docs, API documentation, working examples
+3. **Fix the implementation** — Adjust your code to match the correct API contract
+4. **Ask for help** — If stuck, mark as TODO and ask rather than shipping broken code
+
 ---
 
 ## Session Protocol

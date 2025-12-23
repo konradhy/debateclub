@@ -8,6 +8,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { Button } from "@/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import siteConfig from "~/site.config";
+import ReactMarkdown from "react-markdown";
 import {
   Swords,
   Brain,
@@ -126,6 +127,7 @@ function PrepScreen() {
   );
 
   const generateStrategy = useAction(api.actions.prep.generateStrategy);
+  const generateGemini = useAction(api.actions.geminiPrep.generateStrategyGemini);
   const sendChatMessage = useAction(api.actions.prepChatAction.sendMessage);
   const processResearchText = useAction(api.actions.prep.processResearchText);
   const updateSelection = useConvexMutation(api.opponents.updateSelection);
@@ -134,6 +136,25 @@ function PrepScreen() {
   const deleteFieldItem = useConvexMutation(
     api.opponents.deleteOpponentFieldItem,
   );
+
+  // Gemini progress tracking
+  const { data: geminiProgress } = useQuery({
+    ...convexQuery(
+      api.geminiResearchProgress.getProgress,
+      opponentId ? { opponentId: opponentId as Id<"opponents"> } : "skip",
+    ),
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      if (
+        data &&
+        data.status !== "complete" &&
+        data.status !== "error"
+      ) {
+        return 2000; // Poll every 2 seconds
+      }
+      return false;
+    },
+  });
 
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -392,10 +413,31 @@ function PrepScreen() {
               </div>
               <div className="flex gap-2">
                 {!hasStrategy && !isGenerating && !progress?.status && (
-                  <Button onClick={handleGenerateStrategy}>
-                    <Brain className="mr-2 h-4 w-4" />
-                    Generate Strategy
-                  </Button>
+                  <>
+                    <Button onClick={handleGenerateStrategy}>
+                      <Brain className="mr-2 h-4 w-4" />
+                      Generate Strategy (GPT-4o)
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (opponentId) {
+                          generateGemini({
+                            opponentId: opponentId as Id<"opponents">,
+                            topic: opponent.topic,
+                            position: opponent.position,
+                          });
+                        }
+                      }}
+                      disabled={
+                        geminiProgress?.status &&
+                        !["complete", "error"].includes(geminiProgress.status)
+                      }
+                      variant="outline"
+                    >
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Generate Strategy (Gemini)
+                    </Button>
+                  </>
                 )}
                 {(isGenerating ||
                   (progress &&
@@ -488,11 +530,50 @@ function PrepScreen() {
             </div>
           )}
 
+          {/* Gemini Progress Indicator */}
+          {geminiProgress &&
+            geminiProgress.status !== "complete" &&
+            geminiProgress.status !== "error" && (
+              <div className="px-6 py-4 bg-purple-500/10 border-b border-purple-500/20">
+                <div className="flex items-center gap-3">
+                  <Loader2 className="h-5 w-5 animate-spin text-purple-600" />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Sparkles className="h-4 w-4 text-purple-600" />
+                      <span className="font-medium text-purple-900 dark:text-purple-100">
+                        Gemini Deep Research System
+                      </span>
+                    </div>
+                    <p className="text-sm text-purple-700 dark:text-purple-300">
+                      {geminiProgress.message}
+                    </p>
+                    {geminiProgress.status.startsWith("deep_research") && (
+                      <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                        Deep Research can take 3-20 minutes for comprehensive analysis
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+          {/* Gemini Error Display */}
+          {geminiProgress?.status === "error" && geminiProgress.error && (
+            <div className="px-6 py-4 bg-red-500/10 border-b border-red-500/30">
+              <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+                <AlertTriangle className="h-5 w-5" />
+                <span className="font-medium">
+                  Gemini Error: {geminiProgress.error}
+                </span>
+              </div>
+            </div>
+          )}
+
           {/* Content */}
           <div className="flex-1 p-6 overflow-hidden">
             {hasStrategy ? (
               <Tabs defaultValue="study" className="h-full flex flex-col">
-                <TabsList className="grid w-full grid-cols-5 mb-4">
+                <TabsList className="grid w-full grid-cols-6 mb-4">
                   <TabsTrigger value="study">Study Mode</TabsTrigger>
                   <TabsTrigger value="quickref">Quick Reference</TabsTrigger>
                   <TabsTrigger value="research">Research Data</TabsTrigger>
@@ -503,6 +584,13 @@ function PrepScreen() {
                   >
                     <MessageSquare className="h-4 w-4" />
                     Ask AI
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="gemini-report"
+                    className="flex items-center gap-1.5"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    Gemini Report
                   </TabsTrigger>
                 </TabsList>
 
@@ -2133,6 +2221,50 @@ Example content:
                         </form>
                       </div>
                     </div>
+                  </TabsContent>
+
+                  {/* GEMINI REPORT TAB */}
+                  <TabsContent value="gemini-report" className="space-y-4 pb-10">
+                    {opponent.geminiResearchReport ? (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 pb-2 border-b">
+                          <Sparkles className="h-5 w-5 text-purple-600" />
+                          <h3 className="text-lg font-semibold text-purple-900 dark:text-purple-100">
+                            Gemini Deep Research Report
+                          </h3>
+                        </div>
+                        <div className="prose prose-sm max-w-none dark:prose-invert">
+                          <ReactMarkdown>{opponent.geminiResearchReport}</ReactMarkdown>
+                        </div>
+                        {opponent.geminiResearchMetadata && (
+                          <div className="mt-6 pt-4 border-t text-xs text-muted-foreground">
+                            Generated on{" "}
+                            {new Date(
+                              opponent.geminiResearchMetadata.generatedAt,
+                            ).toLocaleString()}
+                            {" • "}
+                            {Math.round(
+                              opponent.geminiResearchMetadata.reportLength / 1000,
+                            )}
+                            k characters
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-64 text-center">
+                        <Sparkles className="h-12 w-12 mx-auto mb-3 opacity-30 text-purple-500" />
+                        <h3 className="text-lg font-medium mb-2">
+                          No Gemini Research Report Yet
+                        </h3>
+                        <p className="text-sm text-muted-foreground max-w-md">
+                          Click "Generate Strategy (Gemini)" to create a comprehensive
+                          research report using Gemini Deep Research.
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          This process can take 3-20 minutes for thorough analysis.
+                        </p>
+                      </div>
+                    )}
                   </TabsContent>
                 </div>
               </Tabs>

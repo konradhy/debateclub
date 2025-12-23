@@ -258,6 +258,23 @@ export const updateStrategy = internalMutation({
   },
 });
 
+export const updateGeminiReport = internalMutation({
+  args: {
+    opponentId: v.id("opponents"),
+    report: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.opponentId, {
+      geminiResearchReport: args.report,
+      geminiResearchMetadata: {
+        generatedAt: Date.now(),
+        reportLength: args.report.length,
+        sourcesCount: 0, // Will be updated when articles are stored
+      },
+    });
+  },
+});
+
 export const updateSelection = mutation({
   args: {
     opponentId: v.id("opponents"),

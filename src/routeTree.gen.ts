@@ -13,6 +13,13 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BlogIndexRouteImport } from './routes/blog/index'
+import { Route as BlogTheCrossedQuillsRouteImport } from './routes/blog/the-crossed-quills'
+import { Route as BlogStrikeEmotionalChordRouteImport } from './routes/blog/strike-emotional-chord'
+import { Route as BlogReadAnyRoomRouteImport } from './routes/blog/read-any-room'
+import { Route as BlogBlueprintPart3RouteImport } from './routes/blog/blueprint-part-3'
+import { Route as BlogBlueprintPart2RouteImport } from './routes/blog/blueprint-part-2'
+import { Route as BlogBlueprintPart1RouteImport } from './routes/blog/blueprint-part-1'
 import { Route as AppAuthRouteImport } from './routes/_app/_auth'
 import { Route as AppLoginLayoutRouteImport } from './routes/_app/login/_layout'
 import { Route as AppLoginLayoutIndexRouteImport } from './routes/_app/login/_layout.index'
@@ -47,6 +54,42 @@ const AppLoginRoute = AppLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => AppRoute,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogTheCrossedQuillsRoute = BlogTheCrossedQuillsRouteImport.update({
+  id: '/blog/the-crossed-quills',
+  path: '/blog/the-crossed-quills',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogStrikeEmotionalChordRoute =
+  BlogStrikeEmotionalChordRouteImport.update({
+    id: '/blog/strike-emotional-chord',
+    path: '/blog/strike-emotional-chord',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const BlogReadAnyRoomRoute = BlogReadAnyRoomRouteImport.update({
+  id: '/blog/read-any-room',
+  path: '/blog/read-any-room',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogBlueprintPart3Route = BlogBlueprintPart3RouteImport.update({
+  id: '/blog/blueprint-part-3',
+  path: '/blog/blueprint-part-3',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogBlueprintPart2Route = BlogBlueprintPart2RouteImport.update({
+  id: '/blog/blueprint-part-2',
+  path: '/blog/blueprint-part-2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogBlueprintPart1Route = BlogBlueprintPart1RouteImport.update({
+  id: '/blog/blueprint-part-1',
+  path: '/blog/blueprint-part-1',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AppAuthRoute = AppAuthRouteImport.update({
   id: '/_auth',
@@ -145,6 +188,13 @@ const AppAuthDashboardLayoutSettingsBillingRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/blog/blueprint-part-1': typeof BlogBlueprintPart1Route
+  '/blog/blueprint-part-2': typeof BlogBlueprintPart2Route
+  '/blog/blueprint-part-3': typeof BlogBlueprintPart3Route
+  '/blog/read-any-room': typeof BlogReadAnyRoomRoute
+  '/blog/strike-emotional-chord': typeof BlogStrikeEmotionalChordRoute
+  '/blog/the-crossed-quills': typeof BlogTheCrossedQuillsRoute
+  '/blog': typeof BlogIndexRoute
   '/login': typeof AppLoginLayoutRouteWithChildren
   '/dashboard': typeof AppAuthDashboardLayoutRouteWithChildren
   '/dashboard/analysis': typeof AppAuthDashboardAnalysisRoute
@@ -163,6 +213,13 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/blog/blueprint-part-1': typeof BlogBlueprintPart1Route
+  '/blog/blueprint-part-2': typeof BlogBlueprintPart2Route
+  '/blog/blueprint-part-3': typeof BlogBlueprintPart3Route
+  '/blog/read-any-room': typeof BlogReadAnyRoomRoute
+  '/blog/strike-emotional-chord': typeof BlogStrikeEmotionalChordRoute
+  '/blog/the-crossed-quills': typeof BlogTheCrossedQuillsRoute
+  '/blog': typeof BlogIndexRoute
   '/login': typeof AppLoginLayoutIndexRoute
   '/dashboard': typeof AppAuthDashboardLayoutIndexRoute
   '/dashboard/analysis': typeof AppAuthDashboardAnalysisRoute
@@ -181,6 +238,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/_app/_auth': typeof AppAuthRouteWithChildren
+  '/blog/blueprint-part-1': typeof BlogBlueprintPart1Route
+  '/blog/blueprint-part-2': typeof BlogBlueprintPart2Route
+  '/blog/blueprint-part-3': typeof BlogBlueprintPart3Route
+  '/blog/read-any-room': typeof BlogReadAnyRoomRoute
+  '/blog/strike-emotional-chord': typeof BlogStrikeEmotionalChordRoute
+  '/blog/the-crossed-quills': typeof BlogTheCrossedQuillsRoute
+  '/blog/': typeof BlogIndexRoute
   '/_app/login': typeof AppLoginRouteWithChildren
   '/_app/login/_layout': typeof AppLoginLayoutRouteWithChildren
   '/_app/_auth/dashboard': typeof AppAuthDashboardRouteWithChildren
@@ -204,6 +268,13 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/blog/blueprint-part-1'
+    | '/blog/blueprint-part-2'
+    | '/blog/blueprint-part-3'
+    | '/blog/read-any-room'
+    | '/blog/strike-emotional-chord'
+    | '/blog/the-crossed-quills'
+    | '/blog'
     | '/login'
     | '/dashboard'
     | '/dashboard/analysis'
@@ -222,6 +293,13 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/blog/blueprint-part-1'
+    | '/blog/blueprint-part-2'
+    | '/blog/blueprint-part-3'
+    | '/blog/read-any-room'
+    | '/blog/strike-emotional-chord'
+    | '/blog/the-crossed-quills'
+    | '/blog'
     | '/login'
     | '/dashboard'
     | '/dashboard/analysis'
@@ -239,6 +317,13 @@ export interface FileRouteTypes {
     | '/'
     | '/_app'
     | '/_app/_auth'
+    | '/blog/blueprint-part-1'
+    | '/blog/blueprint-part-2'
+    | '/blog/blueprint-part-3'
+    | '/blog/read-any-room'
+    | '/blog/strike-emotional-chord'
+    | '/blog/the-crossed-quills'
+    | '/blog/'
     | '/_app/login'
     | '/_app/login/_layout'
     | '/_app/_auth/dashboard'
@@ -262,6 +347,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  BlogBlueprintPart1Route: typeof BlogBlueprintPart1Route
+  BlogBlueprintPart2Route: typeof BlogBlueprintPart2Route
+  BlogBlueprintPart3Route: typeof BlogBlueprintPart3Route
+  BlogReadAnyRoomRoute: typeof BlogReadAnyRoomRoute
+  BlogStrikeEmotionalChordRoute: typeof BlogStrikeEmotionalChordRoute
+  BlogTheCrossedQuillsRoute: typeof BlogTheCrossedQuillsRoute
+  BlogIndexRoute: typeof BlogIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -286,6 +378,55 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof AppLoginRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/the-crossed-quills': {
+      id: '/blog/the-crossed-quills'
+      path: '/blog/the-crossed-quills'
+      fullPath: '/blog/the-crossed-quills'
+      preLoaderRoute: typeof BlogTheCrossedQuillsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/strike-emotional-chord': {
+      id: '/blog/strike-emotional-chord'
+      path: '/blog/strike-emotional-chord'
+      fullPath: '/blog/strike-emotional-chord'
+      preLoaderRoute: typeof BlogStrikeEmotionalChordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/read-any-room': {
+      id: '/blog/read-any-room'
+      path: '/blog/read-any-room'
+      fullPath: '/blog/read-any-room'
+      preLoaderRoute: typeof BlogReadAnyRoomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/blueprint-part-3': {
+      id: '/blog/blueprint-part-3'
+      path: '/blog/blueprint-part-3'
+      fullPath: '/blog/blueprint-part-3'
+      preLoaderRoute: typeof BlogBlueprintPart3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/blueprint-part-2': {
+      id: '/blog/blueprint-part-2'
+      path: '/blog/blueprint-part-2'
+      fullPath: '/blog/blueprint-part-2'
+      preLoaderRoute: typeof BlogBlueprintPart2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/blueprint-part-1': {
+      id: '/blog/blueprint-part-1'
+      path: '/blog/blueprint-part-1'
+      fullPath: '/blog/blueprint-part-1'
+      preLoaderRoute: typeof BlogBlueprintPart1RouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_app/_auth': {
       id: '/_app/_auth'
@@ -551,6 +692,13 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  BlogBlueprintPart1Route: BlogBlueprintPart1Route,
+  BlogBlueprintPart2Route: BlogBlueprintPart2Route,
+  BlogBlueprintPart3Route: BlogBlueprintPart3Route,
+  BlogReadAnyRoomRoute: BlogReadAnyRoomRoute,
+  BlogStrikeEmotionalChordRoute: BlogStrikeEmotionalChordRoute,
+  BlogTheCrossedQuillsRoute: BlogTheCrossedQuillsRoute,
+  BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

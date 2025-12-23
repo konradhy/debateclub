@@ -9,6 +9,7 @@
  */
 
 import type * as actions_analysisAction from "../actions/analysisAction.js";
+import type * as actions_geminiPrep from "../actions/geminiPrep.js";
 import type * as actions_prep from "../actions/prep.js";
 import type * as actions_prepChatAction from "../actions/prepChatAction.js";
 import type * as actions_prepGeneration from "../actions/prepGeneration.js";
@@ -23,10 +24,13 @@ import type * as debates from "../debates.js";
 import type * as email_index from "../email/index.js";
 import type * as email_templates_subscriptionEmail from "../email/templates/subscriptionEmail.js";
 import type * as env from "../env.js";
+import type * as geminiResearchProgress from "../geminiResearchProgress.js";
 import type * as http from "../http.js";
 import type * as init from "../init.js";
 import type * as lib_aiConfig from "../lib/aiConfig.js";
 import type * as lib_firecrawl from "../lib/firecrawl.js";
+import type * as lib_geminiDeepResearch from "../lib/geminiDeepResearch.js";
+import type * as lib_geminiSearch from "../lib/geminiSearch.js";
 import type * as lib_openrouter from "../lib/openrouter.js";
 import type * as lib_promptTemplates from "../lib/promptTemplates.js";
 import type * as lib_scoring from "../lib/scoring.js";
@@ -49,6 +53,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   "actions/analysisAction": typeof actions_analysisAction;
+  "actions/geminiPrep": typeof actions_geminiPrep;
   "actions/prep": typeof actions_prep;
   "actions/prepChatAction": typeof actions_prepChatAction;
   "actions/prepGeneration": typeof actions_prepGeneration;
@@ -63,10 +68,13 @@ declare const fullApi: ApiFromModules<{
   "email/index": typeof email_index;
   "email/templates/subscriptionEmail": typeof email_templates_subscriptionEmail;
   env: typeof env;
+  geminiResearchProgress: typeof geminiResearchProgress;
   http: typeof http;
   init: typeof init;
   "lib/aiConfig": typeof lib_aiConfig;
   "lib/firecrawl": typeof lib_firecrawl;
+  "lib/geminiDeepResearch": typeof lib_geminiDeepResearch;
+  "lib/geminiSearch": typeof lib_geminiSearch;
   "lib/openrouter": typeof lib_openrouter;
   "lib/promptTemplates": typeof lib_promptTemplates;
   "lib/scoring": typeof lib_scoring;

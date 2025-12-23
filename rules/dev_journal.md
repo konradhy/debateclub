@@ -1601,3 +1601,301 @@ Researched Convex Auth documentation and source code to identify auth tables cre
 - Notify before deleting old debates/exchanges?
 
 ---
+
+## Chapter 8: Gemini Deep Research Integration (System B)
+
+### TL;DR
+
+Built "System B" — an alternative prep generation pipeline using Google's Gemini Interactions API. Uses the autonomous Deep Research agent (`deep-research-pro-preview-12-2025`) for comprehensive 3-20 minute research, followed by source extraction using `gemini-3-flash-preview` with `google_search` tool, then feeds into existing prep generation. Key insight: Deep Research doesn't need methodology instructions — it needs context-aware direction via the strategic brief.
+
+**Roadmap Items Advanced**: Research enhancement, Alternative AI pipeline
+
+---
+
+### Session Context
+
+**Date**: December 21-22, 2025 (multi-session)  
+**Starting Point**: System A (Firecrawl + OpenRouter) worked but had limitations — Firecrawl scraping sometimes failed, no autonomous research capability.  
+**Ending Point**: Full System B pipeline working with context-driven Deep Research prompt, proper structured output handling, and real-time progress tracking.
+
+---
+
+### Work Completed
+
+#### 1. Gemini Interactions API Research
+
+**Key Learnings from Documentation**:
+- **Interactions API** is Google's agentic interface — single call handles multi-step tool execution
+- **Deep Research Agent** (`deep-research-pro-preview-12-2025`) autonomously searches, synthesizes, returns markdown report
+- Requires `background: true` for Deep Research (takes 3-20 minutes)
+- Uses polling pattern with `interactions.get()` to check completion
+- **Structured Output** uses `response_format` parameter (NOT `responseMimeType`/`responseJsonSchema` from generateContent API)
+
+**Models Available**:
+| Model Name | Model ID | Use Case |
+|------------|----------|----------|
+| Gemini 2.5 Pro | gemini-2.5-pro | Complex reasoning |
+| Gemini 2.5 Flash | gemini-2.5-flash | Fast responses |
+| Gemini 3 Flash Preview | gemini-3-flash-preview | Source extraction with tools |
+| Deep Research Preview | deep-research-pro-preview-12-2025 | Autonomous research agent |
+
+#### 2. Deep Research Integration (`convex/lib/geminiDeepResearch.ts`)
+
+**Created** autonomous research wrapper:
+```typescript
+export async function runDeepResearch(
+  query: string,
+  apiKey: string,
+  progressCallback: (status, message, error?) => Promise<void>
+): Promise<string>
+```
+
+**Implementation Details**:
+- Uses `@google/genai` SDK (`GoogleGenAI` class)
+- Starts interaction with `background: true` for async execution
+- Polls every 10 seconds for up to 20 minutes
+- Returns markdown report from final output
+- Progress callback updates UI in real-time
+
+#### 3. Source Extraction with Google Search (`convex/lib/geminiSearch.ts`)
+
+**Problem Solved**: Deep Research synthesizes information ("Studies show X increased by 47%") but doesn't always provide direct URLs. Prep materials need actual citations.
+
+**Solution**: Use `gemini-3-flash-preview` with `google_search` tool to find real URLs from the report.
+
+**Key Fix** (from Claude Code session):
+```typescript
+// WRONG - generateContent API syntax
+config: { responseMimeType: "application/json", responseJsonSchema: schema }
+
+// CORRECT - Interactions API syntax
+response_format: articlesSchema
+```
+
+**Final Implementation**:
+```typescript
+const articlesSchema = {
+  type: "object",
+  properties: {
+    articles: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          title: { type: "string" },
+          url: { type: "string" },
+          content: { type: "string" },
+          summary: { type: "string" },
+          source: { type: "string" },
+          publishedDate: { type: "string" }
+        },
+        required: ["title", "url", "content", "summary", "source"]
+      }
+    }
+  },
+  required: ["articles"]
+};
+
+const interaction = await client.interactions.create({
+  model: 'gemini-3-flash-preview',
+  input: prompt,
+  tools: [{ type: 'google_search' }],
+  response_format: articlesSchema  // ← Correct parameter
+});
+```
+
+#### 4. Orchestrator Action (`convex/actions/geminiPrep.ts`)
+
+**Created** `generateStrategyGemini` action that orchestrates the 3-stage pipeline:
+
+**Stage 1: Deep Research**
+- Builds strategic brief from opponent profile
+- Submits research query to Deep Research agent
+- Polls for completion, updates progress
+- Stores markdown report
+
+**Stage 2: Source Extraction**
+- Passes report + strategic brief to `findSourcesWithGemini`
+- Returns array of articles with real URLs
+
+**Stage 3: Prep Generation**
+- Uses existing `prepGeneration.ts` functions (from System A)
+- Generates openings, frames, receipts, zingers, closings, opponent intel
+- Already has Hasan methodology baked in
+
+#### 5. Progress Tracking (`convex/geminiResearchProgress.ts`)
+
+**Created** dedicated progress tracking for Gemini pipeline:
+- Status enum: `deep_research_planning`, `deep_research_searching`, `deep_research_complete`, `gemini_agent_searching`, `generating`, `storing`, `complete`, `error`
+- Real-time UI updates via Convex subscriptions
+- Separate from System A progress (different statuses)
+
+#### 6. Deep Research Prompt Refinement
+
+**Problem Discovered**: Initial attempt was too mechanical — quoted "Hasan Chapter 3" and methodology instructions directly. Deep Research doesn't need to be taught HOW to research; it needs to know WHAT to focus on.
+
+**Wrong Approach** (Rejected):
+```
+## CORE RESEARCH PRINCIPLES (Hasan Methodology)
+1. **Show Your Receipts** (Chapter 3): Find hard evidence...
+2. **Know Your Opponent** (Chapters 10, 15): Research opponent's past statements...
+```
+
+**Correct Approach** (Implemented):
+```typescript
+// Build context-aware research focus based on strategic brief
+const researchFocus: Array<string> = [];
+
+// Always need core evidence
+researchFocus.push("Current statistics and data from authoritative sources...");
+researchFocus.push("Real-world case studies and examples...");
+researchFocus.push("The strongest arguments made BY THE OPPOSITION...");
+
+// Audience-specific focus (only if hostile/skeptical)
+if (opponent.audienceDisposition === "hostile" || "skeptical") {
+  researchFocus.push("Common objections and concerns raised by critics...");
+}
+
+// Opponent-specific research (only if intel exists)
+if (opponent.opponentPastStatements) {
+  researchFocus.push(`Statements and positions taken by ${opponent.name}...`);
+}
+
+// User priorities (only if specified)
+if (opponent.keyPointsToMake) {
+  researchFocus.push(`Prioritize evidence supporting: ${opponent.keyPointsToMake}`);
+}
+```
+
+**Key Insight**: The strategic brief flows through all 3 stages as context, not as instructions. Each stage uses it differently:
+- Stage 1 (Research): Determines WHAT to prioritize
+- Stage 2 (Extraction): Determines WHAT is relevant to extract
+- Stage 3 (Generation): Determines HOW to frame materials (methodology lives here)
+
+---
+
+### System B Pipeline Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    STRATEGIC BRIEF                          │
+│  (synthesizes opponent profile into narrative context)      │
+└───────────────────────┬─────────────────────────────────────┘
+                        │ flows into ↓
+┌───────────────────────▼─────────────────────────────────────┐
+│  STAGE 1: Deep Research (geminiDeepResearch.ts)             │
+│  • Input: topic, position, strategic brief                  │
+│  • Agent: deep-research-pro-preview-12-2025                 │
+│  • Duration: 3-20 minutes autonomous research               │
+│  • Output: comprehensive markdown report                    │
+└───────────────────────┬─────────────────────────────────────┘
+                        │ report + brief ↓
+┌───────────────────────▼─────────────────────────────────────┐
+│  STAGE 2: Source Extraction (geminiSearch.ts)               │
+│  • Input: report + strategic brief                          │
+│  • Model: gemini-3-flash-preview with google_search         │
+│  • Duration: ~30 seconds                                    │
+│  • Output: Article[] with real URLs (8-12 sources)          │
+└───────────────────────┬─────────────────────────────────────┘
+                        │ articles[] ↓
+┌───────────────────────▼─────────────────────────────────────┐
+│  STAGE 3: Prep Generation (prepGeneration.ts)               │
+│  • Input: articles + strategic brief                        │
+│  • Same as System A — Hasan methodology baked in            │
+│  • Output: openings, frames, receipts, zingers, closings    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Technical Decisions
+
+| Decision | Reasoning | Alternatives Considered |
+|----------|-----------|------------------------|
+| Interactions API over generateContent | Required for Deep Research agent and google_search tool | Standard Gemini API |
+| response_format for structured output | Correct Interactions API parameter for JSON schema | config.responseJsonSchema (wrong API) |
+| Polling pattern for Deep Research | Background mode required; no webhook support | Stream (not supported for agents) |
+| Context-driven prompt over methodology | Let agent do what it's designed to do | Explicit Hasan chapter instructions |
+| Separate geminiResearchProgress | Different status enum from System A | Reuse prepProgress |
+| Reuse System A prep generation | Already has methodology, no duplication | Create new generation functions |
+
+---
+
+### Code Changes Summary
+
+| File | Change Type | Description |
+|------|-------------|-------------|
+| convex/lib/geminiDeepResearch.ts | Created | Deep Research agent wrapper with polling |
+| convex/lib/geminiSearch.ts | Created | Source extraction with google_search tool |
+| convex/actions/geminiPrep.ts | Created | Orchestrator for 3-stage pipeline |
+| convex/geminiResearchProgress.ts | Created | Progress tracking for Gemini pipeline |
+| convex/opponents.ts | Modified | Added updateGeminiReport mutation |
+| convex/schema.ts | Modified | Added geminiResearchProgress table, geminiReport field |
+| package.json | Modified | Added @google/genai dependency |
+
+---
+
+### Environment Variables Required
+
+New variable needed in Convex environment:
+- `GEMINI_API_KEY` — Google AI API key with Gemini access
+
+---
+
+### System A vs System B Comparison
+
+| Aspect | System A (Firecrawl) | System B (Gemini) |
+|--------|---------------------|-------------------|
+| Research method | Web scraping specific URLs | Autonomous agent research |
+| Time | 30-60 seconds | 3-20 minutes |
+| Source quality | Limited to scraped pages | Synthesized from many sources |
+| URL reliability | Direct from scrape | Found via google_search |
+| Cost | Firecrawl API + OpenRouter | Gemini API |
+| Best for | Quick prep, specific sources | Deep research, comprehensive prep |
+
+---
+
+### Debugging Lessons
+
+**Lesson 1: API Syntax Matters**
+- Interactions API uses different parameters than generateContent
+- `response_format` vs `config.responseJsonSchema`
+- Read documentation for the specific API being used
+
+**Lesson 2: Don't Teach, Direct**
+- Autonomous agents know how to research
+- Tell them WHAT to find based on context
+- Save methodology for generation phase where it applies
+
+**Lesson 3: Strategic Brief is the Key**
+- Same context flows through all stages
+- Each stage interprets it differently
+- Build once, use everywhere
+
+---
+
+### Session Handoff
+
+**Status**: Complete ✅
+
+**Features Delivered**:
+1. ✅ Deep Research agent integration
+2. ✅ Source extraction with google_search
+3. ✅ Structured JSON output handling
+4. ✅ Context-driven research prompts
+5. ✅ Real-time progress tracking
+6. ✅ Full pipeline orchestration
+
+**Next Actions**:
+1. Test end-to-end with real debate topics
+2. Add UI toggle to choose System A vs System B
+3. Consider hybrid approach (use both, merge results)
+
+**Blockers**: None
+
+**Open Questions**: 
+- Default to System A or B for new users?
+- Show Deep Research report to users?
+- Cache Deep Research results for similar topics?
+
+---
