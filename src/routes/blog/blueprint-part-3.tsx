@@ -14,6 +14,28 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/blog/blueprint-part-3")({
+  head: () => ({
+    meta: [
+      { title: "Debate Analysis: Know What Worked | DebateClub" },
+      {
+        name: "description",
+        content:
+          "Hasan Scores, technique breakdowns, and improvement tips. How DebateClub analyzes your debates so you know exactly what to fix next.",
+      },
+      {
+        property: "og:title",
+        content: "Debate Analysis: Know What Worked | DebateClub",
+      },
+      {
+        property: "og:description",
+        content:
+          "Hasan Scores, technique breakdowns, and improvement tips. How DebateClub analyzes your debates so you know exactly what to fix next.",
+      },
+      { property: "og:type", content: "article" },
+      { property: "og:image", content: "/images/landingpage.png" },
+      { property: "og:site_name", content: "DebateClub" },
+    ],
+  }),
   component: BlueprintPart3Article,
 });
 

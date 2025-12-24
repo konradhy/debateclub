@@ -1,0 +1,19 @@
+# DebateClub robots.txt
+# Allows search engines to index public pages, blocks authenticated routes
+
+User-agent: *
+
+# Allow all public pages
+Allow: /
+Allow: /blog/
+
+# Block authenticated app routes
+Disallow: /login/
+Disallow: /onboarding/
+Disallow: /dashboard/
+
+# Block API and internal routes (Convex handles its own API)
+Disallow: /api/
+
+
+

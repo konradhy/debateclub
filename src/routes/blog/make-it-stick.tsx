@@ -3,6 +3,28 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, List, Brain, Repeat } from "lucide-react";
 
 export const Route = createFileRoute("/blog/make-it-stick")({
+  head: () => ({
+    meta: [
+      { title: "Rule of Three: Structure Arguments That Stick | DebateClub" },
+      {
+        name: "description",
+        content:
+          "Three points. Three reasons. Three examples. Why the brain remembers threes — and how to structure every argument for maximum impact.",
+      },
+      {
+        property: "og:title",
+        content: "Rule of Three: Structure Arguments That Stick | DebateClub",
+      },
+      {
+        property: "og:description",
+        content:
+          "Three points. Three reasons. Three examples. Why the brain remembers threes — and how to structure every argument for maximum impact.",
+      },
+      { property: "og:type", content: "article" },
+      { property: "og:image", content: "/images/landingpage.png" },
+      { property: "og:site_name", content: "DebateClub" },
+    ],
+  }),
   component: MakeItStickArticle,
 });
 

@@ -3,6 +3,28 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Smile, Shield, Users } from "lucide-react";
 
 export const Route = createFileRoute("/blog/defuse-with-humor")({
+  head: () => ({
+    meta: [
+      { title: "Using Humor to Win Arguments | DebateClub" },
+      {
+        name: "description",
+        content:
+          "Build rapport. Lighten tension. Undermine opponents. The do's and don'ts of humor in high-stakes moments. Don't announce jokes.",
+      },
+      {
+        property: "og:title",
+        content: "Using Humor to Win Arguments | DebateClub",
+      },
+      {
+        property: "og:description",
+        content:
+          "Build rapport. Lighten tension. Undermine opponents. The do's and don'ts of humor in high-stakes moments. Don't announce jokes.",
+      },
+      { property: "og:type", content: "article" },
+      { property: "og:image", content: "/images/landingpage.png" },
+      { property: "og:site_name", content: "DebateClub" },
+    ],
+  }),
   component: DefuseWithHumorArticle,
 });
 

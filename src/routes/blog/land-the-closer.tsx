@@ -3,6 +3,28 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Zap, Clock, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/blog/land-the-closer")({
+  head: () => ({
+    meta: [
+      { title: "How to Deliver a Perfect Zinger | DebateClub" },
+      {
+        name: "description",
+        content:
+          '"Senator, you\'re no Jack Kennedy." The best lines are prepared in advance and delivered like they just occurred to you.',
+      },
+      {
+        property: "og:title",
+        content: "How to Deliver a Perfect Zinger | DebateClub",
+      },
+      {
+        property: "og:description",
+        content:
+          '"Senator, you\'re no Jack Kennedy." The best lines are prepared in advance and delivered like they just occurred to you.',
+      },
+      { property: "og:type", content: "article" },
+      { property: "og:image", content: "/images/landingpage.png" },
+      { property: "og:site_name", content: "DebateClub" },
+    ],
+  }),
   component: LandTheCloserArticle,
 });
 

@@ -9,6 +9,28 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/blog/spot-the-weakness")({
+  head: () => ({
+    meta: [
+      { title: "When to Attack Your Opponent's Credibility | DebateClub" },
+      {
+        name: "description",
+        content:
+          "Ad hominem isn't always a fallacy. The Three C's: challenge their character, credentials, and claims. Know when it's fair game.",
+      },
+      {
+        property: "og:title",
+        content: "When to Attack Your Opponent's Credibility | DebateClub",
+      },
+      {
+        property: "og:description",
+        content:
+          "Ad hominem isn't always a fallacy. The Three C's: challenge their character, credentials, and claims. Know when it's fair game.",
+      },
+      { property: "og:type", content: "article" },
+      { property: "og:image", content: "/images/landingpage.png" },
+      { property: "og:site_name", content: "DebateClub" },
+    ],
+  }),
   component: SpotTheWeaknessArticle,
 });
 

@@ -3,6 +3,32 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, RotateCcw, Shield, Swords } from "lucide-react";
 
 export const Route = createFileRoute("/blog/flip-their-momentum")({
+  head: () => ({
+    meta: [
+      {
+        title:
+          "The Judo Move: Use Their Strength Against Them | DebateClub",
+      },
+      {
+        name: "description",
+        content:
+          "Concede, preempt, reframe. Yield strategically, then redirect their momentum. Three rhetorical moves that flip losing positions.",
+      },
+      {
+        property: "og:title",
+        content:
+          "The Judo Move: Use Their Strength Against Them | DebateClub",
+      },
+      {
+        property: "og:description",
+        content:
+          "Concede, preempt, reframe. Yield strategically, then redirect their momentum. Three rhetorical moves that flip losing positions.",
+      },
+      { property: "og:type", content: "article" },
+      { property: "og:image", content: "/images/landingpage.png" },
+      { property: "og:site_name", content: "DebateClub" },
+    ],
+  }),
   component: FlipTheirMomentumArticle,
 });
 

@@ -9,6 +9,28 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/blog/ask-the-killer-question")({
+  head: () => ({
+    meta: [
+      { title: "Trap Questions That Expose Your Opponent | DebateClub" },
+      {
+        name: "description",
+        content:
+          "Quote them without revealing the source. When they disagree, reveal: \"Those were your words.\" Three traps that work every time.",
+      },
+      {
+        property: "og:title",
+        content: "Trap Questions That Expose Your Opponent | DebateClub",
+      },
+      {
+        property: "og:description",
+        content:
+          "Quote them without revealing the source. When they disagree, reveal: \"Those were your words.\" Three traps that work every time.",
+      },
+      { property: "og:type", content: "article" },
+      { property: "og:image", content: "/images/landingpage.png" },
+      { property: "og:site_name", content: "DebateClub" },
+    ],
+  }),
   component: AskTheKillerQuestionArticle,
 });
 

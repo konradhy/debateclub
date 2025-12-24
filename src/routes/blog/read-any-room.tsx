@@ -3,6 +3,28 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/blog/read-any-room")({
+  head: () => ({
+    meta: [
+      { title: "How to Read Your Audience in Any Debate | DebateClub" },
+      {
+        name: "description",
+        content:
+          "Skeptical investor? Hostile critic? Neutral crowd? Learn to spot the difference in 30 seconds and adjust your approach on the fly.",
+      },
+      {
+        property: "og:title",
+        content: "How to Read Your Audience in Any Debate | DebateClub",
+      },
+      {
+        property: "og:description",
+        content:
+          "Skeptical investor? Hostile critic? Neutral crowd? Learn to spot the difference in 30 seconds and adjust your approach on the fly.",
+      },
+      { property: "og:type", content: "article" },
+      { property: "og:image", content: "/images/landingpage.png" },
+      { property: "og:site_name", content: "DebateClub" },
+    ],
+  }),
   component: ReadAnyRoomArticle,
 });
 

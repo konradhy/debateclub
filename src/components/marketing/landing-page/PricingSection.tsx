@@ -78,6 +78,14 @@ export function PricingSection() {
                     /{tier.period}
                   </span>
                 </div>
+                {"annualPrice" in tier && tier.annualPrice && (
+                  <p
+                    className="mt-1 text-sm font-medium"
+                    style={{ color: "#A8B08C" }}
+                  >
+                    or {tier.annualPrice}
+                  </p>
+                )}
                 <p
                   className="mt-2 text-sm"
                   style={{ color: tier.highlighted ? "#C8C8B8" : "#5C5C54" }}

@@ -3,6 +3,28 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Heart, Brain, Mic } from "lucide-react";
 
 export const Route = createFileRoute("/blog/strike-emotional-chord")({
+  head: () => ({
+    meta: [
+      { title: "Why Emotion Beats Logic in Arguments | DebateClub" },
+      {
+        name: "description",
+        content:
+          "Facts don't change minds — feelings do. Master storytelling, word choice, and delivery that moves people. Hasan's pathos playbook.",
+      },
+      {
+        property: "og:title",
+        content: "Why Emotion Beats Logic in Arguments | DebateClub",
+      },
+      {
+        property: "og:description",
+        content:
+          "Facts don't change minds — feelings do. Master storytelling, word choice, and delivery that moves people. Hasan's pathos playbook.",
+      },
+      { property: "og:type", content: "article" },
+      { property: "og:image", content: "/images/landingpage.png" },
+      { property: "og:site_name", content: "DebateClub" },
+    ],
+  }),
   component: StrikeEmotionalChordArticle,
 });
 
@@ -87,8 +109,7 @@ function StrikeEmotionalChordArticle() {
             demanded: he failed to show that he was a human being who could
             feel. Mehdi Hasan opens Chapter 2 of "Win Every Argument" with this
             story because it illustrates the central insight of his entire
-            methodology:{" "}
-            <strong>pathos beats logos almost every time</strong>.
+            methodology: <strong>pathos beats logos almost every time</strong>.
           </p>
 
           {/* Section 1: The Neuroscience */}
@@ -109,8 +130,8 @@ function StrikeEmotionalChordArticle() {
             Neuroscientist Antonio Damasio's research shows that patients with
             damage to the emotional centers of their brains struggle to make
             even simple decisions, despite having fully functional logical
-            faculties. Emotion is not the enemy of reason. It is the engine
-            that drives it. Hasan quotes Damasio directly: "Humans are not just
+            faculties. Emotion is not the enemy of reason. It is the engine that
+            drives it. Hasan quotes Damasio directly: "Humans are not just
             thinking machines or feeling machines, but{" "}
             <strong>feeling machines that think</strong>."
           </p>
@@ -427,8 +448,8 @@ function StrikeEmotionalChordArticle() {
             </h4>
             <div className="space-y-3 text-sm" style={{ color: "#5C5C54" }}>
               <p>
-                <strong>Pacing:</strong> Start slow. Let the first sentence
-                land before continuing. The silence is where emotion lives.
+                <strong>Pacing:</strong> Start slow. Let the first sentence land
+                before continuing. The silence is where emotion lives.
               </p>
               <p>
                 <strong>Eye Contact:</strong> Pick three people in different
@@ -732,4 +753,3 @@ function StrikeEmotionalChordArticle() {
     </div>
   );
 }
-

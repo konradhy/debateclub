@@ -4,6 +4,28 @@ import { techniques } from "@/components/marketing/landing-page/data";
 import { ArrowLeft, ArrowRight, Feather, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/blog/")({
+  head: () => ({
+    meta: [
+      { title: "Debate Techniques from Win Every Argument | DebateClub" },
+      {
+        name: "description",
+        content:
+          "Master Mehdi Hasan's 12 techniques for winning any argument. Deep guides on evidence, emotion, zingers, and handling difficult opponents.",
+      },
+      {
+        property: "og:title",
+        content: "Debate Techniques from Win Every Argument | DebateClub",
+      },
+      {
+        property: "og:description",
+        content:
+          "Master Mehdi Hasan's 12 techniques for winning any argument. Deep guides on evidence, emotion, zingers, and handling difficult opponents.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: "/images/landingpage.png" },
+      { property: "og:site_name", content: "DebateClub" },
+    ],
+  }),
   component: BlogIndex,
 });
 

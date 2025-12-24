@@ -3,6 +3,28 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/blog/the-crossed-quills")({
+  head: () => ({
+    meta: [
+      { title: "The Story Behind Our Logo | DebateClub" },
+      {
+        name: "description",
+        content:
+          "Every symbol tells a story. The crossed quills connect DebateClub to 2,500 years of rhetoric — from Aristotle to the Oxford Union.",
+      },
+      {
+        property: "og:title",
+        content: "The Story Behind Our Logo | DebateClub",
+      },
+      {
+        property: "og:description",
+        content:
+          "Every symbol tells a story. The crossed quills connect DebateClub to 2,500 years of rhetoric — from Aristotle to the Oxford Union.",
+      },
+      { property: "og:type", content: "article" },
+      { property: "og:image", content: "/images/landingpage.png" },
+      { property: "og:site_name", content: "DebateClub" },
+    ],
+  }),
   component: TheCrossedQuillsArticle,
 });
 

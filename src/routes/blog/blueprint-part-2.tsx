@@ -14,6 +14,28 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/blog/blueprint-part-2")({
+  head: () => ({
+    meta: [
+      { title: "Practice Debates with AI Opponents | DebateClub" },
+      {
+        name: "description",
+        content:
+          "Voice-based sparring with real-time feedback. How DebateClub detects techniques, handles interruptions, and scores your performance live.",
+      },
+      {
+        property: "og:title",
+        content: "Practice Debates with AI Opponents | DebateClub",
+      },
+      {
+        property: "og:description",
+        content:
+          "Voice-based sparring with real-time feedback. How DebateClub detects techniques, handles interruptions, and scores your performance live.",
+      },
+      { property: "og:type", content: "article" },
+      { property: "og:image", content: "/images/landingpage.png" },
+      { property: "og:site_name", content: "DebateClub" },
+    ],
+  }),
   component: BlueprintPart2Article,
 });
 

@@ -3,6 +3,28 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, FileText, Search, Clock } from "lucide-react";
 
 export const Route = createFileRoute("/blog/back-it-up")({
+  head: () => ({
+    meta: [
+      { title: "How to Use Evidence to Win Arguments | DebateClub" },
+      {
+        name: "description",
+        content:
+          "Find it, time it, drop it. The best evidence isn't dumped — it's revealed at the perfect moment. From Win Every Argument, Chapter 3.",
+      },
+      {
+        property: "og:title",
+        content: "How to Use Evidence to Win Arguments | DebateClub",
+      },
+      {
+        property: "og:description",
+        content:
+          "Find it, time it, drop it. The best evidence isn't dumped — it's revealed at the perfect moment. From Win Every Argument, Chapter 3.",
+      },
+      { property: "og:type", content: "article" },
+      { property: "og:image", content: "/images/landingpage.png" },
+      { property: "og:site_name", content: "DebateClub" },
+    ],
+  }),
   component: BackItUpArticle,
 });
 

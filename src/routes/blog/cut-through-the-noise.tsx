@@ -3,6 +3,28 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Filter, Scissors, Target } from "lucide-react";
 
 export const Route = createFileRoute("/blog/cut-through-the-noise")({
+  head: () => ({
+    meta: [
+      { title: "How to Handle a Gish Gallop | DebateClub" },
+      {
+        name: "description",
+        content:
+          "They flood you with 10 bad arguments at once. Your move: pick one, don't budge, expose the tactic. The three-step defense.",
+      },
+      {
+        property: "og:title",
+        content: "How to Handle a Gish Gallop | DebateClub",
+      },
+      {
+        property: "og:description",
+        content:
+          "They flood you with 10 bad arguments at once. Your move: pick one, don't budge, expose the tactic. The three-step defense.",
+      },
+      { property: "og:type", content: "article" },
+      { property: "og:image", content: "/images/landingpage.png" },
+      { property: "og:site_name", content: "DebateClub" },
+    ],
+  }),
   component: CutThroughTheNoiseArticle,
 });
 
