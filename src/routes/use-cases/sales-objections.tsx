@@ -1,16 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import {
-  ArrowLeft,
-  ArrowRight,
-  DollarSign,
-  Target,
-  TrendingUp,
-  CheckCircle,
-  XCircle,
-  Zap,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/use-cases/sales-objections")({
   head: () => ({
@@ -69,575 +59,567 @@ function SalesObjectionsPage() {
       </header>
 
       {/* Hero */}
-      <section className="mx-auto max-w-4xl px-8 py-16">
+      <section className="mx-auto max-w-3xl px-8 py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <div
-            className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl"
-            style={{ backgroundColor: "#3C4A32" }}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
           >
-            <DollarSign className="h-8 w-8" style={{ color: "#C8D4B8" }} />
-          </div>
-          <h1
-            className="mb-6 text-4xl font-bold lg:text-5xl"
-            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
-          >
-            Handle Any Sales Objection
-          </h1>
-          <p
-            className="mx-auto max-w-2xl text-lg leading-relaxed"
+            <h1
+              className="mb-8 text-5xl font-bold leading-tight lg:text-6xl"
+              style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+            >
+              Handle Any Sales Objection
+            </h1>
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="mx-auto max-w-2xl text-xl leading-relaxed"
             style={{ color: "#5C5C54" }}
           >
             "Too expensive." "Need to think about it." "Send me some info." You
             have heard them all. Now practice handling them until your response
             is automatic.
-          </p>
+          </motion.p>
         </motion.div>
       </section>
 
       {/* The Stakes */}
+      <section className="mx-auto max-w-4xl px-8 py-24">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2
+            className="mb-16 text-3xl font-bold"
+            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+          >
+            What Is Actually at Stake
+          </h2>
+          <div className="space-y-10">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1, duration: 0.5 }}
+              className="border-l-4 pl-8"
+              style={{ borderColor: "#3C4A32" }}
+            >
+              <h3
+                className="mb-3 text-2xl font-bold"
+                style={{ color: "#2A2A20" }}
+              >
+                Close Rate
+              </h3>
+              <p
+                className="text-lg leading-relaxed"
+                style={{ color: "#5C5C54" }}
+              >
+                A 10% improvement in objection handling can double your close
+                rate. Every rep who freezes on "too expensive" is leaving money
+                on the table.
+              </p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="border-l-4 pl-8"
+              style={{ borderColor: "#5C6B4A" }}
+            >
+              <h3
+                className="mb-3 text-2xl font-bold"
+                style={{ color: "#2A2A20" }}
+              >
+                Deal Size
+              </h3>
+              <p
+                className="text-lg leading-relaxed"
+                style={{ color: "#5C5C54" }}
+              >
+                Discounting is often a failure of persuasion. Hold your price by
+                reframing value instead of caving.
+              </p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="border-l-4 pl-8"
+              style={{ borderColor: "#A8B08C" }}
+            >
+              <h3
+                className="mb-3 text-2xl font-bold"
+                style={{ color: "#2A2A20" }}
+              >
+                Confidence
+              </h3>
+              <p
+                className="text-lg leading-relaxed"
+                style={{ color: "#5C5C54" }}
+              >
+                Prospects smell fear. When you have practiced every objection,
+                you project the confidence that closes deals.
+              </p>
+            </motion.div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Divider */}
+      <div className="mx-auto max-w-4xl px-8">
+        <div
+          className="h-px"
+          style={{
+            background:
+              "linear-gradient(to right, transparent, #E8E4DA 50%, transparent)",
+          }}
+        />
+      </div>
+
+      {/* Why Traditional Prep Fails */}
       <section style={{ backgroundColor: "#FAFAF8" }}>
-        <div className="mx-auto max-w-4xl px-8 py-16">
+        <div className="mx-auto max-w-4xl px-8 py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.5 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
           >
             <h2
-              className="mb-8 text-2xl font-bold"
+              className="mb-16 text-3xl font-bold"
               style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
             >
-              What Is Actually at Stake
+              Why Traditional Sales Training Falls Short
             </h2>
-            <div className="grid gap-6 md:grid-cols-3">
-              <div
-                className="rounded-xl p-6"
-                style={{ backgroundColor: "#F5F3EF" }}
-              >
-                <TrendingUp
-                  className="mb-4 h-8 w-8"
-                  style={{ color: "#3C4A32" }}
-                />
-                <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
-                  Close Rate
-                </h3>
-                <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  A 10% improvement in objection handling can double your close
-                  rate. Every rep who freezes on "too expensive" is leaving
-                  money on the table.
-                </p>
-              </div>
-              <div
-                className="rounded-xl p-6"
-                style={{ backgroundColor: "#F5F3EF" }}
-              >
-                <Target className="mb-4 h-8 w-8" style={{ color: "#3C4A32" }} />
-                <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
-                  Deal Size
-                </h3>
-                <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  Discounting is often a failure of persuasion. Hold your price
-                  by reframing value instead of caving.
-                </p>
-              </div>
-              <div
-                className="rounded-xl p-6"
-                style={{ backgroundColor: "#F5F3EF" }}
-              >
-                <ShieldCheck
-                  className="mb-4 h-8 w-8"
-                  style={{ color: "#3C4A32" }}
-                />
-                <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
-                  Confidence
-                </h3>
-                <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  Prospects smell fear. When you have practiced every objection,
-                  you project the confidence that closes deals.
-                </p>
-              </div>
+            <div className="space-y-12">
+              {[
+                {
+                  title: "Role-plays at team meetings",
+                  text: "Awkward, in front of colleagues, and you only get a few reps. Not enough to build muscle memory.",
+                },
+                {
+                  title: "Objection handling scripts",
+                  text: "Reading a script is not speaking one. When the prospect goes off-script, you are on your own.",
+                },
+                {
+                  title: "Call recording review",
+                  text: "Great for seeing what went wrong. Terrible for practicing what to do right. You need reps, not replays.",
+                },
+                {
+                  title: "Learning on live deals",
+                  text: "Expensive way to learn. Every botched objection is a lost deal. Practice should happen before the call.",
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                >
+                  <h3
+                    className="mb-3 text-xl font-bold"
+                    style={{ color: "#2A2A20" }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p
+                    className="text-lg leading-relaxed"
+                    style={{ color: "#5C5C54" }}
+                  >
+                    {item.text}
+                  </p>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Why Traditional Prep Fails */}
-      <section className="mx-auto max-w-4xl px-8 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
-          <h2
-            className="mb-8 text-2xl font-bold"
-            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
-          >
-            Why Traditional Sales Training Falls Short
-          </h2>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div
-              className="flex items-start gap-4 rounded-xl p-5"
-              style={{ backgroundColor: "#FAFAF8" }}
-            >
-              <XCircle
-                className="mt-1 h-5 w-5 flex-shrink-0"
-                style={{ color: "#B8860B" }}
-              />
-              <div>
-                <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                  Role-plays at team meetings
-                </h3>
-                <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  Awkward, in front of colleagues, and you only get a few reps.
-                  Not enough to build muscle memory.
-                </p>
-              </div>
-            </div>
-            <div
-              className="flex items-start gap-4 rounded-xl p-5"
-              style={{ backgroundColor: "#FAFAF8" }}
-            >
-              <XCircle
-                className="mt-1 h-5 w-5 flex-shrink-0"
-                style={{ color: "#B8860B" }}
-              />
-              <div>
-                <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                  Objection handling scripts
-                </h3>
-                <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  Reading a script is not speaking one. When the prospect goes
-                  off-script, you are on your own.
-                </p>
-              </div>
-            </div>
-            <div
-              className="flex items-start gap-4 rounded-xl p-5"
-              style={{ backgroundColor: "#FAFAF8" }}
-            >
-              <XCircle
-                className="mt-1 h-5 w-5 flex-shrink-0"
-                style={{ color: "#B8860B" }}
-              />
-              <div>
-                <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                  Call recording review
-                </h3>
-                <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  Great for seeing what went wrong. Terrible for practicing what
-                  to do right. You need reps, not replays.
-                </p>
-              </div>
-            </div>
-            <div
-              className="flex items-start gap-4 rounded-xl p-5"
-              style={{ backgroundColor: "#FAFAF8" }}
-            >
-              <XCircle
-                className="mt-1 h-5 w-5 flex-shrink-0"
-                style={{ color: "#B8860B" }}
-              />
-              <div>
-                <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                  Learning on live deals
-                </h3>
-                <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  Expensive way to learn. Every botched objection is a lost
-                  deal. Practice should happen before the call.
-                </p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
       {/* The DebateClub Approach */}
-      <section style={{ backgroundColor: "#3C4A32" }}>
-        <div className="mx-auto max-w-4xl px-8 py-16">
+      <section
+        className="relative overflow-hidden"
+        style={{ backgroundColor: "#3C4A32" }}
+      >
+        {/* Premium background pattern */}
+        <div
+          className="absolute inset-0 opacity-5"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        />
+        <div className="relative mx-auto max-w-4xl px-8 py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
           >
             <h2
-              className="mb-8 text-2xl font-bold"
+              className="mb-20 text-3xl font-bold"
               style={{ color: "#FAFAF8", fontFamily: "Georgia, serif" }}
             >
               The DebateClub Approach
             </h2>
-            <div className="grid gap-6 md:grid-cols-3">
-              <div
-                className="rounded-xl p-6"
-                style={{ backgroundColor: "rgba(255,255,255,0.1)" }}
-              >
-                <div
-                  className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg font-bold"
-                  style={{ backgroundColor: "#C8D4B8", color: "#3C4A32" }}
+            <div className="space-y-16">
+              {[
+                {
+                  num: "1",
+                  title: "Pick Your Objection",
+                  text: "Price? Timing? Competitor? Set up the exact objection you struggle with. The AI prospect will hit you with it.",
+                },
+                {
+                  num: "2",
+                  title: "Handle It Live",
+                  text: "Voice-based practice. The AI does not accept weak responses. It follows up, pushes back, and tests your reframes.",
+                },
+                {
+                  num: "3",
+                  title: "Iterate Until Automatic",
+                  text: "Get scored. See the rewrite. Practice again. By rep 10, your response is instinct.",
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={item.num}
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.15, duration: 0.6 }}
+                  className="flex gap-10"
                 >
-                  1
-                </div>
-                <h3 className="mb-2 font-bold" style={{ color: "#FAFAF8" }}>
-                  Pick Your Objection
-                </h3>
-                <p className="text-sm" style={{ color: "#C8C8B8" }}>
-                  Price? Timing? Competitor? Set up the exact objection you
-                  struggle with. The AI prospect will hit you with it.
-                </p>
-              </div>
-              <div
-                className="rounded-xl p-6"
-                style={{ backgroundColor: "rgba(255,255,255,0.1)" }}
-              >
-                <div
-                  className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg font-bold"
-                  style={{ backgroundColor: "#C8D4B8", color: "#3C4A32" }}
-                >
-                  2
-                </div>
-                <h3 className="mb-2 font-bold" style={{ color: "#FAFAF8" }}>
-                  Handle It Live
-                </h3>
-                <p className="text-sm" style={{ color: "#C8C8B8" }}>
-                  Voice-based practice. The AI does not accept weak responses.
-                  It follows up, pushes back, and tests your reframes.
-                </p>
-              </div>
-              <div
-                className="rounded-xl p-6"
-                style={{ backgroundColor: "rgba(255,255,255,0.1)" }}
-              >
-                <div
-                  className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg font-bold"
-                  style={{ backgroundColor: "#C8D4B8", color: "#3C4A32" }}
-                >
-                  3
-                </div>
-                <h3 className="mb-2 font-bold" style={{ color: "#FAFAF8" }}>
-                  Iterate Until Automatic
-                </h3>
-                <p className="text-sm" style={{ color: "#C8C8B8" }}>
-                  Get scored. See the rewrite. Practice again. By rep 10, your
-                  response is instinct.
-                </p>
-              </div>
+                  <div
+                    className="flex h-20 w-20 flex-shrink-0 items-center justify-center text-5xl font-bold"
+                    style={{ color: "#A8B08C" }}
+                  >
+                    {item.num}
+                  </div>
+                  <div className="pt-3">
+                    <h3
+                      className="mb-4 text-2xl font-bold"
+                      style={{ color: "#FAFAF8" }}
+                    >
+                      {item.title}
+                    </h3>
+                    <p
+                      className="text-lg leading-relaxed"
+                      style={{ color: "#C8D4B8" }}
+                    >
+                      {item.text}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* Common Objections */}
-      <section className="mx-auto max-w-4xl px-8 py-16">
+      <section className="mx-auto max-w-4xl px-8 py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
         >
           <h2
-            className="mb-8 text-2xl font-bold"
+            className="mb-16 text-3xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
             Objections You Will Master
           </h2>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div
-              className="rounded-xl p-5"
-              style={{ backgroundColor: "#FAFAF8" }}
-            >
-              <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
-                "It's too expensive"
-              </h3>
-              <p className="text-sm" style={{ color: "#5C5C54" }}>
-                Reframe from price to value. Quantify the cost of the problem
-                they are not solving.
-              </p>
-            </div>
-            <div
-              className="rounded-xl p-5"
-              style={{ backgroundColor: "#FAFAF8" }}
-            >
-              <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
-                "I need to think about it"
-              </h3>
-              <p className="text-sm" style={{ color: "#5C5C54" }}>
-                Surface the real concern. "What specifically are you weighing?"
-                turns delay into dialogue.
-              </p>
-            </div>
-            <div
-              className="rounded-xl p-5"
-              style={{ backgroundColor: "#FAFAF8" }}
-            >
-              <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
-                "Send me some info"
-              </h3>
-              <p className="text-sm" style={{ color: "#5C5C54" }}>
-                A polite brush-off. Redirect to what would make the info useful.
-                Book the follow-up before hanging up.
-              </p>
-            </div>
-            <div
-              className="rounded-xl p-5"
-              style={{ backgroundColor: "#FAFAF8" }}
-            >
-              <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
-                "We're using [Competitor]"
-              </h3>
-              <p className="text-sm" style={{ color: "#5C5C54" }}>
-                Respect the current choice. Find the gap they wish was filled.
-                Position as complement or replacement.
-              </p>
-            </div>
-            <div
-              className="rounded-xl p-5"
-              style={{ backgroundColor: "#FAFAF8" }}
-            >
-              <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
-                "Now's not the right time"
-              </h3>
-              <p className="text-sm" style={{ color: "#5C5C54" }}>
-                Validate the timing concern. Quantify what waiting costs. Make
-                starting easy.
-              </p>
-            </div>
-            <div
-              className="rounded-xl p-5"
-              style={{ backgroundColor: "#FAFAF8" }}
-            >
-              <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
-                "I need to check with my [boss/partner]"
-              </h3>
-              <p className="text-sm" style={{ color: "#5C5C54" }}>
-                Arm your champion. "What do they care most about?" Give them the
-                ammunition to sell internally.
-              </p>
-            </div>
+          <div className="space-y-12">
+            {[
+              {
+                title: '"It\'s too expensive"',
+                text: "Reframe from price to value. Quantify the cost of the problem they are not solving.",
+              },
+              {
+                title: '"I need to think about it"',
+                text: 'Surface the real concern. "What specifically are you weighing?" turns delay into dialogue.',
+              },
+              {
+                title: '"Send me some info"',
+                text: "A polite brush-off. Redirect to what would make the info useful. Book the follow-up before hanging up.",
+              },
+              {
+                title: '"We\'re using [Competitor]"',
+                text: "Respect the current choice. Find the gap they wish was filled. Position as complement or replacement.",
+              },
+              {
+                title: '"Now\'s not the right time"',
+                text: "Validate the timing concern. Quantify what waiting costs. Make starting easy.",
+              },
+              {
+                title: '"I need to check with my [boss/partner]"',
+                text: 'Arm your champion. "What do they care most about?" Give them the ammunition to sell internally.',
+              },
+            ].map((scenario, index) => (
+              <motion.div
+                key={scenario.title}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+              >
+                <h3
+                  className="mb-3 text-xl font-bold"
+                  style={{ color: "#2A2A20" }}
+                >
+                  {scenario.title}
+                </h3>
+                <p
+                  className="text-lg leading-relaxed"
+                  style={{ color: "#5C5C54" }}
+                >
+                  {scenario.text}
+                </p>
+              </motion.div>
+            ))}
           </div>
         </motion.div>
       </section>
 
+      {/* Divider */}
+      <div className="mx-auto max-w-4xl px-8">
+        <div
+          className="h-px"
+          style={{
+            background:
+              "linear-gradient(to right, transparent, #E8E4DA 50%, transparent)",
+          }}
+        />
+      </div>
+
       {/* Techniques That Matter */}
       <section style={{ backgroundColor: "#FAFAF8" }}>
-        <div className="mx-auto max-w-4xl px-8 py-16">
+        <div className="mx-auto max-w-4xl px-8 py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
           >
             <h2
-              className="mb-4 text-2xl font-bold"
+              className="mb-6 text-3xl font-bold"
               style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
             >
               Techniques That Close Deals
             </h2>
-            <p className="mb-8" style={{ color: "#5C5C54" }}>
+            <p className="mb-16 text-lg" style={{ color: "#5C5C54" }}>
               From the 12 core techniques, these four matter most in sales:
             </p>
-            <div className="grid gap-4 md:grid-cols-2">
-              <Link
-                to="/blog/flip-their-momentum"
-                className="flex items-start gap-4 rounded-xl p-5 transition-shadow hover:shadow-lg"
-                style={{ backgroundColor: "#F5F3EF" }}
-              >
-                <Zap
-                  className="mt-1 h-5 w-5 flex-shrink-0"
-                  style={{ color: "#3C4A32" }}
-                />
-                <div>
-                  <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                    Flip Their Momentum
-                  </h3>
-                  <p className="text-sm" style={{ color: "#5C5C54" }}>
-                    "You're right, it is an investment. That's exactly why..."
-                    Concede, then redirect.
-                  </p>
-                </div>
-              </Link>
-              <Link
-                to="/blog/ask-the-killer-question"
-                className="flex items-start gap-4 rounded-xl p-5 transition-shadow hover:shadow-lg"
-                style={{ backgroundColor: "#F5F3EF" }}
-              >
-                <Zap
-                  className="mt-1 h-5 w-5 flex-shrink-0"
-                  style={{ color: "#3C4A32" }}
-                />
-                <div>
-                  <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                    Ask the Killer Question
-                  </h3>
-                  <p className="text-sm" style={{ color: "#5C5C54" }}>
-                    "What happens if you do nothing for another quarter?"
-                    Questions that make prospects sell themselves.
-                  </p>
-                </div>
-              </Link>
-              <Link
-                to="/blog/strike-emotional-chord"
-                className="flex items-start gap-4 rounded-xl p-5 transition-shadow hover:shadow-lg"
-                style={{ backgroundColor: "#F5F3EF" }}
-              >
-                <Zap
-                  className="mt-1 h-5 w-5 flex-shrink-0"
-                  style={{ color: "#3C4A32" }}
-                />
-                <div>
-                  <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                    Strike an Emotional Chord
-                  </h3>
-                  <p className="text-sm" style={{ color: "#5C5C54" }}>
-                    People buy on emotion, justify with logic. Paint the picture
-                    of life after the problem is solved.
-                  </p>
-                </div>
-              </Link>
-              <Link
-                to="/blog/back-it-up"
-                className="flex items-start gap-4 rounded-xl p-5 transition-shadow hover:shadow-lg"
-                style={{ backgroundColor: "#F5F3EF" }}
-              >
-                <Zap
-                  className="mt-1 h-5 w-5 flex-shrink-0"
-                  style={{ color: "#3C4A32" }}
-                />
-                <div>
-                  <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                    Back It Up
-                  </h3>
-                  <p className="text-sm" style={{ color: "#5C5C54" }}>
-                    "Companies like yours see 3x ROI in 6 months." Specific
-                    receipts beat vague promises.
-                  </p>
-                </div>
-              </Link>
+            <div className="grid gap-6 md:grid-cols-2">
+              {[
+                {
+                  to: "/blog/flip-their-momentum",
+                  title: "Flip Their Momentum",
+                  text: "\"You're right, it is an investment. That's exactly why...\" Concede, then redirect.",
+                },
+                {
+                  to: "/blog/ask-the-killer-question",
+                  title: "Ask the Killer Question",
+                  text: '"What happens if you do nothing for another quarter?" Questions that make prospects sell themselves.',
+                },
+                {
+                  to: "/blog/strike-emotional-chord",
+                  title: "Strike an Emotional Chord",
+                  text: "People buy on emotion, justify with logic. Paint the picture of life after the problem is solved.",
+                },
+                {
+                  to: "/blog/back-it-up",
+                  title: "Back It Up",
+                  text: '"Companies like yours see 3x ROI in 6 months." Specific receipts beat vague promises.',
+                },
+              ].map((technique, index) => (
+                <motion.div
+                  key={technique.to}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                >
+                  <Link
+                    to={technique.to}
+                    className="group block h-full rounded-xl border-2 p-8 transition-all hover:-translate-y-1 hover:shadow-xl"
+                    style={{
+                      backgroundColor: "#F5F3EF",
+                      borderColor: "#E8E4DA",
+                    }}
+                  >
+                    <h3
+                      className="mb-4 text-xl font-bold transition-colors group-hover:underline"
+                      style={{ color: "#2A2A20" }}
+                    >
+                      {technique.title}
+                    </h3>
+                    <p
+                      className="text-base leading-relaxed"
+                      style={{ color: "#5C5C54" }}
+                    >
+                      {technique.text}
+                    </p>
+                  </Link>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* Before/After */}
-      <section className="mx-auto max-w-4xl px-8 py-16">
+      <section className="mx-auto max-w-4xl px-8 py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
         >
           <h2
-            className="mb-8 text-2xl font-bold"
+            className="mb-16 text-3xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
             Before and After Practice
           </h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            <div
-              className="rounded-xl p-6"
-              style={{ backgroundColor: "#FFF5F5" }}
+          <div className="grid gap-12 md:grid-cols-2">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5 }}
             >
-              <h3 className="mb-4 font-bold" style={{ color: "#7C2D2D" }}>
+              <div
+                className="mb-8 inline-block rounded-full px-6 py-2 text-sm font-bold uppercase tracking-wider shadow-sm"
+                style={{ backgroundColor: "#FFF5F5", color: "#7C2D2D" }}
+              >
                 Before: Reacting
-              </h3>
-              <ul className="space-y-2 text-sm" style={{ color: "#5C5C54" }}>
-                <li className="flex items-start gap-2">
-                  <XCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#DC2626" }}
-                  />
-                  Discount immediately when price comes up
-                </li>
-                <li className="flex items-start gap-2">
-                  <XCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#DC2626" }}
-                  />
-                  Accept "let me think about it" at face value
-                </li>
-                <li className="flex items-start gap-2">
-                  <XCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#DC2626" }}
-                  />
-                  Lose deals to competitors without knowing why
-                </li>
-                <li className="flex items-start gap-2">
-                  <XCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#DC2626" }}
-                  />
-                  Feel the "no" before you hear it
-                </li>
+              </div>
+              <ul className="space-y-5">
+                {[
+                  "Discount immediately when price comes up",
+                  'Accept "let me think about it" at face value',
+                  "Lose deals to competitors without knowing why",
+                  'Feel the "no" before you hear it',
+                ].map((item, index) => (
+                  <motion.li
+                    key={index}
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + index * 0.1, duration: 0.4 }}
+                    className="text-lg leading-relaxed"
+                    style={{ color: "#5C5C54" }}
+                  >
+                    {item}
+                  </motion.li>
+                ))}
               </ul>
-            </div>
-            <div
-              className="rounded-xl p-6"
-              style={{ backgroundColor: "#F0FDF4" }}
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5 }}
             >
-              <h3 className="mb-4 font-bold" style={{ color: "#166534" }}>
+              <div
+                className="mb-8 inline-block rounded-full px-6 py-2 text-sm font-bold uppercase tracking-wider shadow-sm"
+                style={{ backgroundColor: "#F0FDF4", color: "#166534" }}
+              >
                 After: Responding
-              </h3>
-              <ul className="space-y-2 text-sm" style={{ color: "#5C5C54" }}>
-                <li className="flex items-start gap-2">
-                  <CheckCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#16A34A" }}
-                  />
-                  Reframe price as investment with practiced language
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#16A34A" }}
-                  />
-                  Surface real concerns with killer questions
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#16A34A" }}
-                  />
-                  Handle competitive objections with confidence
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#16A34A" }}
-                  />
-                  Stay composed because you have done this 50 times
-                </li>
+              </div>
+              <ul className="space-y-5">
+                {[
+                  "Reframe price as investment with practiced language",
+                  "Surface real concerns with killer questions",
+                  "Handle competitive objections with confidence",
+                  "Stay composed because you have done this 50 times",
+                ].map((item, index) => (
+                  <motion.li
+                    key={index}
+                    initial={{ opacity: 0, x: 10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + index * 0.1, duration: 0.4 }}
+                    className="text-lg leading-relaxed"
+                    style={{ color: "#5C5C54" }}
+                  >
+                    {item}
+                  </motion.li>
+                ))}
               </ul>
-            </div>
+            </motion.div>
           </div>
         </motion.div>
       </section>
 
       {/* CTA */}
-      <section style={{ backgroundColor: "#3C4A32" }}>
-        <div className="mx-auto max-w-4xl px-8 py-16 text-center">
+      <section
+        className="relative overflow-hidden"
+        style={{ backgroundColor: "#3C4A32" }}
+      >
+        {/* Premium background pattern */}
+        <div
+          className="absolute inset-0 opacity-5"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        />
+        <div className="relative mx-auto max-w-4xl px-8 py-24 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.5 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
           >
-            <h2
-              className="mb-4 text-3xl font-bold"
+            <motion.h2
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="mb-6 text-4xl font-bold lg:text-5xl"
               style={{ color: "#FAFAF8", fontFamily: "Georgia, serif" }}
             >
               Your Pipeline Is Waiting
-            </h2>
-            <p className="mb-8" style={{ color: "#C8C8B8" }}>
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="mb-12 text-lg"
+              style={{ color: "#C8D4B8" }}
+            >
               Pick your toughest objection. Practice until it is automatic.
               Close more deals this quarter.
-            </p>
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-2 rounded-full px-8 py-4 text-lg font-semibold transition-all hover:gap-3"
-              style={{ backgroundColor: "#FAFAF8", color: "#3C4A32" }}
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.5 }}
             >
-              Start Practicing Free
-              <ArrowRight className="h-5 w-5" />
-            </Link>
+              <Link
+                to="/login"
+                className="group inline-flex items-center gap-3 rounded-full px-10 py-5 text-lg font-semibold shadow-2xl transition-all hover:gap-4 hover:shadow-xl"
+                style={{ backgroundColor: "#FAFAF8", color: "#3C4A32" }}
+              >
+                Start Practicing Free
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </motion.div>
           </motion.div>
         </div>
       </section>

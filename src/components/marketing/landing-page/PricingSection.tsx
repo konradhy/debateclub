@@ -9,34 +9,34 @@ import { pricingTiers } from "./data";
  */
 export function PricingSection() {
   return (
-    <section id="pricing" className="w-full py-28" style={{ backgroundColor: "#F5F3EF" }}>
-      <div className="mx-auto max-w-5xl px-8">
+    <section id="pricing" className="w-full py-12 sm:py-20 lg:py-28" style={{ backgroundColor: "#F5F3EF" }}>
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <motion.div
-          className="mb-16 text-center"
+          className="mb-10 sm:mb-14 lg:mb-16 text-center"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.5 }}
         >
-          <p className="mb-2 text-base" style={{ color: "#888880" }}>
+          <p className="mb-2 text-sm sm:text-base" style={{ color: "#888880" }}>
             Pricing
           </p>
           <h2
-            className="mb-4 text-4xl font-bold lg:text-5xl"
+            className="mb-4 text-3xl sm:text-4xl lg:text-5xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
             Simple, Transparent Pricing
           </h2>
-          <p className="mx-auto max-w-xl text-lg" style={{ color: "#5C5C54" }}>
+          <p className="mx-auto max-w-xl text-base sm:text-lg" style={{ color: "#5C5C54" }}>
             Start free and upgrade when you're ready to unlock unlimited practice sessions.
           </p>
         </motion.div>
 
-        <div className="flex justify-center gap-8">
+        <div className="flex flex-col sm:flex-row justify-center gap-6 sm:gap-8">
           {pricingTiers.map((tier, index) => (
             <motion.div
               key={tier.name}
-              className="relative w-80 rounded-2xl p-8"
+              className="relative w-full sm:w-80 rounded-2xl p-6 sm:p-8"
               style={{
                 backgroundColor: tier.highlighted ? "#3C4A32" : "#FAFAF8",
                 boxShadow: tier.highlighted
@@ -50,7 +50,7 @@ export function PricingSection() {
             >
               {tier.highlighted && (
                 <div
-                  className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-xs font-semibold"
+                  className="absolute -top-3 sm:-top-4 left-1/2 -translate-x-1/2 rounded-full px-3 sm:px-4 py-1 text-xs font-semibold"
                   style={{ backgroundColor: "#A8B08C", color: "#2A2A20" }}
                 >
                   Most Popular
@@ -59,14 +59,14 @@ export function PricingSection() {
 
               <div className="mb-6">
                 <h3
-                  className="mb-2 text-xl font-bold"
+                  className="mb-2 text-lg sm:text-xl font-bold"
                   style={{ color: tier.highlighted ? "#FAFAF8" : "#2A2A20" }}
                 >
                   {tier.name}
                 </h3>
                 <div className="flex items-baseline gap-1">
                   <span
-                    className="text-4xl font-bold"
+                    className="text-3xl sm:text-4xl font-bold"
                     style={{ color: tier.highlighted ? "#FAFAF8" : "#2A2A20" }}
                   >
                     {tier.price}

@@ -1,16 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Briefcase,
-  MessageSquare,
-  Target,
-  TrendingUp,
-  CheckCircle,
-  XCircle,
-  Zap,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, MoveRight } from "lucide-react";
 
 export const Route = createFileRoute("/use-cases/job-interviews")({
   head: () => ({
@@ -69,556 +59,618 @@ function JobInterviewsPage() {
       </header>
 
       {/* Hero */}
-      <section className="mx-auto max-w-4xl px-8 py-16">
+      <section className="mx-auto max-w-3xl px-8 py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <div
-            className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl"
-            style={{ backgroundColor: "#3C4A32" }}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
           >
-            <Briefcase className="h-8 w-8" style={{ color: "#C8D4B8" }} />
-          </div>
-          <h1
-            className="mb-6 text-4xl font-bold lg:text-5xl"
-            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
-          >
-            Nail Your Next Job Interview
-          </h1>
-          <p
-            className="mx-auto max-w-2xl text-lg leading-relaxed"
+            <h1
+              className="mb-8 text-5xl font-bold leading-tight lg:text-6xl"
+              style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+            >
+              Nail Your Next
+              <br />
+              Job Interview
+            </h1>
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="mx-auto max-w-2xl text-xl leading-relaxed"
             style={{ color: "#5C5C54" }}
           >
             The difference between getting the offer and getting ghosted often
             comes down to how you handle three or four key moments. Practice
             those moments until they are second nature.
-          </p>
+          </motion.p>
         </motion.div>
       </section>
 
       {/* The Stakes */}
+      <section className="mx-auto max-w-4xl px-8 py-24">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2
+            className="mb-16 text-3xl font-bold"
+            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+          >
+            What Is Actually at Stake
+          </h2>
+          <div className="space-y-10">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1, duration: 0.5 }}
+              className="border-l-4 pl-8"
+              style={{ borderColor: "#3C4A32" }}
+            >
+              <h3
+                className="mb-3 text-2xl font-bold"
+                style={{ color: "#2A2A20" }}
+              >
+                Salary Differential
+              </h3>
+              <p
+                className="text-lg leading-relaxed"
+                style={{ color: "#5C5C54" }}
+              >
+                A weak negotiation costs you $5K-$20K per year. Over a career,
+                that compounds to hundreds of thousands.
+              </p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="border-l-4 pl-8"
+              style={{ borderColor: "#5C6B4A" }}
+            >
+              <h3
+                className="mb-3 text-2xl font-bold"
+                style={{ color: "#2A2A20" }}
+              >
+                Career Trajectory
+              </h3>
+              <p
+                className="text-lg leading-relaxed"
+                style={{ color: "#5C5C54" }}
+              >
+                The right role at the right company changes everything. One
+                interview can redirect your entire career path.
+              </p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="border-l-4 pl-8"
+              style={{ borderColor: "#A8B08C" }}
+            >
+              <h3
+                className="mb-3 text-2xl font-bold"
+                style={{ color: "#2A2A20" }}
+              >
+                Confidence Compound
+              </h3>
+              <p
+                className="text-lg leading-relaxed"
+                style={{ color: "#5C5C54" }}
+              >
+                Confidence in interviews comes from reps. Without practice, you
+                walk in hoping. With practice, you walk in knowing.
+              </p>
+            </motion.div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Divider */}
+      <div className="mx-auto max-w-4xl px-8">
+        <div
+          className="h-px"
+          style={{
+            background:
+              "linear-gradient(to right, transparent, #E8E4DA 50%, transparent)",
+          }}
+        />
+      </div>
+
+      {/* Why Traditional Prep Fails */}
       <section style={{ backgroundColor: "#FAFAF8" }}>
-        <div className="mx-auto max-w-4xl px-8 py-16">
+        <div className="mx-auto max-w-4xl px-8 py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.5 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
           >
             <h2
-              className="mb-8 text-2xl font-bold"
+              className="mb-16 text-3xl font-bold"
               style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
             >
-              What Is Actually at Stake
+              Why Traditional Interview Prep Fails
             </h2>
-            <div className="grid gap-6 md:grid-cols-3">
-              <div
-                className="rounded-xl p-6"
-                style={{ backgroundColor: "#F5F3EF" }}
-              >
-                <TrendingUp
-                  className="mb-4 h-8 w-8"
-                  style={{ color: "#3C4A32" }}
-                />
-                <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
-                  Salary Differential
-                </h3>
-                <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  A weak negotiation costs you $5K-$20K per year. Over a career,
-                  that compounds to hundreds of thousands.
-                </p>
-              </div>
-              <div
-                className="rounded-xl p-6"
-                style={{ backgroundColor: "#F5F3EF" }}
-              >
-                <Target className="mb-4 h-8 w-8" style={{ color: "#3C4A32" }} />
-                <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
-                  Career Trajectory
-                </h3>
-                <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  The right role at the right company changes everything. One
-                  interview can redirect your entire career path.
-                </p>
-              </div>
-              <div
-                className="rounded-xl p-6"
-                style={{ backgroundColor: "#F5F3EF" }}
-              >
-                <MessageSquare
-                  className="mb-4 h-8 w-8"
-                  style={{ color: "#3C4A32" }}
-                />
-                <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
-                  Confidence Compound
-                </h3>
-                <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  Confidence in interviews comes from reps. Without practice,
-                  you walk in hoping. With practice, you walk in knowing.
-                </p>
-              </div>
+            <div className="space-y-12">
+              {[
+                {
+                  title: "Reading articles",
+                  text: "You know the STAR method. You have read the top 50 behavioral questions. But reading is not speaking. When the pressure hits, knowledge evaporates.",
+                },
+                {
+                  title: "Practicing in the mirror",
+                  text: "Mirrors do not interrupt. They do not ask follow-up questions. They do not throw curveballs. Real interviewers do.",
+                },
+                {
+                  title: "Asking friends to mock interview",
+                  text: "Friends are too nice. They do not push. They accept your first answer instead of pressing for specifics.",
+                },
+                {
+                  title: "One-off career coaching",
+                  text: "$200/hour for one session. No repetition. No way to practice the same scenario until it is automatic.",
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                >
+                  <h3
+                    className="mb-3 text-xl font-bold"
+                    style={{ color: "#2A2A20" }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p
+                    className="text-lg leading-relaxed"
+                    style={{ color: "#5C5C54" }}
+                  >
+                    {item.text}
+                  </p>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Why Traditional Prep Fails */}
-      <section className="mx-auto max-w-4xl px-8 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
-          <h2
-            className="mb-8 text-2xl font-bold"
-            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
-          >
-            Why Traditional Interview Prep Fails
-          </h2>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div
-              className="flex items-start gap-4 rounded-xl p-5"
-              style={{ backgroundColor: "#FAFAF8" }}
-            >
-              <XCircle
-                className="mt-1 h-5 w-5 flex-shrink-0"
-                style={{ color: "#B8860B" }}
-              />
-              <div>
-                <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                  Reading articles
-                </h3>
-                <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  You know the STAR method. You have read the top 50 behavioral
-                  questions. But reading is not speaking. When the pressure
-                  hits, knowledge evaporates.
-                </p>
-              </div>
-            </div>
-            <div
-              className="flex items-start gap-4 rounded-xl p-5"
-              style={{ backgroundColor: "#FAFAF8" }}
-            >
-              <XCircle
-                className="mt-1 h-5 w-5 flex-shrink-0"
-                style={{ color: "#B8860B" }}
-              />
-              <div>
-                <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                  Practicing in the mirror
-                </h3>
-                <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  Mirrors do not interrupt. They do not ask follow-up questions.
-                  They do not throw curveballs. Real interviewers do.
-                </p>
-              </div>
-            </div>
-            <div
-              className="flex items-start gap-4 rounded-xl p-5"
-              style={{ backgroundColor: "#FAFAF8" }}
-            >
-              <XCircle
-                className="mt-1 h-5 w-5 flex-shrink-0"
-                style={{ color: "#B8860B" }}
-              />
-              <div>
-                <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                  Asking friends to mock interview
-                </h3>
-                <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  Friends are too nice. They do not push. They accept your first
-                  answer instead of pressing for specifics.
-                </p>
-              </div>
-            </div>
-            <div
-              className="flex items-start gap-4 rounded-xl p-5"
-              style={{ backgroundColor: "#FAFAF8" }}
-            >
-              <XCircle
-                className="mt-1 h-5 w-5 flex-shrink-0"
-                style={{ color: "#B8860B" }}
-              />
-              <div>
-                <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                  One-off career coaching
-                </h3>
-                <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  $200/hour for one session. No repetition. No way to practice
-                  the same scenario until it is automatic.
-                </p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
       {/* The DebateClub Approach */}
-      <section style={{ backgroundColor: "#3C4A32" }}>
-        <div className="mx-auto max-w-4xl px-8 py-16">
+      <section className="relative overflow-hidden" style={{ backgroundColor: "#3C4A32" }}>
+        {/* Premium background pattern */}
+        <div
+          className="absolute inset-0 opacity-5"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        />
+        <div className="relative mx-auto max-w-4xl px-8 py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
           >
             <h2
-              className="mb-8 text-2xl font-bold"
+              className="mb-20 text-3xl font-bold"
               style={{ color: "#FAFAF8", fontFamily: "Georgia, serif" }}
             >
               The DebateClub Approach
             </h2>
-            <div className="grid gap-6 md:grid-cols-3">
-              <div
-                className="rounded-xl p-6"
-                style={{ backgroundColor: "rgba(255,255,255,0.1)" }}
-              >
-                <div
-                  className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg font-bold"
-                  style={{ backgroundColor: "#C8D4B8", color: "#3C4A32" }}
+            <div className="space-y-16">
+              {[
+                {
+                  num: "1",
+                  title: "Set Up Your Scenario",
+                  text: "Tell us the role, company, and your background. The AI interviewer adapts to your specific situation.",
+                },
+                {
+                  num: "2",
+                  title: "Practice Out Loud",
+                  text: "Voice-based practice. The AI asks follow-ups, challenges weak answers, and does not let you off easy.",
+                },
+                {
+                  num: "3",
+                  title: "Get Scored and Improve",
+                  text: "See exactly where you were strong and where you lost them. Rewritten answers show you what great looks like.",
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={item.num}
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.15, duration: 0.6 }}
+                  className="flex gap-10"
                 >
-                  1
-                </div>
-                <h3 className="mb-2 font-bold" style={{ color: "#FAFAF8" }}>
-                  Set Up Your Scenario
-                </h3>
-                <p className="text-sm" style={{ color: "#C8C8B8" }}>
-                  Tell us the role, company, and your background. The AI
-                  interviewer adapts to your specific situation.
-                </p>
-              </div>
-              <div
-                className="rounded-xl p-6"
-                style={{ backgroundColor: "rgba(255,255,255,0.1)" }}
-              >
-                <div
-                  className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg font-bold"
-                  style={{ backgroundColor: "#C8D4B8", color: "#3C4A32" }}
-                >
-                  2
-                </div>
-                <h3 className="mb-2 font-bold" style={{ color: "#FAFAF8" }}>
-                  Practice Out Loud
-                </h3>
-                <p className="text-sm" style={{ color: "#C8C8B8" }}>
-                  Voice-based practice. The AI asks follow-ups, challenges weak
-                  answers, and does not let you off easy.
-                </p>
-              </div>
-              <div
-                className="rounded-xl p-6"
-                style={{ backgroundColor: "rgba(255,255,255,0.1)" }}
-              >
-                <div
-                  className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg font-bold"
-                  style={{ backgroundColor: "#C8D4B8", color: "#3C4A32" }}
-                >
-                  3
-                </div>
-                <h3 className="mb-2 font-bold" style={{ color: "#FAFAF8" }}>
-                  Get Scored and Improve
-                </h3>
-                <p className="text-sm" style={{ color: "#C8C8B8" }}>
-                  See exactly where you were strong and where you lost them.
-                  Rewritten answers show you what great looks like.
-                </p>
-              </div>
+                  <div
+                    className="flex h-20 w-20 flex-shrink-0 items-center justify-center text-5xl font-bold"
+                    style={{ color: "#A8B08C" }}
+                  >
+                    {item.num}
+                  </div>
+                  <div className="pt-3">
+                    <h3
+                      className="mb-4 text-2xl font-bold"
+                      style={{ color: "#FAFAF8" }}
+                    >
+                      {item.title}
+                    </h3>
+                    <p
+                      className="text-lg leading-relaxed"
+                      style={{ color: "#C8D4B8" }}
+                    >
+                      {item.text}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* Scenario Walkthrough */}
-      <section className="mx-auto max-w-4xl px-8 py-16">
+      <section className="mx-auto max-w-4xl px-8 py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
         >
           <h2
-            className="mb-8 text-2xl font-bold"
+            className="mb-16 text-3xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
             What a Practice Session Looks Like
           </h2>
-          <div
-            className="overflow-hidden rounded-xl"
-            style={{ backgroundColor: "#2A2A20" }}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="overflow-hidden rounded-2xl shadow-2xl"
+            style={{
+              backgroundColor: "#2A2A20",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+            }}
           >
-            <div className="p-6 font-mono text-sm" style={{ color: "#C8D4B8" }}>
-              <div className="mb-4">
-                <span style={{ color: "#9A9A6D" }}>AI Interviewer:</span>
-                <p className="mt-1" style={{ color: "#FAFAF8" }}>
-                  "Tell me about a time you had a conflict with a coworker and
-                  how you resolved it."
-                </p>
-              </div>
-              <div className="mb-4">
-                <span style={{ color: "#9A9A6D" }}>You:</span>
-                <p className="mt-1" style={{ color: "#C8C8B8" }}>
-                  "Well, there was this one time where we disagreed about a
-                  project timeline..."
-                </p>
-              </div>
-              <div className="mb-4">
-                <span style={{ color: "#9A9A6D" }}>AI Interviewer:</span>
-                <p className="mt-1" style={{ color: "#FAFAF8" }}>
-                  "Can you be more specific? What was the project? What exactly
-                  did you disagree about?"
-                </p>
-              </div>
-              <div
-                className="mb-4 border-l-2 pl-4"
-                style={{ borderColor: "#3C4A32" }}
+            <div className="p-10 font-mono" style={{ color: "#C8D4B8" }}>
+              {[
+                {
+                  label: "AI Interviewer",
+                  text: "Tell me about a time you had a conflict with a coworker and how you resolved it.",
+                  isUser: false,
+                },
+                {
+                  label: "You",
+                  text: "Well, there was this one time where we disagreed about a project timeline...",
+                  isUser: true,
+                },
+                {
+                  label: "AI Interviewer",
+                  text: "Can you be more specific? What was the project? What exactly did you disagree about?",
+                  isUser: false,
+                },
+              ].map((exchange, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 + index * 0.1, duration: 0.4 }}
+                  className="mb-8 last:mb-0"
+                >
+                  <div
+                    className="mb-2 text-sm font-bold uppercase tracking-wider"
+                    style={{ color: "#9A9A6D" }}
+                  >
+                    {exchange.label}
+                  </div>
+                  <p
+                    className="text-base leading-relaxed"
+                    style={{
+                      color: exchange.isUser ? "#C8C8B8" : "#FAFAF8",
+                    }}
+                  >
+                    "{exchange.text}"
+                  </p>
+                </motion.div>
+              ))}
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.9, duration: 0.4 }}
+                className="mt-8 rounded-lg p-5"
+                style={{
+                  backgroundColor: "rgba(168, 176, 140, 0.15)",
+                  border: "1px solid rgba(168, 176, 140, 0.3)",
+                }}
               >
-                <span className="text-xs" style={{ color: "#9A9A6D" }}>
-                  [The AI pushes for specifics - just like a real interviewer]
-                </span>
-              </div>
-              <div className="mb-4">
-                <span style={{ color: "#9A9A6D" }}>You:</span>
-                <p className="mt-1" style={{ color: "#C8C8B8" }}>
+                <p className="text-sm italic" style={{ color: "#A8B08C" }}>
+                  The AI pushes for specifics - just like a real interviewer
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 1.0, duration: 0.4 }}
+                className="mt-8"
+              >
+                <div
+                  className="mb-2 text-sm font-bold uppercase tracking-wider"
+                  style={{ color: "#9A9A6D" }}
+                >
+                  You
+                </div>
+                <p
+                  className="text-base leading-relaxed"
+                  style={{ color: "#C8C8B8" }}
+                >
                   "It was our Q3 product launch. My coworker wanted to delay two
                   weeks for more testing. I thought we should ship on time..."
                 </p>
-              </div>
-              <div>
-                <span style={{ color: "#9A9A6D" }}>AI Interviewer:</span>
-                <p className="mt-1" style={{ color: "#FAFAF8" }}>
-                  "And what happened? Whose approach did you ultimately take,
-                  and what was the outcome?"
-                </p>
-              </div>
+              </motion.div>
             </div>
-          </div>
-          <p className="mt-4 text-sm" style={{ color: "#5C5C54" }}>
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="mt-8 text-base leading-relaxed"
+            style={{ color: "#5C5C54" }}
+          >
             After 10-15 minutes, you get a full analysis: what you did well,
             where you lost clarity, and rewritten versions of your weaker
             answers.
-          </p>
+          </motion.p>
         </motion.div>
       </section>
 
+      {/* Divider */}
+      <div className="mx-auto max-w-4xl px-8">
+        <div
+          className="h-px"
+          style={{
+            background:
+              "linear-gradient(to right, transparent, #E8E4DA 50%, transparent)",
+          }}
+        />
+      </div>
+
       {/* Techniques That Matter */}
       <section style={{ backgroundColor: "#FAFAF8" }}>
-        <div className="mx-auto max-w-4xl px-8 py-16">
+        <div className="mx-auto max-w-4xl px-8 py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
           >
             <h2
-              className="mb-4 text-2xl font-bold"
+              className="mb-6 text-3xl font-bold"
               style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
             >
               Techniques That Win Interviews
             </h2>
-            <p className="mb-8" style={{ color: "#5C5C54" }}>
+            <p className="mb-16 text-lg" style={{ color: "#5C5C54" }}>
               From the 12 core techniques, these four matter most in interviews:
             </p>
-            <div className="grid gap-4 md:grid-cols-2">
-              <Link
-                to="/blog/strike-emotional-chord"
-                className="flex items-start gap-4 rounded-xl p-5 transition-shadow hover:shadow-lg"
-                style={{ backgroundColor: "#F5F3EF" }}
-              >
-                <Zap
-                  className="mt-1 h-5 w-5 flex-shrink-0"
-                  style={{ color: "#3C4A32" }}
-                />
-                <div>
-                  <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                    Strike an Emotional Chord
-                  </h3>
-                  <p className="text-sm" style={{ color: "#5C5C54" }}>
-                    Stories beat bullet points. Make interviewers feel your
-                    impact, not just hear about it.
-                  </p>
-                </div>
-              </Link>
-              <Link
-                to="/blog/back-it-up"
-                className="flex items-start gap-4 rounded-xl p-5 transition-shadow hover:shadow-lg"
-                style={{ backgroundColor: "#F5F3EF" }}
-              >
-                <Zap
-                  className="mt-1 h-5 w-5 flex-shrink-0"
-                  style={{ color: "#3C4A32" }}
-                />
-                <div>
-                  <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                    Back It Up
-                  </h3>
-                  <p className="text-sm" style={{ color: "#5C5C54" }}>
-                    Specific numbers and results. "Increased revenue 23%" beats
-                    "helped grow the business."
-                  </p>
-                </div>
-              </Link>
-              <Link
-                to="/blog/own-your-weaknesses"
-                className="flex items-start gap-4 rounded-xl p-5 transition-shadow hover:shadow-lg"
-                style={{ backgroundColor: "#F5F3EF" }}
-              >
-                <Zap
-                  className="mt-1 h-5 w-5 flex-shrink-0"
-                  style={{ color: "#3C4A32" }}
-                />
-                <div>
-                  <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                    Own Your Weaknesses
-                  </h3>
-                  <p className="text-sm" style={{ color: "#5C5C54" }}>
-                    The "greatest weakness" question. Preempt it, own it, pivot
-                    to growth.
-                  </p>
-                </div>
-              </Link>
-              <Link
-                to="/blog/flip-their-momentum"
-                className="flex items-start gap-4 rounded-xl p-5 transition-shadow hover:shadow-lg"
-                style={{ backgroundColor: "#F5F3EF" }}
-              >
-                <Zap
-                  className="mt-1 h-5 w-5 flex-shrink-0"
-                  style={{ color: "#3C4A32" }}
-                />
-                <div>
-                  <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                    Flip Their Momentum
-                  </h3>
-                  <p className="text-sm" style={{ color: "#5C5C54" }}>
-                    When they challenge you, concede the valid point and
-                    redirect to your strength.
-                  </p>
-                </div>
-              </Link>
+            <div className="grid gap-6 md:grid-cols-2">
+              {[
+                {
+                  to: "/blog/strike-emotional-chord",
+                  title: "Strike an Emotional Chord",
+                  text: "Stories beat bullet points. Make interviewers feel your impact, not just hear about it.",
+                },
+                {
+                  to: "/blog/back-it-up",
+                  title: "Back It Up",
+                  text: 'Specific numbers and results. "Increased revenue 23%" beats "helped grow the business."',
+                },
+                {
+                  to: "/blog/own-your-weaknesses",
+                  title: "Own Your Weaknesses",
+                  text: 'The "greatest weakness" question. Preempt it, own it, pivot to growth.',
+                },
+                {
+                  to: "/blog/flip-their-momentum",
+                  title: "Flip Their Momentum",
+                  text: "When they challenge you, concede the valid point and redirect to your strength.",
+                },
+              ].map((technique, index) => (
+                <motion.div
+                  key={technique.to}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                >
+                  <Link
+                    to={technique.to}
+                    className="group block h-full rounded-xl border-2 p-8 transition-all hover:-translate-y-1 hover:shadow-xl"
+                    style={{
+                      backgroundColor: "#F5F3EF",
+                      borderColor: "#E8E4DA",
+                    }}
+                  >
+                    <h3
+                      className="mb-4 text-xl font-bold transition-colors group-hover:underline"
+                      style={{ color: "#2A2A20" }}
+                    >
+                      {technique.title}
+                    </h3>
+                    <p
+                      className="text-base leading-relaxed"
+                      style={{ color: "#5C5C54" }}
+                    >
+                      {technique.text}
+                    </p>
+                  </Link>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* Before/After */}
-      <section className="mx-auto max-w-4xl px-8 py-16">
+      <section className="mx-auto max-w-4xl px-8 py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
         >
           <h2
-            className="mb-8 text-2xl font-bold"
+            className="mb-16 text-3xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
             Before and After Practice
           </h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            <div
-              className="rounded-xl p-6"
-              style={{ backgroundColor: "#FFF5F5" }}
+          <div className="grid gap-12 md:grid-cols-2">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5 }}
             >
-              <h3 className="mb-4 font-bold" style={{ color: "#7C2D2D" }}>
+              <div
+                className="mb-8 inline-block rounded-full px-6 py-2 text-sm font-bold uppercase tracking-wider shadow-sm"
+                style={{ backgroundColor: "#FFF5F5", color: "#7C2D2D" }}
+              >
                 Before: Walking in Cold
-              </h3>
-              <ul className="space-y-2 text-sm" style={{ color: "#5C5C54" }}>
-                <li className="flex items-start gap-2">
-                  <XCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#DC2626" }}
-                  />
-                  Stumble on "tell me about yourself"
-                </li>
-                <li className="flex items-start gap-2">
-                  <XCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#DC2626" }}
-                  />
-                  Go blank on behavioral questions
-                </li>
-                <li className="flex items-start gap-2">
-                  <XCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#DC2626" }}
-                  />
-                  Accept first salary offer
-                </li>
-                <li className="flex items-start gap-2">
-                  <XCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#DC2626" }}
-                  />
-                  Leave wishing you had said something differently
-                </li>
+              </div>
+              <ul className="space-y-5">
+                {[
+                  'Stumble on "tell me about yourself"',
+                  "Go blank on behavioral questions",
+                  "Accept first salary offer",
+                  "Leave wishing you had said something differently",
+                ].map((item, index) => (
+                  <motion.li
+                    key={index}
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + index * 0.1, duration: 0.4 }}
+                    className="text-lg leading-relaxed"
+                    style={{ color: "#5C5C54" }}
+                  >
+                    {item}
+                  </motion.li>
+                ))}
               </ul>
-            </div>
-            <div
-              className="rounded-xl p-6"
-              style={{ backgroundColor: "#F0FDF4" }}
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5 }}
             >
-              <h3 className="mb-4 font-bold" style={{ color: "#166534" }}>
+              <div
+                className="mb-8 inline-block rounded-full px-6 py-2 text-sm font-bold uppercase tracking-wider shadow-sm"
+                style={{ backgroundColor: "#F0FDF4", color: "#166534" }}
+              >
                 After: Walking in Ready
-              </h3>
-              <ul className="space-y-2 text-sm" style={{ color: "#5C5C54" }}>
-                <li className="flex items-start gap-2">
-                  <CheckCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#16A34A" }}
-                  />
-                  Crisp, practiced opening that hooks them
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#16A34A" }}
-                  />
-                  Stories ready for every behavioral category
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#16A34A" }}
-                  />
-                  Negotiation language you have rehearsed
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#16A34A" }}
-                  />
-                  Leave knowing you showed your best
-                </li>
+              </div>
+              <ul className="space-y-5">
+                {[
+                  "Crisp, practiced opening that hooks them",
+                  "Stories ready for every behavioral category",
+                  "Negotiation language you have rehearsed",
+                  "Leave knowing you showed your best",
+                ].map((item, index) => (
+                  <motion.li
+                    key={index}
+                    initial={{ opacity: 0, x: 10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + index * 0.1, duration: 0.4 }}
+                    className="text-lg leading-relaxed"
+                    style={{ color: "#5C5C54" }}
+                  >
+                    {item}
+                  </motion.li>
+                ))}
               </ul>
-            </div>
+            </motion.div>
           </div>
         </motion.div>
       </section>
 
       {/* CTA */}
-      <section style={{ backgroundColor: "#3C4A32" }}>
-        <div className="mx-auto max-w-4xl px-8 py-16 text-center">
+      <section className="relative overflow-hidden" style={{ backgroundColor: "#3C4A32" }}>
+        {/* Premium background pattern */}
+        <div
+          className="absolute inset-0 opacity-5"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        />
+        <div className="relative mx-auto max-w-4xl px-8 py-24 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.5 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
           >
-            <h2
-              className="mb-4 text-3xl font-bold"
+            <motion.h2
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="mb-6 text-4xl font-bold lg:text-5xl"
               style={{ color: "#FAFAF8", fontFamily: "Georgia, serif" }}
             >
               Your Next Interview Is Coming
-            </h2>
-            <p className="mb-8" style={{ color: "#C8C8B8" }}>
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="mb-12 text-lg"
+              style={{ color: "#C8D4B8" }}
+            >
               Start practicing now. Set up an interview scenario and get your
               first feedback in 15 minutes.
-            </p>
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-2 rounded-full px-8 py-4 text-lg font-semibold transition-all hover:gap-3"
-              style={{ backgroundColor: "#FAFAF8", color: "#3C4A32" }}
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.5 }}
             >
-              Start Practicing Free
-              <ArrowRight className="h-5 w-5" />
-            </Link>
+              <Link
+                to="/login"
+                className="group inline-flex items-center gap-3 rounded-full px-10 py-5 text-lg font-semibold shadow-2xl transition-all hover:gap-4 hover:shadow-xl"
+                style={{ backgroundColor: "#FAFAF8", color: "#3C4A32" }}
+              >
+                Start Practicing Free
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </motion.div>
           </motion.div>
         </div>
       </section>

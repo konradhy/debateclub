@@ -10,30 +10,136 @@ const fadeInVariants = {
 
 /**
  * How It Works section with 4-step visual flow and connecting lines.
+ * Mobile: vertical stacked layout
+ * Desktop: horizontal flow with connecting lines
  */
 export function HowItWorksSection() {
   return (
-    <section id="how-it-works" className="w-full py-32" style={{ backgroundColor: "#F5F3EF" }}>
-      <div className="mx-auto max-w-5xl px-8">
+    <section id="how-it-works" className="w-full py-12 sm:py-20 lg:py-32" style={{ backgroundColor: "#F5F3EF" }}>
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <motion.div
-          className="mb-20 text-center"
+          className="mb-12 sm:mb-16 lg:mb-20 text-center"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={fadeInVariants}
         >
-          <p className="mb-2 text-base" style={{ color: "#888880" }}>
+          <p className="mb-2 text-sm sm:text-base" style={{ color: "#888880" }}>
             How It Works
           </p>
           <h2
-            className="text-3xl font-bold lg:text-4xl"
+            className="text-3xl sm:text-3xl lg:text-4xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
             From Nervous to Unstoppable
           </h2>
         </motion.div>
 
-        <div className="relative" style={{ height: "420px" }}>
+        {/* Mobile: Vertical Stack */}
+        <div className="flex flex-col gap-8 lg:hidden">
+          {/* Step 1 */}
+          <motion.div
+            className="flex flex-col items-center text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ delay: 0, duration: 0.5, ease: "easeOut" }}
+          >
+            <img
+              src="/images/howitworks/opponent.png"
+              alt=""
+              aria-hidden="true"
+              className="mb-4 h-16 sm:h-20 w-auto"
+            />
+            <h3
+              className="mb-2 text-lg font-bold"
+              style={{ color: "#2A2A20" }}
+            >
+              Create Your Opponent
+            </h3>
+            <p className="text-sm sm:text-base leading-relaxed max-w-sm" style={{ color: "#6B6B60" }}>
+              Configure their talking points, style, and personality.
+            </p>
+          </motion.div>
+
+          {/* Step 2 */}
+          <motion.div
+            className="flex flex-col items-center text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ delay: 0.15, duration: 0.5, ease: "easeOut" }}
+          >
+            <img
+              src="/images/howitworks/research.png"
+              alt=""
+              aria-hidden="true"
+              className="mb-4 h-16 sm:h-20 w-auto"
+            />
+            <h3
+              className="mb-2 text-lg font-bold"
+              style={{ color: "#2A2A20" }}
+            >
+              Do Your Research
+            </h3>
+            <p className="text-sm sm:text-base leading-relaxed max-w-sm" style={{ color: "#6B6B60" }}>
+              Deep research gathers intel and generates strategy.
+            </p>
+          </motion.div>
+
+          {/* Step 3 */}
+          <motion.div
+            className="flex flex-col items-center text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
+          >
+            <img
+              src="/images/howitworks/practice.png"
+              alt=""
+              aria-hidden="true"
+              className="mb-4 h-16 sm:h-20 w-auto"
+            />
+            <h3
+              className="mb-2 text-lg font-bold"
+              style={{ color: "#2A2A20" }}
+            >
+              Practice Debates
+            </h3>
+            <p className="text-sm sm:text-base leading-relaxed max-w-sm" style={{ color: "#6B6B60" }}>
+              Voice-based sparring with real-time feedback.
+            </p>
+          </motion.div>
+
+          {/* Step 4 */}
+          <motion.div
+            className="flex flex-col items-center text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ delay: 0.45, duration: 0.5, ease: "easeOut" }}
+          >
+            <img
+              src="/images/howitworks/review.png"
+              alt=""
+              aria-hidden="true"
+              className="mb-4 h-16 sm:h-20 w-auto"
+            />
+            <h3
+              className="mb-2 text-lg font-bold"
+              style={{ color: "#2A2A20" }}
+            >
+              Review & Improve
+            </h3>
+            <p className="text-sm sm:text-base leading-relaxed max-w-sm" style={{ color: "#6B6B60" }}>
+              Detailed analysis shows what to fix.
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Desktop: Horizontal Flow with Connecting Lines */}
+        <div className="relative hidden lg:block" style={{ height: "420px" }}>
           {/* Step 1 */}
           <motion.div
             className="absolute flex w-40 flex-col items-center text-center"

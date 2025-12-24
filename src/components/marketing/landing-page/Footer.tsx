@@ -7,18 +7,18 @@ import { footerLinks } from "./data";
 export function Footer() {
   return (
     <footer className="w-full" style={{ backgroundColor: "#1F1F1A" }}>
-      <div className="mx-auto max-w-6xl px-8 py-16">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         {/* Main footer content */}
-        <div className="grid grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12">
           {/* Brand column */}
-          <div className="col-span-1">
+          <div className="sm:col-span-2 lg:col-span-1">
             <Link to="/blog" className="inline-block">
-              <span className="text-2xl font-bold" style={{ color: "#FAFAF8" }}>
+              <span className="text-xl sm:text-2xl font-bold" style={{ color: "#FAFAF8" }}>
                 DebateClub
               </span>
             </Link>
             <p
-              className="mt-4 text-sm leading-relaxed"
+              className="mt-3 sm:mt-4 text-sm leading-relaxed"
               style={{ color: "#8A8A80" }}
             >
               Master the art of persuasion with voice-first debate practice
@@ -132,11 +132,11 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div
-          className="mt-12 flex items-center justify-between border-t pt-8"
+          className="mt-10 sm:mt-12 flex flex-col sm:flex-row items-center justify-between gap-6 border-t pt-6 sm:pt-8"
           style={{ borderColor: "#2A2A25" }}
         >
           {/* Copyright */}
-          <p className="text-sm" style={{ color: "#5C5C54" }}>
+          <p className="text-xs sm:text-sm text-center sm:text-left" style={{ color: "#5C5C54" }}>
             © {new Date().getFullYear()} DebateClub. Based on{" "}
             <Link
               to="/win-every-argument"

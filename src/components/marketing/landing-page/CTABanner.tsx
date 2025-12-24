@@ -9,7 +9,7 @@ import { ArrowRight, Mic } from "lucide-react";
 export function CTABanner() {
   return (
     <section
-      className="relative w-full overflow-hidden py-24"
+      className="relative w-full overflow-hidden py-12 sm:py-16 lg:py-24"
       style={{ backgroundColor: "#3C4A32" }}
     >
       {/* Subtle background pattern */}
@@ -20,7 +20,7 @@ export function CTABanner() {
         }}
       />
 
-      <div className="relative mx-auto max-w-4xl px-8">
+      <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <motion.div
           className="text-center"
           initial={{ opacity: 0, y: 30 }}
@@ -30,19 +30,19 @@ export function CTABanner() {
         >
           {/* Icon */}
           <motion.div
-            className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full"
+            className="mx-auto mb-4 sm:mb-6 flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full"
             style={{ backgroundColor: "rgba(255,255,255,0.1)" }}
             initial={{ scale: 0 }}
             whileInView={{ scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
           >
-            <Mic className="h-8 w-8" style={{ color: "#C8D4B8" }} />
+            <Mic className="h-6 w-6 sm:h-8 sm:w-8" style={{ color: "#C8D4B8" }} />
           </motion.div>
 
           {/* Headline */}
           <h2
-            className="mb-4 text-4xl font-bold lg:text-5xl"
+            className="mb-4 text-3xl sm:text-4xl lg:text-5xl font-bold"
             style={{ color: "#FAFAF8", fontFamily: "Georgia, serif" }}
           >
             Ready to Win Your Next Argument?
@@ -50,7 +50,7 @@ export function CTABanner() {
 
           {/* Supporting text */}
           <p
-            className="mx-auto mb-10 max-w-xl text-lg leading-relaxed"
+            className="mx-auto mb-8 sm:mb-10 max-w-xl text-base sm:text-lg leading-relaxed"
             style={{ color: "#C8C8B8" }}
           >
             Your first debate is free. No credit card required. Start practicing
@@ -60,15 +60,15 @@ export function CTABanner() {
           {/* CTA Button */}
           <Link
             to="/login"
-            className="group inline-flex items-center gap-3 rounded-full px-10 py-4 text-lg font-semibold transition-all hover:gap-4"
+            className="group inline-flex items-center gap-2 sm:gap-3 rounded-full px-8 sm:px-10 py-3 sm:py-4 text-base sm:text-lg font-semibold transition-all hover:gap-4"
             style={{ backgroundColor: "#FAFAF8", color: "#3C4A32" }}
           >
             Start Your Free Debate
-            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
           </Link>
 
           {/* Trust indicator */}
-          <p className="mt-6 text-sm" style={{ color: "#8A9A7A" }}>
+          <p className="mt-4 sm:mt-6 text-xs sm:text-sm" style={{ color: "#8A9A7A" }}>
             Join the early adopters improving their skills
           </p>
         </motion.div>

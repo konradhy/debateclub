@@ -26,31 +26,31 @@ const cardVariants = {
  */
 export function FeaturesSection() {
   return (
-    <section id="features" className="w-full py-28" style={{ backgroundColor: "#E5DFD3" }}>
-      <div className="mx-auto max-w-5xl px-8">
+    <section id="features" className="w-full py-12 sm:py-20 lg:py-28" style={{ backgroundColor: "#E5DFD3" }}>
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <motion.div
-          className="mb-14 text-center"
+          className="mb-8 sm:mb-12 lg:mb-14 text-center"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={fadeInVariants}
         >
-          <p className="mb-2 text-base" style={{ color: "#888880" }}>
+          <p className="mb-2 text-sm sm:text-base" style={{ color: "#888880" }}>
             Features
           </p>
           <h2
-            className="text-4xl font-bold"
+            className="text-3xl sm:text-4xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
             Train Like a Champion
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              className="rounded-xl border-l-4 p-6 pb-8"
+              className="rounded-xl border-l-4 p-5 pb-6 sm:p-6 sm:pb-8"
               style={{
                 backgroundColor: "#FAFAF8",
                 borderLeftColor: "#9A9A6D",
@@ -67,22 +67,22 @@ export function FeaturesSection() {
                 transition: { duration: 0.2 },
               }}
             >
-              <div className="mb-4">
+              <div className="mb-3 sm:mb-4">
                 <img
                   src={feature.icon}
                   alt=""
                   aria-hidden="true"
-                  className="h-16 w-auto"
+                  className="h-12 sm:h-16 w-auto"
                 />
               </div>
               <h3
-                className="mb-2 text-xl font-bold"
+                className="mb-2 text-lg sm:text-xl font-bold"
                 style={{ color: "#2A2A20" }}
               >
                 {feature.title}
               </h3>
               <p
-                className="text-base leading-relaxed"
+                className="text-sm sm:text-base leading-relaxed"
                 style={{ color: "#5C5C54" }}
               >
                 {feature.description}

@@ -18,8 +18,8 @@ export function TestimonialsCarousel() {
   }, []);
 
   return (
-    <section className="w-full py-24" style={{ backgroundColor: "#E5DFD3" }}>
-      <div className="mx-auto max-w-3xl px-8">
+    <section className="w-full py-12 sm:py-16 lg:py-24" style={{ backgroundColor: "#E5DFD3" }}>
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <motion.div
           className="relative mx-auto"
           initial={{ opacity: 0, y: 30 }}
@@ -34,7 +34,7 @@ export function TestimonialsCarousel() {
               aria-hidden="true"
               className="w-full"
             />
-            <div className="absolute inset-0 flex flex-col items-center justify-center px-16 pt-8">
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-6 sm:px-12 lg:px-16 pt-4 sm:pt-8">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentIndex}
@@ -45,12 +45,12 @@ export function TestimonialsCarousel() {
                   className="text-center"
                 >
                   <p
-                    className="mb-6 text-2xl italic leading-relaxed lg:text-3xl"
+                    className="mb-4 sm:mb-6 text-lg sm:text-2xl lg:text-3xl italic leading-relaxed"
                     style={{ color: "#3C4A32", fontFamily: "Georgia, serif" }}
                   >
                     {testimonials[currentIndex].quote}
                   </p>
-                  <p className="text-base" style={{ color: "#5C5C54" }}>
+                  <p className="text-sm sm:text-base" style={{ color: "#5C5C54" }}>
                     {testimonials[currentIndex].author},{" "}
                     {testimonials[currentIndex].role}
                   </p>
@@ -59,7 +59,7 @@ export function TestimonialsCarousel() {
             </div>
           </div>
 
-          <div className="mt-6 flex justify-center gap-2">
+          <div className="mt-4 sm:mt-6 flex justify-center gap-2">
             {testimonials.map((_, index) => (
               <button
                 key={index}
