@@ -13,7 +13,7 @@ export function TechniquesShowcase() {
   const visibleTechniques = isExpanded ? techniques : techniques.slice(0, 6);
 
   return (
-    <section className="w-full py-28" style={{ backgroundColor: "#E8E4DA" }}>
+    <section id="techniques" className="w-full py-28" style={{ backgroundColor: "#E8E4DA" }}>
       <div className="mx-auto max-w-5xl px-8">
         <motion.div
           className="mb-10 text-center"
@@ -22,7 +22,7 @@ export function TechniquesShowcase() {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.5 }}
         >
-          <p className="mb-2 text-sm" style={{ color: "#888880" }}>
+          <p className="mb-2 text-base" style={{ color: "#888880" }}>
             Techniques
           </p>
           <h2
@@ -64,7 +64,7 @@ export function TechniquesShowcase() {
                     {technique.title}
                   </h3>
                   <p
-                    className="mb-4 text-sm leading-relaxed"
+                    className="mb-4 text-base leading-relaxed"
                     style={{ color: "#5C5C54" }}
                   >
                     {technique.description}

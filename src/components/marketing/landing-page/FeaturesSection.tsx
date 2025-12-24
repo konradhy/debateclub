@@ -26,7 +26,7 @@ const cardVariants = {
  */
 export function FeaturesSection() {
   return (
-    <section className="w-full py-28" style={{ backgroundColor: "#E5DFD3" }}>
+    <section id="features" className="w-full py-28" style={{ backgroundColor: "#E5DFD3" }}>
       <div className="mx-auto max-w-5xl px-8">
         <motion.div
           className="mb-14 text-center"
@@ -35,7 +35,7 @@ export function FeaturesSection() {
           viewport={{ once: true, margin: "-100px" }}
           variants={fadeInVariants}
         >
-          <p className="mb-2 text-sm" style={{ color: "#888880" }}>
+          <p className="mb-2 text-base" style={{ color: "#888880" }}>
             Features
           </p>
           <h2
@@ -76,13 +76,13 @@ export function FeaturesSection() {
                 />
               </div>
               <h3
-                className="mb-2 text-lg font-bold"
+                className="mb-2 text-xl font-bold"
                 style={{ color: "#2A2A20" }}
               >
                 {feature.title}
               </h3>
               <p
-                className="text-sm leading-relaxed"
+                className="text-base leading-relaxed"
                 style={{ color: "#5C5C54" }}
               >
                 {feature.description}

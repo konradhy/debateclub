@@ -3,47 +3,47 @@ import { motion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
-  Briefcase,
-  MessageSquare,
-  Target,
-  TrendingUp,
+  Stethoscope,
+  Heart,
+  Users,
+  Shield,
   CheckCircle,
   XCircle,
   Zap,
 } from "lucide-react";
 
-export const Route = createFileRoute("/use-cases/job-interviews")({
+export const Route = createFileRoute("/use-cases/healthcare-professionals")({
   head: () => ({
     meta: [
-      { title: "Practice Job Interviews with AI | DebateClub" },
+      { title: "Practice Difficult Patient Conversations | DebateClub" },
       {
         name: "description",
         content:
-          "Nail behavioral interviews and salary negotiations. Practice with AI that pushes back, asks follow-ups, and scores your responses. Free to start.",
+          "Breaking bad news, non-compliant patients, family conflicts. Practice the conversations that medical school didn't teach you.",
       },
       {
         property: "og:title",
-        content: "Practice Job Interviews with AI | DebateClub",
+        content: "Practice Difficult Patient Conversations | DebateClub",
       },
       {
         property: "og:description",
         content:
-          "Nail behavioral interviews and salary negotiations. Practice with AI that pushes back, asks follow-ups, and scores your responses. Free to start.",
+          "Breaking bad news, non-compliant patients, family conflicts. Practice the conversations that medical school didn't teach you.",
       },
       { property: "og:type", content: "website" },
       { property: "og:image", content: "/images/landingpage.png" },
       { property: "og:site_name", content: "DebateClub" },
     ],
   }),
-  component: JobInterviewsPage,
+  component: HealthcareProfessionalsPage,
 });
 
 /**
- * Use case page: Job Interview preparation.
- * Shows how DebateClub helps users prepare for behavioral interviews,
- * salary negotiations, and tough interview questions.
+ * Use case page: Healthcare professionals.
+ * Shows how DebateClub helps doctors, nurses, and healthcare workers
+ * practice difficult patient conversations, family discussions, and more.
  */
-function JobInterviewsPage() {
+function HealthcareProfessionalsPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F5F3EF" }}>
       {/* Header */}
@@ -80,21 +80,22 @@ function JobInterviewsPage() {
             className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl"
             style={{ backgroundColor: "#3C4A32" }}
           >
-            <Briefcase className="h-8 w-8" style={{ color: "#C8D4B8" }} />
+            <Stethoscope className="h-8 w-8" style={{ color: "#C8D4B8" }} />
           </div>
           <h1
             className="mb-6 text-4xl font-bold lg:text-5xl"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            Nail Your Next Job Interview
+            Communicate When It Matters Most
           </h1>
           <p
             className="mx-auto max-w-2xl text-lg leading-relaxed"
             style={{ color: "#5C5C54" }}
           >
-            The difference between getting the offer and getting ghosted often
-            comes down to how you handle three or four key moments. Practice
-            those moments until they are second nature.
+            The hardest part of medicine is often the conversation, not the
+            diagnosis. Breaking bad news. Convincing non-compliant patients.
+            Navigating family conflict. Practice until you can do it with
+            compassion and clarity.
           </p>
         </motion.div>
       </section>
@@ -118,45 +119,40 @@ function JobInterviewsPage() {
                 className="rounded-xl p-6"
                 style={{ backgroundColor: "#F5F3EF" }}
               >
-                <TrendingUp
-                  className="mb-4 h-8 w-8"
-                  style={{ color: "#3C4A32" }}
-                />
+                <Heart className="mb-4 h-8 w-8" style={{ color: "#3C4A32" }} />
                 <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
-                  Salary Differential
+                  Patient Outcomes
                 </h3>
                 <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  A weak negotiation costs you $5K-$20K per year. Over a career,
-                  that compounds to hundreds of thousands.
+                  Patients who understand and trust you follow treatment plans.
+                  Communication directly affects clinical outcomes.
                 </p>
               </div>
               <div
                 className="rounded-xl p-6"
                 style={{ backgroundColor: "#F5F3EF" }}
               >
-                <Target className="mb-4 h-8 w-8" style={{ color: "#3C4A32" }} />
+                <Users className="mb-4 h-8 w-8" style={{ color: "#3C4A32" }} />
                 <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
-                  Career Trajectory
+                  Patient Experience
                 </h3>
                 <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  The right role at the right company changes everything. One
-                  interview can redirect your entire career path.
+                  How you deliver information matters as much as what you
+                  deliver. Bad news handled well is bearable. Handled poorly, it
+                  traumatizes.
                 </p>
               </div>
               <div
                 className="rounded-xl p-6"
                 style={{ backgroundColor: "#F5F3EF" }}
               >
-                <MessageSquare
-                  className="mb-4 h-8 w-8"
-                  style={{ color: "#3C4A32" }}
-                />
+                <Shield className="mb-4 h-8 w-8" style={{ color: "#3C4A32" }} />
                 <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
-                  Confidence Compound
+                  Your Wellbeing
                 </h3>
                 <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  Confidence in interviews comes from reps. Without practice,
-                  you walk in hoping. With practice, you walk in knowing.
+                  Difficult conversations take a toll. Having the skills to
+                  handle them reduces burnout and moral injury.
                 </p>
               </div>
             </div>
@@ -175,7 +171,7 @@ function JobInterviewsPage() {
             className="mb-8 text-2xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            Why Traditional Interview Prep Fails
+            Why Traditional Medical Training Falls Short
           </h2>
           <div className="grid gap-4 md:grid-cols-2">
             <div
@@ -188,12 +184,11 @@ function JobInterviewsPage() {
               />
               <div>
                 <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                  Reading articles
+                  Standardized patient encounters
                 </h3>
                 <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  You know the STAR method. You have read the top 50 behavioral
-                  questions. But reading is not speaking. When the pressure
-                  hits, knowledge evaporates.
+                  A few sessions in medical school. Not enough reps to build the
+                  instinct for real-world complexity.
                 </p>
               </div>
             </div>
@@ -207,11 +202,11 @@ function JobInterviewsPage() {
               />
               <div>
                 <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                  Practicing in the mirror
+                  Observing senior colleagues
                 </h3>
                 <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  Mirrors do not interrupt. They do not ask follow-up questions.
-                  They do not throw curveballs. Real interviewers do.
+                  Watching is not doing. You need to practice the words coming
+                  out of your own mouth.
                 </p>
               </div>
             </div>
@@ -225,11 +220,11 @@ function JobInterviewsPage() {
               />
               <div>
                 <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                  Asking friends to mock interview
+                  Communication frameworks
                 </h3>
                 <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  Friends are too nice. They do not push. They accept your first
-                  answer instead of pressing for specifics.
+                  SPIKES, NURSE. Great frameworks. But patients do not follow
+                  scripts. You need to practice the unexpected.
                 </p>
               </div>
             </div>
@@ -243,11 +238,11 @@ function JobInterviewsPage() {
               />
               <div>
                 <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                  One-off career coaching
+                  Learning on real patients
                 </h3>
                 <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  $200/hour for one session. No repetition. No way to practice
-                  the same scenario until it is automatic.
+                  Your first attempt at breaking bad news should not be with a
+                  real patient facing real devastation.
                 </p>
               </div>
             </div>
@@ -281,11 +276,11 @@ function JobInterviewsPage() {
                   1
                 </div>
                 <h3 className="mb-2 font-bold" style={{ color: "#FAFAF8" }}>
-                  Set Up Your Scenario
+                  Set Up the Scenario
                 </h3>
                 <p className="text-sm" style={{ color: "#C8C8B8" }}>
-                  Tell us the role, company, and your background. The AI
-                  interviewer adapts to your specific situation.
+                  What is the diagnosis? Who is the patient? What is their
+                  likely reaction? The AI adapts to your specific case.
                 </p>
               </div>
               <div
@@ -299,11 +294,11 @@ function JobInterviewsPage() {
                   2
                 </div>
                 <h3 className="mb-2 font-bold" style={{ color: "#FAFAF8" }}>
-                  Practice Out Loud
+                  Have the Conversation
                 </h3>
                 <p className="text-sm" style={{ color: "#C8C8B8" }}>
-                  Voice-based practice. The AI asks follow-ups, challenges weak
-                  answers, and does not let you off easy.
+                  The AI responds as a scared patient, an angry family member,
+                  or a non-compliant diabetic. Handle it in real time.
                 </p>
               </div>
               <div
@@ -317,11 +312,11 @@ function JobInterviewsPage() {
                   3
                 </div>
                 <h3 className="mb-2 font-bold" style={{ color: "#FAFAF8" }}>
-                  Get Scored and Improve
+                  Refine Your Approach
                 </h3>
                 <p className="text-sm" style={{ color: "#C8C8B8" }}>
-                  See exactly where you were strong and where you lost them.
-                  Rewritten answers show you what great looks like.
+                  See where you could have been clearer or more compassionate.
+                  Get suggestions. Practice until it feels natural.
                 </p>
               </div>
             </div>
@@ -329,7 +324,7 @@ function JobInterviewsPage() {
         </div>
       </section>
 
-      {/* Scenario Walkthrough */}
+      {/* Clinical Scenarios */}
       <section className="mx-auto max-w-4xl px-8 py-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -340,63 +335,82 @@ function JobInterviewsPage() {
             className="mb-8 text-2xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            What a Practice Session Looks Like
+            Conversations You Can Practice
           </h2>
-          <div
-            className="overflow-hidden rounded-xl"
-            style={{ backgroundColor: "#2A2A20" }}
-          >
-            <div className="p-6 font-mono text-sm" style={{ color: "#C8D4B8" }}>
-              <div className="mb-4">
-                <span style={{ color: "#9A9A6D" }}>AI Interviewer:</span>
-                <p className="mt-1" style={{ color: "#FAFAF8" }}>
-                  "Tell me about a time you had a conflict with a coworker and
-                  how you resolved it."
-                </p>
-              </div>
-              <div className="mb-4">
-                <span style={{ color: "#9A9A6D" }}>You:</span>
-                <p className="mt-1" style={{ color: "#C8C8B8" }}>
-                  "Well, there was this one time where we disagreed about a
-                  project timeline..."
-                </p>
-              </div>
-              <div className="mb-4">
-                <span style={{ color: "#9A9A6D" }}>AI Interviewer:</span>
-                <p className="mt-1" style={{ color: "#FAFAF8" }}>
-                  "Can you be more specific? What was the project? What exactly
-                  did you disagree about?"
-                </p>
-              </div>
-              <div
-                className="mb-4 border-l-2 pl-4"
-                style={{ borderColor: "#3C4A32" }}
-              >
-                <span className="text-xs" style={{ color: "#9A9A6D" }}>
-                  [The AI pushes for specifics - just like a real interviewer]
-                </span>
-              </div>
-              <div className="mb-4">
-                <span style={{ color: "#9A9A6D" }}>You:</span>
-                <p className="mt-1" style={{ color: "#C8C8B8" }}>
-                  "It was our Q3 product launch. My coworker wanted to delay two
-                  weeks for more testing. I thought we should ship on time..."
-                </p>
-              </div>
-              <div>
-                <span style={{ color: "#9A9A6D" }}>AI Interviewer:</span>
-                <p className="mt-1" style={{ color: "#FAFAF8" }}>
-                  "And what happened? Whose approach did you ultimately take,
-                  and what was the outcome?"
-                </p>
-              </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div
+              className="rounded-xl p-5"
+              style={{ backgroundColor: "#FAFAF8" }}
+            >
+              <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
+                Breaking Bad News
+              </h3>
+              <p className="text-sm" style={{ color: "#5C5C54" }}>
+                Cancer diagnosis. Chronic disease. Prognosis conversations.
+                Deliver devastating news with compassion and clarity.
+              </p>
+            </div>
+            <div
+              className="rounded-xl p-5"
+              style={{ backgroundColor: "#FAFAF8" }}
+            >
+              <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
+                Non-Compliant Patients
+              </h3>
+              <p className="text-sm" style={{ color: "#5C5C54" }}>
+                "I stopped taking my meds." "I know I should quit smoking."
+                Motivate change without lecturing.
+              </p>
+            </div>
+            <div
+              className="rounded-xl p-5"
+              style={{ backgroundColor: "#FAFAF8" }}
+            >
+              <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
+                Family Conflict
+              </h3>
+              <p className="text-sm" style={{ color: "#5C5C54" }}>
+                Families who disagree about care. Angry relatives. Navigating
+                competing interests while advocating for the patient.
+              </p>
+            </div>
+            <div
+              className="rounded-xl p-5"
+              style={{ backgroundColor: "#FAFAF8" }}
+            >
+              <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
+                End-of-Life Discussions
+              </h3>
+              <p className="text-sm" style={{ color: "#5C5C54" }}>
+                Goals of care. DNR conversations. Helping patients and families
+                make the hardest decisions.
+              </p>
+            </div>
+            <div
+              className="rounded-xl p-5"
+              style={{ backgroundColor: "#FAFAF8" }}
+            >
+              <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
+                Medical Errors
+              </h3>
+              <p className="text-sm" style={{ color: "#5C5C54" }}>
+                Disclosing errors honestly. Apologizing effectively. Maintaining
+                trust after something went wrong.
+              </p>
+            </div>
+            <div
+              className="rounded-xl p-5"
+              style={{ backgroundColor: "#FAFAF8" }}
+            >
+              <h3 className="mb-2 font-bold" style={{ color: "#2A2A20" }}>
+                Seeking Consent
+              </h3>
+              <p className="text-sm" style={{ color: "#5C5C54" }}>
+                Explaining risks and benefits. Ensuring understanding.
+                Respecting autonomy while recommending care.
+              </p>
             </div>
           </div>
-          <p className="mt-4 text-sm" style={{ color: "#5C5C54" }}>
-            After 10-15 minutes, you get a full analysis: what you did well,
-            where you lost clarity, and rewritten versions of your weaker
-            answers.
-          </p>
         </motion.div>
       </section>
 
@@ -412,12 +426,31 @@ function JobInterviewsPage() {
               className="mb-4 text-2xl font-bold"
               style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
             >
-              Techniques That Win Interviews
+              Techniques for Clinical Communication
             </h2>
             <p className="mb-8" style={{ color: "#5C5C54" }}>
-              From the 12 core techniques, these four matter most in interviews:
+              From the 12 core techniques, these four matter most in healthcare:
             </p>
             <div className="grid gap-4 md:grid-cols-2">
+              <Link
+                to="/blog/read-any-room"
+                className="flex items-start gap-4 rounded-xl p-5 transition-shadow hover:shadow-lg"
+                style={{ backgroundColor: "#F5F3EF" }}
+              >
+                <Zap
+                  className="mt-1 h-5 w-5 flex-shrink-0"
+                  style={{ color: "#3C4A32" }}
+                />
+                <div>
+                  <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
+                    Read Any Room
+                  </h3>
+                  <p className="text-sm" style={{ color: "#5C5C54" }}>
+                    Sense when patients need you to slow down. When they are
+                    ready to hear more. When they need silence.
+                  </p>
+                </div>
+              </Link>
               <Link
                 to="/blog/strike-emotional-chord"
                 className="flex items-start gap-4 rounded-xl p-5 transition-shadow hover:shadow-lg"
@@ -432,27 +465,8 @@ function JobInterviewsPage() {
                     Strike an Emotional Chord
                   </h3>
                   <p className="text-sm" style={{ color: "#5C5C54" }}>
-                    Stories beat bullet points. Make interviewers feel your
-                    impact, not just hear about it.
-                  </p>
-                </div>
-              </Link>
-              <Link
-                to="/blog/back-it-up"
-                className="flex items-start gap-4 rounded-xl p-5 transition-shadow hover:shadow-lg"
-                style={{ backgroundColor: "#F5F3EF" }}
-              >
-                <Zap
-                  className="mt-1 h-5 w-5 flex-shrink-0"
-                  style={{ color: "#3C4A32" }}
-                />
-                <div>
-                  <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                    Back It Up
-                  </h3>
-                  <p className="text-sm" style={{ color: "#5C5C54" }}>
-                    Specific numbers and results. "Increased revenue 23%" beats
-                    "helped grow the business."
+                    Connect with their fear before explaining the treatment.
+                    Empathy first, information second.
                   </p>
                 </div>
               </Link>
@@ -470,13 +484,13 @@ function JobInterviewsPage() {
                     Own Your Weaknesses
                   </h3>
                   <p className="text-sm" style={{ color: "#5C5C54" }}>
-                    The "greatest weakness" question. Preempt it, own it, pivot
-                    to growth.
+                    "I don't have all the answers, but here's what I know..."
+                    Honesty builds trust.
                   </p>
                 </div>
               </Link>
               <Link
-                to="/blog/flip-their-momentum"
+                to="/blog/make-it-stick"
                 className="flex items-start gap-4 rounded-xl p-5 transition-shadow hover:shadow-lg"
                 style={{ backgroundColor: "#F5F3EF" }}
               >
@@ -486,11 +500,11 @@ function JobInterviewsPage() {
                 />
                 <div>
                   <h3 className="mb-1 font-bold" style={{ color: "#2A2A20" }}>
-                    Flip Their Momentum
+                    Make It Stick
                   </h3>
                   <p className="text-sm" style={{ color: "#5C5C54" }}>
-                    When they challenge you, concede the valid point and
-                    redirect to your strength.
+                    Three things to remember. Three next steps. Structure
+                    information so overwhelmed patients can retain it.
                   </p>
                 </div>
               </Link>
@@ -518,36 +532,24 @@ function JobInterviewsPage() {
               style={{ backgroundColor: "#FFF5F5" }}
             >
               <h3 className="mb-4 font-bold" style={{ color: "#7C2D2D" }}>
-                Before: Walking in Cold
+                Before: Dreading the Conversation
               </h3>
               <ul className="space-y-2 text-sm" style={{ color: "#5C5C54" }}>
                 <li className="flex items-start gap-2">
-                  <XCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#DC2626" }}
-                  />
-                  Stumble on "tell me about yourself"
+                  <XCircle className="mt-0.5 h-4 w-4" style={{ color: "#DC2626" }} />
+                  Rush through bad news
                 </li>
                 <li className="flex items-start gap-2">
-                  <XCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#DC2626" }}
-                  />
-                  Go blank on behavioral questions
+                  <XCircle className="mt-0.5 h-4 w-4" style={{ color: "#DC2626" }} />
+                  Not know what to say when they cry
                 </li>
                 <li className="flex items-start gap-2">
-                  <XCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#DC2626" }}
-                  />
-                  Accept first salary offer
+                  <XCircle className="mt-0.5 h-4 w-4" style={{ color: "#DC2626" }} />
+                  Feel helpless with non-compliant patients
                 </li>
                 <li className="flex items-start gap-2">
-                  <XCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#DC2626" }}
-                  />
-                  Leave wishing you had said something differently
+                  <XCircle className="mt-0.5 h-4 w-4" style={{ color: "#DC2626" }} />
+                  Carry the weight home
                 </li>
               </ul>
             </div>
@@ -556,36 +558,24 @@ function JobInterviewsPage() {
               style={{ backgroundColor: "#F0FDF4" }}
             >
               <h3 className="mb-4 font-bold" style={{ color: "#166534" }}>
-                After: Walking in Ready
+                After: Communicating with Confidence
               </h3>
               <ul className="space-y-2 text-sm" style={{ color: "#5C5C54" }}>
                 <li className="flex items-start gap-2">
-                  <CheckCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#16A34A" }}
-                  />
-                  Crisp, practiced opening that hooks them
+                  <CheckCircle className="mt-0.5 h-4 w-4" style={{ color: "#16A34A" }} />
+                  Deliver news with compassion and clarity
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#16A34A" }}
-                  />
-                  Stories ready for every behavioral category
+                  <CheckCircle className="mt-0.5 h-4 w-4" style={{ color: "#16A34A" }} />
+                  Sit with emotion without panicking
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#16A34A" }}
-                  />
-                  Negotiation language you have rehearsed
+                  <CheckCircle className="mt-0.5 h-4 w-4" style={{ color: "#16A34A" }} />
+                  Motivate change effectively
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle
-                    className="mt-0.5 h-4 w-4"
-                    style={{ color: "#16A34A" }}
-                  />
-                  Leave knowing you showed your best
+                  <CheckCircle className="mt-0.5 h-4 w-4" style={{ color: "#16A34A" }} />
+                  Feel prepared for hard conversations
                 </li>
               </ul>
             </div>
@@ -605,11 +595,10 @@ function JobInterviewsPage() {
               className="mb-4 text-3xl font-bold"
               style={{ color: "#FAFAF8", fontFamily: "Georgia, serif" }}
             >
-              Your Next Interview Is Coming
+              Your Patients Deserve Your Best Communication
             </h2>
             <p className="mb-8" style={{ color: "#C8C8B8" }}>
-              Start practicing now. Set up an interview scenario and get your
-              first feedback in 15 minutes.
+              Set up the scenario. Practice the conversation. Walk in prepared.
             </p>
             <Link
               to="/login"
@@ -641,3 +630,4 @@ function JobInterviewsPage() {
     </div>
   );
 }
+

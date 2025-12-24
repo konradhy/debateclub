@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WinEveryArgumentRouteImport } from './routes/win-every-argument'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
@@ -19,6 +20,7 @@ import { Route as UseCasesPoliticiansActivistsRouteImport } from './routes/use-c
 import { Route as UseCasesPitchingFundraisingRouteImport } from './routes/use-cases/pitching-fundraising'
 import { Route as UseCasesParentsEducatorsRouteImport } from './routes/use-cases/parents-educators'
 import { Route as UseCasesJobInterviewsRouteImport } from './routes/use-cases/job-interviews'
+import { Route as UseCasesHealthcareProfessionalsRouteImport } from './routes/use-cases/healthcare-professionals'
 import { Route as UseCasesDifficultConversationsRouteImport } from './routes/use-cases/difficult-conversations'
 import { Route as UseCasesAttorneysLegalRouteImport } from './routes/use-cases/attorneys-legal'
 import { Route as UseCasesAcademicsResearchersRouteImport } from './routes/use-cases/academics-researchers'
@@ -58,6 +60,11 @@ import { Route as AppAuthDashboardLayoutSettingsBillingRouteImport } from './rou
 const WinEveryArgumentRoute = WinEveryArgumentRouteImport.update({
   id: '/win-every-argument',
   path: '/win-every-argument',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -107,6 +114,12 @@ const UseCasesJobInterviewsRoute = UseCasesJobInterviewsRouteImport.update({
   path: '/use-cases/job-interviews',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UseCasesHealthcareProfessionalsRoute =
+  UseCasesHealthcareProfessionalsRouteImport.update({
+    id: '/use-cases/healthcare-professionals',
+    path: '/use-cases/healthcare-professionals',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const UseCasesDifficultConversationsRoute =
   UseCasesDifficultConversationsRouteImport.update({
     id: '/use-cases/difficult-conversations',
@@ -296,6 +309,7 @@ const AppAuthDashboardLayoutSettingsBillingRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
   '/win-every-argument': typeof WinEveryArgumentRoute
   '/blog/ask-the-killer-question': typeof BlogAskTheKillerQuestionRoute
   '/blog/back-it-up': typeof BlogBackItUpRoute
@@ -316,6 +330,7 @@ export interface FileRoutesByFullPath {
   '/use-cases/academics-researchers': typeof UseCasesAcademicsResearchersRoute
   '/use-cases/attorneys-legal': typeof UseCasesAttorneysLegalRoute
   '/use-cases/difficult-conversations': typeof UseCasesDifficultConversationsRoute
+  '/use-cases/healthcare-professionals': typeof UseCasesHealthcareProfessionalsRoute
   '/use-cases/job-interviews': typeof UseCasesJobInterviewsRoute
   '/use-cases/parents-educators': typeof UseCasesParentsEducatorsRoute
   '/use-cases/pitching-fundraising': typeof UseCasesPitchingFundraisingRoute
@@ -341,6 +356,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
   '/win-every-argument': typeof WinEveryArgumentRoute
   '/blog/ask-the-killer-question': typeof BlogAskTheKillerQuestionRoute
   '/blog/back-it-up': typeof BlogBackItUpRoute
@@ -361,6 +377,7 @@ export interface FileRoutesByTo {
   '/use-cases/academics-researchers': typeof UseCasesAcademicsResearchersRoute
   '/use-cases/attorneys-legal': typeof UseCasesAttorneysLegalRoute
   '/use-cases/difficult-conversations': typeof UseCasesDifficultConversationsRoute
+  '/use-cases/healthcare-professionals': typeof UseCasesHealthcareProfessionalsRoute
   '/use-cases/job-interviews': typeof UseCasesJobInterviewsRoute
   '/use-cases/parents-educators': typeof UseCasesParentsEducatorsRoute
   '/use-cases/pitching-fundraising': typeof UseCasesPitchingFundraisingRoute
@@ -385,6 +402,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/contact': typeof ContactRoute
   '/win-every-argument': typeof WinEveryArgumentRoute
   '/_app/_auth': typeof AppAuthRouteWithChildren
   '/blog/ask-the-killer-question': typeof BlogAskTheKillerQuestionRoute
@@ -406,6 +424,7 @@ export interface FileRoutesById {
   '/use-cases/academics-researchers': typeof UseCasesAcademicsResearchersRoute
   '/use-cases/attorneys-legal': typeof UseCasesAttorneysLegalRoute
   '/use-cases/difficult-conversations': typeof UseCasesDifficultConversationsRoute
+  '/use-cases/healthcare-professionals': typeof UseCasesHealthcareProfessionalsRoute
   '/use-cases/job-interviews': typeof UseCasesJobInterviewsRoute
   '/use-cases/parents-educators': typeof UseCasesParentsEducatorsRoute
   '/use-cases/pitching-fundraising': typeof UseCasesPitchingFundraisingRoute
@@ -433,6 +452,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/contact'
     | '/win-every-argument'
     | '/blog/ask-the-killer-question'
     | '/blog/back-it-up'
@@ -453,6 +473,7 @@ export interface FileRouteTypes {
     | '/use-cases/academics-researchers'
     | '/use-cases/attorneys-legal'
     | '/use-cases/difficult-conversations'
+    | '/use-cases/healthcare-professionals'
     | '/use-cases/job-interviews'
     | '/use-cases/parents-educators'
     | '/use-cases/pitching-fundraising'
@@ -478,6 +499,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/contact'
     | '/win-every-argument'
     | '/blog/ask-the-killer-question'
     | '/blog/back-it-up'
@@ -498,6 +520,7 @@ export interface FileRouteTypes {
     | '/use-cases/academics-researchers'
     | '/use-cases/attorneys-legal'
     | '/use-cases/difficult-conversations'
+    | '/use-cases/healthcare-professionals'
     | '/use-cases/job-interviews'
     | '/use-cases/parents-educators'
     | '/use-cases/pitching-fundraising'
@@ -521,6 +544,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_app'
+    | '/contact'
     | '/win-every-argument'
     | '/_app/_auth'
     | '/blog/ask-the-killer-question'
@@ -542,6 +566,7 @@ export interface FileRouteTypes {
     | '/use-cases/academics-researchers'
     | '/use-cases/attorneys-legal'
     | '/use-cases/difficult-conversations'
+    | '/use-cases/healthcare-professionals'
     | '/use-cases/job-interviews'
     | '/use-cases/parents-educators'
     | '/use-cases/pitching-fundraising'
@@ -569,6 +594,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  ContactRoute: typeof ContactRoute
   WinEveryArgumentRoute: typeof WinEveryArgumentRoute
   BlogAskTheKillerQuestionRoute: typeof BlogAskTheKillerQuestionRoute
   BlogBackItUpRoute: typeof BlogBackItUpRoute
@@ -589,6 +615,7 @@ export interface RootRouteChildren {
   UseCasesAcademicsResearchersRoute: typeof UseCasesAcademicsResearchersRoute
   UseCasesAttorneysLegalRoute: typeof UseCasesAttorneysLegalRoute
   UseCasesDifficultConversationsRoute: typeof UseCasesDifficultConversationsRoute
+  UseCasesHealthcareProfessionalsRoute: typeof UseCasesHealthcareProfessionalsRoute
   UseCasesJobInterviewsRoute: typeof UseCasesJobInterviewsRoute
   UseCasesParentsEducatorsRoute: typeof UseCasesParentsEducatorsRoute
   UseCasesPitchingFundraisingRoute: typeof UseCasesPitchingFundraisingRoute
@@ -605,6 +632,13 @@ declare module '@tanstack/react-router' {
       path: '/win-every-argument'
       fullPath: '/win-every-argument'
       preLoaderRoute: typeof WinEveryArgumentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app': {
@@ -668,6 +702,13 @@ declare module '@tanstack/react-router' {
       path: '/use-cases/job-interviews'
       fullPath: '/use-cases/job-interviews'
       preLoaderRoute: typeof UseCasesJobInterviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/use-cases/healthcare-professionals': {
+      id: '/use-cases/healthcare-professionals'
+      path: '/use-cases/healthcare-professionals'
+      fullPath: '/use-cases/healthcare-professionals'
+      preLoaderRoute: typeof UseCasesHealthcareProfessionalsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/use-cases/difficult-conversations': {
@@ -1019,6 +1060,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  ContactRoute: ContactRoute,
   WinEveryArgumentRoute: WinEveryArgumentRoute,
   BlogAskTheKillerQuestionRoute: BlogAskTheKillerQuestionRoute,
   BlogBackItUpRoute: BlogBackItUpRoute,
@@ -1039,6 +1081,7 @@ const rootRouteChildren: RootRouteChildren = {
   UseCasesAcademicsResearchersRoute: UseCasesAcademicsResearchersRoute,
   UseCasesAttorneysLegalRoute: UseCasesAttorneysLegalRoute,
   UseCasesDifficultConversationsRoute: UseCasesDifficultConversationsRoute,
+  UseCasesHealthcareProfessionalsRoute: UseCasesHealthcareProfessionalsRoute,
   UseCasesJobInterviewsRoute: UseCasesJobInterviewsRoute,
   UseCasesParentsEducatorsRoute: UseCasesParentsEducatorsRoute,
   UseCasesPitchingFundraisingRoute: UseCasesPitchingFundraisingRoute,

@@ -13,7 +13,7 @@ const fadeInVariants = {
  */
 export function HowItWorksSection() {
   return (
-    <section className="w-full py-32" style={{ backgroundColor: "#F5F3EF" }}>
+    <section id="how-it-works" className="w-full py-32" style={{ backgroundColor: "#F5F3EF" }}>
       <div className="mx-auto max-w-5xl px-8">
         <motion.div
           className="mb-20 text-center"
@@ -22,7 +22,7 @@ export function HowItWorksSection() {
           viewport={{ once: true, margin: "-100px" }}
           variants={fadeInVariants}
         >
-          <p className="mb-2 text-sm" style={{ color: "#888880" }}>
+          <p className="mb-2 text-base" style={{ color: "#888880" }}>
             How It Works
           </p>
           <h2
@@ -50,14 +50,14 @@ export function HowItWorksSection() {
               className="mb-4 h-20 w-auto"
             />
             <h3
-              className="mb-2 text-base font-bold"
+              className="mb-2 text-lg font-bold"
               style={{ color: "#2A2A20" }}
             >
               Create Your
               <br />
               Opponent
             </h3>
-            <p className="text-sm leading-relaxed" style={{ color: "#6B6B60" }}>
+            <p className="text-base leading-relaxed" style={{ color: "#6B6B60" }}>
               Configure their talking points, style, and personality.
             </p>
           </motion.div>
@@ -90,14 +90,14 @@ export function HowItWorksSection() {
               className="mb-4 h-20 w-auto"
             />
             <h3
-              className="mb-2 text-base font-bold"
+              className="mb-2 text-lg font-bold"
               style={{ color: "#2A2A20" }}
             >
               Do Your
               <br />
               Research
             </h3>
-            <p className="text-sm leading-relaxed" style={{ color: "#6B6B60" }}>
+            <p className="text-base leading-relaxed" style={{ color: "#6B6B60" }}>
               Deep research gathers intel and generates strategy.
             </p>
           </motion.div>
@@ -135,14 +135,14 @@ export function HowItWorksSection() {
               className="mb-4 h-20 w-auto"
             />
             <h3
-              className="mb-2 text-base font-bold"
+              className="mb-2 text-lg font-bold"
               style={{ color: "#2A2A20" }}
             >
               Practice
               <br />
               Debates
             </h3>
-            <p className="text-sm leading-relaxed" style={{ color: "#6B6B60" }}>
+            <p className="text-base leading-relaxed" style={{ color: "#6B6B60" }}>
               Voice-based sparring with real-time feedback.
             </p>
           </motion.div>
@@ -175,14 +175,14 @@ export function HowItWorksSection() {
               className="mb-4 h-20 w-auto"
             />
             <h3
-              className="mb-2 text-base font-bold"
+              className="mb-2 text-lg font-bold"
               style={{ color: "#2A2A20" }}
             >
               Review &
               <br />
               Improve
             </h3>
-            <p className="text-sm leading-relaxed" style={{ color: "#6B6B60" }}>
+            <p className="text-base leading-relaxed" style={{ color: "#6B6B60" }}>
               Detailed analysis shows what to fix.
             </p>
           </motion.div>

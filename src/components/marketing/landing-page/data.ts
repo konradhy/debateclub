@@ -259,7 +259,7 @@ export const footerLinks = {
     },
   ],
   company: [
-    { label: "About", href: "#" },
-    { label: "Contact", href: "#" },
+    { label: "About", href: "/win-every-argument" },
+    { label: "Contact", href: "/contact" },
   ],
 };

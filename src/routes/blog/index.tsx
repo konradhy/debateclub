@@ -1,7 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { techniques } from "@/components/marketing/landing-page/data";
-import { ArrowLeft, ArrowRight, Feather, BookOpen } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Feather,
+  BookOpen,
+  ChevronDown,
+  ChevronUp,
+  MoveRight,
+} from "lucide-react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
@@ -33,6 +42,77 @@ export const Route = createFileRoute("/blog/")({
  * Blog index page listing featured articles and technique guides.
  */
 function BlogIndex() {
+  const [showAllUseCases, setShowAllUseCases] = useState(false);
+  const [showAllTechniques, setShowAllTechniques] = useState(false);
+
+  const useCases = [
+    {
+      to: "/use-cases/job-interviews",
+      title: "Job Interviews",
+      desc: "Behavioral questions and salary negotiation",
+      accent: "#7B8A6F",
+    },
+    {
+      to: "/use-cases/sales-objections",
+      title: "Sales",
+      desc: "Handle objections, close more deals",
+      accent: "#8A7B6F",
+    },
+    {
+      to: "/use-cases/presentations",
+      title: "Presentations",
+      desc: "Own the Q&A, command the room",
+      accent: "#6F7B8A",
+    },
+    {
+      to: "/use-cases/difficult-conversations",
+      title: "Tough Talks",
+      desc: "Performance reviews, conflict resolution",
+      accent: "#8A6F7B",
+    },
+    {
+      to: "/use-cases/pitching-fundraising",
+      title: "Fundraising",
+      desc: "Investor pitches, VC meetings",
+      accent: "#7B8A6F",
+    },
+    {
+      to: "/use-cases/attorneys-legal",
+      title: "Legal",
+      desc: "Courtroom, depositions, cross-examination",
+      accent: "#8A7B6F",
+    },
+    {
+      to: "/use-cases/politicians-activists",
+      title: "Politics",
+      desc: "Town halls, media, policy debates",
+      accent: "#6F7B8A",
+    },
+    {
+      to: "/use-cases/academics-researchers",
+      title: "Academia",
+      desc: "Thesis defense, conference Q&A",
+      accent: "#8A6F7B",
+    },
+    {
+      to: "/use-cases/parents-educators",
+      title: "Parenting",
+      desc: "Connect with kids and students",
+      accent: "#7B8A6F",
+    },
+    {
+      to: "/use-cases/healthcare-professionals",
+      title: "Healthcare",
+      desc: "Patient conversations, family meetings",
+      accent: "#8A7B6F",
+    },
+  ];
+
+  const displayedUseCases = showAllUseCases ? useCases : useCases.slice(0, 6);
+  const displayedTechniques = showAllTechniques
+    ? techniques
+    : techniques.slice(0, 6);
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F5F3EF" }}>
       {/* Header */}
@@ -233,18 +313,102 @@ function BlogIndex() {
           </div>
         </motion.div>
 
+        {/* Who It's For Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mb-16"
+        >
+          <p className="mb-4 text-sm font-medium" style={{ color: "#888880" }}>
+            Use Cases
+          </p>
+          <h2
+            className="mb-4 text-3xl font-bold lg:text-4xl"
+            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+          >
+            Who It's For
+          </h2>
+          <p className="mb-8 text-lg" style={{ color: "#5C5C54" }}>
+            Real-world scenarios where DebateClub helps you prepare, practice,
+            and perform.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {displayedUseCases.map((useCase, index) => (
+              <Link
+                key={useCase.to}
+                to={useCase.to}
+                className="group relative block overflow-hidden rounded-lg border-t-3 p-5 transition-all duration-200 hover:shadow-lg"
+                style={{
+                  backgroundColor: "#FAFAF8",
+                  borderTopWidth: "3px",
+                  borderTopColor: useCase.accent,
+                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
+                }}
+              >
+                <div className="mb-3 flex items-center justify-between">
+                  <div
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{ backgroundColor: useCase.accent }}
+                  />
+                  <MoveRight
+                    className="h-4 w-4 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
+                    style={{
+                      color: useCase.accent,
+                      transform: "translateX(-8px)",
+                    }}
+                  />
+                </div>
+                <h3
+                  className="mb-2 text-base font-bold transition-colors"
+                  style={{ color: "#2A2A20" }}
+                >
+                  {useCase.title}
+                </h3>
+                <p className="text-sm leading-relaxed" style={{ color: "#5C5C54" }}>
+                  {useCase.desc}
+                </p>
+              </Link>
+            ))}
+          </div>
+          {useCases.length > 6 && (
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={() => setShowAllUseCases(!showAllUseCases)}
+                className="flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-medium transition-all duration-200 hover:shadow-md"
+                style={{
+                  backgroundColor: "#FAFAF8",
+                  color: "#2A2A20",
+                  border: "1px solid #E8E4DA",
+                }}
+              >
+                {showAllUseCases ? (
+                  <>
+                    Show Less <ChevronUp className="h-4 w-4" />
+                  </>
+                ) : (
+                  <>
+                    Show All {useCases.length} Use Cases{" "}
+                    <ChevronDown className="h-4 w-4" />
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+        </motion.div>
+
         {/* Technique Library Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
+          transition={{ duration: 0.5, delay: 0.25 }}
         >
-          <h1
-            className="mb-4 text-4xl font-bold lg:text-5xl"
+          <h2
+            className="mb-4 text-3xl font-bold lg:text-4xl"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
             Technique Library
-          </h1>
+          </h2>
           <p className="mb-12 text-lg" style={{ color: "#5C5C54" }}>
             Deep dives into the 12 debate techniques from Mehdi Hasan's "Win
             Every Argument" and how DebateClub helps you master each one.
@@ -253,7 +417,7 @@ function BlogIndex() {
 
         {/* Article Grid */}
         <div className="grid grid-cols-2 gap-6">
-          {techniques.map((technique, index) => (
+          {displayedTechniques.map((technique, index) => (
             <motion.div
               key={technique.id}
               initial={{ opacity: 0, y: 20 }}
@@ -294,6 +458,31 @@ function BlogIndex() {
             </motion.div>
           ))}
         </div>
+
+        {techniques.length > 6 && (
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={() => setShowAllTechniques(!showAllTechniques)}
+              className="flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-medium transition-all duration-200 hover:shadow-md"
+              style={{
+                backgroundColor: "#FAFAF8",
+                color: "#2A2A20",
+                border: "1px solid #E8E4DA",
+              }}
+            >
+              {showAllTechniques ? (
+                <>
+                  Show Less <ChevronUp className="h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  Show All {techniques.length} Techniques{" "}
+                  <ChevronDown className="h-4 w-4" />
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </main>
 
       {/* Footer */}

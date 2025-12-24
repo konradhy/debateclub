@@ -4,7 +4,6 @@ import {
   ArrowLeft,
   ArrowRight,
   DollarSign,
-  MessageSquare,
   Target,
   TrendingUp,
   CheckCircle,
@@ -376,8 +375,8 @@ function SalesObjectionsPage() {
                 "Send me some info"
               </h3>
               <p className="text-sm" style={{ color: "#5C5C54" }}>
-                A polite brush-off. Redirect to what would make the info
-                useful. Book the follow-up before hanging up.
+                A polite brush-off. Redirect to what would make the info useful.
+                Book the follow-up before hanging up.
               </p>
             </div>
             <div
@@ -542,19 +541,31 @@ function SalesObjectionsPage() {
               </h3>
               <ul className="space-y-2 text-sm" style={{ color: "#5C5C54" }}>
                 <li className="flex items-start gap-2">
-                  <XCircle className="mt-0.5 h-4 w-4" style={{ color: "#DC2626" }} />
+                  <XCircle
+                    className="mt-0.5 h-4 w-4"
+                    style={{ color: "#DC2626" }}
+                  />
                   Discount immediately when price comes up
                 </li>
                 <li className="flex items-start gap-2">
-                  <XCircle className="mt-0.5 h-4 w-4" style={{ color: "#DC2626" }} />
+                  <XCircle
+                    className="mt-0.5 h-4 w-4"
+                    style={{ color: "#DC2626" }}
+                  />
                   Accept "let me think about it" at face value
                 </li>
                 <li className="flex items-start gap-2">
-                  <XCircle className="mt-0.5 h-4 w-4" style={{ color: "#DC2626" }} />
+                  <XCircle
+                    className="mt-0.5 h-4 w-4"
+                    style={{ color: "#DC2626" }}
+                  />
                   Lose deals to competitors without knowing why
                 </li>
                 <li className="flex items-start gap-2">
-                  <XCircle className="mt-0.5 h-4 w-4" style={{ color: "#DC2626" }} />
+                  <XCircle
+                    className="mt-0.5 h-4 w-4"
+                    style={{ color: "#DC2626" }}
+                  />
                   Feel the "no" before you hear it
                 </li>
               </ul>
@@ -568,19 +579,31 @@ function SalesObjectionsPage() {
               </h3>
               <ul className="space-y-2 text-sm" style={{ color: "#5C5C54" }}>
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="mt-0.5 h-4 w-4" style={{ color: "#16A34A" }} />
+                  <CheckCircle
+                    className="mt-0.5 h-4 w-4"
+                    style={{ color: "#16A34A" }}
+                  />
                   Reframe price as investment with practiced language
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="mt-0.5 h-4 w-4" style={{ color: "#16A34A" }} />
+                  <CheckCircle
+                    className="mt-0.5 h-4 w-4"
+                    style={{ color: "#16A34A" }}
+                  />
                   Surface real concerns with killer questions
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="mt-0.5 h-4 w-4" style={{ color: "#16A34A" }} />
+                  <CheckCircle
+                    className="mt-0.5 h-4 w-4"
+                    style={{ color: "#16A34A" }}
+                  />
                   Handle competitive objections with confidence
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="mt-0.5 h-4 w-4" style={{ color: "#16A34A" }} />
+                  <CheckCircle
+                    className="mt-0.5 h-4 w-4"
+                    style={{ color: "#16A34A" }}
+                  />
                   Stay composed because you have done this 50 times
                 </li>
               </ul>

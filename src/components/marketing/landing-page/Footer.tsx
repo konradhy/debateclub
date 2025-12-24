@@ -37,13 +37,23 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-sm transition-colors hover:opacity-80"
-                    style={{ color: "#A8A8A0" }}
-                  >
-                    {link.label}
-                  </a>
+                  {link.href.startsWith("#") ? (
+                    <a
+                      href={link.href}
+                      className="text-sm transition-colors hover:opacity-80"
+                      style={{ color: "#A8A8A0" }}
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      to={link.href}
+                      className="text-sm transition-colors hover:opacity-80"
+                      style={{ color: "#A8A8A0" }}
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
@@ -60,19 +70,25 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.resources.map((link) => (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-sm transition-colors hover:opacity-80"
-                    style={{ color: "#A8A8A0" }}
-                    target={link.href.startsWith("http") ? "_blank" : undefined}
-                    rel={
-                      link.href.startsWith("http")
-                        ? "noopener noreferrer"
-                        : undefined
-                    }
-                  >
-                    {link.label}
-                  </a>
+                  {link.href.startsWith("http") ? (
+                    <a
+                      href={link.href}
+                      className="text-sm transition-colors hover:opacity-80"
+                      style={{ color: "#A8A8A0" }}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      to={link.href}
+                      className="text-sm transition-colors hover:opacity-80"
+                      style={{ color: "#A8A8A0" }}
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
@@ -89,13 +105,25 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-sm transition-colors hover:opacity-80"
-                    style={{ color: "#A8A8A0" }}
-                  >
-                    {link.label}
-                  </a>
+                  {link.href.startsWith("#") || link.href.startsWith("http") ? (
+                    <a
+                      href={link.href}
+                      className="text-sm transition-colors hover:opacity-80"
+                      style={{ color: "#A8A8A0" }}
+                      target={link.href.startsWith("http") ? "_blank" : undefined}
+                      rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      to={link.href}
+                      className="text-sm transition-colors hover:opacity-80"
+                      style={{ color: "#A8A8A0" }}
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
