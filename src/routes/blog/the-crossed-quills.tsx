@@ -5,20 +5,20 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/blog/the-crossed-quills")({
   head: () => ({
     meta: [
-      { title: "The Story Behind Our Logo | DebateClub" },
+      { title: "The Crossed Quills: A Symbol for the Art of Argument | DebateClub" },
       {
         name: "description",
         content:
-          "Every symbol tells a story. The crossed quills connect DebateClub to 2,500 years of rhetoric — from Aristotle to the Oxford Union.",
+          "Why crossed quills? The connection between DebateClub and 2,500 years of rhetoric, from Aristotle to the Oxford Union.",
       },
       {
         property: "og:title",
-        content: "The Story Behind Our Logo | DebateClub",
+        content: "The Crossed Quills: A Symbol for the Art of Argument | DebateClub",
       },
       {
         property: "og:description",
         content:
-          "Every symbol tells a story. The crossed quills connect DebateClub to 2,500 years of rhetoric — from Aristotle to the Oxford Union.",
+          "Why crossed quills? The connection between DebateClub and 2,500 years of rhetoric, from Aristotle to the Oxford Union.",
       },
       { property: "og:type", content: "article" },
       { property: "og:image", content: "/images/landingpage.png" },
@@ -522,8 +522,14 @@ Today
       <footer className="py-8" style={{ backgroundColor: "#E8E4DA" }}>
         <div className="mx-auto max-w-3xl px-8 text-center">
           <p className="text-sm" style={{ color: "#5C5C54" }}>
-            © {new Date().getFullYear()} DebateClub. Based on "Win Every
-            Argument" by Mehdi Hasan.
+            © {new Date().getFullYear()} DebateClub. Based on{" "}
+            <Link
+              to="/win-every-argument"
+              className="underline transition-opacity hover:opacity-70"
+            >
+              "Win Every Argument"
+            </Link>{" "}
+            by Mehdi Hasan.
           </p>
         </div>
       </footer>

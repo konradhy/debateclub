@@ -9,13 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WinEveryArgumentRouteImport } from './routes/win-every-argument'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
+import { Route as UseCasesSalesObjectionsRouteImport } from './routes/use-cases/sales-objections'
+import { Route as UseCasesPresentationsRouteImport } from './routes/use-cases/presentations'
+import { Route as UseCasesPoliticiansActivistsRouteImport } from './routes/use-cases/politicians-activists'
+import { Route as UseCasesPitchingFundraisingRouteImport } from './routes/use-cases/pitching-fundraising'
+import { Route as UseCasesParentsEducatorsRouteImport } from './routes/use-cases/parents-educators'
+import { Route as UseCasesJobInterviewsRouteImport } from './routes/use-cases/job-interviews'
+import { Route as UseCasesDifficultConversationsRouteImport } from './routes/use-cases/difficult-conversations'
+import { Route as UseCasesAttorneysLegalRouteImport } from './routes/use-cases/attorneys-legal'
+import { Route as UseCasesAcademicsResearchersRouteImport } from './routes/use-cases/academics-researchers'
 import { Route as BlogTheCrossedQuillsRouteImport } from './routes/blog/the-crossed-quills'
 import { Route as BlogStrikeEmotionalChordRouteImport } from './routes/blog/strike-emotional-chord'
+import { Route as BlogStickTheLandingRouteImport } from './routes/blog/stick-the-landing'
 import { Route as BlogSpotTheWeaknessRouteImport } from './routes/blog/spot-the-weakness'
 import { Route as BlogReadAnyRoomRouteImport } from './routes/blog/read-any-room'
+import { Route as BlogOwnYourWeaknessesRouteImport } from './routes/blog/own-your-weaknesses'
 import { Route as BlogMakeItStickRouteImport } from './routes/blog/make-it-stick'
 import { Route as BlogLandTheCloserRouteImport } from './routes/blog/land-the-closer'
 import { Route as BlogFlipTheirMomentumRouteImport } from './routes/blog/flip-their-momentum'
@@ -43,6 +55,11 @@ import { Route as AppAuthDashboardLayoutCheckoutRouteImport } from './routes/_ap
 import { Route as AppAuthDashboardLayoutSettingsIndexRouteImport } from './routes/_app/_auth/dashboard/_layout.settings.index'
 import { Route as AppAuthDashboardLayoutSettingsBillingRouteImport } from './routes/_app/_auth/dashboard/_layout.settings.billing'
 
+const WinEveryArgumentRoute = WinEveryArgumentRouteImport.update({
+  id: '/win-every-argument',
+  path: '/win-every-argument',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
@@ -57,6 +74,56 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   path: '/blog/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UseCasesSalesObjectionsRoute = UseCasesSalesObjectionsRouteImport.update({
+  id: '/use-cases/sales-objections',
+  path: '/use-cases/sales-objections',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UseCasesPresentationsRoute = UseCasesPresentationsRouteImport.update({
+  id: '/use-cases/presentations',
+  path: '/use-cases/presentations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UseCasesPoliticiansActivistsRoute =
+  UseCasesPoliticiansActivistsRouteImport.update({
+    id: '/use-cases/politicians-activists',
+    path: '/use-cases/politicians-activists',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const UseCasesPitchingFundraisingRoute =
+  UseCasesPitchingFundraisingRouteImport.update({
+    id: '/use-cases/pitching-fundraising',
+    path: '/use-cases/pitching-fundraising',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const UseCasesParentsEducatorsRoute =
+  UseCasesParentsEducatorsRouteImport.update({
+    id: '/use-cases/parents-educators',
+    path: '/use-cases/parents-educators',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const UseCasesJobInterviewsRoute = UseCasesJobInterviewsRouteImport.update({
+  id: '/use-cases/job-interviews',
+  path: '/use-cases/job-interviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UseCasesDifficultConversationsRoute =
+  UseCasesDifficultConversationsRouteImport.update({
+    id: '/use-cases/difficult-conversations',
+    path: '/use-cases/difficult-conversations',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const UseCasesAttorneysLegalRoute = UseCasesAttorneysLegalRouteImport.update({
+  id: '/use-cases/attorneys-legal',
+  path: '/use-cases/attorneys-legal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UseCasesAcademicsResearchersRoute =
+  UseCasesAcademicsResearchersRouteImport.update({
+    id: '/use-cases/academics-researchers',
+    path: '/use-cases/academics-researchers',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const BlogTheCrossedQuillsRoute = BlogTheCrossedQuillsRouteImport.update({
   id: '/blog/the-crossed-quills',
   path: '/blog/the-crossed-quills',
@@ -68,6 +135,11 @@ const BlogStrikeEmotionalChordRoute =
     path: '/blog/strike-emotional-chord',
     getParentRoute: () => rootRouteImport,
   } as any)
+const BlogStickTheLandingRoute = BlogStickTheLandingRouteImport.update({
+  id: '/blog/stick-the-landing',
+  path: '/blog/stick-the-landing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogSpotTheWeaknessRoute = BlogSpotTheWeaknessRouteImport.update({
   id: '/blog/spot-the-weakness',
   path: '/blog/spot-the-weakness',
@@ -76,6 +148,11 @@ const BlogSpotTheWeaknessRoute = BlogSpotTheWeaknessRouteImport.update({
 const BlogReadAnyRoomRoute = BlogReadAnyRoomRouteImport.update({
   id: '/blog/read-any-room',
   path: '/blog/read-any-room',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogOwnYourWeaknessesRoute = BlogOwnYourWeaknessesRouteImport.update({
+  id: '/blog/own-your-weaknesses',
+  path: '/blog/own-your-weaknesses',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogMakeItStickRoute = BlogMakeItStickRouteImport.update({
@@ -219,6 +296,7 @@ const AppAuthDashboardLayoutSettingsBillingRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/win-every-argument': typeof WinEveryArgumentRoute
   '/blog/ask-the-killer-question': typeof BlogAskTheKillerQuestionRoute
   '/blog/back-it-up': typeof BlogBackItUpRoute
   '/blog/blueprint-part-1': typeof BlogBlueprintPart1Route
@@ -229,10 +307,21 @@ export interface FileRoutesByFullPath {
   '/blog/flip-their-momentum': typeof BlogFlipTheirMomentumRoute
   '/blog/land-the-closer': typeof BlogLandTheCloserRoute
   '/blog/make-it-stick': typeof BlogMakeItStickRoute
+  '/blog/own-your-weaknesses': typeof BlogOwnYourWeaknessesRoute
   '/blog/read-any-room': typeof BlogReadAnyRoomRoute
   '/blog/spot-the-weakness': typeof BlogSpotTheWeaknessRoute
+  '/blog/stick-the-landing': typeof BlogStickTheLandingRoute
   '/blog/strike-emotional-chord': typeof BlogStrikeEmotionalChordRoute
   '/blog/the-crossed-quills': typeof BlogTheCrossedQuillsRoute
+  '/use-cases/academics-researchers': typeof UseCasesAcademicsResearchersRoute
+  '/use-cases/attorneys-legal': typeof UseCasesAttorneysLegalRoute
+  '/use-cases/difficult-conversations': typeof UseCasesDifficultConversationsRoute
+  '/use-cases/job-interviews': typeof UseCasesJobInterviewsRoute
+  '/use-cases/parents-educators': typeof UseCasesParentsEducatorsRoute
+  '/use-cases/pitching-fundraising': typeof UseCasesPitchingFundraisingRoute
+  '/use-cases/politicians-activists': typeof UseCasesPoliticiansActivistsRoute
+  '/use-cases/presentations': typeof UseCasesPresentationsRoute
+  '/use-cases/sales-objections': typeof UseCasesSalesObjectionsRoute
   '/blog': typeof BlogIndexRoute
   '/login': typeof AppLoginLayoutRouteWithChildren
   '/dashboard': typeof AppAuthDashboardLayoutRouteWithChildren
@@ -252,6 +341,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/win-every-argument': typeof WinEveryArgumentRoute
   '/blog/ask-the-killer-question': typeof BlogAskTheKillerQuestionRoute
   '/blog/back-it-up': typeof BlogBackItUpRoute
   '/blog/blueprint-part-1': typeof BlogBlueprintPart1Route
@@ -262,10 +352,21 @@ export interface FileRoutesByTo {
   '/blog/flip-their-momentum': typeof BlogFlipTheirMomentumRoute
   '/blog/land-the-closer': typeof BlogLandTheCloserRoute
   '/blog/make-it-stick': typeof BlogMakeItStickRoute
+  '/blog/own-your-weaknesses': typeof BlogOwnYourWeaknessesRoute
   '/blog/read-any-room': typeof BlogReadAnyRoomRoute
   '/blog/spot-the-weakness': typeof BlogSpotTheWeaknessRoute
+  '/blog/stick-the-landing': typeof BlogStickTheLandingRoute
   '/blog/strike-emotional-chord': typeof BlogStrikeEmotionalChordRoute
   '/blog/the-crossed-quills': typeof BlogTheCrossedQuillsRoute
+  '/use-cases/academics-researchers': typeof UseCasesAcademicsResearchersRoute
+  '/use-cases/attorneys-legal': typeof UseCasesAttorneysLegalRoute
+  '/use-cases/difficult-conversations': typeof UseCasesDifficultConversationsRoute
+  '/use-cases/job-interviews': typeof UseCasesJobInterviewsRoute
+  '/use-cases/parents-educators': typeof UseCasesParentsEducatorsRoute
+  '/use-cases/pitching-fundraising': typeof UseCasesPitchingFundraisingRoute
+  '/use-cases/politicians-activists': typeof UseCasesPoliticiansActivistsRoute
+  '/use-cases/presentations': typeof UseCasesPresentationsRoute
+  '/use-cases/sales-objections': typeof UseCasesSalesObjectionsRoute
   '/blog': typeof BlogIndexRoute
   '/dashboard/analysis': typeof AppAuthDashboardAnalysisRoute
   '/dashboard/debate': typeof AppAuthDashboardDebateRoute
@@ -284,6 +385,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/win-every-argument': typeof WinEveryArgumentRoute
   '/_app/_auth': typeof AppAuthRouteWithChildren
   '/blog/ask-the-killer-question': typeof BlogAskTheKillerQuestionRoute
   '/blog/back-it-up': typeof BlogBackItUpRoute
@@ -295,10 +397,21 @@ export interface FileRoutesById {
   '/blog/flip-their-momentum': typeof BlogFlipTheirMomentumRoute
   '/blog/land-the-closer': typeof BlogLandTheCloserRoute
   '/blog/make-it-stick': typeof BlogMakeItStickRoute
+  '/blog/own-your-weaknesses': typeof BlogOwnYourWeaknessesRoute
   '/blog/read-any-room': typeof BlogReadAnyRoomRoute
   '/blog/spot-the-weakness': typeof BlogSpotTheWeaknessRoute
+  '/blog/stick-the-landing': typeof BlogStickTheLandingRoute
   '/blog/strike-emotional-chord': typeof BlogStrikeEmotionalChordRoute
   '/blog/the-crossed-quills': typeof BlogTheCrossedQuillsRoute
+  '/use-cases/academics-researchers': typeof UseCasesAcademicsResearchersRoute
+  '/use-cases/attorneys-legal': typeof UseCasesAttorneysLegalRoute
+  '/use-cases/difficult-conversations': typeof UseCasesDifficultConversationsRoute
+  '/use-cases/job-interviews': typeof UseCasesJobInterviewsRoute
+  '/use-cases/parents-educators': typeof UseCasesParentsEducatorsRoute
+  '/use-cases/pitching-fundraising': typeof UseCasesPitchingFundraisingRoute
+  '/use-cases/politicians-activists': typeof UseCasesPoliticiansActivistsRoute
+  '/use-cases/presentations': typeof UseCasesPresentationsRoute
+  '/use-cases/sales-objections': typeof UseCasesSalesObjectionsRoute
   '/blog/': typeof BlogIndexRoute
   '/_app/login/_layout': typeof AppLoginLayoutRouteWithChildren
   '/_app/_auth/dashboard/_layout': typeof AppAuthDashboardLayoutRouteWithChildren
@@ -320,6 +433,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/win-every-argument'
     | '/blog/ask-the-killer-question'
     | '/blog/back-it-up'
     | '/blog/blueprint-part-1'
@@ -330,10 +444,21 @@ export interface FileRouteTypes {
     | '/blog/flip-their-momentum'
     | '/blog/land-the-closer'
     | '/blog/make-it-stick'
+    | '/blog/own-your-weaknesses'
     | '/blog/read-any-room'
     | '/blog/spot-the-weakness'
+    | '/blog/stick-the-landing'
     | '/blog/strike-emotional-chord'
     | '/blog/the-crossed-quills'
+    | '/use-cases/academics-researchers'
+    | '/use-cases/attorneys-legal'
+    | '/use-cases/difficult-conversations'
+    | '/use-cases/job-interviews'
+    | '/use-cases/parents-educators'
+    | '/use-cases/pitching-fundraising'
+    | '/use-cases/politicians-activists'
+    | '/use-cases/presentations'
+    | '/use-cases/sales-objections'
     | '/blog'
     | '/login'
     | '/dashboard'
@@ -353,6 +478,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/win-every-argument'
     | '/blog/ask-the-killer-question'
     | '/blog/back-it-up'
     | '/blog/blueprint-part-1'
@@ -363,10 +489,21 @@ export interface FileRouteTypes {
     | '/blog/flip-their-momentum'
     | '/blog/land-the-closer'
     | '/blog/make-it-stick'
+    | '/blog/own-your-weaknesses'
     | '/blog/read-any-room'
     | '/blog/spot-the-weakness'
+    | '/blog/stick-the-landing'
     | '/blog/strike-emotional-chord'
     | '/blog/the-crossed-quills'
+    | '/use-cases/academics-researchers'
+    | '/use-cases/attorneys-legal'
+    | '/use-cases/difficult-conversations'
+    | '/use-cases/job-interviews'
+    | '/use-cases/parents-educators'
+    | '/use-cases/pitching-fundraising'
+    | '/use-cases/politicians-activists'
+    | '/use-cases/presentations'
+    | '/use-cases/sales-objections'
     | '/blog'
     | '/dashboard/analysis'
     | '/dashboard/debate'
@@ -384,6 +521,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_app'
+    | '/win-every-argument'
     | '/_app/_auth'
     | '/blog/ask-the-killer-question'
     | '/blog/back-it-up'
@@ -395,10 +533,21 @@ export interface FileRouteTypes {
     | '/blog/flip-their-momentum'
     | '/blog/land-the-closer'
     | '/blog/make-it-stick'
+    | '/blog/own-your-weaknesses'
     | '/blog/read-any-room'
     | '/blog/spot-the-weakness'
+    | '/blog/stick-the-landing'
     | '/blog/strike-emotional-chord'
     | '/blog/the-crossed-quills'
+    | '/use-cases/academics-researchers'
+    | '/use-cases/attorneys-legal'
+    | '/use-cases/difficult-conversations'
+    | '/use-cases/job-interviews'
+    | '/use-cases/parents-educators'
+    | '/use-cases/pitching-fundraising'
+    | '/use-cases/politicians-activists'
+    | '/use-cases/presentations'
+    | '/use-cases/sales-objections'
     | '/blog/'
     | '/_app/login/_layout'
     | '/_app/_auth/dashboard/_layout'
@@ -420,6 +569,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  WinEveryArgumentRoute: typeof WinEveryArgumentRoute
   BlogAskTheKillerQuestionRoute: typeof BlogAskTheKillerQuestionRoute
   BlogBackItUpRoute: typeof BlogBackItUpRoute
   BlogBlueprintPart1Route: typeof BlogBlueprintPart1Route
@@ -430,15 +580,33 @@ export interface RootRouteChildren {
   BlogFlipTheirMomentumRoute: typeof BlogFlipTheirMomentumRoute
   BlogLandTheCloserRoute: typeof BlogLandTheCloserRoute
   BlogMakeItStickRoute: typeof BlogMakeItStickRoute
+  BlogOwnYourWeaknessesRoute: typeof BlogOwnYourWeaknessesRoute
   BlogReadAnyRoomRoute: typeof BlogReadAnyRoomRoute
   BlogSpotTheWeaknessRoute: typeof BlogSpotTheWeaknessRoute
+  BlogStickTheLandingRoute: typeof BlogStickTheLandingRoute
   BlogStrikeEmotionalChordRoute: typeof BlogStrikeEmotionalChordRoute
   BlogTheCrossedQuillsRoute: typeof BlogTheCrossedQuillsRoute
+  UseCasesAcademicsResearchersRoute: typeof UseCasesAcademicsResearchersRoute
+  UseCasesAttorneysLegalRoute: typeof UseCasesAttorneysLegalRoute
+  UseCasesDifficultConversationsRoute: typeof UseCasesDifficultConversationsRoute
+  UseCasesJobInterviewsRoute: typeof UseCasesJobInterviewsRoute
+  UseCasesParentsEducatorsRoute: typeof UseCasesParentsEducatorsRoute
+  UseCasesPitchingFundraisingRoute: typeof UseCasesPitchingFundraisingRoute
+  UseCasesPoliticiansActivistsRoute: typeof UseCasesPoliticiansActivistsRoute
+  UseCasesPresentationsRoute: typeof UseCasesPresentationsRoute
+  UseCasesSalesObjectionsRoute: typeof UseCasesSalesObjectionsRoute
   BlogIndexRoute: typeof BlogIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/win-every-argument': {
+      id: '/win-every-argument'
+      path: '/win-every-argument'
+      fullPath: '/win-every-argument'
+      preLoaderRoute: typeof WinEveryArgumentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app': {
       id: '/_app'
       path: ''
@@ -460,6 +628,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/use-cases/sales-objections': {
+      id: '/use-cases/sales-objections'
+      path: '/use-cases/sales-objections'
+      fullPath: '/use-cases/sales-objections'
+      preLoaderRoute: typeof UseCasesSalesObjectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/use-cases/presentations': {
+      id: '/use-cases/presentations'
+      path: '/use-cases/presentations'
+      fullPath: '/use-cases/presentations'
+      preLoaderRoute: typeof UseCasesPresentationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/use-cases/politicians-activists': {
+      id: '/use-cases/politicians-activists'
+      path: '/use-cases/politicians-activists'
+      fullPath: '/use-cases/politicians-activists'
+      preLoaderRoute: typeof UseCasesPoliticiansActivistsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/use-cases/pitching-fundraising': {
+      id: '/use-cases/pitching-fundraising'
+      path: '/use-cases/pitching-fundraising'
+      fullPath: '/use-cases/pitching-fundraising'
+      preLoaderRoute: typeof UseCasesPitchingFundraisingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/use-cases/parents-educators': {
+      id: '/use-cases/parents-educators'
+      path: '/use-cases/parents-educators'
+      fullPath: '/use-cases/parents-educators'
+      preLoaderRoute: typeof UseCasesParentsEducatorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/use-cases/job-interviews': {
+      id: '/use-cases/job-interviews'
+      path: '/use-cases/job-interviews'
+      fullPath: '/use-cases/job-interviews'
+      preLoaderRoute: typeof UseCasesJobInterviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/use-cases/difficult-conversations': {
+      id: '/use-cases/difficult-conversations'
+      path: '/use-cases/difficult-conversations'
+      fullPath: '/use-cases/difficult-conversations'
+      preLoaderRoute: typeof UseCasesDifficultConversationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/use-cases/attorneys-legal': {
+      id: '/use-cases/attorneys-legal'
+      path: '/use-cases/attorneys-legal'
+      fullPath: '/use-cases/attorneys-legal'
+      preLoaderRoute: typeof UseCasesAttorneysLegalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/use-cases/academics-researchers': {
+      id: '/use-cases/academics-researchers'
+      path: '/use-cases/academics-researchers'
+      fullPath: '/use-cases/academics-researchers'
+      preLoaderRoute: typeof UseCasesAcademicsResearchersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/the-crossed-quills': {
       id: '/blog/the-crossed-quills'
       path: '/blog/the-crossed-quills'
@@ -474,6 +705,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogStrikeEmotionalChordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/stick-the-landing': {
+      id: '/blog/stick-the-landing'
+      path: '/blog/stick-the-landing'
+      fullPath: '/blog/stick-the-landing'
+      preLoaderRoute: typeof BlogStickTheLandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/spot-the-weakness': {
       id: '/blog/spot-the-weakness'
       path: '/blog/spot-the-weakness'
@@ -486,6 +724,13 @@ declare module '@tanstack/react-router' {
       path: '/blog/read-any-room'
       fullPath: '/blog/read-any-room'
       preLoaderRoute: typeof BlogReadAnyRoomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/own-your-weaknesses': {
+      id: '/blog/own-your-weaknesses'
+      path: '/blog/own-your-weaknesses'
+      fullPath: '/blog/own-your-weaknesses'
+      preLoaderRoute: typeof BlogOwnYourWeaknessesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/make-it-stick': {
@@ -774,6 +1019,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  WinEveryArgumentRoute: WinEveryArgumentRoute,
   BlogAskTheKillerQuestionRoute: BlogAskTheKillerQuestionRoute,
   BlogBackItUpRoute: BlogBackItUpRoute,
   BlogBlueprintPart1Route: BlogBlueprintPart1Route,
@@ -784,10 +1030,21 @@ const rootRouteChildren: RootRouteChildren = {
   BlogFlipTheirMomentumRoute: BlogFlipTheirMomentumRoute,
   BlogLandTheCloserRoute: BlogLandTheCloserRoute,
   BlogMakeItStickRoute: BlogMakeItStickRoute,
+  BlogOwnYourWeaknessesRoute: BlogOwnYourWeaknessesRoute,
   BlogReadAnyRoomRoute: BlogReadAnyRoomRoute,
   BlogSpotTheWeaknessRoute: BlogSpotTheWeaknessRoute,
+  BlogStickTheLandingRoute: BlogStickTheLandingRoute,
   BlogStrikeEmotionalChordRoute: BlogStrikeEmotionalChordRoute,
   BlogTheCrossedQuillsRoute: BlogTheCrossedQuillsRoute,
+  UseCasesAcademicsResearchersRoute: UseCasesAcademicsResearchersRoute,
+  UseCasesAttorneysLegalRoute: UseCasesAttorneysLegalRoute,
+  UseCasesDifficultConversationsRoute: UseCasesDifficultConversationsRoute,
+  UseCasesJobInterviewsRoute: UseCasesJobInterviewsRoute,
+  UseCasesParentsEducatorsRoute: UseCasesParentsEducatorsRoute,
+  UseCasesPitchingFundraisingRoute: UseCasesPitchingFundraisingRoute,
+  UseCasesPoliticiansActivistsRoute: UseCasesPoliticiansActivistsRoute,
+  UseCasesPresentationsRoute: UseCasesPresentationsRoute,
+  UseCasesSalesObjectionsRoute: UseCasesSalesObjectionsRoute,
   BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport

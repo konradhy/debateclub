@@ -109,8 +109,15 @@ export function Footer() {
         >
           {/* Copyright */}
           <p className="text-sm" style={{ color: "#5C5C54" }}>
-            © {new Date().getFullYear()} DebateClub. Based on "Win Every
-            Argument" by Mehdi Hasan.
+            © {new Date().getFullYear()} DebateClub. Based on{" "}
+            <Link
+              to="/win-every-argument"
+              className="underline transition-opacity hover:opacity-70"
+              style={{ color: "#8A8A80" }}
+            >
+              "Win Every Argument"
+            </Link>{" "}
+            by Mehdi Hasan.
           </p>
 
           {/* Social icons */}

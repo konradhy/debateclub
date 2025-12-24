@@ -95,20 +95,20 @@ const jsonLd = {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "AI Debate Practice - Win Every Argument | DebateClub" },
+      { title: "Practice Debate with AI That Fights Back | DebateClub" },
       {
         name: "description",
         content:
-          "Practice debate with AI opponents that push back. Master 12 proven techniques from Mehdi Hasan's bestseller. Get real-time feedback. Free to start.",
+          "Spar with AI opponents. Get graded on 12 techniques from Mehdi Hasan's Win Every Argument. Real-time feedback, voice-based practice, free to start.",
       },
       {
         property: "og:title",
-        content: "AI Debate Practice - Win Every Argument | DebateClub",
+        content: "Practice Debate with AI That Fights Back | DebateClub",
       },
       {
         property: "og:description",
         content:
-          "Practice debate with AI opponents that push back. Master 12 proven techniques from Mehdi Hasan's bestseller. Get real-time feedback. Free to start.",
+          "Spar with AI opponents. Get graded on 12 techniques from Mehdi Hasan's Win Every Argument. Real-time feedback, voice-based practice, free to start.",
       },
       { property: "og:type", content: "website" },
       { property: "og:image", content: "/images/landingpage.png" },

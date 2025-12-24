@@ -1,41 +1,41 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, RotateCcw, Shield, Swords } from "lucide-react";
+import { ArrowLeft, ArrowRight, Flag, Sparkles, Mic } from "lucide-react";
 
-export const Route = createFileRoute("/blog/flip-their-momentum")({
+export const Route = createFileRoute("/blog/stick-the-landing")({
   head: () => ({
     meta: [
       {
-        title: "The Judo Move: Use Their Strength Against Them | DebateClub",
+        title: "How to End a Debate So They Remember | DebateClub",
       },
       {
         name: "description",
         content:
-          "Concession is not surrender. Strategic yielding that redirects momentum to where you win. From Mehdi Hasan's Win Every Argument.",
+          "\"Free at last\" was not improvised. Craft closings that audiences quote years later. The peroration from Mehdi Hasan's Win Every Argument.",
       },
       {
         property: "og:title",
-        content: "The Judo Move: Use Their Strength Against Them | DebateClub",
+        content: "How to End a Debate So They Remember | DebateClub",
       },
       {
         property: "og:description",
         content:
-          "Concession is not surrender. Strategic yielding that redirects momentum to where you win. From Mehdi Hasan's Win Every Argument.",
+          "\"Free at last\" was not improvised. Craft closings that audiences quote years later. The peroration from Mehdi Hasan's Win Every Argument.",
       },
       { property: "og:type", content: "article" },
       { property: "og:image", content: "/images/landingpage.png" },
       { property: "og:site_name", content: "DebateClub" },
     ],
   }),
-  component: FlipTheirMomentumArticle,
+  component: StickTheLandingArticle,
 });
 
 /**
- * Blog article: Flip Their Momentum technique deep dive.
- * Explores strategic concession and the "judo move" from Mehdi Hasan's
- * "Win Every Argument" and how DebateClub trains users to master it.
+ * Blog article: Stick the Landing technique deep dive.
+ * Explores Mehdi Hasan's Chapter 11: "The Peroration" and how
+ * DebateClub trains users to deliver powerful, memorable closings.
  */
-function FlipTheirMomentumArticle() {
+function StickTheLandingArticle() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F5F3EF" }}>
       {/* Header */}
@@ -70,9 +70,9 @@ function FlipTheirMomentumArticle() {
           {/* Badge */}
           <span
             className="mb-4 inline-block rounded-md px-3 py-1 text-xs font-medium"
-            style={{ backgroundColor: "#E8DFC8", color: "#5C5444" }}
+            style={{ backgroundColor: "#A8B08C", color: "#3A4030" }}
           >
-            The Judo Move
+            The Finale
           </span>
 
           {/* Title */}
@@ -80,12 +80,12 @@ function FlipTheirMomentumArticle() {
             className="mb-6 text-4xl font-bold leading-tight lg:text-5xl"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            Flip Their Momentum: The Art of Strategic Concession
+            Stick the Landing: The Art of the Peroration
           </h1>
 
           {/* Meta */}
           <p className="mb-12 text-sm" style={{ color: "#888880" }}>
-            8 min read · Technique 5 of 12
+            9 min read · Technique 12 of 12
           </p>
         </motion.div>
 
@@ -98,34 +98,36 @@ function FlipTheirMomentumArticle() {
         >
           {/* Opening */}
           <p className="text-lg leading-relaxed" style={{ color: "#3A3A35" }}>
-            In judo, the best throws do not rely on brute strength. They use the
-            opponent's force against them. The opponent lunges forward and
-            suddenly finds themselves on the mat, thrown by their own momentum.
-            Mehdi Hasan applies this principle to debate with what he calls the
-            "concession and pivot."
+            Martin Luther King Jr. did not end "I Have a Dream" with a policy
+            recommendation. Winston Churchill did not close his wartime speeches
+            with logistics. The greatest orators in history understood what
+            Mehdi Hasan makes explicit in Chapter 11 of "Win Every Argument":{" "}
+            <strong>
+              the ending is what people remember, and memory is emotion
+            </strong>
+            .
           </p>
 
           <p className="mt-6 leading-relaxed" style={{ color: "#5C5C54" }}>
-            Most debaters think conceding any point is weakness. They fight for
-            every inch, even when the ground is indefensible. Mehdi Hasan argues this
-            is exactly wrong.{" "}
-            <strong>Strategic concession is a power move</strong>. When you
-            yield ground that costs you nothing and use their forward motion to
-            redirect to your strongest argument, you appear reasonable while
-            leaving your opponent off balance.
+            The ancient Greeks had a word for this: peroration. It is the
+            closing section of a speech, where the orator summarizes their case,
+            makes a final appeal to emotion, and sends the audience out with a
+            feeling they will not forget. Mehdi Hasan argues that most modern
+            debaters completely neglect this. They run out of time, they trail
+            off, or they end with a limp "so, yeah" that squanders everything
+            they built.
           </p>
 
-          {/* Section 1: Why Concession Works */}
+          {/* Section 1: Why Endings Matter */}
           <h2
             className="mb-4 mt-12 text-2xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            The Psychology of the Concession
+            The Psychology of Last Impressions
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Mehdi Hasan identifies several reasons why strategic concession is so
-            effective:
+            Mehdi Hasan explains why endings carry disproportionate weight:
           </p>
 
           <div
@@ -134,52 +136,53 @@ function FlipTheirMomentumArticle() {
           >
             <div className="mb-6">
               <div className="mb-2 flex items-center gap-2">
-                <Shield className="h-4 w-4" style={{ color: "#3C4A32" }} />
+                <Flag className="h-4 w-4" style={{ color: "#3C4A32" }} />
                 <h3 className="text-lg font-bold" style={{ color: "#3C4A32" }}>
-                  It Builds Credibility
+                  Recency Effect
                 </h3>
               </div>
               <p
                 className="text-sm leading-relaxed"
                 style={{ color: "#5C5C54" }}
               >
-                When you acknowledge a valid point, the audience sees you as
-                fair-minded rather than partisan. This makes them more likely to
-                trust you on contested points.
+                Humans remember the last thing they heard disproportionately
+                well. Psychologists call this the "recency effect." Your closing
+                words are the words the audience carries with them.
               </p>
             </div>
 
             <div className="mb-6">
               <div className="mb-2 flex items-center gap-2">
-                <RotateCcw className="h-4 w-4" style={{ color: "#3C4A32" }} />
+                <Sparkles className="h-4 w-4" style={{ color: "#3C4A32" }} />
                 <h3 className="text-lg font-bold" style={{ color: "#3C4A32" }}>
-                  It Defuses Their Momentum
+                  Emotional Peak
                 </h3>
               </div>
               <p
                 className="text-sm leading-relaxed"
                 style={{ color: "#5C5C54" }}
               >
-                When you concede, your opponent has nothing to push against.
-                They prepared to fight and now must recalibrate. This brief
-                confusion is your window to redirect.
+                The ending is your last chance to make the audience feel
+                something. A debate that ends on logic alone leaves people
+                intellectually convinced but emotionally unmoved. Emotion drives
+                action.
               </p>
             </div>
 
             <div>
               <div className="mb-2 flex items-center gap-2">
-                <Swords className="h-4 w-4" style={{ color: "#3C4A32" }} />
+                <Mic className="h-4 w-4" style={{ color: "#3C4A32" }} />
                 <h3 className="text-lg font-bold" style={{ color: "#3C4A32" }}>
-                  It Sets Up the Pivot
+                  Sense of Completion
                 </h3>
               </div>
               <p
                 className="text-sm leading-relaxed"
                 style={{ color: "#5C5C54" }}
               >
-                The concession is never the end. It is a setup. "Yes, X is true.
-                But what really matters is Y." The pivot reframes the entire
-                debate on your terms.
+                A strong ending signals mastery. It tells the audience you knew
+                exactly where you were going and you arrived confidently. A weak
+                ending makes everything before it feel unfinished.
               </p>
             </div>
           </div>
@@ -188,23 +191,24 @@ function FlipTheirMomentumArticle() {
             className="my-8 border-l-4 py-2 pl-6 italic"
             style={{ borderColor: "#9A9A6D", color: "#5C5C54" }}
           >
-            "Concession is not surrender. It is strategic retreat to better
-            ground."
+            "The conclusion is what audiences remember most... a well-prepared,
+            well-delivered speech without a peroration dribbles off and leaves
+            an audience unsatisfied."
             <span className="mt-2 block text-sm not-italic">
-              - Mehdi Hasan, "Win Every Argument"
+              - William Safire, quoted by Mehdi Hasan in "Win Every Argument"
             </span>
           </blockquote>
 
-          {/* Section 2: The Concession-Pivot Formula */}
+          {/* Section 2: The Peroration Formula */}
           <h2
             className="mb-4 mt-12 text-2xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            The Three-Part Formula
+            Mehdi Hasan's Three-Part Peroration
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Mehdi Hasan's concession technique follows a consistent structure:
+            Mehdi Hasan outlines a specific structure for powerful closings:
           </p>
 
           <div className="my-6 grid gap-4">
@@ -220,12 +224,12 @@ function FlipTheirMomentumArticle() {
               </div>
               <div>
                 <h4 className="mb-1 font-bold" style={{ color: "#3C4A32" }}>
-                  Acknowledge Clearly
+                  Summarize Your Wins
                 </h4>
                 <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  "You're absolutely right that..." or "I agree that..." Make
-                  the concession explicit and genuine. Half-concessions sound
-                  evasive and undermine the effect.
+                  Remind the audience what you proved. Not everything you said,
+                  just the highlights. "Today I showed you three things..." Use
+                  the Rule of Three to make it memorable.
                 </p>
               </div>
             </div>
@@ -241,12 +245,12 @@ function FlipTheirMomentumArticle() {
               </div>
               <div>
                 <h4 className="mb-1 font-bold" style={{ color: "#3C4A32" }}>
-                  Bridge With "But"
+                  Make a Call to Action
                 </h4>
                 <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  "But that's not the central question here..." or "But what
-                  that misses is..." The bridge word signals that you are about
-                  to redirect, not simply agree.
+                  Tell the audience what to do with what they learned. Vote,
+                  donate, share, change their mind, take action. Give them a
+                  concrete next step. People want to be told what to do.
                 </p>
               </div>
             </div>
@@ -262,87 +266,83 @@ function FlipTheirMomentumArticle() {
               </div>
               <div>
                 <h4 className="mb-1 font-bold" style={{ color: "#3C4A32" }}>
-                  Pivot to Your Ground
+                  End with Emotion
                 </h4>
                 <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  Immediately move to your strongest point. The pivot should
-                  land on ground where you are strongest and they are weakest.
+                  Your final sentence should make them feel something. Hope,
+                  urgency, outrage, pride. Return to a story you told earlier.
+                  Reference a phrase you used. Close the loop with feeling.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Section 3: What to Concede */}
+          {/* Section 3: Types of Closings */}
           <h2
             className="mb-4 mt-12 text-2xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            Knowing What to Give Up
+            The Closing Toolkit
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Not all concessions are strategic. The skill is in identifying what
-            costs you nothing:
+            Mehdi Hasan identifies several types of powerful closings:
           </p>
 
-          <div
-            className="my-6 rounded-xl border-l-4 p-6"
-            style={{
-              backgroundColor: "#FAFAF8",
-              borderColor: "#3C4A32",
-            }}
-          >
-            <h4 className="mb-4 font-bold" style={{ color: "#2A2A20" }}>
-              Safe Concessions
-            </h4>
-            <ul className="space-y-2 text-sm" style={{ color: "#5C5C54" }}>
-              <li>
-                <strong>Obvious facts:</strong> If something is undeniably true,
-                fighting it makes you look unreasonable.
-              </li>
-              <li>
-                <strong>Peripheral points:</strong> Issues that do not affect
-                your core argument. Let them have the edges.
-              </li>
-              <li>
-                <strong>Shared premises:</strong> "We both want X. We disagree
-                about how to get there."
-              </li>
-              <li>
-                <strong>Past mistakes:</strong> If your side made an error, own
-                it briefly and pivot to what should happen now.
-              </li>
-            </ul>
-          </div>
-
-          <div
-            className="my-6 rounded-xl border-l-4 p-6"
-            style={{
-              backgroundColor: "#FAFAF8",
-              borderColor: "#B8860B",
-            }}
-          >
-            <h4 className="mb-4 font-bold" style={{ color: "#2A2A20" }}>
-              Dangerous Concessions
-            </h4>
-            <ul className="space-y-2 text-sm" style={{ color: "#5C5C54" }}>
-              <li>
-                <strong>Your core thesis:</strong> Never concede the foundation
-                of your argument.
-              </li>
-              <li>
-                <strong>Moral ground:</strong> Do not accept framing that makes
-                you the villain.
-              </li>
-              <li>
-                <strong>Key evidence:</strong> If they attack your receipts,
-                defend them.
-              </li>
-              <li>
-                <strong>Credibility points:</strong> Never accept that you are
-                unqualified to speak.
-              </li>
-            </ul>
+          <div className="my-6 grid gap-4">
+            <div
+              className="rounded-lg p-4"
+              style={{ backgroundColor: "#E5DFD3" }}
+            >
+              <h4 className="mb-2 font-bold" style={{ color: "#3C4A32" }}>
+                The Callback
+              </h4>
+              <p className="text-sm" style={{ color: "#5C5C54" }}>
+                Return to a story or phrase from your opening. "Remember the
+                teacher I told you about? She is still rationing her insulin
+                tonight. That is why we need to act now." The loop creates
+                narrative satisfaction.
+              </p>
+            </div>
+            <div
+              className="rounded-lg p-4"
+              style={{ backgroundColor: "#E5DFD3" }}
+            >
+              <h4 className="mb-2 font-bold" style={{ color: "#3C4A32" }}>
+                The Vision
+              </h4>
+              <p className="text-sm" style={{ color: "#5C5C54" }}>
+                Paint a picture of the future you are arguing for. "Imagine a
+                world where..." Make it concrete and desirable. Let them see
+                what they are fighting for.
+              </p>
+            </div>
+            <div
+              className="rounded-lg p-4"
+              style={{ backgroundColor: "#E5DFD3" }}
+            >
+              <h4 className="mb-2 font-bold" style={{ color: "#3C4A32" }}>
+                The Challenge
+              </h4>
+              <p className="text-sm" style={{ color: "#5C5C54" }}>
+                Issue a direct challenge to the audience. "The question is not
+                whether we can afford to do this. The question is whether we can
+                afford not to. Which side of history will you be on?"
+              </p>
+            </div>
+            <div
+              className="rounded-lg p-4"
+              style={{ backgroundColor: "#E5DFD3" }}
+            >
+              <h4 className="mb-2 font-bold" style={{ color: "#3C4A32" }}>
+                The Quote
+              </h4>
+              <p className="text-sm" style={{ color: "#5C5C54" }}>
+                End with powerful words from someone respected. Let a greater
+                voice carry your final message. Choose a quote that reinforces
+                your exact thesis.
+              </p>
+            </div>
           </div>
 
           {/* Section 4: How DebateClub Trains This */}
@@ -350,13 +350,13 @@ function FlipTheirMomentumArticle() {
             className="mb-4 mt-12 text-2xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            How DebateClub Trains Strategic Concession
+            How DebateClub Trains the Peroration
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            The judo move is difficult to practice in isolation because it
-            requires an opponent pushing hard enough to give you momentum to
-            redirect. DebateClub creates these opportunities systematically:
+            Most people never practice closings. They run out of time in
+            rehearsal or they improvise and hope for the best. DebateClub makes
+            the peroration a deliberate skill:
           </p>
 
           {/* Mermaid-style diagram */}
@@ -369,73 +369,126 @@ function FlipTheirMomentumArticle() {
                 className="text-sm font-semibold uppercase tracking-wide"
                 style={{ color: "#C8D4B8" }}
               >
-                Concession Training Pipeline
+                Peroration Training Pipeline
               </h4>
             </div>
             <div className="p-6 font-mono text-sm" style={{ color: "#C8D4B8" }}>
               <pre className="whitespace-pre-wrap">
                 {`┌──────────────────────────────────────┐
-│  PREP: CONCESSION PLANNING           │
+│  PREP: CLOSING GENERATION            │
 │                                      │
-│  Your prep materials include:        │
+│  Your prep materials include 3       │
+│  crafted closings:                   │
 │                                      │
-│  • "Safe Concessions" list: points   │
-│    you can give up without damage    │
+│  • Call to Action type: concrete     │
+│    next steps for the audience       │
 │                                      │
-│  • "Pivot Phrases" for each one:     │
-│    the exact bridge language to use  │
+│  • Emotional Appeal type: story      │
+│    callback with feeling             │
 │                                      │
-│  • "Target Ground": where you want   │
-│    to redirect after each concession │
+│  • Vision type: picture of the       │
+│    future you are fighting for       │
+│                                      │
+│  Each includes delivery guidance:    │
+│  pacing, pauses, where to modulate   │
+│  voice for maximum impact            │
 └──────────────┬───────────────────────┘
                │
                ▼
 ┌──────────────────────────────────────┐
-│  DURING DEBATE: OPPONENT PRESSURE    │
+│  DURING DEBATE                       │
 │                                      │
-│  Your AI opponent deliberately:      │
+│  Quick Reference panel keeps your    │
+│  chosen closing accessible:          │
 │                                      │
-│  • Hammers on peripheral points to   │
-│    see if you will waste time        │
-│    defending indefensible ground     │
+│  • The exact words to use            │
+│  • Delivery notes inline             │
+│  • Backup options if primary does    │
+│    not fit how debate unfolded       │
 │                                      │
-│  • Creates openings where concession │
-│    and pivot would be devastating    │
-│                                      │
-│  • Tests whether you can yield       │
-│    gracefully under pressure         │
+│  Your opponent creates clean endings │
+│  so you can practice delivering      │
+│  your peroration without interruption│
 └──────────────┬───────────────────────┘
                │
                ▼
 ┌──────────────────────────────────────┐
-│  POST-DEBATE: ANALYSIS               │
+│  POST-DEBATE ANALYSIS                │
 │                                      │
 │  Your coaching evaluates:            │
 │                                      │
-│  • Did you concede when you should   │
-│    have? Or did you fight for every  │
-│    inch and waste credibility?       │
-│                                      │
-│  • Did you pivot effectively? Or     │
-│    did you concede and stop there?   │
-│                                      │
-│  • Were there opportunities for the  │
-│    judo move that you missed?        │
+│  • Did you deliver a clear summary?  │
+│  • Did you include a call to action? │
+│  • Did you end with emotion?         │
+│  • Did your closing feel prepared    │
+│    or improvised/weak?               │
+│  • Did you stick the landing?        │
 └──────────────────────────────────────┘`}
               </pre>
             </div>
           </div>
 
-          {/* Section 5: Example in Action */}
+          {/* Section 5: The Prepared vs. Improvised Ending */}
           <h2
             className="mb-4 mt-12 text-2xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            The Judo Move in Action
+            Why Prepared Closings Sound Better
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Here is a real-world example of how the concession and pivot works:
+            Mehdi Hasan emphasizes that the best closings are written in
+            advance, even though they must sound spontaneous:
+          </p>
+
+          <div
+            className="my-6 rounded-xl border-l-4 p-6"
+            style={{
+              backgroundColor: "#FAFAF8",
+              borderColor: "#3C4A32",
+            }}
+          >
+            <h4 className="mb-4 font-bold" style={{ color: "#2A2A20" }}>
+              The Prepared Closing Advantage
+            </h4>
+            <div className="space-y-3 text-sm" style={{ color: "#5C5C54" }}>
+              <p>
+                <strong>Word choice is refined:</strong> You have time to find
+                exactly the right words, the right rhythm, the right final
+                phrase.
+              </p>
+              <p>
+                <strong>Structure is clean:</strong> Summary, call to action,
+                emotion. The three parts flow naturally because you planned
+                them.
+              </p>
+              <p>
+                <strong>Callbacks are set up:</strong> You can reference your
+                opening story because you wrote the closing to connect to it.
+              </p>
+              <p>
+                <strong>Delivery is practiced:</strong> You know where to pause,
+                where to slow down, where to make eye contact.
+              </p>
+              <p>
+                <strong>Confidence shows:</strong> The audience can feel the
+                difference between someone landing exactly where they planned
+                and someone hoping for the best.
+              </p>
+            </div>
+          </div>
+
+          {/* Section 6: Example in Action */}
+          <h2
+            className="mb-4 mt-12 text-2xl font-bold"
+            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+          >
+            The Peroration in Action
+          </h2>
+
+          <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
+            Here is the difference between a weak ending and a Mehdi Hasan-style
+            peroration:
           </p>
 
           <div
@@ -445,29 +498,17 @@ function FlipTheirMomentumArticle() {
             <div className="mb-4">
               <span
                 className="inline-block rounded-md px-2 py-1 text-xs font-medium"
-                style={{ backgroundColor: "#E4E4FF", color: "#2D2D7C" }}
-              >
-                Opponent Attack
-              </span>
-              <p className="mt-2 italic" style={{ color: "#5C5C54" }}>
-                "Your side supported the Iraq War. You have no credibility on
-                foreign policy."
-              </p>
-            </div>
-            <div className="mb-4">
-              <span
-                className="inline-block rounded-md px-2 py-1 text-xs font-medium"
                 style={{ backgroundColor: "#FFE4E4", color: "#7C2D2D" }}
               >
-                Weak Response (Fighting)
+                Weak Ending
               </span>
               <p className="mt-2 italic" style={{ color: "#5C5C54" }}>
-                "That's not fair. The intelligence at the time suggested... and
-                besides, your side also..."
+                "So, yeah, I think we should support this policy because it
+                makes sense economically and also helps people, so... yeah."
               </p>
               <p className="mt-2 text-sm" style={{ color: "#888880" }}>
-                This response digs into indefensible ground and sounds
-                defensive.
+                No summary, no call to action, no emotion. The debate dribbles
+                off.
               </p>
             </div>
             <div>
@@ -475,22 +516,25 @@ function FlipTheirMomentumArticle() {
                 className="inline-block rounded-md px-2 py-1 text-xs font-medium"
                 style={{ backgroundColor: "#E4FFE4", color: "#2D7C2D" }}
               >
-                Strong Response (Judo Move)
+                Strong Peroration
               </span>
               <p className="mt-2 italic" style={{ color: "#5C5C54" }}>
-                "You're right. Iraq was a mistake. I supported it and I was
-                wrong. But the lesson from Iraq is exactly why we need to be
-                cautious about this intervention. We learned the hard way.
-                What's your excuse for repeating the same mistake?"
+                "Today I showed you three things: this policy is affordable,
+                it is achievable, and it is morally necessary. [Summary] So
+                when you leave this room, I want you to call your
+                representative. Tell them you support this. Tell them you are
+                watching. [Call to Action] Because remember the teacher I told
+                you about? Maria, who rations her insulin? She is watching too.
+                She is counting on us. Let us not let her down. [Emotion]"
               </p>
               <p className="mt-2 text-sm" style={{ color: "#888880" }}>
-                Concedes past error, uses it as proof of wisdom learned, pivots
-                to attack opponent.
+                Summary, call to action, callback to opening story, emotional
+                close. The landing is stuck.
               </p>
             </div>
           </div>
 
-          {/* Section 6: Expected Results */}
+          {/* Section 7: Expected Results */}
           <h2
             className="mb-4 mt-12 text-2xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
@@ -499,7 +543,7 @@ function FlipTheirMomentumArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            After practicing the judo move across multiple debates, you will
+            After practicing perorations across multiple debates, you will
             notice:
           </p>
 
@@ -509,11 +553,11 @@ function FlipTheirMomentumArticle() {
               style={{ backgroundColor: "#E5DFD3" }}
             >
               <h4 className="mb-2 font-bold" style={{ color: "#3C4A32" }}>
-                Reduced Defensiveness
+                No More Trailing Off
               </h4>
               <p className="text-sm" style={{ color: "#5C5C54" }}>
-                You stop instinctively fighting every point. You recognize when
-                conceding is stronger than defending.
+                You never again end with "so, yeah" or run out of things to say.
+                You know exactly where you are going.
               </p>
             </div>
             <div
@@ -521,11 +565,11 @@ function FlipTheirMomentumArticle() {
               style={{ backgroundColor: "#E5DFD3" }}
             >
               <h4 className="mb-2 font-bold" style={{ color: "#3C4A32" }}>
-                Smoother Redirects
+                Lasting Impressions
               </h4>
               <p className="text-sm" style={{ color: "#5C5C54" }}>
-                Your pivots become natural and conversational. The audience
-                follows your logic without noticing the redirect.
+                People remember your final words. Your closing becomes the thing
+                they quote and recall.
               </p>
             </div>
             <div
@@ -533,11 +577,11 @@ function FlipTheirMomentumArticle() {
               style={{ backgroundColor: "#E5DFD3" }}
             >
               <h4 className="mb-2 font-bold" style={{ color: "#3C4A32" }}>
-                Increased Credibility
+                Emotional Resonance
               </h4>
               <p className="text-sm" style={{ color: "#5C5C54" }}>
-                Audiences respond to fair-mindedness. Your concessions signal
-                intellectual honesty.
+                You leave audiences feeling something, not just thinking
+                something. Emotion drives action.
               </p>
             </div>
             <div
@@ -545,11 +589,11 @@ function FlipTheirMomentumArticle() {
               style={{ backgroundColor: "#E5DFD3" }}
             >
               <h4 className="mb-2 font-bold" style={{ color: "#3C4A32" }}>
-                Opponent Confusion
+                Structural Mastery
               </h4>
               <p className="text-sm" style={{ color: "#5C5C54" }}>
-                When you concede their point and immediately redirect, opponents
-                often hesitate, unsure whether to celebrate or object.
+                The three-part peroration becomes instinct. Summary, call to
+                action, emotion. You can deliver it under any conditions.
               </p>
             </div>
           </div>
@@ -563,25 +607,25 @@ function FlipTheirMomentumArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Fighting for every point is exhausting and counterproductive. It
-            makes you look unreasonable and wastes time defending weak ground.
-            Strategic concession is how you conserve energy, build credibility,
-            and redirect the debate to where you are strongest.
+            Martin Luther King Jr. did not improvise "Free at last, free at
+            last, thank God Almighty, we are free at last." That ending was
+            crafted, refined, and delivered with precision. It is the reason we
+            still quote those words sixty years later.
           </p>
 
           <p className="mt-4 leading-relaxed" style={{ color: "#5C5C54" }}>
-            DebateClub trains this skill by giving you opponents who hammer
-            peripheral points, creating opportunities to practice the judo move.
-            Your prep materials identify safe concessions in advance. Your
-            post-debate analysis evaluates whether you used them effectively.
+            DebateClub gives you prepared closings for every debate. Three
+            options, each with delivery guidance. Your Quick Reference panel
+            keeps them accessible. Your analysis evaluates whether you stuck the
+            landing or let it dribble off.
           </p>
 
           <p
             className="mt-4 text-lg font-medium leading-relaxed"
             style={{ color: "#3A3A35" }}
           >
-            Yield the ground that costs you nothing. Redirect to where you win.
-            That is the judo move.
+            They will forget most of what you said. Make sure they remember how
+            you ended.
           </p>
 
           {/* CTA */}
@@ -593,11 +637,11 @@ function FlipTheirMomentumArticle() {
               className="mb-4 text-2xl font-bold"
               style={{ color: "#FAFAF8", fontFamily: "Georgia, serif" }}
             >
-              Ready to Master the Pivot?
+              Ready to Master the Finish?
             </h3>
             <p className="mb-6" style={{ color: "#C8C8B8" }}>
-              Practice against opponents who create opportunities for strategic
-              concession. Learn when to yield and when to hold.
+              Get crafted closings for every debate and practice delivering them
+              until the landing becomes instinct.
             </p>
             <Link
               to="/login"
@@ -615,19 +659,19 @@ function FlipTheirMomentumArticle() {
             style={{ borderColor: "#E8E4DA" }}
           >
             <Link
-              to="/blog/spot-the-weakness"
+              to="/blog/own-your-weaknesses"
               className="flex items-center gap-2 text-sm transition-opacity hover:opacity-70"
               style={{ color: "#3C4A32" }}
             >
               <ArrowLeft className="h-4 w-4" />
-              Previous: Spot the Weakness
+              Previous: Own Your Weaknesses
             </Link>
             <Link
-              to="/blog/land-the-closer"
+              to="/blog"
               className="flex items-center gap-2 text-sm transition-opacity hover:opacity-70"
               style={{ color: "#3C4A32" }}
             >
-              Next: Land the Closer
+              Back to All Techniques
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

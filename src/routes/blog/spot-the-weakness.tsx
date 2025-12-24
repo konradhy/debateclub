@@ -11,20 +11,20 @@ import {
 export const Route = createFileRoute("/blog/spot-the-weakness")({
   head: () => ({
     meta: [
-      { title: "When to Attack Your Opponent's Credibility | DebateClub" },
+      { title: "How to Spot Logical Fallacies in Real-Time | DebateClub" },
       {
         name: "description",
         content:
-          "Ad hominem isn't always a fallacy. The Three C's: challenge their character, credentials, and claims. Know when it's fair game.",
+          "Straw men, false dilemmas, slippery slopes. Learn to catch bad arguments as they happen. From Mehdi Hasan's Win Every Argument.",
       },
       {
         property: "og:title",
-        content: "When to Attack Your Opponent's Credibility | DebateClub",
+        content: "How to Spot Logical Fallacies in Real-Time | DebateClub",
       },
       {
         property: "og:description",
         content:
-          "Ad hominem isn't always a fallacy. The Three C's: challenge their character, credentials, and claims. Know when it's fair game.",
+          "Straw men, false dilemmas, slippery slopes. Learn to catch bad arguments as they happen. From Mehdi Hasan's Win Every Argument.",
       },
       { property: "og:type", content: "article" },
       { property: "og:image", content: "/images/landingpage.png" },
@@ -130,7 +130,7 @@ function SpotTheWeaknessArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            While philosophers catalog dozens of logical fallacies, Hasan
+            While philosophers catalog dozens of logical fallacies, Mehdi Hasan
             focuses on the ones that appear most frequently in real-world
             debates:
           </p>
@@ -380,7 +380,7 @@ function SpotTheWeaknessArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            When you spot a weakness, you need to expose it effectively. Hasan's
+            When you spot a weakness, you need to expose it effectively. Mehdi Hasan's
             approach involves three steps:
           </p>
 
@@ -715,8 +715,14 @@ function SpotTheWeaknessArticle() {
       <footer className="py-8" style={{ backgroundColor: "#E8E4DA" }}>
         <div className="mx-auto max-w-3xl px-8 text-center">
           <p className="text-sm" style={{ color: "#5C5C54" }}>
-            © {new Date().getFullYear()} DebateClub. Based on "Win Every
-            Argument" by Mehdi Hasan.
+            © {new Date().getFullYear()} DebateClub. Based on{" "}
+            <Link
+              to="/win-every-argument"
+              className="underline transition-opacity hover:opacity-70"
+            >
+              "Win Every Argument"
+            </Link>{" "}
+            by Mehdi Hasan.
           </p>
         </div>
       </footer>

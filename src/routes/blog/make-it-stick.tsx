@@ -5,20 +5,20 @@ import { ArrowLeft, ArrowRight, List, Brain, Repeat } from "lucide-react";
 export const Route = createFileRoute("/blog/make-it-stick")({
   head: () => ({
     meta: [
-      { title: "Rule of Three: Structure Arguments That Stick | DebateClub" },
+      { title: "The Rule of Three: Why Your Brain Remembers Triads | DebateClub" },
       {
         name: "description",
         content:
-          "Three points. Three reasons. Three examples. Why the brain remembers threes — and how to structure every argument for maximum impact.",
+          "Life, liberty, pursuit of happiness. Why the brain locks onto threes and how to structure arguments that stick. From Mehdi Hasan's Win Every Argument.",
       },
       {
         property: "og:title",
-        content: "Rule of Three: Structure Arguments That Stick | DebateClub",
+        content: "The Rule of Three: Why Your Brain Remembers Triads | DebateClub",
       },
       {
         property: "og:description",
         content:
-          "Three points. Three reasons. Three examples. Why the brain remembers threes — and how to structure every argument for maximum impact.",
+          "Life, liberty, pursuit of happiness. Why the brain locks onto threes and how to structure arguments that stick. From Mehdi Hasan's Win Every Argument.",
       },
       { property: "og:type", content: "article" },
       { property: "og:image", content: "/images/landingpage.png" },
@@ -120,7 +120,7 @@ function MakeItStickArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Hasan explains why triads are so effective:
+            Mehdi Hasan explains why triads are so effective:
           </p>
 
           <div
@@ -200,7 +200,7 @@ function MakeItStickArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Hasan identifies several key moments where the Rule of Three creates
+            Mehdi Hasan identifies several key moments where the Rule of Three creates
             maximum impact:
           </p>
 
@@ -404,7 +404,7 @@ function MakeItStickArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Hasan identifies several reliable triad structures that you can
+            Mehdi Hasan identifies several reliable triad structures that you can
             adapt to any topic:
           </p>
 
@@ -594,8 +594,14 @@ function MakeItStickArticle() {
       <footer className="py-8" style={{ backgroundColor: "#E8E4DA" }}>
         <div className="mx-auto max-w-3xl px-8 text-center">
           <p className="text-sm" style={{ color: "#5C5C54" }}>
-            © {new Date().getFullYear()} DebateClub. Based on "Win Every
-            Argument" by Mehdi Hasan.
+            © {new Date().getFullYear()} DebateClub. Based on{" "}
+            <Link
+              to="/win-every-argument"
+              className="underline transition-opacity hover:opacity-70"
+            >
+              "Win Every Argument"
+            </Link>{" "}
+            by Mehdi Hasan.
           </p>
         </div>
       </footer>

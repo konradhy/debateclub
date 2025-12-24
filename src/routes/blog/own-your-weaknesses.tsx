@@ -1,41 +1,43 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, RotateCcw, Shield, Swords } from "lucide-react";
+import { ArrowLeft, ArrowRight, Shield, Check, TrendingUp } from "lucide-react";
 
-export const Route = createFileRoute("/blog/flip-their-momentum")({
+export const Route = createFileRoute("/blog/own-your-weaknesses")({
   head: () => ({
     meta: [
       {
-        title: "The Judo Move: Use Their Strength Against Them | DebateClub",
+        title:
+          "Preemption: Admit Your Weakness Before They Attack | DebateClub",
       },
       {
         name: "description",
         content:
-          "Concession is not surrender. Strategic yielding that redirects momentum to where you win. From Mehdi Hasan's Win Every Argument.",
+          "Obama gave a 37-minute speech about his pastor before his opponent could weaponize it. The preemption technique from Mehdi Hasan's Win Every Argument.",
       },
       {
         property: "og:title",
-        content: "The Judo Move: Use Their Strength Against Them | DebateClub",
+        content:
+          "Preemption: Admit Your Weakness Before They Attack | DebateClub",
       },
       {
         property: "og:description",
         content:
-          "Concession is not surrender. Strategic yielding that redirects momentum to where you win. From Mehdi Hasan's Win Every Argument.",
+          "Obama gave a 37-minute speech about his pastor before his opponent could weaponize it. The preemption technique from Mehdi Hasan's Win Every Argument.",
       },
       { property: "og:type", content: "article" },
       { property: "og:image", content: "/images/landingpage.png" },
       { property: "og:site_name", content: "DebateClub" },
     ],
   }),
-  component: FlipTheirMomentumArticle,
+  component: OwnYourWeaknessesArticle,
 });
 
 /**
- * Blog article: Flip Their Momentum technique deep dive.
- * Explores strategic concession and the "judo move" from Mehdi Hasan's
- * "Win Every Argument" and how DebateClub trains users to master it.
+ * Blog article: Own Your Weaknesses technique deep dive.
+ * Explores Mehdi Hasan's preemption strategy from "Win Every Argument"
+ * and how DebateClub trains users to neutralize attacks before they land.
  */
-function FlipTheirMomentumArticle() {
+function OwnYourWeaknessesArticle() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F5F3EF" }}>
       {/* Header */}
@@ -72,7 +74,7 @@ function FlipTheirMomentumArticle() {
             className="mb-4 inline-block rounded-md px-3 py-1 text-xs font-medium"
             style={{ backgroundColor: "#E8DFC8", color: "#5C5444" }}
           >
-            The Judo Move
+            Strategic Concession
           </span>
 
           {/* Title */}
@@ -80,12 +82,12 @@ function FlipTheirMomentumArticle() {
             className="mb-6 text-4xl font-bold leading-tight lg:text-5xl"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            Flip Their Momentum: The Art of Strategic Concession
+            Own Your Weaknesses: The Preemption Principle
           </h1>
 
           {/* Meta */}
           <p className="mb-12 text-sm" style={{ color: "#888880" }}>
-            8 min read · Technique 5 of 12
+            8 min read · Technique 11 of 12
           </p>
         </motion.div>
 
@@ -98,34 +100,37 @@ function FlipTheirMomentumArticle() {
         >
           {/* Opening */}
           <p className="text-lg leading-relaxed" style={{ color: "#3A3A35" }}>
-            In judo, the best throws do not rely on brute strength. They use the
-            opponent's force against them. The opponent lunges forward and
-            suddenly finds themselves on the mat, thrown by their own momentum.
-            Mehdi Hasan applies this principle to debate with what he calls the
-            "concession and pivot."
+            In 2008, Barack Obama faced a political crisis. Videos of his
+            pastor, Jeremiah Wright, making inflammatory statements threatened
+            to derail his campaign. Obama could have distanced himself, offered
+            denials, or hoped the story would fade. Instead, he gave a 37-minute
+            speech in Philadelphia where he acknowledged the controversy
+            head-on, explained his relationship with Wright, and broadened the
+            conversation to race in America. The speech did not end the
+            controversy. It transcended it.
           </p>
 
           <p className="mt-6 leading-relaxed" style={{ color: "#5C5C54" }}>
-            Most debaters think conceding any point is weakness. They fight for
-            every inch, even when the ground is indefensible. Mehdi Hasan argues this
-            is exactly wrong.{" "}
-            <strong>Strategic concession is a power move</strong>. When you
-            yield ground that costs you nothing and use their forward motion to
-            redirect to your strongest argument, you appear reasonable while
-            leaving your opponent off balance.
+            Mehdi Hasan calls this technique "preemption" in "Win Every
+            Argument." The principle is counterintuitive:{" "}
+            <strong>
+              acknowledge your weakness before your opponent can weaponize it
+            </strong>
+            . When you own the flaw first, you control the framing. You choose
+            how it gets discussed. And paradoxically, you build credibility by
+            showing you have nothing to hide.
           </p>
 
-          {/* Section 1: Why Concession Works */}
+          {/* Section 1: Why Preemption Works */}
           <h2
             className="mb-4 mt-12 text-2xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            The Psychology of the Concession
+            The Psychology of Getting There First
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Mehdi Hasan identifies several reasons why strategic concession is so
-            effective:
+            Mehdi Hasan explains why preemption is so effective:
           </p>
 
           <div
@@ -136,6 +141,24 @@ function FlipTheirMomentumArticle() {
               <div className="mb-2 flex items-center gap-2">
                 <Shield className="h-4 w-4" style={{ color: "#3C4A32" }} />
                 <h3 className="text-lg font-bold" style={{ color: "#3C4A32" }}>
+                  It Disarms the Attack
+                </h3>
+              </div>
+              <p
+                className="text-sm leading-relaxed"
+                style={{ color: "#5C5C54" }}
+              >
+                When your opponent prepares to hit you with a weakness, they
+                expect you to deny or deflect. When you acknowledge it first,
+                their prepared attack has nowhere to land. You have already
+                absorbed the blow on your own terms.
+              </p>
+            </div>
+
+            <div className="mb-6">
+              <div className="mb-2 flex items-center gap-2">
+                <Check className="h-4 w-4" style={{ color: "#3C4A32" }} />
+                <h3 className="text-lg font-bold" style={{ color: "#3C4A32" }}>
                   It Builds Credibility
                 </h3>
               </div>
@@ -143,43 +166,27 @@ function FlipTheirMomentumArticle() {
                 className="text-sm leading-relaxed"
                 style={{ color: "#5C5C54" }}
               >
-                When you acknowledge a valid point, the audience sees you as
-                fair-minded rather than partisan. This makes them more likely to
-                trust you on contested points.
-              </p>
-            </div>
-
-            <div className="mb-6">
-              <div className="mb-2 flex items-center gap-2">
-                <RotateCcw className="h-4 w-4" style={{ color: "#3C4A32" }} />
-                <h3 className="text-lg font-bold" style={{ color: "#3C4A32" }}>
-                  It Defuses Their Momentum
-                </h3>
-              </div>
-              <p
-                className="text-sm leading-relaxed"
-                style={{ color: "#5C5C54" }}
-              >
-                When you concede, your opponent has nothing to push against.
-                They prepared to fight and now must recalibrate. This brief
-                confusion is your window to redirect.
+                Audiences are suspicious of people who seem perfect. When you
+                admit a flaw, you signal honesty. "If they are willing to admit
+                that, they must be telling the truth about everything else."
               </p>
             </div>
 
             <div>
               <div className="mb-2 flex items-center gap-2">
-                <Swords className="h-4 w-4" style={{ color: "#3C4A32" }} />
+                <TrendingUp className="h-4 w-4" style={{ color: "#3C4A32" }} />
                 <h3 className="text-lg font-bold" style={{ color: "#3C4A32" }}>
-                  It Sets Up the Pivot
+                  It Controls the Frame
                 </h3>
               </div>
               <p
                 className="text-sm leading-relaxed"
                 style={{ color: "#5C5C54" }}
               >
-                The concession is never the end. It is a setup. "Yes, X is true.
-                But what really matters is Y." The pivot reframes the entire
-                debate on your terms.
+                When your opponent raises your weakness, they frame it as a
+                fatal flaw. When you raise it first, you frame it as a minor
+                issue you have already addressed. The first framing usually
+                wins.
               </p>
             </div>
           </div>
@@ -188,23 +195,23 @@ function FlipTheirMomentumArticle() {
             className="my-8 border-l-4 py-2 pl-6 italic"
             style={{ borderColor: "#9A9A6D", color: "#5C5C54" }}
           >
-            "Concession is not surrender. It is strategic retreat to better
-            ground."
+            "Preemption is the rhetorical equivalent of a vaccine: a small dose
+            of the disease to build immunity against the full attack."
             <span className="mt-2 block text-sm not-italic">
               - Mehdi Hasan, "Win Every Argument"
             </span>
           </blockquote>
 
-          {/* Section 2: The Concession-Pivot Formula */}
+          {/* Section 2: The Preemption Formula */}
           <h2
             className="mb-4 mt-12 text-2xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            The Three-Part Formula
+            Mehdi Hasan's Four-Step Preemption
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Mehdi Hasan's concession technique follows a consistent structure:
+            Mehdi Hasan outlines a specific structure for effective preemption:
           </p>
 
           <div className="my-6 grid gap-4">
@@ -223,9 +230,9 @@ function FlipTheirMomentumArticle() {
                   Acknowledge Clearly
                 </h4>
                 <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  "You're absolutely right that..." or "I agree that..." Make
-                  the concession explicit and genuine. Half-concessions sound
-                  evasive and undermine the effect.
+                  State the weakness plainly. No hedging, no minimizing. "I know
+                  some of you are thinking about my vote on X" or "Before my
+                  opponent brings this up..."
                 </p>
               </div>
             </div>
@@ -241,12 +248,11 @@ function FlipTheirMomentumArticle() {
               </div>
               <div>
                 <h4 className="mb-1 font-bold" style={{ color: "#3C4A32" }}>
-                  Bridge With "But"
+                  Explain (Briefly)
                 </h4>
                 <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  "But that's not the central question here..." or "But what
-                  that misses is..." The bridge word signals that you are about
-                  to redirect, not simply agree.
+                  Provide context without making excuses. "Here is why that
+                  happened..." Keep it short. Long explanations sound defensive.
                 </p>
               </div>
             </div>
@@ -262,27 +268,49 @@ function FlipTheirMomentumArticle() {
               </div>
               <div>
                 <h4 className="mb-1 font-bold" style={{ color: "#3C4A32" }}>
-                  Pivot to Your Ground
+                  Show Growth or Learning
                 </h4>
                 <p className="text-sm" style={{ color: "#5C5C54" }}>
-                  Immediately move to your strongest point. The pivot should
-                  land on ground where you are strongest and they are weakest.
+                  Demonstrate what you learned or how you have changed. "That
+                  experience taught me..." This transforms a weakness into
+                  evidence of wisdom.
+                </p>
+              </div>
+            </div>
+            <div
+              className="flex items-start gap-4 rounded-lg p-4"
+              style={{ backgroundColor: "#E5DFD3" }}
+            >
+              <div
+                className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full font-bold"
+                style={{ backgroundColor: "#3C4A32", color: "#FAFAF8" }}
+              >
+                4
+              </div>
+              <div>
+                <h4 className="mb-1 font-bold" style={{ color: "#3C4A32" }}>
+                  Pivot to Strength
+                </h4>
+                <p className="text-sm" style={{ color: "#5C5C54" }}>
+                  Redirect to your strongest ground. "And that is exactly why I
+                  now believe..." The preemption is a setup for your best
+                  argument.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Section 3: What to Concede */}
+          {/* Section 3: When to Preempt */}
           <h2
             className="mb-4 mt-12 text-2xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            Knowing What to Give Up
+            Knowing What to Preempt
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Not all concessions are strategic. The skill is in identifying what
-            costs you nothing:
+            Not every weakness needs preemption. Mehdi Hasan advises preempting
+            only when:
           </p>
 
           <div
@@ -293,24 +321,27 @@ function FlipTheirMomentumArticle() {
             }}
           >
             <h4 className="mb-4 font-bold" style={{ color: "#2A2A20" }}>
-              Safe Concessions
+              When to Preempt
             </h4>
             <ul className="space-y-2 text-sm" style={{ color: "#5C5C54" }}>
               <li>
-                <strong>Obvious facts:</strong> If something is undeniably true,
-                fighting it makes you look unreasonable.
+                <strong>It is already known:</strong> If the audience knows
+                about your weakness, address it. Ignoring the elephant makes you
+                look evasive.
               </li>
               <li>
-                <strong>Peripheral points:</strong> Issues that do not affect
-                your core argument. Let them have the edges.
+                <strong>Your opponent will definitely use it:</strong> If the
+                attack is coming, get there first. Control the framing.
               </li>
               <li>
-                <strong>Shared premises:</strong> "We both want X. We disagree
-                about how to get there."
+                <strong>You have a good pivot:</strong> Only preempt if you can
+                turn the weakness into a strength. Otherwise, you are just
+                highlighting a flaw.
               </li>
               <li>
-                <strong>Past mistakes:</strong> If your side made an error, own
-                it briefly and pivot to what should happen now.
+                <strong>The weakness is fixable or learnable:</strong> Past
+                mistakes you learned from are preemptable. Ongoing fundamental
+                flaws are not.
               </li>
             </ul>
           </div>
@@ -323,24 +354,20 @@ function FlipTheirMomentumArticle() {
             }}
           >
             <h4 className="mb-4 font-bold" style={{ color: "#2A2A20" }}>
-              Dangerous Concessions
+              When NOT to Preempt
             </h4>
             <ul className="space-y-2 text-sm" style={{ color: "#5C5C54" }}>
               <li>
-                <strong>Your core thesis:</strong> Never concede the foundation
-                of your argument.
+                <strong>No one knows about it:</strong> Do not volunteer
+                weaknesses your opponent has not discovered.
               </li>
               <li>
-                <strong>Moral ground:</strong> Do not accept framing that makes
-                you the villain.
+                <strong>It is truly indefensible:</strong> Some flaws cannot be
+                spun. Preempting them just draws attention.
               </li>
               <li>
-                <strong>Key evidence:</strong> If they attack your receipts,
-                defend them.
-              </li>
-              <li>
-                <strong>Credibility points:</strong> Never accept that you are
-                unqualified to speak.
+                <strong>You cannot pivot convincingly:</strong> If you lack a
+                good "and that is why..." the preemption falls flat.
               </li>
             </ul>
           </div>
@@ -350,13 +377,13 @@ function FlipTheirMomentumArticle() {
             className="mb-4 mt-12 text-2xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            How DebateClub Trains Strategic Concession
+            How DebateClub Trains Preemption
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            The judo move is difficult to practice in isolation because it
-            requires an opponent pushing hard enough to give you momentum to
-            redirect. DebateClub creates these opportunities systematically:
+            Preemption requires knowing your vulnerabilities in advance and
+            having pivot language ready. DebateClub builds this into your
+            preparation:
           </p>
 
           {/* Mermaid-style diagram */}
@@ -369,58 +396,55 @@ function FlipTheirMomentumArticle() {
                 className="text-sm font-semibold uppercase tracking-wide"
                 style={{ color: "#C8D4B8" }}
               >
-                Concession Training Pipeline
+                Preemption Training Pipeline
               </h4>
             </div>
             <div className="p-6 font-mono text-sm" style={{ color: "#C8D4B8" }}>
               <pre className="whitespace-pre-wrap">
                 {`┌──────────────────────────────────────┐
-│  PREP: CONCESSION PLANNING           │
+│  PREP: VULNERABILITY MAPPING         │
 │                                      │
-│  Your prep materials include:        │
+│  Your prep materials identify:       │
 │                                      │
-│  • "Safe Concessions" list: points   │
-│    you can give up without damage    │
+│  • Likely attacks on your position   │
+│  • Weaknesses in your evidence       │
+│  • Past statements that could be     │
+│    used against you                  │
+│  • Gaps in your expertise            │
 │                                      │
-│  • "Pivot Phrases" for each one:     │
-│    the exact bridge language to use  │
-│                                      │
-│  • "Target Ground": where you want   │
-│    to redirect after each concession │
+│  For each, you get:                  │
+│  • Preemption language               │
+│  • Pivot phrases to strength         │
+│  • Timing guidance (early vs. save)  │
 └──────────────┬───────────────────────┘
                │
                ▼
 ┌──────────────────────────────────────┐
-│  DURING DEBATE: OPPONENT PRESSURE    │
+│  DURING DEBATE                       │
 │                                      │
-│  Your AI opponent deliberately:      │
+│  Your opponent behavior includes:    │
 │                                      │
-│  • Hammers on peripheral points to   │
-│    see if you will waste time        │
-│    defending indefensible ground     │
+│  • Building toward attacks you can   │
+│    preempt if you act quickly        │
 │                                      │
-│  • Creates openings where concession │
-│    and pivot would be devastating    │
+│  • Testing whether you acknowledge   │
+│    weaknesses or dodge them          │
 │                                      │
-│  • Tests whether you can yield       │
-│    gracefully under pressure         │
+│  • Rewarding honest preemption with  │
+│    reduced follow-up attacks         │
 └──────────────┬───────────────────────┘
                │
                ▼
 ┌──────────────────────────────────────┐
-│  POST-DEBATE: ANALYSIS               │
+│  POST-DEBATE ANALYSIS                │
 │                                      │
 │  Your coaching evaluates:            │
 │                                      │
-│  • Did you concede when you should   │
-│    have? Or did you fight for every  │
-│    inch and waste credibility?       │
-│                                      │
-│  • Did you pivot effectively? Or     │
-│    did you concede and stop there?   │
-│                                      │
-│  • Were there opportunities for the  │
-│    judo move that you missed?        │
+│  • Did you preempt known weaknesses? │
+│  • Did preemptions include pivots?   │
+│  • Did you over-preempt (volunteer   │
+│    weaknesses no one knew about)?    │
+│  • Did you time preemptions well?    │
 └──────────────────────────────────────┘`}
               </pre>
             </div>
@@ -431,11 +455,11 @@ function FlipTheirMomentumArticle() {
             className="mb-4 mt-12 text-2xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            The Judo Move in Action
+            Preemption in Action
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Here is a real-world example of how the concession and pivot works:
+            Here is how Mehdi Hasan's preemption formula looks in practice:
           </p>
 
           <div
@@ -445,13 +469,12 @@ function FlipTheirMomentumArticle() {
             <div className="mb-4">
               <span
                 className="inline-block rounded-md px-2 py-1 text-xs font-medium"
-                style={{ backgroundColor: "#E4E4FF", color: "#2D2D7C" }}
+                style={{ backgroundColor: "#FFE4E4", color: "#7C2D2D" }}
               >
-                Opponent Attack
+                Known Weakness
               </span>
               <p className="mt-2 italic" style={{ color: "#5C5C54" }}>
-                "Your side supported the Iraq War. You have no credibility on
-                foreign policy."
+                You previously supported a policy you now oppose.
               </p>
             </div>
             <div className="mb-4">
@@ -459,15 +482,13 @@ function FlipTheirMomentumArticle() {
                 className="inline-block rounded-md px-2 py-1 text-xs font-medium"
                 style={{ backgroundColor: "#FFE4E4", color: "#7C2D2D" }}
               >
-                Weak Response (Fighting)
+                Bad Response (Waiting to be attacked)
               </span>
               <p className="mt-2 italic" style={{ color: "#5C5C54" }}>
-                "That's not fair. The intelligence at the time suggested... and
-                besides, your side also..."
+                Wait for opponent to bring it up, then scramble to explain.
               </p>
               <p className="mt-2 text-sm" style={{ color: "#888880" }}>
-                This response digs into indefensible ground and sounds
-                defensive.
+                You look caught. The opponent frames it as hypocrisy.
               </p>
             </div>
             <div>
@@ -475,17 +496,18 @@ function FlipTheirMomentumArticle() {
                 className="inline-block rounded-md px-2 py-1 text-xs font-medium"
                 style={{ backgroundColor: "#E4FFE4", color: "#2D7C2D" }}
               >
-                Strong Response (Judo Move)
+                Good Response (Preemption)
               </span>
               <p className="mt-2 italic" style={{ color: "#5C5C54" }}>
-                "You're right. Iraq was a mistake. I supported it and I was
-                wrong. But the lesson from Iraq is exactly why we need to be
-                cautious about this intervention. We learned the hard way.
-                What's your excuse for repeating the same mistake?"
+                "Before we go further, I want to address something. Yes, I
+                supported this policy five years ago. I was wrong. Here is what
+                I did not understand then that I understand now: [specific
+                insight]. That experience is exactly why I am now the strongest
+                voice against it. I learned what my opponent still refuses to
+                see."
               </p>
               <p className="mt-2 text-sm" style={{ color: "#888880" }}>
-                Concedes past error, uses it as proof of wisdom learned, pivots
-                to attack opponent.
+                You frame the weakness as growth, then pivot to attack.
               </p>
             </div>
           </div>
@@ -499,7 +521,7 @@ function FlipTheirMomentumArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            After practicing the judo move across multiple debates, you will
+            After practicing preemption across multiple debates, you will
             notice:
           </p>
 
@@ -509,11 +531,11 @@ function FlipTheirMomentumArticle() {
               style={{ backgroundColor: "#E5DFD3" }}
             >
               <h4 className="mb-2 font-bold" style={{ color: "#3C4A32" }}>
-                Reduced Defensiveness
+                Reduced Anxiety
               </h4>
               <p className="text-sm" style={{ color: "#5C5C54" }}>
-                You stop instinctively fighting every point. You recognize when
-                conceding is stronger than defending.
+                When you know you will address weaknesses first, you stop
+                dreading the attack. The fear of being exposed disappears.
               </p>
             </div>
             <div
@@ -521,11 +543,11 @@ function FlipTheirMomentumArticle() {
               style={{ backgroundColor: "#E5DFD3" }}
             >
               <h4 className="mb-2 font-bold" style={{ color: "#3C4A32" }}>
-                Smoother Redirects
+                Better Pivots
               </h4>
               <p className="text-sm" style={{ color: "#5C5C54" }}>
-                Your pivots become natural and conversational. The audience
-                follows your logic without noticing the redirect.
+                Your "and that is why..." language becomes natural. You
+                instinctively turn admissions into attacks.
               </p>
             </div>
             <div
@@ -533,11 +555,11 @@ function FlipTheirMomentumArticle() {
               style={{ backgroundColor: "#E5DFD3" }}
             >
               <h4 className="mb-2 font-bold" style={{ color: "#3C4A32" }}>
-                Increased Credibility
+                Increased Trust
               </h4>
               <p className="text-sm" style={{ color: "#5C5C54" }}>
-                Audiences respond to fair-mindedness. Your concessions signal
-                intellectual honesty.
+                Audiences respond to honesty. Your willingness to acknowledge
+                flaws makes your claims more believable.
               </p>
             </div>
             <div
@@ -545,11 +567,11 @@ function FlipTheirMomentumArticle() {
               style={{ backgroundColor: "#E5DFD3" }}
             >
               <h4 className="mb-2 font-bold" style={{ color: "#3C4A32" }}>
-                Opponent Confusion
+                Opponent Frustration
               </h4>
               <p className="text-sm" style={{ color: "#5C5C54" }}>
-                When you concede their point and immediately redirect, opponents
-                often hesitate, unsure whether to celebrate or object.
+                When their prepared attacks have already been addressed, your
+                opponent must improvise. You have taken their best weapon.
               </p>
             </div>
           </div>
@@ -563,25 +585,25 @@ function FlipTheirMomentumArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Fighting for every point is exhausting and counterproductive. It
-            makes you look unreasonable and wastes time defending weak ground.
-            Strategic concession is how you conserve energy, build credibility,
-            and redirect the debate to where you are strongest.
+            Barack Obama could have spent months denying his connection to
+            Jeremiah Wright. Instead, he acknowledged it, explained it, and
+            pivoted to a broader conversation he could lead. That is the power
+            of preemption: you choose the battlefield.
           </p>
 
           <p className="mt-4 leading-relaxed" style={{ color: "#5C5C54" }}>
-            DebateClub trains this skill by giving you opponents who hammer
-            peripheral points, creating opportunities to practice the judo move.
-            Your prep materials identify safe concessions in advance. Your
-            post-debate analysis evaluates whether you used them effectively.
+            DebateClub trains this skill by mapping your vulnerabilities in
+            advance and giving you preemption language with built-in pivots.
+            Your AI opponent tests whether you address weaknesses proactively or
+            wait to be attacked. Your analysis shows when preemption worked and
+            when you missed opportunities.
           </p>
 
           <p
             className="mt-4 text-lg font-medium leading-relaxed"
             style={{ color: "#3A3A35" }}
           >
-            Yield the ground that costs you nothing. Redirect to where you win.
-            That is the judo move.
+            Own it before they can use it. Then make it your strength.
           </p>
 
           {/* CTA */}
@@ -593,11 +615,11 @@ function FlipTheirMomentumArticle() {
               className="mb-4 text-2xl font-bold"
               style={{ color: "#FAFAF8", fontFamily: "Georgia, serif" }}
             >
-              Ready to Master the Pivot?
+              Ready to Turn Weakness Into Strength?
             </h3>
             <p className="mb-6" style={{ color: "#C8C8B8" }}>
-              Practice against opponents who create opportunities for strategic
-              concession. Learn when to yield and when to hold.
+              Get prep materials that identify your vulnerabilities and give you
+              preemption language to neutralize attacks.
             </p>
             <Link
               to="/login"
@@ -615,19 +637,19 @@ function FlipTheirMomentumArticle() {
             style={{ borderColor: "#E8E4DA" }}
           >
             <Link
-              to="/blog/spot-the-weakness"
+              to="/blog/cut-through-the-noise"
               className="flex items-center gap-2 text-sm transition-opacity hover:opacity-70"
               style={{ color: "#3C4A32" }}
             >
               <ArrowLeft className="h-4 w-4" />
-              Previous: Spot the Weakness
+              Previous: Cut Through the Noise
             </Link>
             <Link
-              to="/blog/land-the-closer"
+              to="/blog/stick-the-landing"
               className="flex items-center gap-2 text-sm transition-opacity hover:opacity-70"
               style={{ color: "#3C4A32" }}
             >
-              Next: Land the Closer
+              Next: Stick the Landing
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

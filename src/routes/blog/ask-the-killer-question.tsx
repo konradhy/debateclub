@@ -11,20 +11,20 @@ import {
 export const Route = createFileRoute("/blog/ask-the-killer-question")({
   head: () => ({
     meta: [
-      { title: "Trap Questions That Expose Your Opponent | DebateClub" },
+      { title: "How to Ask Questions That Trap Your Opponent | DebateClub" },
       {
         name: "description",
         content:
-          "Quote them without revealing the source. When they disagree, reveal: \"Those were your words.\" Three traps that work every time.",
+          "Socrates never told anyone they were wrong. He asked questions until they realized it themselves. From Mehdi Hasan's Win Every Argument.",
       },
       {
         property: "og:title",
-        content: "Trap Questions That Expose Your Opponent | DebateClub",
+        content: "How to Ask Questions That Trap Your Opponent | DebateClub",
       },
       {
         property: "og:description",
         content:
-          "Quote them without revealing the source. When they disagree, reveal: \"Those were your words.\" Three traps that work every time.",
+          "Socrates never told anyone they were wrong. He asked questions until they realized it themselves. From Mehdi Hasan's Win Every Argument.",
       },
       { property: "og:type", content: "article" },
       { property: "og:image", content: "/images/landingpage.png" },
@@ -131,7 +131,7 @@ function AskTheKillerQuestionArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Hasan identifies several types of devastating questions:
+            Mehdi Hasan identifies several types of devastating questions:
           </p>
 
           <div
@@ -245,7 +245,7 @@ function AskTheKillerQuestionArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Hasan explains why questions are often more effective than
+            Mehdi Hasan explains why questions are often more effective than
             statements:
           </p>
 
@@ -401,7 +401,7 @@ function AskTheKillerQuestionArticle() {
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
             A killer question is only as good as your follow-up. When opponents
-            evade, you must press. Hasan emphasizes persistence:
+            evade, you must press. Mehdi Hasan emphasizes persistence:
           </p>
 
           <div
@@ -670,8 +670,14 @@ function AskTheKillerQuestionArticle() {
       <footer className="py-8" style={{ backgroundColor: "#E8E4DA" }}>
         <div className="mx-auto max-w-3xl px-8 text-center">
           <p className="text-sm" style={{ color: "#5C5C54" }}>
-            © {new Date().getFullYear()} DebateClub. Based on "Win Every
-            Argument" by Mehdi Hasan.
+            © {new Date().getFullYear()} DebateClub. Based on{" "}
+            <Link
+              to="/win-every-argument"
+              className="underline transition-opacity hover:opacity-70"
+            >
+              "Win Every Argument"
+            </Link>{" "}
+            by Mehdi Hasan.
           </p>
         </div>
       </footer>

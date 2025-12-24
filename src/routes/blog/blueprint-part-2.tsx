@@ -20,7 +20,7 @@ export const Route = createFileRoute("/blog/blueprint-part-2")({
       {
         name: "description",
         content:
-          "Voice-based sparring with real-time feedback. How DebateClub detects techniques, handles interruptions, and scores your performance live.",
+          "Voice-based sparring with real-time technique detection. AI opponents that interrupt, Gish Gallop, and test your composure. Based on Mehdi Hasan's methodology.",
       },
       {
         property: "og:title",
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/blog/blueprint-part-2")({
       {
         property: "og:description",
         content:
-          "Voice-based sparring with real-time feedback. How DebateClub detects techniques, handles interruptions, and scores your performance live.",
+          "Voice-based sparring with real-time technique detection. AI opponents that interrupt, Gish Gallop, and test your composure. Based on Mehdi Hasan's methodology.",
       },
       { property: "og:type", content: "article" },
       { property: "og:image", content: "/images/landingpage.png" },
@@ -157,7 +157,7 @@ function BlueprintPart2Article() {
           </p>
 
           <p className="mt-4 leading-relaxed" style={{ color: "#5C5C54" }}>
-            The problem is that debate is a performance art. Hasan dedicates an
+            The problem is that debate is a performance art. Mehdi Hasan dedicates an
             entire chapter (Chapter 14) to "The 4 P's of Voice Control": Pitch,
             Power, Pace, and Pauses. None of these exist in text. You cannot
             practice timing in a chat window. You cannot practice composure when
@@ -277,7 +277,7 @@ function BlueprintPart2Article() {
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
             As you debate, the system is analyzing your speech. Every exchange
             is run through an AI that detects whether you used any of the 11
-            techniques from Hasan's methodology:
+            techniques from Mehdi Hasan's methodology:
           </p>
 
           <div
@@ -395,7 +395,7 @@ CLOSING TECHNIQUE
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Chapter 8 of Hasan's book is titled "Judo Moves" for a reason. In
+            Chapter 8 of Mehdi Hasan's book is titled "Judo Moves" for a reason. In
             judo, you use your opponent's momentum against them. In debate, you
             do the same thing with words.
           </p>
@@ -497,7 +497,7 @@ CLOSING TECHNIQUE
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
             Chapter 11 is dedicated entirely to the Gish Gallop: the tactic of
-            overwhelming your opponent with a firehose of dubious claims. Hasan
+            overwhelming your opponent with a firehose of dubious claims. Mehdi Hasan
             calls it "the reigning world heavyweight champion of bad-faith
             debate tactics."
           </p>
@@ -626,7 +626,7 @@ CLOSING TECHNIQUE
           </ul>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            This is not cheating. This is how professionals prepare. Hasan does
+            This is not cheating. This is how professionals prepare. Mehdi Hasan does
             not walk into interviews without notes. Neither should you.
           </p>
 
@@ -639,7 +639,7 @@ CLOSING TECHNIQUE
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Chapter 13 is titled "Keep Calm and Carry On." Hasan writes: "Losing
+            Chapter 13 is titled "Keep Calm and Carry On." Mehdi Hasan writes: "Losing
             your cool almost always means losing the argument."
           </p>
 
@@ -735,7 +735,7 @@ CLOSING TECHNIQUE
           </p>
 
           <p className="mt-4 leading-relaxed" style={{ color: "#5C5C54" }}>
-            Professional athletes review game tape obsessively. Hasan describes
+            Professional athletes review game tape obsessively. Mehdi Hasan describes
             practicing delivery by recording himself and reviewing the footage.
             The recording feature gives you the same capability.
           </p>
@@ -895,8 +895,14 @@ CLOSING TECHNIQUE
       <footer className="py-8" style={{ backgroundColor: "#E8E4DA" }}>
         <div className="mx-auto max-w-3xl px-8 text-center">
           <p className="text-sm" style={{ color: "#5C5C54" }}>
-            © {new Date().getFullYear()} DebateClub. Based on "Win Every
-            Argument" by Mehdi Hasan.
+            © {new Date().getFullYear()} DebateClub. Based on{" "}
+            <Link
+              to="/win-every-argument"
+              className="underline transition-opacity hover:opacity-70"
+            >
+              "Win Every Argument"
+            </Link>{" "}
+            by Mehdi Hasan.
           </p>
         </div>
       </footer>

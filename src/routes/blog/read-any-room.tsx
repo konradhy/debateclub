@@ -9,7 +9,7 @@ export const Route = createFileRoute("/blog/read-any-room")({
       {
         name: "description",
         content:
-          "Skeptical investor? Hostile critic? Neutral crowd? Learn to spot the difference in 30 seconds and adjust your approach on the fly.",
+          "Skeptics, supporters, or hostile crowds? Adapt your approach in 30 seconds. From Mehdi Hasan's Win Every Argument.",
       },
       {
         property: "og:title",
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/blog/read-any-room")({
       {
         property: "og:description",
         content:
-          "Skeptical investor? Hostile critic? Neutral crowd? Learn to spot the difference in 30 seconds and adjust your approach on the fly.",
+          "Skeptics, supporters, or hostile crowds? Adapt your approach in 30 seconds. From Mehdi Hasan's Win Every Argument.",
       },
       { property: "og:type", content: "article" },
       { property: "og:image", content: "/images/landingpage.png" },
@@ -127,7 +127,7 @@ function ReadAnyRoomArticle() {
           </p>
 
           <p className="mt-4 leading-relaxed" style={{ color: "#5C5C54" }}>
-            But audiences are not interchangeable. Hasan emphasizes that
+            But audiences are not interchangeable. Mehdi Hasan emphasizes that
             effective persuaders "tailor their language and examples to the
             specific audience." A statistic that impresses an expert might bore
             a general audience. An emotional appeal that moves a jury might
@@ -566,8 +566,14 @@ function ReadAnyRoomArticle() {
       <footer className="py-8" style={{ backgroundColor: "#E8E4DA" }}>
         <div className="mx-auto max-w-3xl px-8 text-center">
           <p className="text-sm" style={{ color: "#5C5C54" }}>
-            © {new Date().getFullYear()} DebateClub. Based on "Win Every
-            Argument" by Mehdi Hasan.
+            © {new Date().getFullYear()} DebateClub. Based on{" "}
+            <Link
+              to="/win-every-argument"
+              className="underline transition-opacity hover:opacity-70"
+            >
+              "Win Every Argument"
+            </Link>{" "}
+            by Mehdi Hasan.
           </p>
         </div>
       </footer>

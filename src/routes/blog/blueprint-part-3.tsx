@@ -16,20 +16,20 @@ import {
 export const Route = createFileRoute("/blog/blueprint-part-3")({
   head: () => ({
     meta: [
-      { title: "Debate Analysis: Know What Worked | DebateClub" },
+      { title: "How to Analyze Your Debate Performance | DebateClub" },
       {
         name: "description",
         content:
-          "Hasan Scores, technique breakdowns, and improvement tips. How DebateClub analyzes your debates so you know exactly what to fix next.",
+          "Athletes review game tape. So should you. Technique scorecards, missed opportunity rewrites, and the feedback loop from Mehdi Hasan's Win Every Argument.",
       },
       {
         property: "og:title",
-        content: "Debate Analysis: Know What Worked | DebateClub",
+        content: "How to Analyze Your Debate Performance | DebateClub",
       },
       {
         property: "og:description",
         content:
-          "Hasan Scores, technique breakdowns, and improvement tips. How DebateClub analyzes your debates so you know exactly what to fix next.",
+          "Athletes review game tape. So should you. Technique scorecards, missed opportunity rewrites, and the feedback loop from Mehdi Hasan's Win Every Argument.",
       },
       { property: "og:type", content: "article" },
       { property: "og:image", content: "/images/landingpage.png" },
@@ -946,8 +946,14 @@ TOTAL HASAN SCORE                       26/40`}
       <footer className="py-8" style={{ backgroundColor: "#E8E4DA" }}>
         <div className="mx-auto max-w-3xl px-8 text-center">
           <p className="text-sm" style={{ color: "#5C5C54" }}>
-            © {new Date().getFullYear()} DebateClub. Based on "Win Every
-            Argument" by Mehdi Hasan.
+            © {new Date().getFullYear()} DebateClub. Based on{" "}
+            <Link
+              to="/win-every-argument"
+              className="underline transition-opacity hover:opacity-70"
+            >
+              "Win Every Argument"
+            </Link>{" "}
+            by Mehdi Hasan.
           </p>
         </div>
       </footer>

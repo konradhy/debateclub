@@ -5,20 +5,20 @@ import { ArrowLeft, ArrowRight, FileText, Search, Clock } from "lucide-react";
 export const Route = createFileRoute("/blog/back-it-up")({
   head: () => ({
     meta: [
-      { title: "How to Use Evidence to Win Arguments | DebateClub" },
+      { title: "How to Use Evidence to Win Any Argument | DebateClub" },
       {
         name: "description",
         content:
-          "Find it, time it, drop it. The best evidence isn't dumped — it's revealed at the perfect moment. From Win Every Argument, Chapter 3.",
+          "Timing matters more than having receipts. When to drop evidence for maximum impact. From Mehdi Hasan's Win Every Argument.",
       },
       {
         property: "og:title",
-        content: "How to Use Evidence to Win Arguments | DebateClub",
+        content: "How to Use Evidence to Win Any Argument | DebateClub",
       },
       {
         property: "og:description",
         content:
-          "Find it, time it, drop it. The best evidence isn't dumped — it's revealed at the perfect moment. From Win Every Argument, Chapter 3.",
+          "Timing matters more than having receipts. When to drop evidence for maximum impact. From Mehdi Hasan's Win Every Argument.",
       },
       { property: "og:type", content: "article" },
       { property: "og:image", content: "/images/landingpage.png" },
@@ -98,7 +98,7 @@ function BackItUpArticle() {
           <p className="text-lg leading-relaxed" style={{ color: "#3A3A35" }}>
             In 2020, Mehdi Hasan interviewed Erik Prince, the controversial
             founder of Blackwater. Prince denied ever meeting with a Russian
-            banker in the Seychelles. Hasan paused, reached for a document, and
+            banker in the Seychelles. Mehdi Hasan paused, reached for a document, and
             read aloud the exact passage from the Mueller report confirming the
             meeting. Prince stammered. The clip went viral. That is the power of
             receipts.
@@ -106,7 +106,7 @@ function BackItUpArticle() {
 
           <p className="mt-6 leading-relaxed" style={{ color: "#5C5C54" }}>
             Chapter 3 of "Win Every Argument" is titled "Show Your Receipts"
-            because Hasan believes{" "}
+            because Mehdi Hasan believes{" "}
             <strong>evidence is what separates assertion from argument</strong>.
             Anyone can claim anything. But when you produce the document, the
             video clip, the direct quote, you transform the debate. Your
@@ -122,7 +122,7 @@ function BackItUpArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Hasan identifies several reasons why evidence is so powerful in
+            Mehdi Hasan identifies several reasons why evidence is so powerful in
             debate:
           </p>
 
@@ -204,7 +204,7 @@ function BackItUpArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Not all receipts are created equal. Hasan categorizes evidence into
+            Not all receipts are created equal. Mehdi Hasan categorizes evidence into
             a hierarchy based on persuasive power:
           </p>
 
@@ -450,7 +450,7 @@ function BackItUpArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Hasan's specific guidance on evidence timing:
+            Mehdi Hasan's specific guidance on evidence timing:
           </p>
 
           <div className="my-6 grid grid-cols-2 gap-4">
@@ -698,8 +698,14 @@ function BackItUpArticle() {
       <footer className="py-8" style={{ backgroundColor: "#E8E4DA" }}>
         <div className="mx-auto max-w-3xl px-8 text-center">
           <p className="text-sm" style={{ color: "#5C5C54" }}>
-            © {new Date().getFullYear()} DebateClub. Based on "Win Every
-            Argument" by Mehdi Hasan.
+            © {new Date().getFullYear()} DebateClub. Based on{" "}
+            <Link
+              to="/win-every-argument"
+              className="underline transition-opacity hover:opacity-70"
+            >
+              "Win Every Argument"
+            </Link>{" "}
+            by Mehdi Hasan.
           </p>
         </div>
       </footer>

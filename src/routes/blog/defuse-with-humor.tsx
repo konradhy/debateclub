@@ -5,20 +5,20 @@ import { ArrowLeft, ArrowRight, Smile, Shield, Users } from "lucide-react";
 export const Route = createFileRoute("/blog/defuse-with-humor")({
   head: () => ({
     meta: [
-      { title: "Using Humor to Win Arguments | DebateClub" },
+      { title: "Using Humor to Win Arguments (Without Bombing) | DebateClub" },
       {
         name: "description",
         content:
-          "Build rapport. Lighten tension. Undermine opponents. The do's and don'ts of humor in high-stakes moments. Don't announce jokes.",
+          "Reagan neutralized his age problem with one joke. When humor disarms attacks and when it backfires. From Mehdi Hasan's Win Every Argument.",
       },
       {
         property: "og:title",
-        content: "Using Humor to Win Arguments | DebateClub",
+        content: "Using Humor to Win Arguments (Without Bombing) | DebateClub",
       },
       {
         property: "og:description",
         content:
-          "Build rapport. Lighten tension. Undermine opponents. The do's and don'ts of humor in high-stakes moments. Don't announce jokes.",
+          "Reagan neutralized his age problem with one joke. When humor disarms attacks and when it backfires. From Mehdi Hasan's Win Every Argument.",
       },
       { property: "og:type", content: "article" },
       { property: "og:image", content: "/images/landingpage.png" },
@@ -126,7 +126,7 @@ function DefuseWithHumorArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Hasan identifies several reasons why humor is such a powerful tool
+            Mehdi Hasan identifies several reasons why humor is such a powerful tool
             in debate:
           </p>
 
@@ -208,7 +208,7 @@ function DefuseWithHumorArticle() {
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
             Humor is powerful but risky. A joke that falls flat makes you look
-            nervous. A joke at the wrong moment makes you look callous. Hasan
+            nervous. A joke at the wrong moment makes you look callous. Mehdi Hasan
             identifies the optimal windows:
           </p>
 
@@ -410,7 +410,7 @@ function DefuseWithHumorArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Humor that fails is worse than no humor at all. Hasan warns against
+            Humor that fails is worse than no humor at all. Mehdi Hasan warns against
             these common mistakes:
           </p>
 
@@ -602,8 +602,14 @@ function DefuseWithHumorArticle() {
       <footer className="py-8" style={{ backgroundColor: "#E8E4DA" }}>
         <div className="mx-auto max-w-3xl px-8 text-center">
           <p className="text-sm" style={{ color: "#5C5C54" }}>
-            © {new Date().getFullYear()} DebateClub. Based on "Win Every
-            Argument" by Mehdi Hasan.
+            © {new Date().getFullYear()} DebateClub. Based on{" "}
+            <Link
+              to="/win-every-argument"
+              className="underline transition-opacity hover:opacity-70"
+            >
+              "Win Every Argument"
+            </Link>{" "}
+            by Mehdi Hasan.
           </p>
         </div>
       </footer>

@@ -6,20 +6,20 @@ import { ArrowLeft, ArrowRight, Feather, BookOpen } from "lucide-react";
 export const Route = createFileRoute("/blog/")({
   head: () => ({
     meta: [
-      { title: "Debate Techniques from Win Every Argument | DebateClub" },
+      { title: "12 Debate Techniques to Win Any Argument | DebateClub" },
       {
         name: "description",
         content:
-          "Master Mehdi Hasan's 12 techniques for winning any argument. Deep guides on evidence, emotion, zingers, and handling difficult opponents.",
+          "Evidence timing, emotional appeals, killer questions, handling Gish Gallops. Deep guides on every technique from Mehdi Hasan's Win Every Argument.",
       },
       {
         property: "og:title",
-        content: "Debate Techniques from Win Every Argument | DebateClub",
+        content: "12 Debate Techniques to Win Any Argument | DebateClub",
       },
       {
         property: "og:description",
         content:
-          "Master Mehdi Hasan's 12 techniques for winning any argument. Deep guides on evidence, emotion, zingers, and handling difficult opponents.",
+          "Evidence timing, emotional appeals, killer questions, handling Gish Gallops. Deep guides on every technique from Mehdi Hasan's Win Every Argument.",
       },
       { property: "og:type", content: "website" },
       { property: "og:image", content: "/images/landingpage.png" },
@@ -219,7 +219,7 @@ function BlogIndex() {
                     After the Dust Settles
                   </h3>
                   <p className="mb-3 text-sm" style={{ color: "#A8A898" }}>
-                    Hasan Scores, analysis, and continuous improvement
+                    Mehdi Hasan Scores, analysis, and continuous improvement
                   </p>
                   <span
                     className="inline-flex items-center gap-1 text-sm font-medium transition-all group-hover:gap-2"
@@ -300,8 +300,14 @@ function BlogIndex() {
       <footer className="py-8" style={{ backgroundColor: "#E8E4DA" }}>
         <div className="mx-auto max-w-4xl px-8 text-center">
           <p className="text-sm" style={{ color: "#5C5C54" }}>
-            © {new Date().getFullYear()} DebateClub. Based on "Win Every
-            Argument" by Mehdi Hasan.
+            © {new Date().getFullYear()} DebateClub. Based on{" "}
+            <Link
+              to="/win-every-argument"
+              className="underline transition-opacity hover:opacity-70"
+            >
+              "Win Every Argument"
+            </Link>{" "}
+            by Mehdi Hasan.
           </p>
         </div>
       </footer>

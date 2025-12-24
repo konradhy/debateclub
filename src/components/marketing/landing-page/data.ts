@@ -252,8 +252,9 @@ export const footerLinks = {
   ],
   resources: [
     { label: "Blog", href: "/blog" },
+    { label: "Win Every Argument", href: "/win-every-argument" },
     {
-      label: "The Book",
+      label: "Buy the Book",
       href: "https://www.amazon.com/Win-Every-Argument-Debating-Persuading/dp/1250853478",
     },
   ],

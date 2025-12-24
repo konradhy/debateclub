@@ -9,7 +9,7 @@ export const Route = createFileRoute("/blog/cut-through-the-noise")({
       {
         name: "description",
         content:
-          "They flood you with 10 bad arguments at once. Your move: pick one, don't budge, expose the tactic. The three-step defense.",
+          "They flood you with 10 bad arguments at once. Pick one, don't budge, expose the tactic. From Mehdi Hasan's Win Every Argument.",
       },
       {
         property: "og:title",
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/blog/cut-through-the-noise")({
       {
         property: "og:description",
         content:
-          "They flood you with 10 bad arguments at once. Your move: pick one, don't budge, expose the tactic. The three-step defense.",
+          "They flood you with 10 bad arguments at once. Pick one, don't budge, expose the tactic. From Mehdi Hasan's Win Every Argument.",
       },
       { property: "og:type", content: "article" },
       { property: "og:image", content: "/images/landingpage.png" },
@@ -125,7 +125,7 @@ function CutThroughTheNoiseArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Hasan identifies the telltale signs of a Gish Gallop:
+            Mehdi Hasan identifies the telltale signs of a Gish Gallop:
           </p>
 
           <div
@@ -198,11 +198,11 @@ function CutThroughTheNoiseArticle() {
             className="mb-4 mt-12 text-2xl font-bold"
             style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
           >
-            The Hasan Counter-Strategy
+            The Mehdi Hasan Counter-Strategy
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Hasan's approach to the Gish Gallop is surgical, not comprehensive.
+            Mehdi Hasan's approach to the Gish Gallop is surgical, not comprehensive.
             Do not try to address every point. Instead:
           </p>
 
@@ -657,8 +657,14 @@ function CutThroughTheNoiseArticle() {
       <footer className="py-8" style={{ backgroundColor: "#E8E4DA" }}>
         <div className="mx-auto max-w-3xl px-8 text-center">
           <p className="text-sm" style={{ color: "#5C5C54" }}>
-            © {new Date().getFullYear()} DebateClub. Based on "Win Every
-            Argument" by Mehdi Hasan.
+            © {new Date().getFullYear()} DebateClub. Based on{" "}
+            <Link
+              to="/win-every-argument"
+              className="underline transition-opacity hover:opacity-70"
+            >
+              "Win Every Argument"
+            </Link>{" "}
+            by Mehdi Hasan.
           </p>
         </div>
       </footer>

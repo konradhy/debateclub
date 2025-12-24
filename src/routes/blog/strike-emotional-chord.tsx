@@ -5,20 +5,20 @@ import { ArrowLeft, ArrowRight, Heart, Brain, Mic } from "lucide-react";
 export const Route = createFileRoute("/blog/strike-emotional-chord")({
   head: () => ({
     meta: [
-      { title: "Why Emotion Beats Logic in Arguments | DebateClub" },
+      { title: "Why Emotion Wins Arguments (And Logic Doesn't) | DebateClub" },
       {
         name: "description",
         content:
-          "Facts don't change minds — feelings do. Master storytelling, word choice, and delivery that moves people. Hasan's pathos playbook.",
+          "Dukakis lost a campaign in 48 hours by forgetting to feel. The neuroscience of pathos from Mehdi Hasan's Win Every Argument.",
       },
       {
         property: "og:title",
-        content: "Why Emotion Beats Logic in Arguments | DebateClub",
+        content: "Why Emotion Wins Arguments (And Logic Doesn't) | DebateClub",
       },
       {
         property: "og:description",
         content:
-          "Facts don't change minds — feelings do. Master storytelling, word choice, and delivery that moves people. Hasan's pathos playbook.",
+          "Dukakis lost a campaign in 48 hours by forgetting to feel. The neuroscience of pathos from Mehdi Hasan's Win Every Argument.",
       },
       { property: "og:type", content: "article" },
       { property: "og:image", content: "/images/landingpage.png" },
@@ -122,7 +122,7 @@ function StrikeEmotionalChordArticle() {
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
             Ben Shapiro famously says "facts don't care about your feelings."
-            Hasan's counterargument: your feelings don't care about the facts
+            Mehdi Hasan's counterargument: your feelings don't care about the facts
             either. And there is hard science behind this.
           </p>
 
@@ -745,8 +745,14 @@ function StrikeEmotionalChordArticle() {
       <footer className="py-8" style={{ backgroundColor: "#E8E4DA" }}>
         <div className="mx-auto max-w-3xl px-8 text-center">
           <p className="text-sm" style={{ color: "#5C5C54" }}>
-            © {new Date().getFullYear()} DebateClub. Based on "Win Every
-            Argument" by Mehdi Hasan.
+            © {new Date().getFullYear()} DebateClub. Based on{" "}
+            <Link
+              to="/win-every-argument"
+              className="underline transition-opacity hover:opacity-70"
+            >
+              "Win Every Argument"
+            </Link>{" "}
+            by Mehdi Hasan.
           </p>
         </div>
       </footer>

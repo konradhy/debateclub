@@ -5,20 +5,20 @@ import { ArrowLeft, ArrowRight, Zap, Clock, Sparkles } from "lucide-react";
 export const Route = createFileRoute("/blog/land-the-closer")({
   head: () => ({
     meta: [
-      { title: "How to Deliver a Perfect Zinger | DebateClub" },
+      { title: "How to Deliver the Perfect Zinger | DebateClub" },
       {
         name: "description",
         content:
-          '"Senator, you\'re no Jack Kennedy." The best lines are prepared in advance and delivered like they just occurred to you.',
+          "\"Senator, you're no Jack Kennedy.\" The best one-liners are prepared, then delivered like they just occurred to you. From Mehdi Hasan's Win Every Argument.",
       },
       {
         property: "og:title",
-        content: "How to Deliver a Perfect Zinger | DebateClub",
+        content: "How to Deliver the Perfect Zinger | DebateClub",
       },
       {
         property: "og:description",
         content:
-          '"Senator, you\'re no Jack Kennedy." The best lines are prepared in advance and delivered like they just occurred to you.',
+          "\"Senator, you're no Jack Kennedy.\" The best one-liners are prepared, then delivered like they just occurred to you. From Mehdi Hasan's Win Every Argument.",
       },
       { property: "og:type", content: "article" },
       { property: "og:image", content: "/images/landingpage.png" },
@@ -123,7 +123,7 @@ function LandTheCloserArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Hasan identifies several elements that make a one-liner land:
+            Mehdi Hasan identifies several elements that make a one-liner land:
           </p>
 
           <div
@@ -219,7 +219,7 @@ function LandTheCloserArticle() {
           </h2>
 
           <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
-            Hasan catalogs several types of zingers that work in different
+            Mehdi Hasan catalogs several types of zingers that work in different
             situations:
           </p>
 
@@ -632,8 +632,14 @@ function LandTheCloserArticle() {
       <footer className="py-8" style={{ backgroundColor: "#E8E4DA" }}>
         <div className="mx-auto max-w-3xl px-8 text-center">
           <p className="text-sm" style={{ color: "#5C5C54" }}>
-            © {new Date().getFullYear()} DebateClub. Based on "Win Every
-            Argument" by Mehdi Hasan.
+            © {new Date().getFullYear()} DebateClub. Based on{" "}
+            <Link
+              to="/win-every-argument"
+              className="underline transition-opacity hover:opacity-70"
+            >
+              "Win Every Argument"
+            </Link>{" "}
+            by Mehdi Hasan.
           </p>
         </div>
       </footer>
