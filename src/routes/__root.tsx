@@ -1,44 +1,73 @@
-import { QueryClient } from "@tanstack/react-query";
-import {
-  createRootRouteWithContext,
-  Outlet,
-  useRouter,
-} from "@tanstack/react-router";
+/// <reference types="vite/client" />
+import type { ReactNode } from "react";
 import React, { Suspense } from "react";
-import { Helmet } from "react-helmet-async";
+import {
+  Outlet,
+  createRootRoute,
+  HeadContent,
+  Scripts,
+} from "@tanstack/react-router";
+import appCss from "@/index.css?url";
 
 const TanStackRouterDevtools =
   process.env.NODE_ENV === "production"
-    ? () => null // Render nothing in production
+    ? () => null
     : React.lazy(() =>
-        // Lazy load in development
         import("@tanstack/router-devtools").then((res) => ({
           default: res.TanStackRouterDevtools,
-          // For Embedded Mode
-          // default: res.TanStackRouterDevtoolsPanel
         })),
       );
 
-export const Route = createRootRouteWithContext<{
-  queryClient: QueryClient;
-}>()({
-  component: () => {
-    const router = useRouter();
-    const matchWithTitle = [...router.state.matches]
-      .reverse()
-      .find((d) => d.routeContext?.title);
-    const title = matchWithTitle?.routeContext.title || "Convex SaaS";
-
-    return (
-      <>
-        <Outlet />
-        <Helmet>
-          <title>{title}</title>
-        </Helmet>
-        <Suspense>
-          <TanStackRouterDevtools />
-        </Suspense>
-      </>
-    );
-  },
+export const Route = createRootRoute({
+  head: () => ({
+    meta: [
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { title: "DebateClub - Win Every Argument" },
+    ],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      {
+        rel: "preconnect",
+        href: "https://fonts.gstatic.com",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap",
+      },
+    ],
+    scripts: [
+      {
+        children: `if (localStorage.theme === "dark" || (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.style.colorScheme = "dark";
+        }`,
+      },
+    ],
+  }),
+  component: RootComponent,
 });
+
+function RootComponent() {
+  return (
+    <RootDocument>
+      <Outlet />
+      <Suspense>
+        <TanStackRouterDevtools />
+      </Suspense>
+    </RootDocument>
+  );
+}
+
+function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
+  return (
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body>{children}<Scripts /></body>
+    </html>
+  );
+}

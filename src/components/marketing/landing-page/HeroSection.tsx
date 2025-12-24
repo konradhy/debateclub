@@ -1,6 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { Loader2 } from "lucide-react";
-import { useConvexAuth } from "@convex-dev/react-query";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -28,14 +26,13 @@ const itemVariants = {
 
 /**
  * Hero section with background image, main headline, and CTAs.
+ * Links to /login - authenticated users are redirected from there.
  */
 export function HeroSection() {
-  const { isLoading, isAuthenticated } = useConvexAuth();
-
   return (
     <section className="relative h-screen w-full">
       <img
-        src="/images/1960by1064background.png"
+        src="/images/1960by1040background.png"
         alt=""
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover"
@@ -104,15 +101,11 @@ export function HeroSection() {
             variants={itemVariants}
           >
             <Link
-              to={isAuthenticated ? "/dashboard" : "/login"}
+              to="/login"
               className="inline-flex h-14 items-center justify-center rounded-md px-10 text-lg font-semibold text-white shadow-sm transition-all hover:brightness-110 active:scale-[0.98]"
               style={{ backgroundColor: "#5C6B4A" }}
             >
-              {isLoading ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
-              ) : (
-                "Start Free Practice"
-              )}
+              Start Free Practice
             </Link>
 
             <button

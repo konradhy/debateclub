@@ -8,18 +8,24 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as BlogTheCrossedQuillsRouteImport } from './routes/blog/the-crossed-quills'
 import { Route as BlogStrikeEmotionalChordRouteImport } from './routes/blog/strike-emotional-chord'
+import { Route as BlogSpotTheWeaknessRouteImport } from './routes/blog/spot-the-weakness'
 import { Route as BlogReadAnyRoomRouteImport } from './routes/blog/read-any-room'
+import { Route as BlogMakeItStickRouteImport } from './routes/blog/make-it-stick'
+import { Route as BlogLandTheCloserRouteImport } from './routes/blog/land-the-closer'
+import { Route as BlogFlipTheirMomentumRouteImport } from './routes/blog/flip-their-momentum'
+import { Route as BlogDefuseWithHumorRouteImport } from './routes/blog/defuse-with-humor'
+import { Route as BlogCutThroughTheNoiseRouteImport } from './routes/blog/cut-through-the-noise'
 import { Route as BlogBlueprintPart3RouteImport } from './routes/blog/blueprint-part-3'
 import { Route as BlogBlueprintPart2RouteImport } from './routes/blog/blueprint-part-2'
 import { Route as BlogBlueprintPart1RouteImport } from './routes/blog/blueprint-part-1'
+import { Route as BlogBackItUpRouteImport } from './routes/blog/back-it-up'
+import { Route as BlogAskTheKillerQuestionRouteImport } from './routes/blog/ask-the-killer-question'
 import { Route as AppAuthRouteImport } from './routes/_app/_auth'
 import { Route as AppLoginLayoutRouteImport } from './routes/_app/login/_layout'
 import { Route as AppLoginLayoutIndexRouteImport } from './routes/_app/login/_layout.index'
@@ -37,10 +43,6 @@ import { Route as AppAuthDashboardLayoutCheckoutRouteImport } from './routes/_ap
 import { Route as AppAuthDashboardLayoutSettingsIndexRouteImport } from './routes/_app/_auth/dashboard/_layout.settings.index'
 import { Route as AppAuthDashboardLayoutSettingsBillingRouteImport } from './routes/_app/_auth/dashboard/_layout.settings.billing'
 
-const AppLoginRouteImport = createFileRoute('/_app/login')()
-const AppAuthOnboardingRouteImport = createFileRoute('/_app/_auth/onboarding')()
-const AppAuthDashboardRouteImport = createFileRoute('/_app/_auth/dashboard')()
-
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
@@ -49,11 +51,6 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AppLoginRoute = AppLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => AppRoute,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
@@ -71,9 +68,39 @@ const BlogStrikeEmotionalChordRoute =
     path: '/blog/strike-emotional-chord',
     getParentRoute: () => rootRouteImport,
   } as any)
+const BlogSpotTheWeaknessRoute = BlogSpotTheWeaknessRouteImport.update({
+  id: '/blog/spot-the-weakness',
+  path: '/blog/spot-the-weakness',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogReadAnyRoomRoute = BlogReadAnyRoomRouteImport.update({
   id: '/blog/read-any-room',
   path: '/blog/read-any-room',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogMakeItStickRoute = BlogMakeItStickRouteImport.update({
+  id: '/blog/make-it-stick',
+  path: '/blog/make-it-stick',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogLandTheCloserRoute = BlogLandTheCloserRouteImport.update({
+  id: '/blog/land-the-closer',
+  path: '/blog/land-the-closer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogFlipTheirMomentumRoute = BlogFlipTheirMomentumRouteImport.update({
+  id: '/blog/flip-their-momentum',
+  path: '/blog/flip-their-momentum',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogDefuseWithHumorRoute = BlogDefuseWithHumorRouteImport.update({
+  id: '/blog/defuse-with-humor',
+  path: '/blog/defuse-with-humor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogCutThroughTheNoiseRoute = BlogCutThroughTheNoiseRouteImport.update({
+  id: '/blog/cut-through-the-noise',
+  path: '/blog/cut-through-the-noise',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogBlueprintPart3Route = BlogBlueprintPart3RouteImport.update({
@@ -91,23 +118,25 @@ const BlogBlueprintPart1Route = BlogBlueprintPart1RouteImport.update({
   path: '/blog/blueprint-part-1',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogBackItUpRoute = BlogBackItUpRouteImport.update({
+  id: '/blog/back-it-up',
+  path: '/blog/back-it-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogAskTheKillerQuestionRoute =
+  BlogAskTheKillerQuestionRouteImport.update({
+    id: '/blog/ask-the-killer-question',
+    path: '/blog/ask-the-killer-question',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AppAuthRoute = AppAuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => AppRoute,
 } as any)
-const AppAuthOnboardingRoute = AppAuthOnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => AppAuthRoute,
-} as any)
-const AppAuthDashboardRoute = AppAuthDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AppAuthRoute,
-} as any)
 const AppLoginLayoutRoute = AppLoginLayoutRouteImport.update({
-  id: '/_layout',
-  getParentRoute: () => AppLoginRoute,
+  id: '/login/_layout',
+  path: '/login',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppLoginLayoutIndexRoute = AppLoginLayoutIndexRouteImport.update({
   id: '/',
@@ -115,39 +144,41 @@ const AppLoginLayoutIndexRoute = AppLoginLayoutIndexRouteImport.update({
   getParentRoute: () => AppLoginLayoutRoute,
 } as any)
 const AppAuthOnboardingLayoutRoute = AppAuthOnboardingLayoutRouteImport.update({
-  id: '/_layout',
-  getParentRoute: () => AppAuthOnboardingRoute,
+  id: '/onboarding/_layout',
+  path: '/onboarding',
+  getParentRoute: () => AppAuthRoute,
 } as any)
 const AppAuthDashboardPrepRoute = AppAuthDashboardPrepRouteImport.update({
-  id: '/prep',
-  path: '/prep',
-  getParentRoute: () => AppAuthDashboardRoute,
+  id: '/dashboard/prep',
+  path: '/dashboard/prep',
+  getParentRoute: () => AppAuthRoute,
 } as any)
 const AppAuthDashboardOpponentProfileRoute =
   AppAuthDashboardOpponentProfileRouteImport.update({
-    id: '/opponent-profile',
-    path: '/opponent-profile',
-    getParentRoute: () => AppAuthDashboardRoute,
+    id: '/dashboard/opponent-profile',
+    path: '/dashboard/opponent-profile',
+    getParentRoute: () => AppAuthRoute,
   } as any)
 const AppAuthDashboardHistoryRoute = AppAuthDashboardHistoryRouteImport.update({
-  id: '/history',
-  path: '/history',
-  getParentRoute: () => AppAuthDashboardRoute,
+  id: '/dashboard/history',
+  path: '/dashboard/history',
+  getParentRoute: () => AppAuthRoute,
 } as any)
 const AppAuthDashboardDebateRoute = AppAuthDashboardDebateRouteImport.update({
-  id: '/debate',
-  path: '/debate',
-  getParentRoute: () => AppAuthDashboardRoute,
+  id: '/dashboard/debate',
+  path: '/dashboard/debate',
+  getParentRoute: () => AppAuthRoute,
 } as any)
 const AppAuthDashboardAnalysisRoute =
   AppAuthDashboardAnalysisRouteImport.update({
-    id: '/analysis',
-    path: '/analysis',
-    getParentRoute: () => AppAuthDashboardRoute,
+    id: '/dashboard/analysis',
+    path: '/dashboard/analysis',
+    getParentRoute: () => AppAuthRoute,
   } as any)
 const AppAuthDashboardLayoutRoute = AppAuthDashboardLayoutRouteImport.update({
-  id: '/_layout',
-  getParentRoute: () => AppAuthDashboardRoute,
+  id: '/dashboard/_layout',
+  path: '/dashboard',
+  getParentRoute: () => AppAuthRoute,
 } as any)
 const AppAuthDashboardLayoutIndexRoute =
   AppAuthDashboardLayoutIndexRouteImport.update({
@@ -188,10 +219,18 @@ const AppAuthDashboardLayoutSettingsBillingRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/blog/ask-the-killer-question': typeof BlogAskTheKillerQuestionRoute
+  '/blog/back-it-up': typeof BlogBackItUpRoute
   '/blog/blueprint-part-1': typeof BlogBlueprintPart1Route
   '/blog/blueprint-part-2': typeof BlogBlueprintPart2Route
   '/blog/blueprint-part-3': typeof BlogBlueprintPart3Route
+  '/blog/cut-through-the-noise': typeof BlogCutThroughTheNoiseRoute
+  '/blog/defuse-with-humor': typeof BlogDefuseWithHumorRoute
+  '/blog/flip-their-momentum': typeof BlogFlipTheirMomentumRoute
+  '/blog/land-the-closer': typeof BlogLandTheCloserRoute
+  '/blog/make-it-stick': typeof BlogMakeItStickRoute
   '/blog/read-any-room': typeof BlogReadAnyRoomRoute
+  '/blog/spot-the-weakness': typeof BlogSpotTheWeaknessRoute
   '/blog/strike-emotional-chord': typeof BlogStrikeEmotionalChordRoute
   '/blog/the-crossed-quills': typeof BlogTheCrossedQuillsRoute
   '/blog': typeof BlogIndexRoute
@@ -213,23 +252,31 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/blog/ask-the-killer-question': typeof BlogAskTheKillerQuestionRoute
+  '/blog/back-it-up': typeof BlogBackItUpRoute
   '/blog/blueprint-part-1': typeof BlogBlueprintPart1Route
   '/blog/blueprint-part-2': typeof BlogBlueprintPart2Route
   '/blog/blueprint-part-3': typeof BlogBlueprintPart3Route
+  '/blog/cut-through-the-noise': typeof BlogCutThroughTheNoiseRoute
+  '/blog/defuse-with-humor': typeof BlogDefuseWithHumorRoute
+  '/blog/flip-their-momentum': typeof BlogFlipTheirMomentumRoute
+  '/blog/land-the-closer': typeof BlogLandTheCloserRoute
+  '/blog/make-it-stick': typeof BlogMakeItStickRoute
   '/blog/read-any-room': typeof BlogReadAnyRoomRoute
+  '/blog/spot-the-weakness': typeof BlogSpotTheWeaknessRoute
   '/blog/strike-emotional-chord': typeof BlogStrikeEmotionalChordRoute
   '/blog/the-crossed-quills': typeof BlogTheCrossedQuillsRoute
   '/blog': typeof BlogIndexRoute
-  '/login': typeof AppLoginLayoutIndexRoute
-  '/dashboard': typeof AppAuthDashboardLayoutIndexRoute
   '/dashboard/analysis': typeof AppAuthDashboardAnalysisRoute
   '/dashboard/debate': typeof AppAuthDashboardDebateRoute
   '/dashboard/history': typeof AppAuthDashboardHistoryRoute
   '/dashboard/opponent-profile': typeof AppAuthDashboardOpponentProfileRoute
   '/dashboard/prep': typeof AppAuthDashboardPrepRoute
   '/onboarding': typeof AppAuthOnboardingLayoutRouteWithChildren
+  '/login': typeof AppLoginLayoutIndexRoute
   '/dashboard/checkout': typeof AppAuthDashboardLayoutCheckoutRoute
   '/onboarding/username': typeof AppAuthOnboardingLayoutUsernameRoute
+  '/dashboard': typeof AppAuthDashboardLayoutIndexRoute
   '/dashboard/settings/billing': typeof AppAuthDashboardLayoutSettingsBillingRoute
   '/dashboard/settings': typeof AppAuthDashboardLayoutSettingsIndexRoute
 }
@@ -238,23 +285,28 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/_app/_auth': typeof AppAuthRouteWithChildren
+  '/blog/ask-the-killer-question': typeof BlogAskTheKillerQuestionRoute
+  '/blog/back-it-up': typeof BlogBackItUpRoute
   '/blog/blueprint-part-1': typeof BlogBlueprintPart1Route
   '/blog/blueprint-part-2': typeof BlogBlueprintPart2Route
   '/blog/blueprint-part-3': typeof BlogBlueprintPart3Route
+  '/blog/cut-through-the-noise': typeof BlogCutThroughTheNoiseRoute
+  '/blog/defuse-with-humor': typeof BlogDefuseWithHumorRoute
+  '/blog/flip-their-momentum': typeof BlogFlipTheirMomentumRoute
+  '/blog/land-the-closer': typeof BlogLandTheCloserRoute
+  '/blog/make-it-stick': typeof BlogMakeItStickRoute
   '/blog/read-any-room': typeof BlogReadAnyRoomRoute
+  '/blog/spot-the-weakness': typeof BlogSpotTheWeaknessRoute
   '/blog/strike-emotional-chord': typeof BlogStrikeEmotionalChordRoute
   '/blog/the-crossed-quills': typeof BlogTheCrossedQuillsRoute
   '/blog/': typeof BlogIndexRoute
-  '/_app/login': typeof AppLoginRouteWithChildren
   '/_app/login/_layout': typeof AppLoginLayoutRouteWithChildren
-  '/_app/_auth/dashboard': typeof AppAuthDashboardRouteWithChildren
   '/_app/_auth/dashboard/_layout': typeof AppAuthDashboardLayoutRouteWithChildren
   '/_app/_auth/dashboard/analysis': typeof AppAuthDashboardAnalysisRoute
   '/_app/_auth/dashboard/debate': typeof AppAuthDashboardDebateRoute
   '/_app/_auth/dashboard/history': typeof AppAuthDashboardHistoryRoute
   '/_app/_auth/dashboard/opponent-profile': typeof AppAuthDashboardOpponentProfileRoute
   '/_app/_auth/dashboard/prep': typeof AppAuthDashboardPrepRoute
-  '/_app/_auth/onboarding': typeof AppAuthOnboardingRouteWithChildren
   '/_app/_auth/onboarding/_layout': typeof AppAuthOnboardingLayoutRouteWithChildren
   '/_app/login/_layout/': typeof AppLoginLayoutIndexRoute
   '/_app/_auth/dashboard/_layout/checkout': typeof AppAuthDashboardLayoutCheckoutRoute
@@ -268,10 +320,18 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/blog/ask-the-killer-question'
+    | '/blog/back-it-up'
     | '/blog/blueprint-part-1'
     | '/blog/blueprint-part-2'
     | '/blog/blueprint-part-3'
+    | '/blog/cut-through-the-noise'
+    | '/blog/defuse-with-humor'
+    | '/blog/flip-their-momentum'
+    | '/blog/land-the-closer'
+    | '/blog/make-it-stick'
     | '/blog/read-any-room'
+    | '/blog/spot-the-weakness'
     | '/blog/strike-emotional-chord'
     | '/blog/the-crossed-quills'
     | '/blog'
@@ -293,23 +353,31 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/blog/ask-the-killer-question'
+    | '/blog/back-it-up'
     | '/blog/blueprint-part-1'
     | '/blog/blueprint-part-2'
     | '/blog/blueprint-part-3'
+    | '/blog/cut-through-the-noise'
+    | '/blog/defuse-with-humor'
+    | '/blog/flip-their-momentum'
+    | '/blog/land-the-closer'
+    | '/blog/make-it-stick'
     | '/blog/read-any-room'
+    | '/blog/spot-the-weakness'
     | '/blog/strike-emotional-chord'
     | '/blog/the-crossed-quills'
     | '/blog'
-    | '/login'
-    | '/dashboard'
     | '/dashboard/analysis'
     | '/dashboard/debate'
     | '/dashboard/history'
     | '/dashboard/opponent-profile'
     | '/dashboard/prep'
     | '/onboarding'
+    | '/login'
     | '/dashboard/checkout'
     | '/onboarding/username'
+    | '/dashboard'
     | '/dashboard/settings/billing'
     | '/dashboard/settings'
   id:
@@ -317,23 +385,28 @@ export interface FileRouteTypes {
     | '/'
     | '/_app'
     | '/_app/_auth'
+    | '/blog/ask-the-killer-question'
+    | '/blog/back-it-up'
     | '/blog/blueprint-part-1'
     | '/blog/blueprint-part-2'
     | '/blog/blueprint-part-3'
+    | '/blog/cut-through-the-noise'
+    | '/blog/defuse-with-humor'
+    | '/blog/flip-their-momentum'
+    | '/blog/land-the-closer'
+    | '/blog/make-it-stick'
     | '/blog/read-any-room'
+    | '/blog/spot-the-weakness'
     | '/blog/strike-emotional-chord'
     | '/blog/the-crossed-quills'
     | '/blog/'
-    | '/_app/login'
     | '/_app/login/_layout'
-    | '/_app/_auth/dashboard'
     | '/_app/_auth/dashboard/_layout'
     | '/_app/_auth/dashboard/analysis'
     | '/_app/_auth/dashboard/debate'
     | '/_app/_auth/dashboard/history'
     | '/_app/_auth/dashboard/opponent-profile'
     | '/_app/_auth/dashboard/prep'
-    | '/_app/_auth/onboarding'
     | '/_app/_auth/onboarding/_layout'
     | '/_app/login/_layout/'
     | '/_app/_auth/dashboard/_layout/checkout'
@@ -347,10 +420,18 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  BlogAskTheKillerQuestionRoute: typeof BlogAskTheKillerQuestionRoute
+  BlogBackItUpRoute: typeof BlogBackItUpRoute
   BlogBlueprintPart1Route: typeof BlogBlueprintPart1Route
   BlogBlueprintPart2Route: typeof BlogBlueprintPart2Route
   BlogBlueprintPart3Route: typeof BlogBlueprintPart3Route
+  BlogCutThroughTheNoiseRoute: typeof BlogCutThroughTheNoiseRoute
+  BlogDefuseWithHumorRoute: typeof BlogDefuseWithHumorRoute
+  BlogFlipTheirMomentumRoute: typeof BlogFlipTheirMomentumRoute
+  BlogLandTheCloserRoute: typeof BlogLandTheCloserRoute
+  BlogMakeItStickRoute: typeof BlogMakeItStickRoute
   BlogReadAnyRoomRoute: typeof BlogReadAnyRoomRoute
+  BlogSpotTheWeaknessRoute: typeof BlogSpotTheWeaknessRoute
   BlogStrikeEmotionalChordRoute: typeof BlogStrikeEmotionalChordRoute
   BlogTheCrossedQuillsRoute: typeof BlogTheCrossedQuillsRoute
   BlogIndexRoute: typeof BlogIndexRoute
@@ -371,13 +452,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_app/login': {
-      id: '/_app/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof AppLoginRouteImport
-      parentRoute: typeof AppRoute
     }
     '/blog/': {
       id: '/blog/'
@@ -400,11 +474,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogStrikeEmotionalChordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/spot-the-weakness': {
+      id: '/blog/spot-the-weakness'
+      path: '/blog/spot-the-weakness'
+      fullPath: '/blog/spot-the-weakness'
+      preLoaderRoute: typeof BlogSpotTheWeaknessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/read-any-room': {
       id: '/blog/read-any-room'
       path: '/blog/read-any-room'
       fullPath: '/blog/read-any-room'
       preLoaderRoute: typeof BlogReadAnyRoomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/make-it-stick': {
+      id: '/blog/make-it-stick'
+      path: '/blog/make-it-stick'
+      fullPath: '/blog/make-it-stick'
+      preLoaderRoute: typeof BlogMakeItStickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/land-the-closer': {
+      id: '/blog/land-the-closer'
+      path: '/blog/land-the-closer'
+      fullPath: '/blog/land-the-closer'
+      preLoaderRoute: typeof BlogLandTheCloserRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/flip-their-momentum': {
+      id: '/blog/flip-their-momentum'
+      path: '/blog/flip-their-momentum'
+      fullPath: '/blog/flip-their-momentum'
+      preLoaderRoute: typeof BlogFlipTheirMomentumRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/defuse-with-humor': {
+      id: '/blog/defuse-with-humor'
+      path: '/blog/defuse-with-humor'
+      fullPath: '/blog/defuse-with-humor'
+      preLoaderRoute: typeof BlogDefuseWithHumorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/cut-through-the-noise': {
+      id: '/blog/cut-through-the-noise'
+      path: '/blog/cut-through-the-noise'
+      fullPath: '/blog/cut-through-the-noise'
+      preLoaderRoute: typeof BlogCutThroughTheNoiseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/blueprint-part-3': {
@@ -428,6 +544,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogBlueprintPart1RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/back-it-up': {
+      id: '/blog/back-it-up'
+      path: '/blog/back-it-up'
+      fullPath: '/blog/back-it-up'
+      preLoaderRoute: typeof BlogBackItUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/ask-the-killer-question': {
+      id: '/blog/ask-the-killer-question'
+      path: '/blog/ask-the-killer-question'
+      fullPath: '/blog/ask-the-killer-question'
+      preLoaderRoute: typeof BlogAskTheKillerQuestionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/_auth': {
       id: '/_app/_auth'
       path: ''
@@ -435,26 +565,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAuthRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/_auth/onboarding': {
-      id: '/_app/_auth/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof AppAuthOnboardingRouteImport
-      parentRoute: typeof AppAuthRoute
-    }
-    '/_app/_auth/dashboard': {
-      id: '/_app/_auth/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AppAuthDashboardRouteImport
-      parentRoute: typeof AppAuthRoute
-    }
     '/_app/login/_layout': {
       id: '/_app/login/_layout'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof AppLoginLayoutRouteImport
-      parentRoute: typeof AppLoginRoute
+      parentRoute: typeof AppRoute
     }
     '/_app/login/_layout/': {
       id: '/_app/login/_layout/'
@@ -468,49 +584,49 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof AppAuthOnboardingLayoutRouteImport
-      parentRoute: typeof AppAuthOnboardingRoute
+      parentRoute: typeof AppAuthRoute
     }
     '/_app/_auth/dashboard/prep': {
       id: '/_app/_auth/dashboard/prep'
-      path: '/prep'
+      path: '/dashboard/prep'
       fullPath: '/dashboard/prep'
       preLoaderRoute: typeof AppAuthDashboardPrepRouteImport
-      parentRoute: typeof AppAuthDashboardRoute
+      parentRoute: typeof AppAuthRoute
     }
     '/_app/_auth/dashboard/opponent-profile': {
       id: '/_app/_auth/dashboard/opponent-profile'
-      path: '/opponent-profile'
+      path: '/dashboard/opponent-profile'
       fullPath: '/dashboard/opponent-profile'
       preLoaderRoute: typeof AppAuthDashboardOpponentProfileRouteImport
-      parentRoute: typeof AppAuthDashboardRoute
+      parentRoute: typeof AppAuthRoute
     }
     '/_app/_auth/dashboard/history': {
       id: '/_app/_auth/dashboard/history'
-      path: '/history'
+      path: '/dashboard/history'
       fullPath: '/dashboard/history'
       preLoaderRoute: typeof AppAuthDashboardHistoryRouteImport
-      parentRoute: typeof AppAuthDashboardRoute
+      parentRoute: typeof AppAuthRoute
     }
     '/_app/_auth/dashboard/debate': {
       id: '/_app/_auth/dashboard/debate'
-      path: '/debate'
+      path: '/dashboard/debate'
       fullPath: '/dashboard/debate'
       preLoaderRoute: typeof AppAuthDashboardDebateRouteImport
-      parentRoute: typeof AppAuthDashboardRoute
+      parentRoute: typeof AppAuthRoute
     }
     '/_app/_auth/dashboard/analysis': {
       id: '/_app/_auth/dashboard/analysis'
-      path: '/analysis'
+      path: '/dashboard/analysis'
       fullPath: '/dashboard/analysis'
       preLoaderRoute: typeof AppAuthDashboardAnalysisRouteImport
-      parentRoute: typeof AppAuthDashboardRoute
+      parentRoute: typeof AppAuthRoute
     }
     '/_app/_auth/dashboard/_layout': {
       id: '/_app/_auth/dashboard/_layout'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AppAuthDashboardLayoutRouteImport
-      parentRoute: typeof AppAuthDashboardRoute
+      parentRoute: typeof AppAuthRoute
     }
     '/_app/_auth/dashboard/_layout/': {
       id: '/_app/_auth/dashboard/_layout/'
@@ -594,27 +710,6 @@ const AppAuthDashboardLayoutRouteWithChildren =
     AppAuthDashboardLayoutRouteChildren,
   )
 
-interface AppAuthDashboardRouteChildren {
-  AppAuthDashboardLayoutRoute: typeof AppAuthDashboardLayoutRouteWithChildren
-  AppAuthDashboardAnalysisRoute: typeof AppAuthDashboardAnalysisRoute
-  AppAuthDashboardDebateRoute: typeof AppAuthDashboardDebateRoute
-  AppAuthDashboardHistoryRoute: typeof AppAuthDashboardHistoryRoute
-  AppAuthDashboardOpponentProfileRoute: typeof AppAuthDashboardOpponentProfileRoute
-  AppAuthDashboardPrepRoute: typeof AppAuthDashboardPrepRoute
-}
-
-const AppAuthDashboardRouteChildren: AppAuthDashboardRouteChildren = {
-  AppAuthDashboardLayoutRoute: AppAuthDashboardLayoutRouteWithChildren,
-  AppAuthDashboardAnalysisRoute: AppAuthDashboardAnalysisRoute,
-  AppAuthDashboardDebateRoute: AppAuthDashboardDebateRoute,
-  AppAuthDashboardHistoryRoute: AppAuthDashboardHistoryRoute,
-  AppAuthDashboardOpponentProfileRoute: AppAuthDashboardOpponentProfileRoute,
-  AppAuthDashboardPrepRoute: AppAuthDashboardPrepRoute,
-}
-
-const AppAuthDashboardRouteWithChildren =
-  AppAuthDashboardRoute._addFileChildren(AppAuthDashboardRouteChildren)
-
 interface AppAuthOnboardingLayoutRouteChildren {
   AppAuthOnboardingLayoutUsernameRoute: typeof AppAuthOnboardingLayoutUsernameRoute
 }
@@ -629,25 +724,24 @@ const AppAuthOnboardingLayoutRouteWithChildren =
     AppAuthOnboardingLayoutRouteChildren,
   )
 
-interface AppAuthOnboardingRouteChildren {
+interface AppAuthRouteChildren {
+  AppAuthDashboardLayoutRoute: typeof AppAuthDashboardLayoutRouteWithChildren
+  AppAuthDashboardAnalysisRoute: typeof AppAuthDashboardAnalysisRoute
+  AppAuthDashboardDebateRoute: typeof AppAuthDashboardDebateRoute
+  AppAuthDashboardHistoryRoute: typeof AppAuthDashboardHistoryRoute
+  AppAuthDashboardOpponentProfileRoute: typeof AppAuthDashboardOpponentProfileRoute
+  AppAuthDashboardPrepRoute: typeof AppAuthDashboardPrepRoute
   AppAuthOnboardingLayoutRoute: typeof AppAuthOnboardingLayoutRouteWithChildren
 }
 
-const AppAuthOnboardingRouteChildren: AppAuthOnboardingRouteChildren = {
-  AppAuthOnboardingLayoutRoute: AppAuthOnboardingLayoutRouteWithChildren,
-}
-
-const AppAuthOnboardingRouteWithChildren =
-  AppAuthOnboardingRoute._addFileChildren(AppAuthOnboardingRouteChildren)
-
-interface AppAuthRouteChildren {
-  AppAuthDashboardRoute: typeof AppAuthDashboardRouteWithChildren
-  AppAuthOnboardingRoute: typeof AppAuthOnboardingRouteWithChildren
-}
-
 const AppAuthRouteChildren: AppAuthRouteChildren = {
-  AppAuthDashboardRoute: AppAuthDashboardRouteWithChildren,
-  AppAuthOnboardingRoute: AppAuthOnboardingRouteWithChildren,
+  AppAuthDashboardLayoutRoute: AppAuthDashboardLayoutRouteWithChildren,
+  AppAuthDashboardAnalysisRoute: AppAuthDashboardAnalysisRoute,
+  AppAuthDashboardDebateRoute: AppAuthDashboardDebateRoute,
+  AppAuthDashboardHistoryRoute: AppAuthDashboardHistoryRoute,
+  AppAuthDashboardOpponentProfileRoute: AppAuthDashboardOpponentProfileRoute,
+  AppAuthDashboardPrepRoute: AppAuthDashboardPrepRoute,
+  AppAuthOnboardingLayoutRoute: AppAuthOnboardingLayoutRouteWithChildren,
 }
 
 const AppAuthRouteWithChildren =
@@ -665,26 +759,14 @@ const AppLoginLayoutRouteWithChildren = AppLoginLayoutRoute._addFileChildren(
   AppLoginLayoutRouteChildren,
 )
 
-interface AppLoginRouteChildren {
-  AppLoginLayoutRoute: typeof AppLoginLayoutRouteWithChildren
-}
-
-const AppLoginRouteChildren: AppLoginRouteChildren = {
-  AppLoginLayoutRoute: AppLoginLayoutRouteWithChildren,
-}
-
-const AppLoginRouteWithChildren = AppLoginRoute._addFileChildren(
-  AppLoginRouteChildren,
-)
-
 interface AppRouteChildren {
   AppAuthRoute: typeof AppAuthRouteWithChildren
-  AppLoginRoute: typeof AppLoginRouteWithChildren
+  AppLoginLayoutRoute: typeof AppLoginLayoutRouteWithChildren
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAuthRoute: AppAuthRouteWithChildren,
-  AppLoginRoute: AppLoginRouteWithChildren,
+  AppLoginLayoutRoute: AppLoginLayoutRouteWithChildren,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -692,10 +774,18 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  BlogAskTheKillerQuestionRoute: BlogAskTheKillerQuestionRoute,
+  BlogBackItUpRoute: BlogBackItUpRoute,
   BlogBlueprintPart1Route: BlogBlueprintPart1Route,
   BlogBlueprintPart2Route: BlogBlueprintPart2Route,
   BlogBlueprintPart3Route: BlogBlueprintPart3Route,
+  BlogCutThroughTheNoiseRoute: BlogCutThroughTheNoiseRoute,
+  BlogDefuseWithHumorRoute: BlogDefuseWithHumorRoute,
+  BlogFlipTheirMomentumRoute: BlogFlipTheirMomentumRoute,
+  BlogLandTheCloserRoute: BlogLandTheCloserRoute,
+  BlogMakeItStickRoute: BlogMakeItStickRoute,
   BlogReadAnyRoomRoute: BlogReadAnyRoomRoute,
+  BlogSpotTheWeaknessRoute: BlogSpotTheWeaknessRoute,
   BlogStrikeEmotionalChordRoute: BlogStrikeEmotionalChordRoute,
   BlogTheCrossedQuillsRoute: BlogTheCrossedQuillsRoute,
   BlogIndexRoute: BlogIndexRoute,
@@ -703,3 +793,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

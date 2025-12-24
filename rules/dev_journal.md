@@ -18,7 +18,7 @@
 
 ### TL;DR
 
-This chapter establishes the baseline for the AI documentation system. It captures the state of the OratorPrep project as of December 17, 2025 when structured documentation began. All prior work is referenced as "Pre-docs" throughout the system.
+This chapter establishes the baseline for the AI documentation system. It captures the state of the OratorPrep project as of December 17, 2025 when structured documentation began. All prior work is referenced as "Pre-docs" throughout the system. 
 
 **Roadmap Items Advanced**: N/A — baseline establishment
 
@@ -30,6 +30,8 @@ This chapter establishes the baseline for the AI documentation system. It captur
 
 **Reason for adding documentation system**: 
 Project has grown significantly with multiple phases complete. Need structured context for future sessions to maintain consistency, avoid re-learning the codebase, and track progress systematically.
+
+This entire project began today, so not much nuance is lost. Core project started with a convex/tanstack router template. 
 
 ---
 
@@ -65,10 +67,9 @@ Project has grown significantly with multiple phases complete. Need structured c
 |----------|---------------------|------------|
 | Vapi over custom voice pipeline | Faster to market, handles interruptions natively | High |
 | Convex over traditional backend | Real-time subscriptions perfect for live debates | High |
-| OpenRouter over direct LLM APIs | Model flexibility, unified API | High |
+
 | Transient Vapi assistants | Dynamic config per debate, no dashboard management | High |
-| Claude Sonnet for analysis | Cost optimization after claude-3-opus proved too expensive | High |
-| GPT-4o for prep generation | Quality over cost for user-facing content | High |
+
 | TanStack Router over React Router | Type-safe routing, modern approach | Med |
 | Convex SaaS template base | Auth, Stripe, email already configured | High |
 | 11 techniques from Mehdi Hasan's book | Proven framework, teachable techniques | High |
@@ -85,25 +86,11 @@ Patterns that may need review:
 
 ---
 
-### Lost Context
 
-- Specific dates of Phase 1 and 2 completion not captured
-- Original decision process for choosing Deepgram over alternatives
-- Any failed approaches that were abandoned
-- Specific prompt iteration history for technique detection
 
 ---
 
-### Starting Point for Future Sessions
 
-**Current Focus**: Phase 3 completion, specifically:
-- Topic generation suggestions
-- Document upload for context
-- Missed opportunity detection refinement
-
-**Active Roadmap Item**: [R-3.4.0] Custom Debate Configuration
-
-**Immediate Next Action**: Implement topic suggestion feature [R-3.4.2]
 
 ---
 
@@ -1897,5 +1884,316 @@ New variable needed in Convex environment:
 - Default to System A or B for new users?
 - Show Deep Research report to users?
 - Cache Deep Research results for similar topics?
+
+---
+
+## Chapter 9: TanStack Start Migration for SSR
+
+### TL;DR
+
+Migrated from pure CSR (client-side rendering) to SSR using TanStack Start for public-facing pages (landing page, blog) while keeping authenticated routes client-rendered. This enables search engine indexing of marketing content. Key insight: Convex providers stay in `_app.tsx` with `ssr: false`, isolating client-only auth from server-rendered public pages.
+
+**Roadmap Items Advanced**: [R-4.7.1] SSR enabled for public pages
+
+---
+
+### Session Context
+
+**Date**: December 23, 2025  
+**Starting Point**: App was fully CSR — `index.html` contained empty `<div id="root">` with JavaScript loading all content. Google couldn't index landing page or blog content.  
+**Ending Point**: Full SSR for public routes (`/`, `/blog/*`), CSR preserved for authenticated routes (`/_app/*`). View source shows complete HTML.
+
+---
+
+### Work Completed
+
+#### 1. Dependency Updates
+
+**Removed**:
+- `react-helmet-async` — Replaced by TanStack Start's built-in `head()` function
+- `@tanstack/router-plugin` — Replaced by `@tanstack/react-start`
+
+**Reinstalled** (clean install to avoid version conflicts):
+- `@tanstack/react-router`
+- `@tanstack/react-start`
+- `vite`
+- `@vitejs/plugin-react`
+- `vite-tsconfig-paths`
+- `@tanstack/router-devtools`
+
+**Package.json Scripts Updated**:
+```json
+{
+  "scripts": {
+    "dev": "npm-run-all --parallel dev:frontend dev:backend",
+    "dev:frontend": "vite dev",
+    "dev:backend": "convex dev",
+    "build": "vite build",
+    "start": "vite preview"
+  }
+}
+```
+
+#### 2. Vite Configuration (`vite.config.ts`)
+
+Replaced TanStack Router plugin with TanStack Start plugin:
+
+```typescript
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+
+export default defineConfig({
+  plugins: [
+    tsConfigPaths(),
+    tanstackStart(),      // TanStack Start SSR plugin
+    viteReact(),          // Must come AFTER tanstackStart()
+  ],
+  ssr: {
+    noExternal: ["@xixixao/uploadstuff"],  // Exclude from SSR bundle
+  },
+});
+```
+
+**Key Fix**: Added `ssr.noExternal` for `@xixixao/uploadstuff` — this package failed during SSR even though it's only used in client routes. Vite still analyzes all imports.
+
+#### 3. Router Configuration (`src/router.tsx`)
+
+TanStack Start requires a `getRouter()` factory function instead of a direct export:
+
+```typescript
+export function getRouter() {
+  const router = createRouter({
+    routeTree,
+    scrollRestoration: true,
+  });
+  return router;
+}
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: ReturnType<typeof getRouter>;
+  }
+}
+```
+
+#### 4. Root Route (`src/routes/__root.tsx`)
+
+Transformed into full HTML document structure for SSR:
+
+```tsx
+import { HeadContent, Scripts } from "@tanstack/react-router";
+import appCss from "@/index.css?url";
+
+export const Route = createRootRoute({
+  head: () => ({
+    meta: [
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { title: "DebateClub - Win Every Argument" },
+    ],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      // Google Fonts preconnect and stylesheet
+    ],
+    scripts: [
+      {
+        children: `if (localStorage.theme === "dark"...) { ... }`,  // Theme FOUC prevention
+      },
+    ],
+  }),
+  component: RootComponent,
+});
+
+function RootDocument({ children }) {
+  return (
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        {children}
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+```
+
+**Key Changes**:
+- `head()` function replaces `react-helmet-async`
+- `<HeadContent />` renders meta tags from `head()`
+- `<Scripts />` injects hydration scripts
+- CSS imported with `?url` suffix for SSR compatibility
+- Theme script prevents flash of unstyled content (FOUC)
+
+#### 5. App Layout Route (`src/routes/_app.tsx`)
+
+Configured as client-only with Convex providers:
+
+```typescript
+export const Route = createFileRoute("/_app")({
+  ssr: false,  // ← All routes under /_app are CSR
+  component: AppLayout,
+  beforeLoad: async () => {
+    await queryClient.ensureQueryData(
+      convexQuery(api.app.getCurrentUser, {}),
+    );
+  },
+});
+
+function AppLayout() {
+  return (
+    <ConvexAuthProvider client={convex}>
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+      </QueryClientProvider>
+    </ConvexAuthProvider>
+  );
+}
+```
+
+**Key Insight**: By placing Convex providers inside `_app.tsx` with `ssr: false`, all authenticated routes get client-side rendering while public routes (`/`, `/blog/*`) get full SSR without needing Convex during server render.
+
+#### 6. HeroSection Fix (`src/components/marketing/landing-page/HeroSection.tsx`)
+
+**Problem**: `HeroSection` used `useConvexAuth()` to conditionally show "Dashboard" vs "Start Free Practice". This failed during SSR because Convex providers weren't available.
+
+**Solution**: Simplified to always show "Start Free Practice" linking to `/login`. This is actually better UX — public landing page shouldn't need auth state.
+
+#### 7. Deleted Files
+
+- `index.html` — Content now managed by `__root.tsx`
+- `src/main.tsx` — TanStack Start handles client entry
+- `src/app.tsx` — Providers moved to `_app.tsx`
+
+---
+
+### Technical Decisions
+
+| Decision | Reasoning | Alternatives Considered |
+|----------|-----------|------------------------|
+| TanStack Start over manual SSR | Full framework support, aligns with existing TanStack Router | Next.js (too different), manual Vite SSR (complex) |
+| `ssr: false` on `_app` route | Clean separation of SSR/CSR, Convex isolated to client | SSR with Convex (would require server-side auth handling) |
+| Move Convex to `_app.tsx` | Avoids SSR errors on public pages | Keep at root with conditional rendering |
+| Remove auth check from Hero | Simpler, SSR-compatible, better UX | Add server-side auth (overkill for landing page) |
+| `ssr.noExternal` for uploadstuff | Package not SSR-compatible even in CSR routes | Dynamic import (more complex) |
+
+---
+
+### Problems Encountered
+
+#### 1. `ERR_MODULE_NOT_FOUND: @xixixao/uploadstuff`
+
+**Symptoms**: Server crashed trying to SSR routes that don't even use upload functionality.
+
+**Cause**: Vite analyzes all imports during SSR, even for CSR-only routes. The uploadstuff package isn't designed for server environments.
+
+**Solution**: Added `ssr.noExternal: ["@xixixao/uploadstuff"]` to vite.config.ts.
+
+**Time spent**: 15 minutes
+
+#### 2. `Could not find ConvexProviderWithAuth` in SSR
+
+**Symptoms**: Server render failed with React context error.
+
+**Cause**: `HeroSection.tsx` called `useConvexAuth()` which requires `ConvexAuthProvider`. During SSR, this provider wasn't available because it was only in `_app.tsx`.
+
+**Solution**: Removed `useConvexAuth()` from HeroSection. Public landing page doesn't need auth state.
+
+**Time spent**: 20 minutes
+
+---
+
+### Code Changes Summary
+
+| File | Change Type | Description |
+|------|-------------|-------------|
+| package.json | Modified | Updated scripts, swapped router plugin for start |
+| vite.config.ts | Modified | tanstackStart() plugin, ssr.noExternal config |
+| src/router.tsx | Modified | Export getRouter() factory function |
+| src/routes/__root.tsx | Rebuilt | Full HTML document with head(), HeadContent, Scripts |
+| src/routes/_app.tsx | Modified | Added ssr: false, moved Convex providers here |
+| src/components/marketing/landing-page/HeroSection.tsx | Modified | Removed useConvexAuth() |
+| index.html | Deleted | Replaced by __root.tsx |
+| src/main.tsx | Deleted | Handled by TanStack Start |
+| src/app.tsx | Deleted | Merged into _app.tsx |
+
+---
+
+### Verification
+
+**SSR Confirmed** via `curl` and View Page Source:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>DebateClub - Win Every Argument</title>
+  <meta charSet="utf-8"/>
+  <!-- Full head content rendered -->
+</head>
+<body>
+  <!-- Full page content rendered on server -->
+  <div class="min-h-screen" style="background-color:#F5F3EF">
+    <header>...</header>
+    <article>...</article>  <!-- Blog content fully rendered -->
+  </div>
+  <script>...</script>  <!-- Hydration scripts -->
+</body>
+</html>
+```
+
+**Routes Verified**:
+- ✅ `/` (landing page) — Full SSR
+- ✅ `/blog` — Full SSR
+- ✅ `/blog/read-any-room` — Full SSR with complete article content
+- ✅ `/_app/*` — CSR (loads with JavaScript)
+
+---
+
+### Architectural Pattern Established
+
+**Selective SSR with Convex**:
+
+```
+/ (SSR)              ← Public, no Convex needed
+/blog/* (SSR)        ← Public, no Convex needed
+/_app/* (CSR)        ← Authenticated, Convex providers here
+  ├─ /dashboard      ← CSR
+  ├─ /debate         ← CSR  
+  ├─ /history        ← CSR
+  └─ /settings       ← CSR
+```
+
+This pattern works because:
+1. Public pages don't need real-time data or auth
+2. Authenticated pages need Convex WebSocket connection
+3. `ssr: false` on `_app` layout propagates to all children
+4. No conditional provider wrapping needed
+
+---
+
+### Session Handoff
+
+**Status**: Complete ✅
+
+**Features Delivered**:
+1. ✅ SSR for landing page (SEO indexable)
+2. ✅ SSR for blog posts (SEO indexable)
+3. ✅ CSR preserved for authenticated routes
+4. ✅ Theme FOUC prevention in SSR
+5. ✅ head() function for meta tags
+
+**Next Actions** (tracked in Roadmap 4.7):
+1. Add unique meta descriptions per route
+2. Add Open Graph tags for social sharing
+3. Create sitemap.xml
+4. Submit to Google Search Console
+
+**Blockers**: None
+
+**Open Questions**: 
+- Add JSON-LD structured data to blog posts?
+- Make debate transcripts public for SEO?
+- Create topic landing pages?
 
 ---

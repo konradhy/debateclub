@@ -8,20 +8,23 @@ const languages = ["es", "en"] as const;
 // List of languages your application supports.
 export const supportedLangs = [...languages];
 
-i18n
-  // load translation using http -> see /public/locales
-  // learn more: https://github.com/i18next/i18next-http-backend
-  .use(Backend)
-  // detect user language
-  // learn more: https://github.com/i18next/i18next-browser-languageDetector
-  .use(LanguageDetector)
-  // pass the i18n instance to react-i18next.
-  .use(initReactI18next)
-  // init i18next
-  // for all options read: https://www.i18next.com/overview/configuration-options
-  .init({
-    fallbackLng: "en",
-    debug: true,
-  });
+// Only initialize i18n on the client side (SSR doesn't support HTTP backend)
+if (typeof window !== "undefined") {
+  i18n
+    // load translation using http -> see /public/locales
+    // learn more: https://github.com/i18next/i18next-http-backend
+    .use(Backend)
+    // detect user language
+    // learn more: https://github.com/i18next/i18next-browser-languageDetector
+    .use(LanguageDetector)
+    // pass the i18n instance to react-i18next.
+    .use(initReactI18next)
+    // init i18next
+    // for all options read: https://www.i18next.com/overview/configuration-options
+    .init({
+      fallbackLng: "en",
+      debug: false, // Disable debug logging
+    });
+}
 
 export default i18n;

@@ -523,6 +523,44 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 ---
 
+### 4.7 SEO & Indexability
+
+**Description**: Search engine optimization for public pages
+
+**Status**: 🔄
+
+**Chapters**: —
+
+#### Tasks
+
+**Meta Tags & Open Graph**
+- ✅ **4.7.1** — SSR enabled for public pages (TanStack Start migration)
+- ⬜ **4.7.2** — Unique `<title>` and `<meta description>` per route via `head()`
+- ⬜ **4.7.3** — Open Graph tags (og:title, og:description, og:image) for social sharing
+- ⬜ **4.7.4** — Twitter Card meta tags
+
+**Structured Data**
+- ⬜ **4.7.5** — JSON-LD Article schema for blog posts
+- ⬜ **4.7.6** — Organization schema on homepage
+- ⬜ **4.7.7** — FAQ schema where applicable
+
+**Technical SEO**
+- ⬜ **4.7.8** — XML sitemap (`/sitemap.xml`)
+- ⬜ **4.7.9** — robots.txt in `/public`
+- ⬜ **4.7.10** — Canonical URLs via `head()` links
+- ⬜ **4.7.11** — Submit sitemap to Google Search Console
+
+**Performance & Core Web Vitals**
+- ⬜ **4.7.12** — Image optimization (WebP, lazy loading)
+- ⬜ **4.7.13** — Lighthouse audit and CWV improvements
+
+**Content Indexability (Future)**
+- ⬜ **4.7.14** — Evaluate public debate transcripts for SEO value
+- ⬜ **4.7.15** — Topic landing pages aggregating debates
+- ⬜ **4.7.16** — Technique showcase pages with real examples
+
+---
+
 ## Phase 5: Enhanced Analysis & Intelligence
 
 **Goal**: Advanced technique detection and emotional intelligence
