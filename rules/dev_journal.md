@@ -2650,3 +2650,256 @@ export const SCENARIOS = {
 
 
 ---
+
+## Chapter 11: Scenario System - Complete Implementation (Phases 3, 4, 5)
+
+### TL;DR
+
+Completed the Scenario System implementation. All five phases are now done. The platform now supports multiple practice scenarios (Debate, Sales Cold Prospect, Sales Demo Follow-up, Entrepreneur Pitch) with scenario-specific AI behavior, prep materials, quick reference panels, and post-session analysis. Adding new scenarios now only requires creating a config file.
+
+**Roadmap Items Advanced**: Scenario System Complete ✅
+
+---
+
+### Date: December 26, 2025
+
+---
+
+### Phase 3: Vapi Integration — Dynamic AI Configuration
+
+**Goal**: Make the Vapi assistant dynamically configure based on scenario.
+
+**Changes Made**:
+
+1. **`src/routes/_app/_auth/dashboard/debate.tsx`**:
+   - Loads scenario config from `SCENARIOS` registry using `opponent.scenarioType`
+   - Replaces placeholders in system prompt and first message (`{{TOPIC}}`, `{{AI_POSITION}}`, etc.)
+   - Uses scenario's voice config, temperature, interruption settings
+   - Random first message selection for scenarios with arrays
+   - **Removed all fallback defaults** — explicit failure with error messages if config missing
+
+2. **`src/scenarios/sales.ts` & `entrepreneur.ts`**:
+   - Added voice config with `stability` and `similarityBoost`
+   - Defined multiple first messages (array) for variety
+   - Full system prompts for skeptical prospect / demo follow-up / investor personas
+
+**Key Implementation Detail — No Fallbacks**:
+```typescript
+// BAD (old approach)
+const topic = opponent?.topic || "Unknown Topic";
+
+// GOOD (new approach)
+if (!opponent?.topic) {
+  setError("Opponent missing topic. Cannot start practice.");
+  return;
+}
+const topic = opponent.topic;
+```
+
+This ensures configuration errors surface immediately rather than producing confusing AI behavior.
+
+---
+
+### Phase 4: PrepPanel (Quick Reference) — Dynamic Content
+
+**Goal**: Make the floating "Quick Reference" button show appropriate cheat sheet content based on scenario type.
+
+**Changes Made**:
+
+1. **`src/ui/prep-panel.tsx`**:
+   - Added `isDebatePrep = opponent?.prepType === "debate"` check
+   - **Debate Mode**: Opening, Closing, Arguments, Zingers, Counters, Receipts
+   - **Generic Mode**: Opening Approach, Talking Points, Key Phrases, Response Map, Closing Approach, Things to Avoid
+   - Same 3-column layout, different content
+
+2. **`src/routes/_app/_auth/dashboard/debate.tsx`**:
+   - Changed button visibility from `(opponent.openingOptions || opponent.argumentFrames)` to just `opponent`
+   - Now shows for all scenarios, not just debates with prep materials
+
+**Visual Layout (Generic Mode)**:
+```
+┌─────────────────┬─────────────────┬─────────────────┐
+│ OPENING APPROACH│ TALKING POINTS  │ RESPONSE MAP    │
+│ (blue)          │ (green bullets) │ (orange)        │
+├─────────────────┼─────────────────┤ "When they say X│
+│ CLOSING APPROACH│ KEY PHRASES     │  You say Y"     │
+│ (purple)        │ (yellow cards)  │                 │
+├─────────────────┼─────────────────┤                 │
+│ AVOID           │                 │                 │
+│ (red × marks)   │                 │                 │
+└─────────────────┴─────────────────┴─────────────────┘
+```
+
+---
+
+### Phase 5: Analysis Framework — Scenario-Specific Scoring
+
+**Goal**: Generate and display analysis appropriate to each scenario type.
+
+**Changes Made**:
+
+1. **`convex/schema.ts`**:
+   - Made debate-specific fields optional: `techniqueScorecard`, `opponentAnalysis`, `missedOpportunities`, `rewrites`, `hasanScores`
+   - Added generic fields: `keyMoments`, `skillsAssessment`
+   - Made `practiceRecommendations` flexible (some subfields optional)
+   - Added `scenarioType` and `opponentId` to `debates` table
+
+2. **`convex/actions/analysisAction.ts`** — Full rewrite:
+   - Two JSON schemas: `debateAnalysisSchema` (Hasan methodology) and `genericAnalysisSchema` (skills-based)
+   - Scenario-specific prompts and score categories
+   - Branches based on `debate.scenarioType`
+   - Stores `analysisFramework` to identify which type was used
+
+3. **`convex/analysis.ts`**:
+   - Uses `v.any()` for flexible analysis storage
+   - Handles both debate and generic analysis shapes
+
+4. **`src/routes/_app/_auth/dashboard/analysis.tsx`**:
+   - `isDebateAnalysis` check for conditional rendering
+   - Debate: Hasan Scores card, Opponent Intel card, Missed Opportunities, Technique Scorecard
+   - Generic: Skills Assessment card (avg + individual bars), Key Moments card (handled well/poorly)
+   - Dynamic grid layout (3 columns for debate, 2 for generic training plan)
+
+5. **`convex/debates.ts`** — Dashboard stats fix:
+   - Filters for `debateAnalyses` (only those with `hasanScores`)
+   - Uses optional chaining for all Hasan score access
+   - Dashboard averages only count debate-type analyses
+
+6. **`src/routes/_app/_auth/dashboard/history.tsx`** — History page fix:
+   - Filters chart data for debates with `hasanScores`
+   - Conditionally shows "Hasan Scores" or "Skills Assessment" in expandable rows
+
+**Score Categories by Scenario**:
+| Scenario | Categories |
+|----------|------------|
+| Debate | Fundamentals, Tricks of Trade, Behind the Scenes, Grand Finale (Hasan methodology) |
+| Sales | Discovery, Control, Confidence, Closing |
+| Entrepreneur | Clarity, Confidence, Handling Skepticism, Business Acumen |
+
+---
+
+### Bug Fixes
+
+1. **Scenario files emptied mysteriously** — Restored `sales.ts`, `entrepreneur.ts`, `debate.ts`, `types.ts`, `index.ts` from memory
+2. **TypeScript errors from optional hasanScores** — Added null checks throughout `debates.ts` and `history.tsx`
+3. **History page crash** — Fixed access to `hasanScores.total` without null check
+
+---
+
+### Testing Verification
+
+- ✅ Build passes (`npm run build`)
+- ✅ Sales Cold Prospect scenario works end-to-end
+- ✅ Got hit with "I don't have time right now" — proper brush-off behavior
+- ✅ Quick Reference toggle appears and shows generic content
+- ✅ Analysis generates with Skills Assessment
+- ✅ History page displays without crashing
+- ✅ Dashboard stats calculate correctly (debate-only averages)
+
+---
+
+### System Architecture — Complete
+
+The Scenario System is now **feature complete**. Here's what happens for each scenario type:
+
+**Debate Flow**:
+1. Opponent profile form with all 25+ Hasan-specific fields
+2. Research phase runs (Gemini + Firecrawl)
+3. Prep page shows debate-specific content (Openings, Arguments, Zingers, etc.)
+4. Practice uses debate AI with Hasan techniques
+5. Quick Reference shows debate cheat sheet
+6. Analysis uses Hasan methodology (4 categories, 40-point scale)
+7. History shows Hasan scores
+
+**Generic Flow (Sales/Entrepreneur)**:
+1. Opponent profile form with simplified fields (topic, prospect background, objections)
+2. No research phase
+3. Prep page shows generic content (Talking Points, Key Phrases, Response Map, etc.)
+4. Practice uses scenario-specific AI personality (skeptical prospect, investor)
+5. Quick Reference shows generic cheat sheet
+6. Analysis uses Skills Assessment (4 categories, 10-point scale)
+7. History shows Skills scores
+
+---
+
+### Adding New Scenarios — The Promise Delivered
+
+**To add a new scenario** (e.g., "Healthcare - Difficult Patient"):
+
+```typescript
+// 1. Create src/scenarios/healthcare.ts
+export const DifficultPatientScenario: ScenarioConfig = {
+  id: "healthcare-difficult-patient",
+  name: "Healthcare - Difficult Patient",
+  category: "healthcare",
+  pipeline: { research: false, prep: true, prepType: "generic" },
+  inputs: {
+    topic: { label: "Patient Situation", placeholder: "e.g., Chronic pain management discussion" },
+    opponentDescription: { label: "Patient Profile", placeholder: "Age, condition, emotional state..." },
+    talkingPoints: { label: "Key Points to Communicate", placeholder: "..." },
+  },
+  assistant: {
+    firstMessage: ["I don't understand why I'm still in pain. Nothing is working."],
+    systemPrompt: "You are a frustrated patient who feels unheard...",
+    voice: { provider: "11labs", voiceId: "...", stability: 0.7, similarityBoost: 0.8 },
+    temperature: 0.7,
+    canInterrupt: true,
+  },
+  analysis: {
+    framework: "healthcare",
+    scoreCategories: [
+      { name: "Empathy", description: "Did they validate the patient's feelings?" },
+      { name: "Clarity", description: "Was medical information explained clearly?" },
+      { name: "De-escalation", description: "Did they calm the patient?" },
+      { name: "Action Plan", description: "Did they establish clear next steps?" },
+    ],
+    systemPrompt: "Analyze this patient conversation...",
+  },
+};
+
+// 2. Add to src/scenarios/index.ts
+import { DifficultPatientScenario } from './healthcare';
+export const SCENARIOS = {
+  // ...existing
+  'healthcare-difficult-patient': DifficultPatientScenario,
+};
+```
+
+**That's it.** The entire system automatically supports the new scenario:
+- ✅ Selector shows it
+- ✅ Form uses its labels
+- ✅ AI uses its personality
+- ✅ Prep uses generic layout
+- ✅ Analysis uses healthcare categories
+
+---
+
+### Session Handoff
+
+**Status**: Scenario System Complete ✅
+
+**All 5 Phases Delivered**:
+1. ✅ Phase 1: Scenario config structure + schema updates
+2. ✅ Phase 2: Generic prep system + unified prep page
+3. ✅ Phase 3: Dynamic Vapi assistant configuration
+4. ✅ Phase 4: Dynamic PrepPanel (Quick Reference)
+5. ✅ Phase 5: Scenario-specific analysis framework
+
+**Current Scenarios**:
+- `debate` — Full Hasan methodology
+- `sales-cold-prospect` — Skeptical cold call
+- `sales-demo-followup` — Warm prospect with objections
+- `entrepreneur-pitch` — Skeptical investor
+
+**What's Left** (Future Work):
+- Add more scenario variations (just config files)
+- Possibly add scenario-specific branding/icons
+- Consider user-created custom scenarios (not planned)
+
+**Technical Debt Introduced**:
+- `v.any()` used in `storeAnalysis` mutation (flexibility tradeoff)
+- Dashboard stats only count debate analyses (intentional — Hasan scores are debate-specific)
+
+**Blockers**: None
+
+---

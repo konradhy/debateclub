@@ -247,26 +247,31 @@ export const getPerformanceStats = query({
       };
     }
 
-    // Calculate average score
-    const totalScore = completedAnalyses.reduce(
-      (sum, a) => sum + a.hasanScores.total,
+    // Filter for analyses that have hasanScores (debate analyses only)
+    const debateAnalyses = completedAnalyses.filter((a) => a.hasanScores);
+
+    // Calculate average score (only from debate analyses)
+    const totalScore = debateAnalyses.reduce(
+      (sum, a) => sum + (a.hasanScores?.total ?? 0),
       0,
     );
     const averageScore =
-      Math.round((totalScore / completedAnalyses.length) * 10) / 10;
+      debateAnalyses.length > 0
+        ? Math.round((totalScore / debateAnalyses.length) * 10) / 10
+        : 0;
 
     // Calculate improvement percent (compare first half vs second half)
     let improvementPercent = 0;
-    if (completedAnalyses.length >= 2) {
-      const midpoint = Math.floor(completedAnalyses.length / 2);
-      const firstHalf = completedAnalyses.slice(midpoint);
-      const secondHalf = completedAnalyses.slice(0, midpoint);
+    if (debateAnalyses.length >= 2) {
+      const midpoint = Math.floor(debateAnalyses.length / 2);
+      const firstHalf = debateAnalyses.slice(midpoint);
+      const secondHalf = debateAnalyses.slice(0, midpoint);
 
       const firstHalfAvg =
-        firstHalf.reduce((sum, a) => sum + a.hasanScores.total, 0) /
+        firstHalf.reduce((sum, a) => sum + (a.hasanScores?.total ?? 0), 0) /
         firstHalf.length;
       const secondHalfAvg =
-        secondHalf.reduce((sum, a) => sum + a.hasanScores.total, 0) /
+        secondHalf.reduce((sum, a) => sum + (a.hasanScores?.total ?? 0), 0) /
         secondHalf.length;
 
       if (firstHalfAvg > 0) {
@@ -277,7 +282,7 @@ export const getPerformanceStats = query({
       }
     }
 
-    // Calculate category averages
+    // Calculate category averages (only from debate analyses)
     const categoryTotals = {
       fundamentals: 0,
       tricksOfTrade: 0,
@@ -285,30 +290,25 @@ export const getPerformanceStats = query({
       grandFinale: 0,
     };
 
-    completedAnalyses.forEach((a) => {
-      categoryTotals.fundamentals += a.hasanScores.fundamentals;
-      categoryTotals.tricksOfTrade += a.hasanScores.tricksOfTrade;
-      categoryTotals.behindTheScenes += a.hasanScores.behindTheScenes;
-      categoryTotals.grandFinale += a.hasanScores.grandFinale;
+    debateAnalyses.forEach((a) => {
+      if (a.hasanScores) {
+        categoryTotals.fundamentals += a.hasanScores.fundamentals;
+        categoryTotals.tricksOfTrade += a.hasanScores.tricksOfTrade;
+        categoryTotals.behindTheScenes += a.hasanScores.behindTheScenes;
+        categoryTotals.grandFinale += a.hasanScores.grandFinale;
+      }
     });
 
+    const debateCount = debateAnalyses.length || 1; // Avoid division by zero
     const categoryAverages = {
       fundamentals:
-        Math.round(
-          (categoryTotals.fundamentals / completedAnalyses.length) * 10,
-        ) / 10,
+        Math.round((categoryTotals.fundamentals / debateCount) * 10) / 10,
       tricksOfTrade:
-        Math.round(
-          (categoryTotals.tricksOfTrade / completedAnalyses.length) * 10,
-        ) / 10,
+        Math.round((categoryTotals.tricksOfTrade / debateCount) * 10) / 10,
       behindTheScenes:
-        Math.round(
-          (categoryTotals.behindTheScenes / completedAnalyses.length) * 10,
-        ) / 10,
+        Math.round((categoryTotals.behindTheScenes / debateCount) * 10) / 10,
       grandFinale:
-        Math.round(
-          (categoryTotals.grandFinale / completedAnalyses.length) * 10,
-        ) / 10,
+        Math.round((categoryTotals.grandFinale / debateCount) * 10) / 10,
     };
 
     // Get recent debates (last 10) with scores
@@ -318,7 +318,7 @@ export const getPerformanceStats = query({
         _id: debate._id,
         topic: debate.topic,
         date: debate.completedAt || debate.startedAt,
-        score: analysis?.hasanScores.total || null,
+        score: analysis?.hasanScores?.total ?? null,
       };
     });
 

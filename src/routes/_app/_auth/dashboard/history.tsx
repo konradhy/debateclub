@@ -43,12 +43,11 @@ function History() {
     convexQuery(api.debates.getPerformanceStats, {}),
   );
 
-  const [selectedDebateId, setSelectedDebateId] = useState<
-    Id<"debates"> | null
-  >(null);
-  const [playingDebateId, setPlayingDebateId] = useState<
-    Id<"debates"> | null
-  >(null);
+  const [selectedDebateId, setSelectedDebateId] =
+    useState<Id<"debates"> | null>(null);
+  const [playingDebateId, setPlayingDebateId] = useState<Id<"debates"> | null>(
+    null,
+  );
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const selectedDebate = debates.find((d) => d._id === selectedDebateId);
@@ -75,17 +74,17 @@ function History() {
     }
   };
 
-  // Prepare chart data
+  // Prepare chart data (only for debates with hasanScores)
   const chartData =
     debates
-      .filter((d) => d.analysis)
+      .filter((d) => d.analysis?.hasanScores)
       .map((d) => ({
         date: new Date(d.completedAt || d.startedAt).toLocaleDateString(),
-        score: d.analysis?.hasanScores.total || 0,
-        fundamentals: d.analysis?.hasanScores.fundamentals || 0,
-        tricksOfTrade: d.analysis?.hasanScores.tricksOfTrade || 0,
-        behindTheScenes: d.analysis?.hasanScores.behindTheScenes || 0,
-        grandFinale: d.analysis?.hasanScores.grandFinale || 0,
+        score: d.analysis?.hasanScores?.total ?? 0,
+        fundamentals: d.analysis?.hasanScores?.fundamentals ?? 0,
+        tricksOfTrade: d.analysis?.hasanScores?.tricksOfTrade ?? 0,
+        behindTheScenes: d.analysis?.hasanScores?.behindTheScenes ?? 0,
+        grandFinale: d.analysis?.hasanScores?.grandFinale ?? 0,
       }))
       .reverse() || [];
 
@@ -305,7 +304,7 @@ function History() {
                       <div className="flex-1">
                         <div className="flex items-center gap-3">
                           <h3 className="font-semibold">{debate.topic}</h3>
-                          {debate.analysis && (
+                          {debate.analysis?.hasanScores && (
                             <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                               {debate.analysis.hasanScores.total}/40
                             </span>
@@ -336,7 +335,10 @@ function History() {
                             variant="outline"
                             size="icon"
                             onClick={() =>
-                              handlePlayRecording(debate._id, debate.recordingUrl!)
+                              handlePlayRecording(
+                                debate._id,
+                                debate.recordingUrl!,
+                              )
                             }
                           >
                             {playingDebateId === debate._id ? (
@@ -387,10 +389,10 @@ function History() {
                             />
                           </div>
                         )}
-                        {selectedDebate.analysis && (
+                        {selectedDebate.analysis?.hasanScores && (
                           <div>
                             <h4 className="mb-2 text-sm font-semibold">
-                              Quick Stats
+                              Hasan Scores
                             </h4>
                             <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                               <div>
@@ -398,7 +400,10 @@ function History() {
                                   Fundamentals
                                 </div>
                                 <div className="text-lg font-semibold">
-                                  {selectedDebate.analysis.hasanScores.fundamentals}
+                                  {
+                                    selectedDebate.analysis.hasanScores
+                                      .fundamentals
+                                  }
                                   /10
                                 </div>
                               </div>
@@ -438,6 +443,27 @@ function History() {
                                   /10
                                 </div>
                               </div>
+                            </div>
+                          </div>
+                        )}
+                        {selectedDebate.analysis?.skillsAssessment && (
+                          <div>
+                            <h4 className="mb-2 text-sm font-semibold">
+                              Skills Assessment
+                            </h4>
+                            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                              {selectedDebate.analysis.skillsAssessment.map(
+                                (skill: { name: string; score: number }) => (
+                                  <div key={skill.name}>
+                                    <div className="text-xs text-muted-foreground">
+                                      {skill.name}
+                                    </div>
+                                    <div className="text-lg font-semibold">
+                                      {skill.score}/10
+                                    </div>
+                                  </div>
+                                ),
+                              )}
                             </div>
                           </div>
                         )}
