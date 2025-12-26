@@ -1094,3 +1094,4 @@ Presenter: "Great question. Three things: First, our current growth rate is X. S
 4. Launch Reddit post Tuesday 8am ET
 5. Monitor engagement first 2 hours, reply to all comments
 
+
