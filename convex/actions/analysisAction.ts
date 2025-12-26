@@ -8,10 +8,10 @@ import { DEBATE_COACH_PROMPT } from "../lib/promptTemplates";
 import { AI_MODELS } from "../lib/aiConfig";
 
 /**
- * JSON Schema for OpenRouter structured outputs.
- * This enforces the schema at the model level, preventing missing/malformed fields.
+ * JSON Schema for OpenRouter structured outputs - DEBATE scenarios.
+ * Uses Hasan methodology with techniqueScorecard and hasanScores.
  */
-const analysisJsonSchema: JsonSchema = {
+const debateAnalysisSchema: JsonSchema = {
   name: "debate_analysis",
   strict: true,
   schema: {
@@ -160,9 +160,143 @@ const analysisJsonSchema: JsonSchema = {
 };
 
 /**
- * Generates a comprehensive post-debate analysis using AI.
+ * JSON Schema for OpenRouter structured outputs - GENERIC scenarios (sales, entrepreneur, etc.).
+ * Uses simpler skillsAssessment instead of Hasan-specific scoring.
+ */
+const genericAnalysisSchema: JsonSchema = {
+  name: "generic_analysis",
+  strict: true,
+  schema: {
+    type: "object",
+    properties: {
+      executiveSummary: {
+        type: "object",
+        properties: {
+          assessment: { type: "string", description: "Overall assessment of the performance" },
+          topStrengths: { type: "array", items: { type: "string" }, description: "Top 3 strengths demonstrated" },
+          topImprovements: { type: "array", items: { type: "string" }, description: "Top 3 areas for improvement" },
+          verdict: { type: "string", description: "Overall verdict on how the conversation went" },
+        },
+        required: ["assessment", "topStrengths", "topImprovements", "verdict"],
+        additionalProperties: false,
+      },
+      skillsAssessment: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            name: { type: "string", description: "Skill category name" },
+            score: { type: "number", description: "Score from 1-10" },
+            feedback: { type: "string", description: "Specific feedback for this skill" },
+          },
+          required: ["name", "score", "feedback"],
+          additionalProperties: false,
+        },
+      },
+      momentAnalysis: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            exchangeRef: { type: "string", description: "Reference to the exchange" },
+            whatHappened: { type: "string", description: "Description of what occurred" },
+            effectiveness: { type: "number", description: "Effectiveness score 1-10" },
+            suggestion: { type: "string", description: "How it could have been handled better" },
+          },
+          required: ["exchangeRef", "whatHappened", "effectiveness"],
+          additionalProperties: false,
+        },
+      },
+      keyMoments: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            moment: { type: "string", description: "Description of the key moment" },
+            impact: { type: "string", description: "Why this moment was significant" },
+            wasHandledWell: { type: "boolean", description: "Whether this was handled well" },
+          },
+          required: ["moment", "impact", "wasHandledWell"],
+          additionalProperties: false,
+        },
+      },
+      practiceRecommendations: {
+        type: "object",
+        properties: {
+          immediateFocus: {
+            type: "object",
+            properties: {
+              area: { type: "string", description: "Area to focus on immediately" },
+              drill: { type: "string", description: "Specific drill to practice" },
+            },
+            required: ["area", "drill"],
+            additionalProperties: false,
+          },
+          secondaryFocus: {
+            type: "object",
+            properties: {
+              area: { type: "string", description: "Secondary area to focus on" },
+              drill: { type: "string", description: "Specific drill to practice" },
+            },
+            required: ["area", "drill"],
+            additionalProperties: false,
+          },
+        },
+        required: ["immediateFocus", "secondaryFocus"],
+        additionalProperties: false,
+      },
+    },
+    required: [
+      "executiveSummary",
+      "skillsAssessment",
+      "momentAnalysis",
+      "keyMoments",
+      "practiceRecommendations",
+    ],
+    additionalProperties: false,
+  },
+};
+
+/**
+ * Generic analysis prompt template.
+ * Expects {{CATEGORIES}} to be replaced with scenario-specific categories.
+ */
+const GENERIC_ANALYSIS_PROMPT = `You are an expert communication coach analyzing a practice conversation.
+
+Your task is to provide actionable feedback that helps the user improve.
+
+SCORING CATEGORIES (rate each 1-10):
+{{CATEGORIES}}
+
+For each category, provide:
+- A score from 1-10
+- Specific examples from the transcript supporting your score
+- Concrete suggestions for improvement
+
+Be encouraging but honest. Focus on practical, actionable feedback.`;
+
+/**
+ * Score category definitions for different scenario frameworks.
+ */
+const SCENARIO_CATEGORIES: Record<string, Array<{ name: string; description: string }>> = {
+  sales: [
+    { name: "Discovery", description: "Did they uncover the real objection/need?" },
+    { name: "Control", description: "Did they maintain conversation flow and momentum?" },
+    { name: "Confidence", description: "Did they handle pushback without getting defensive?" },
+    { name: "Closing", description: "Did they advance the deal or set next steps?" },
+  ],
+  entrepreneur: [
+    { name: "Clarity", description: "Was the value proposition crystal clear?" },
+    { name: "Confidence", description: "Did they project confidence without arrogance?" },
+    { name: "Handling Skepticism", description: "How well did they address tough questions?" },
+    { name: "Business Acumen", description: "Did they demonstrate deep understanding of their market?" },
+  ],
+};
+
+/**
+ * Generates a comprehensive post-session analysis using AI.
  * Uses OpenRouter structured outputs to enforce schema at the model level.
- * Called automatically after debate ends via webhook.
+ * Called automatically after session ends via webhook.
  */
 export const generateFullAnalysis = internalAction({
   args: {
@@ -198,14 +332,28 @@ export const generateFullAnalysis = internalAction({
       return;
     }
 
+    // Determine if this is a debate or generic scenario
+    const scenarioType = debate.scenarioType || "debate";
+    const isDebateScenario = scenarioType === "debate";
+
     // Format transcript for analysis
     const transcript = exchanges
       .map(
         (e: { speaker: string; text: string }, i: number) =>
-          `[Exchange ${i + 1}] ${e.speaker === "user" ? "DEBATER" : "OPPONENT"}: ${e.text}`,
+          `[Exchange ${i + 1}] ${e.speaker === "user" ? "USER" : "AI"}: ${e.text}`,
       )
       .join("\n\n");
 
+    console.log(
+      `[generateFullAnalysis] Analyzing ${scenarioType} session ${args.debateId} with ${exchanges.length} exchanges`,
+    );
+
+    try {
+      let analysis: any;
+      let analysisFramework: string;
+
+      if (isDebateScenario) {
+        // === DEBATE ANALYSIS ===
     const debateContext = `
 DEBATE TOPIC: ${debate.topic}
 USER POSITION: ${debate.userPosition}
@@ -220,12 +368,6 @@ TRANSCRIPT:
 ${transcript}
 `;
 
-    console.log(
-      `[generateFullAnalysis] Analyzing debate ${args.debateId} with ${exchanges.length} exchanges`,
-    );
-
-    try {
-      // Use structured outputs - OpenRouter enforces the schema at the model level
       const response = await callOpenRouter(
         apiKey,
         [
@@ -236,7 +378,7 @@ ${transcript}
         3,
         AI_MODELS.POST_DEBATE_ANALYSIS,
         8000,
-        analysisJsonSchema, // Pass JSON schema for structured outputs
+          debateAnalysisSchema,
       );
 
       const content = response.choices[0]?.message?.content;
@@ -244,17 +386,69 @@ ${transcript}
         throw new Error("Empty response from AI");
       }
 
-      // Parse the response - structured outputs guarantee valid JSON matching our schema
-      const analysis = JSON.parse(content);
+        analysis = JSON.parse(content);
+        analysisFramework = "debate";
 
-      // Store the analysis
+      } else {
+        // === GENERIC ANALYSIS (sales, entrepreneur, etc.) ===
+        
+        // Determine framework from scenarioType (e.g., "sales-cold-prospect" -> "sales")
+        const framework = scenarioType.split("-")[0];
+        const categories = SCENARIO_CATEGORIES[framework] || SCENARIO_CATEGORIES.sales;
+        
+        // Build the prompt with scenario-specific categories
+        const categoryList = categories
+          .map((cat) => `- ${cat.name}: ${cat.description}`)
+          .join("\n");
+        
+        const systemPrompt = GENERIC_ANALYSIS_PROMPT.replace("{{CATEGORIES}}", categoryList);
+
+        const sessionContext = `
+SCENARIO: ${scenarioType}
+TOPIC: ${debate.topic}
+SESSION DURATION: ${debate.duration ? Math.round(debate.duration / 60) + " minutes" : "Unknown"}
+TOTAL EXCHANGES: ${exchanges.length}
+
+---
+
+TRANSCRIPT:
+
+${transcript}
+`;
+
+        const response = await callOpenRouter(
+          apiKey,
+          [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: sessionContext },
+          ],
+          "https://orator.app",
+          3,
+          AI_MODELS.POST_DEBATE_ANALYSIS,
+          4000,
+          genericAnalysisSchema,
+        );
+
+        const content = response.choices[0]?.message?.content;
+        if (!content) {
+          throw new Error("Empty response from AI");
+        }
+
+        analysis = JSON.parse(content);
+        analysisFramework = framework;
+      }
+
+      // Store the analysis with framework identifier
       await ctx.runMutation(internal.analysis.storeAnalysis, {
         debateId: args.debateId,
-        analysis,
+        analysis: {
+          ...analysis,
+          analysisFramework,
+        },
       });
 
       console.log(
-        `[generateFullAnalysis] Successfully stored analysis for debate ${args.debateId}`,
+        `[generateFullAnalysis] Successfully stored ${analysisFramework} analysis for session ${args.debateId}`,
       );
     } catch (error) {
       console.error(

@@ -14,6 +14,8 @@ export const create = mutation({
     topic: v.string(),
     userPosition: v.string(),
     aiPosition: v.string(),
+    scenarioType: v.optional(v.string()),
+    opponentId: v.optional(v.id("opponents")),
   },
   handler: async (ctx, args) => {
     const debateId = await ctx.db.insert("debates", {
@@ -23,6 +25,8 @@ export const create = mutation({
       aiPosition: args.aiPosition,
       status: "active",
       startedAt: Date.now(),
+      scenarioType: args.scenarioType,
+      opponentId: args.opponentId,
     });
     return debateId;
   },
@@ -248,7 +252,8 @@ export const getPerformanceStats = query({
       (sum, a) => sum + a.hasanScores.total,
       0,
     );
-    const averageScore = Math.round((totalScore / completedAnalyses.length) * 10) / 10;
+    const averageScore =
+      Math.round((totalScore / completedAnalyses.length) * 10) / 10;
 
     // Calculate improvement percent (compare first half vs second half)
     let improvementPercent = 0;
@@ -308,9 +313,7 @@ export const getPerformanceStats = query({
 
     // Get recent debates (last 10) with scores
     const recentDebates = debates.slice(0, 10).map((debate) => {
-      const analysis = completedAnalyses.find(
-        (a) => a.debateId === debate._id,
-      );
+      const analysis = completedAnalyses.find((a) => a.debateId === debate._id);
       return {
         _id: debate._id,
         topic: debate.topic,
@@ -328,5 +331,3 @@ export const getPerformanceStats = query({
     };
   },
 });
-
-

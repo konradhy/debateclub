@@ -16,7 +16,14 @@ import {
   Users,
   Lightbulb,
   AlertTriangle,
+  Sparkles,
 } from "lucide-react";
+import {
+  SCENARIOS,
+  getScenariosByCategory,
+  DEFAULT_SCENARIO_ID,
+  type ScenarioConfig,
+} from "@/scenarios";
 
 export const Route = createFileRoute("/_app/_auth/dashboard/opponent-profile")({
   component: OpponentProfile,
@@ -94,9 +101,7 @@ function LabeledTextarea({
         rows={rows}
         className="resize-none"
       />
-      {helperText && (
-        <p className="text-xs text-primary/50">{helperText}</p>
-      )}
+      {helperText && <p className="text-xs text-primary/50">{helperText}</p>}
     </div>
   );
 }
@@ -136,9 +141,7 @@ function LabeledSelect({
           </option>
         ))}
       </select>
-      {helperText && (
-        <p className="text-xs text-primary/50">{helperText}</p>
-      )}
+      {helperText && <p className="text-xs text-primary/50">{helperText}</p>}
     </div>
   );
 }
@@ -149,6 +152,13 @@ function OpponentProfile() {
   const { mutateAsync: createOpponent } = useMutation({
     mutationFn: useConvexMutation(api.opponents.create),
   });
+
+  // ==========================================
+  // Scenario Selection
+  // ==========================================
+  const [scenarioType, setScenarioType] = useState(DEFAULT_SCENARIO_ID);
+  const scenario = SCENARIOS[scenarioType];
+  const scenariosByCategory = getScenariosByCategory();
 
   // ==========================================
   // Required fields (Basic Info)
@@ -238,6 +248,10 @@ function OpponentProfile() {
         style,
         difficulty,
 
+        // Scenario system
+        scenarioType,
+        prepType: scenario?.pipeline?.prepType || "debate",
+
         // Audience context (only include if non-empty)
         audienceDescription: audienceDescription.trim() || undefined,
         audienceType: audienceType || undefined,
@@ -282,7 +296,7 @@ function OpponentProfile() {
     } catch (err) {
       console.error("Error creating opponent:", err);
       setError(
-        err instanceof Error ? err.message : "Failed to create opponent"
+        err instanceof Error ? err.message : "Failed to create opponent",
       );
       setIsSubmitting(false);
     }
@@ -313,6 +327,42 @@ function OpponentProfile() {
             className="flex w-full flex-col gap-4 overflow-y-auto p-6"
           >
             {/* ==========================================
+                SCENARIO TYPE SELECTOR
+                ========================================== */}
+            <div className="flex flex-col gap-3 rounded-lg border border-primary/30 bg-gradient-to-r from-primary/5 to-primary/10 p-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-primary" />
+                <h3 className="text-sm font-semibold text-primary">
+                  Practice Type
+                </h3>
+              </div>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {Object.entries(scenariosByCategory).map(
+                  ([category, scenarios]) =>
+                    scenarios.map((s) => (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => setScenarioType(s.id)}
+                        className={`rounded-lg border p-3 text-left transition-all ${
+                          scenarioType === s.id
+                            ? "border-primary bg-primary/10 ring-2 ring-primary/20"
+                            : "border-border bg-card hover:border-primary/50 hover:bg-primary/5"
+                        }`}
+                      >
+                        <div className="text-sm font-medium text-primary">
+                          {s.name}
+                        </div>
+                        <div className="text-xs text-primary/50 capitalize">
+                          {s.category}
+                        </div>
+                      </button>
+                    )),
+                )}
+              </div>
+            </div>
+
+            {/* ==========================================
                 SECTION 1: Basic Info (Always visible, required)
                 ========================================== */}
             <div className="flex flex-col gap-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
@@ -330,48 +380,56 @@ function OpponentProfile() {
                   htmlFor="name"
                   className="text-sm font-medium text-primary"
                 >
-                Opponent Name
-              </label>
-              <Input
-                id="name"
-                type="text"
+                  Opponent Name
+                </label>
+                <Input
+                  id="name"
+                  type="text"
                   placeholder="e.g., Climate Skeptic, Senator Johnson, Policy Expert"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </div>
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </div>
 
-              {/* Debate Topic */}
+              {/* Topic (label from scenario config) */}
               <div className="flex flex-col gap-1.5">
                 <label
                   htmlFor="topic"
                   className="text-sm font-medium text-primary"
                 >
-                Debate Topic
-              </label>
-              <Input
-                id="topic"
-                type="text"
-                  placeholder="e.g., Climate change requires immediate government intervention"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                required
-              />
-            </div>
+                  {scenario?.inputs?.topic?.label || "Topic"}
+                </label>
+                <Input
+                  id="topic"
+                  type="text"
+                  placeholder={
+                    scenario?.inputs?.topic?.placeholder ||
+                    "e.g., Climate change requires immediate government intervention"
+                  }
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  required
+                />
+              </div>
 
-              {/* Your Position */}
-              <LabeledSelect
-                id="position"
-                label="Your Position"
-                value={position}
-                onChange={(v) => setPosition(v as "pro" | "con")}
-                options={[
-                  { value: "pro", label: "Pro - I'm supporting this motion" },
-                  { value: "con", label: "Con - I'm opposing this motion" },
-                ]}
-                helperText="The AI will take the opposite position"
-              />
+              {/* Your Position (hidden for non-debate scenarios) */}
+              {!scenario?.inputs?.position?.hidden && (
+                <LabeledSelect
+                  id="position"
+                  label={scenario?.inputs?.position?.label || "Your Position"}
+                  value={position}
+                  onChange={(v) => setPosition(v as "pro" | "con")}
+                  options={[
+                    { value: "pro", label: "Pro - I'm supporting this motion" },
+                    { value: "con", label: "Con - I'm opposing this motion" },
+                  ]}
+                  helperText={
+                    scenario?.inputs?.position?.helperText ||
+                    "The AI will take the opposite position"
+                  }
+                />
+              )}
 
               <div className="grid grid-cols-2 gap-4">
                 {/* Debate Style */}
@@ -428,7 +486,7 @@ function OpponentProfile() {
                       className="text-sm font-medium text-primary"
                     >
                       Organization / Affiliation
-              </label>
+                    </label>
                     <Input
                       id="opponentOrganization"
                       type="text"
@@ -453,7 +511,10 @@ function OpponentProfile() {
                         value: "academic",
                         label: "Academic (evidence-heavy)",
                       },
-                      { value: "emotional", label: "Emotional (appeals to feelings)" },
+                      {
+                        value: "emotional",
+                        label: "Emotional (appeals to feelings)",
+                      },
                       {
                         value: "socratic",
                         label: "Socratic (trap questions)",
@@ -464,7 +525,7 @@ function OpponentProfile() {
                       },
                     ]}
                   />
-            </div>
+                </div>
 
                 <LabeledTextarea
                   id="opponentCredentials"
@@ -627,7 +688,10 @@ function OpponentProfile() {
                       { value: "", label: "— Select type —" },
                       { value: "general", label: "General Public" },
                       { value: "academic", label: "Academic / Experts" },
-                      { value: "professional", label: "Professional / Industry" },
+                      {
+                        value: "professional",
+                        label: "Professional / Industry",
+                      },
                       { value: "political", label: "Political / Partisan" },
                       { value: "legal", label: "Legal / Judicial" },
                       { value: "media", label: "Media / Journalists" },
@@ -647,7 +711,7 @@ function OpponentProfile() {
                       { value: "broadcast", label: "Broadcast / Recorded" },
                     ]}
                   />
-            </div>
+                </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <LabeledSelect
@@ -657,9 +721,18 @@ function OpponentProfile() {
                     onChange={setAudienceDisposition}
                     options={[
                       { value: "", label: "— Select disposition —" },
-                      { value: "friendly", label: "Friendly (already on your side)" },
-                      { value: "neutral", label: "Neutral (open to persuasion)" },
-                      { value: "skeptical", label: "Skeptical (needs convincing)" },
+                      {
+                        value: "friendly",
+                        label: "Friendly (already on your side)",
+                      },
+                      {
+                        value: "neutral",
+                        label: "Neutral (open to persuasion)",
+                      },
+                      {
+                        value: "skeptical",
+                        label: "Skeptical (needs convincing)",
+                      },
                       { value: "hostile", label: "Hostile (against you)" },
                     ]}
                   />

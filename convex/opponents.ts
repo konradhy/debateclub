@@ -12,6 +12,13 @@ export const create = mutation({
     style: v.string(),
     difficulty: v.string(),
 
+    // Scenario system
+    scenarioType: v.optional(v.string()),
+    prepType: v.optional(v.string()),
+
+    // Note: Generic prep fields (talkingPoints, keyPhrases, responseMap, etc.)
+    // are populated by AI generation, not at creation time
+
     // Audience context (optional)
     audienceDescription: v.optional(v.string()),
     audienceType: v.optional(v.string()),
@@ -311,12 +318,17 @@ export const updateOpponentField = mutation({
   args: {
     opponentId: v.id("opponents"),
     field: v.union(
+      // Debate fields
       v.literal("openingOptions"),
       v.literal("argumentFrames"),
       v.literal("receipts"),
       v.literal("zingers"),
       v.literal("closingOptions"),
       v.literal("opponentIntel"),
+      // Generic prep fields
+      v.literal("talkingPoints"),
+      v.literal("keyPhrases"),
+      v.literal("responseMap"),
     ),
     itemId: v.string(),
     updates: v.any(),
@@ -343,12 +355,17 @@ export const addOpponentFieldItem = mutation({
   args: {
     opponentId: v.id("opponents"),
     field: v.union(
+      // Debate fields
       v.literal("openingOptions"),
       v.literal("argumentFrames"),
       v.literal("receipts"),
       v.literal("zingers"),
       v.literal("closingOptions"),
       v.literal("opponentIntel"),
+      // Generic prep fields
+      v.literal("talkingPoints"),
+      v.literal("keyPhrases"),
+      v.literal("responseMap"),
     ),
     item: v.any(),
   },
@@ -379,12 +396,17 @@ export const deleteOpponentFieldItem = mutation({
   args: {
     opponentId: v.id("opponents"),
     field: v.union(
+      // Debate fields
       v.literal("openingOptions"),
       v.literal("argumentFrames"),
       v.literal("receipts"),
       v.literal("zingers"),
       v.literal("closingOptions"),
       v.literal("opponentIntel"),
+      // Generic prep fields
+      v.literal("talkingPoints"),
+      v.literal("keyPhrases"),
+      v.literal("responseMap"),
     ),
     itemId: v.string(),
   },
@@ -490,5 +512,77 @@ export const deleteOpponent = mutation({
 
     // 4. Delete the opponent itself
     await ctx.db.delete(args.opponentId);
+  },
+});
+
+/**
+ * Updates single text fields for generic prep (opening/closing approach).
+ */
+export const updateGenericPrepText = mutation({
+  args: {
+    opponentId: v.id("opponents"),
+    field: v.union(v.literal("openingApproach"), v.literal("closingApproach")),
+    value: v.string(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    const opponent = await ctx.db.get(args.opponentId);
+    if (!opponent || opponent.userId !== userId) {
+      throw new Error("Opponent not found");
+    }
+
+    await ctx.db.patch(args.opponentId, {
+      [args.field]: args.value,
+    });
+
+    return null;
+  },
+});
+
+/**
+ * Internal mutation for AI-generated generic prep.
+ * Called from genericPrep action.
+ */
+export const updateGenericPrepInternal = internalMutation({
+  args: {
+    opponentId: v.id("opponents"),
+    talkingPoints: v.array(
+      v.object({
+        id: v.string(),
+        content: v.string(),
+      }),
+    ),
+    openingApproach: v.string(),
+    keyPhrases: v.array(
+      v.object({
+        id: v.string(),
+        phrase: v.string(),
+      }),
+    ),
+    responseMap: v.array(
+      v.object({
+        id: v.string(),
+        trigger: v.string(),
+        response: v.string(),
+      }),
+    ),
+    closingApproach: v.string(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.opponentId, {
+      talkingPoints: args.talkingPoints,
+      openingApproach: args.openingApproach,
+      keyPhrases: args.keyPhrases,
+      responseMap: args.responseMap,
+      closingApproach: args.closingApproach,
+    });
+
+    return null;
   },
 });

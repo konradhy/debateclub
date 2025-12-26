@@ -98,6 +98,9 @@ const schema = defineSchema({
     duration: v.optional(v.number()),
     vapiCallId: v.optional(v.string()),
     recordingKey: v.optional(v.string()),
+    // Scenario system fields
+    scenarioType: v.optional(v.string()), // e.g., "debate", "sales-cold-prospect"
+    opponentId: v.optional(v.id("opponents")), // Reference to opponent profile
   }).index("by_user", ["userId"]),
   exchanges: defineTable({
     debateId: v.id("debates"),
@@ -139,7 +142,44 @@ const schema = defineSchema({
     position: v.string(), // "pro" or "con"
     style: v.string(),
     difficulty: v.string(),
-    talkingPoints: v.optional(v.array(v.string())),
+
+    // ==========================================
+    // SCENARIO SYSTEM
+    // ==========================================
+    scenarioType: v.optional(v.string()), // "debate", "sales-cold-prospect", etc.
+    prepType: v.optional(v.string()), // "debate" or "generic"
+
+    // ==========================================
+    // GENERIC PREP FIELDS (used by non-debate scenarios)
+    // All use objects with id for consistent edit/add/delete
+    // ==========================================
+    talkingPoints: v.optional(
+      v.array(
+        v.object({
+          id: v.string(),
+          content: v.string(),
+        }),
+      ),
+    ),
+    openingApproach: v.optional(v.string()),
+    keyPhrases: v.optional(
+      v.array(
+        v.object({
+          id: v.string(),
+          phrase: v.string(),
+        }),
+      ),
+    ),
+    responseMap: v.optional(
+      v.array(
+        v.object({
+          id: v.string(),
+          trigger: v.string(),
+          response: v.string(),
+        }),
+      ),
+    ),
+    closingApproach: v.optional(v.string()),
 
     // ==========================================
     // AUDIENCE CONTEXT (Chapter 1: Know Your Audience)
@@ -373,9 +413,36 @@ const schema = defineSchema({
     content: v.string(),
     timestamp: v.number(),
   }).index("by_opponent", ["opponentId"]),
-  // Comprehensive post-debate coaching analysis (Hasan methodology)
+  // Comprehensive post-practice coaching analysis
   analyses: defineTable({
     debateId: v.id("debates"),
+
+    // ==========================================
+    // SCENARIO SYSTEM - Analysis Framework
+    // ==========================================
+    analysisFramework: v.optional(v.string()), // "debate", "sales", "entrepreneur", etc.
+
+    // Generic skills assessment (used by non-debate scenarios)
+    skillsAssessment: v.optional(
+      v.array(
+        v.object({
+          name: v.string(), // e.g., "Discovery", "Clarity"
+          score: v.number(), // 1-10
+          feedback: v.string(), // Specific feedback for this skill
+        }),
+      ),
+    ),
+
+    // Key moments (used by generic scenarios)
+    keyMoments: v.optional(
+      v.array(
+        v.object({
+          moment: v.string(),
+          impact: v.string(),
+          wasHandledWell: v.boolean(),
+        }),
+      ),
+    ),
 
     // Executive Summary
     executiveSummary: v.object({
@@ -385,81 +452,99 @@ const schema = defineSchema({
       verdict: v.string(), // one sentence
     }),
 
-    // Technique Scorecard (category-based, not per-technique)
-    techniqueScorecard: v.array(
-      v.object({
-        category: v.string(), // Opening, Emotional Appeal, Evidence, Judo Moves, etc.
-        techniquesIdentified: v.array(v.string()),
-        executionScore: v.number(), // 1-5
-        notes: v.string(),
-      }),
+    // Technique Scorecard (category-based, not per-technique) - DEBATE ONLY
+    techniqueScorecard: v.optional(
+      v.array(
+        v.object({
+          category: v.string(), // Opening, Emotional Appeal, Evidence, Judo Moves, etc.
+          techniquesIdentified: v.array(v.string()),
+          executionScore: v.number(), // 1-5
+          notes: v.string(),
+        }),
+      ),
     ),
 
     // Moment-by-Moment Analysis
-    momentAnalysis: v.array(
+    momentAnalysis: v.optional(
+      v.array(
+        v.object({
+          exchangeRef: v.string(), // timestamp or quote reference
+          whatHappened: v.string(),
+          techniqueUsed: v.optional(v.string()),
+          techniqueShouldHaveUsed: v.optional(v.string()),
+          effectiveness: v.number(), // 1-5
+          rewrite: v.optional(v.string()), // how it could have been stronger
+          suggestion: v.optional(v.string()), // generic scenario field
+        }),
+      ),
+    ),
+
+    // Opponent Analysis (what the AI opponent did, for learning) - DEBATE ONLY
+    opponentAnalysis: v.optional(
       v.object({
-        exchangeRef: v.string(), // timestamp or quote reference
-        whatHappened: v.string(),
-        techniqueUsed: v.optional(v.string()),
-        techniqueShouldHaveUsed: v.optional(v.string()),
-        effectiveness: v.number(), // 1-5
-        rewrite: v.optional(v.string()), // how it could have been stronger
+        techniquesUsed: v.array(v.string()),
+        trapsSet: v.array(v.string()),
+        weaknessesExposed: v.array(v.string()),
+        unexploitedWeaknesses: v.array(v.string()),
       }),
     ),
 
-    // Opponent Analysis (what the AI opponent did, for learning)
-    opponentAnalysis: v.object({
-      techniquesUsed: v.array(v.string()),
-      trapsSet: v.array(v.string()),
-      weaknessesExposed: v.array(v.string()),
-      unexploitedWeaknesses: v.array(v.string()),
-    }),
-
-    // Missed Opportunities (enhanced with technique guidance)
-    missedOpportunities: v.array(
-      v.object({
-        moment: v.string(),
-        whatShouldHaveDone: v.string(),
-        whichTechnique: v.string(),
-      }),
+    // Missed Opportunities (enhanced with technique guidance) - DEBATE ONLY
+    missedOpportunities: v.optional(
+      v.array(
+        v.object({
+          moment: v.string(),
+          whatShouldHaveDone: v.string(),
+          whichTechnique: v.string(),
+        }),
+      ),
     ),
 
-    // Rewrites - showing optimal execution
-    rewrites: v.array(
-      v.object({
-        original: v.string(),
-        improved: v.string(),
-        explanation: v.string(), // techniques applied
-      }),
+    // Rewrites - showing optimal execution - DEBATE ONLY
+    rewrites: v.optional(
+      v.array(
+        v.object({
+          original: v.string(),
+          improved: v.string(),
+          explanation: v.string(), // techniques applied
+        }),
+      ),
     ),
 
-    // Practice Recommendations (structured priorities)
-    practiceRecommendations: v.object({
-      immediateFocus: v.object({
-        area: v.string(),
-        drill: v.string(),
-        exampleToStudy: v.string(),
+    // Practice Recommendations - flexible structure for both debate and generic
+    practiceRecommendations: v.optional(
+      v.object({
+        immediateFocus: v.object({
+          area: v.string(),
+          drill: v.string(),
+          exampleToStudy: v.optional(v.string()), // DEBATE ONLY
+        }),
+        secondaryFocus: v.object({
+          area: v.string(),
+          drill: v.string(),
+          exampleToStudy: v.optional(v.string()), // DEBATE ONLY
+        }),
+        longTermDevelopment: v.optional(
+          v.object({
+            skill: v.string(),
+            practiceApproach: v.string(),
+            resources: v.string(),
+          }),
+        ), // DEBATE ONLY
       }),
-      secondaryFocus: v.object({
-        area: v.string(),
-        drill: v.string(),
-        exampleToStudy: v.string(),
-      }),
-      longTermDevelopment: v.object({
-        skill: v.string(),
-        practiceApproach: v.string(),
-        resources: v.string(),
-      }),
-    }),
+    ),
 
     // Hasan Methodology Scores (category-based)
-    hasanScores: v.object({
-      fundamentals: v.number(), // Chs 1-6: Audience, Emotion, Evidence, Ad Hominem, Listening, Humor
-      tricksOfTrade: v.number(), // Chs 7-11: Rule of Three, Judo, Zingers, Traps, Gish Gallop
-      behindTheScenes: v.number(), // Chs 12-15: Confidence, Composure, Practice, Homework
-      grandFinale: v.number(), // Ch 16: Closing/Peroration
-      total: v.number(), // Sum of all /40
-    }),
+    // Hasan Scores - DEBATE ONLY
+    hasanScores: v.optional(
+      v.object({
+        fundamentals: v.number(), // Chs 1-6: Audience, Emotion, Evidence, Ad Hominem, Listening, Humor
+        tricksOfTrade: v.number(), // Chs 7-11: Rule of Three, Judo, Zingers, Traps, Gish Gallop
+        behindTheScenes: v.number(), // Chs 12-15: Confidence, Composure, Practice, Homework
+        grandFinale: v.number(), // Ch 16: Closing/Peroration
+        total: v.number(), // Sum of all /40
+      }),
+    ),
 
     generatedAt: v.number(),
   }).index("by_debate", ["debateId"]),
@@ -473,7 +558,7 @@ const schema = defineSchema({
       v.literal("generating"),
       v.literal("storing"),
       v.literal("complete"),
-      v.literal("error")
+      v.literal("error"),
     ),
     message: v.string(),
     startedAt: v.number(),

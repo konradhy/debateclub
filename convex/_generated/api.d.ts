@@ -10,6 +10,7 @@
 
 import type * as actions_analysisAction from "../actions/analysisAction.js";
 import type * as actions_geminiPrep from "../actions/geminiPrep.js";
+import type * as actions_genericPrep from "../actions/genericPrep.js";
 import type * as actions_prep from "../actions/prep.js";
 import type * as actions_prepChatAction from "../actions/prepChatAction.js";
 import type * as actions_prepGeneration from "../actions/prepGeneration.js";
@@ -43,6 +44,11 @@ import type * as prepChat from "../prepChat.js";
 import type * as prepProgress from "../prepProgress.js";
 import type * as r2 from "../r2.js";
 import type * as research from "../research.js";
+import type * as scenarios_debate from "../scenarios/debate.js";
+import type * as scenarios_entrepreneur from "../scenarios/entrepreneur.js";
+import type * as scenarios_index from "../scenarios/index.js";
+import type * as scenarios_sales from "../scenarios/sales.js";
+import type * as scenarios_types from "../scenarios/types.js";
 import type * as stripe from "../stripe.js";
 
 import type {
@@ -54,6 +60,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   "actions/analysisAction": typeof actions_analysisAction;
   "actions/geminiPrep": typeof actions_geminiPrep;
+  "actions/genericPrep": typeof actions_genericPrep;
   "actions/prep": typeof actions_prep;
   "actions/prepChatAction": typeof actions_prepChatAction;
   "actions/prepGeneration": typeof actions_prepGeneration;
@@ -87,6 +94,11 @@ declare const fullApi: ApiFromModules<{
   prepProgress: typeof prepProgress;
   r2: typeof r2;
   research: typeof research;
+  "scenarios/debate": typeof scenarios_debate;
+  "scenarios/entrepreneur": typeof scenarios_entrepreneur;
+  "scenarios/index": typeof scenarios_index;
+  "scenarios/sales": typeof scenarios_sales;
+  "scenarios/types": typeof scenarios_types;
   stripe: typeof stripe;
 }>;
 

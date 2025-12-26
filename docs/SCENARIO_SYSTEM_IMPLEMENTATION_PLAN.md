@@ -3,6 +3,27 @@
 
 ---
 
+## ⚠️ CRITICAL: READ THE CODE, NOT JUST THIS PLAN
+
+**This plan is a GUIDE, not the source of truth. The actual codebase IS the source of truth.**
+
+During Phase 1 implementation (Dec 2025), the AI relied solely on this plan without inspecting the actual code. Result: the debate scenario config only included 4 input fields when the real `opponent-profile.tsx` form has 25+ fields across 6 sections.
+
+**Before implementing ANY section:**
+1. Read the relevant source files first
+2. Understand what currently exists
+3. Use this plan as a guide, not a specification
+4. The plan may be incomplete or outdated — the code is reality
+
+**Files to always check:**
+- `src/routes/_app/_auth/dashboard/opponent-profile.tsx` — actual form fields
+- `convex/schema.ts` — actual database fields
+- `src/routes/_app/_auth/dashboard/prep.tsx` — actual prep page structure
+- `src/routes/_app/_auth/dashboard/debate.tsx` — actual Vapi config
+- `src/ui/prep-panel.tsx` — actual PrepPanel categories
+
+---
+
 ## COMMANDER'S INTENT
 
 **Mission:** Build a plugin architecture that lets us rapidly create new practice scenarios by writing one config file.
@@ -290,7 +311,9 @@ skillsAssessment: v.optional(v.array(v.object({
 
 ### 2. INPUT FORM CHANGES
 
-**File:** `src/routes/_app/_auth/dashboard/opponents.tsx` (opponent creation)
+**File:** `src/routes/_app/_auth/dashboard/opponent-profile.tsx` (opponent creation)
+
+> ⚠️ **WARNING:** The table below is INCOMPLETE. The actual form has 25+ fields across 6 collapsible sections. Always check `opponent-profile.tsx` for the full list. This table only shows examples.
 
 **Changes:**
 1. Add scenario type selector at top of form
@@ -314,7 +337,7 @@ const scenario = SCENARIOS[selectedScenarioType]
 )}
 ```
 
-**Field Mapping by Scenario:**
+**Field Mapping by Scenario (EXAMPLES ONLY — see code for full list):**
 
 | Field | Debate | Sales | Entrepreneur Pitch |
 |-------|--------|-------|-------------------|
@@ -322,6 +345,14 @@ const scenario = SCENARIOS[selectedScenarioType]
 | position | "pro/con" | HIDDEN | HIDDEN |
 | talkingPoints | "Arguments" | "Common Objections" | "Anticipated Questions" |
 | opponentDescription | "Opponent Bio" | "Prospect Background" | "Investor Background" |
+
+**Actual form sections (for debate):**
+1. Basic Info — name, topic, position, style, difficulty
+2. About Your Opponent — 8 fields (description, org, credentials, style, triggers, etc.)
+3. Opponent's Record — 3 fields (past statements, contradictions, track record)
+4. Steelmanning Their Case — 3 fields (strongest args, best evidence, likely critiques)
+5. Your Audience — 5 fields (description, type, size, disposition, format)
+6. Your Context & Directives — 4 fields (research, key points, things to avoid, tone)
 
 ---
 
@@ -540,61 +571,45 @@ interruptionThreshold: 150
 
 ---
 
-### 6. CHEAT SHEET IN DEBATE SCREEN
+### 6. PREP PANEL DURING PRACTICE
 
-**File:** `src/routes/_app/_auth/dashboard/debate.tsx`
+**Existing Implementation:**
+- `src/ui/prep-panel.tsx` — Bottom sheet component showing Quick Reference during practice
+- `src/routes/_app/_auth/dashboard/debate.tsx` — Floating toggle button (FileText icon) opens PrepPanel
 
-**Add collapsible sidebar during call:**
+**Current State:** PrepPanel is hardcoded for debate categories.
 
+**Required Change:** Update `PrepPanel` to render different categories based on `prepType`.
+
+**Debate Categories (prepType = "debate"):**
+| Category | Source |
+|----------|--------|
+| Opening | `selectedOpening` |
+| Closing | `selectedClosing` |
+| Core Arguments | `selectedFrames` |
+| Zingers | `selectedZingers` |
+| Counters | `selectedCounters` |
+| Receipts | `groupedReceipts` |
+
+**Generic Categories (prepType = "generic"):**
+| Category | Source |
+|----------|--------|
+| Opening Approach | `opponent.openingApproach` |
+| Closing | `opponent.closingApproach` |
+| Talking Points | `opponent.talkingPoints` |
+| Key Phrases | `opponent.keyPhrases` |
+| Response Map | `opponent.responseMap` |
+| Things to Avoid | `opponent.thingsToAvoid` |
+
+**Implementation:**
 ```tsx
-<div className="flex h-full">
-  {/* Cheat Sheet Sidebar */}
-  <div className="w-80 border-r bg-secondary/30 p-4 overflow-y-auto">
-    <h3 className="font-semibold mb-4">Your Cheat Sheet</h3>
-
-    {/* Talking Points */}
-    <section className="mb-6">
-      <h4 className="text-sm font-bold mb-2">📌 Talking Points</h4>
-      <ul className="text-sm space-y-1">
-        {opponent.talkingPoints?.map(point => (
-          <li key={point}>• {point}</li>
-        ))}
-      </ul>
-    </section>
-
-    {/* Response Map */}
-    <section className="mb-6">
-      <h4 className="text-sm font-bold mb-2">🎯 If They Say...</h4>
-      {opponent.responseMap?.map(item => (
-        <div key={item.trigger} className="text-xs mb-2 p-2 bg-background rounded">
-          <div className="font-medium">"{item.trigger}"</div>
-          <div className="text-muted-foreground">→ {item.response}</div>
-        </div>
-      ))}
-    </section>
-
-    {/* Things to Avoid */}
-    <section>
-      <h4 className="text-sm font-bold mb-2">⚠️ Avoid</h4>
-      <ul className="text-xs space-y-1">
-        {opponent.thingsToAvoid?.map(item => (
-          <li key={item} className="text-red-600">• {item}</li>
-        ))}
-      </ul>
-    </section>
-  </div>
-
-  {/* Main Call Area */}
-  <div className="flex-1">
-    {/* Existing debate UI */}
-  </div>
-</div>
+// In PrepPanel component
+if (opponent.prepType === 'debate') {
+  // Render debate categories (current implementation)
+} else {
+  // Render generic categories
+}
 ```
-
-**Make it collapsible:**
-- Toggle button to hide/show
-- Persists state in localStorage
-- Mobile: overlay instead of sidebar
 
 ---
 
@@ -773,10 +788,10 @@ if (analysis.analysisFramework === 'debate') {
 20. Write analysis prompt for pitch framework
 21. Test all 4 scenarios work correctly
 
-### Phase 4: Cheat Sheet (Week 3)
-22. Add sidebar to debate.tsx
-23. Make it collapsible
-24. Mobile responsive version
+### Phase 4: PrepPanel Updates (Week 3)
+22. Update PrepPanel to check `prepType`
+23. Add generic category rendering (Talking Points, Response Map, etc.)
+24. Test PrepPanel works for both debate and generic scenarios
 
 ### Phase 5: Analysis Updates (Week 3)
 25. Create GenericAnalysisView component
@@ -841,12 +856,9 @@ if (analysis.analysisFramework === 'debate') {
 2. **Do we need scenario-specific analysis views or is generic enough?**
    - Start with generic, add specific views if needed
 
-3. **Should cheat sheet be visible during debate or only after?**
-   - During (like having notes during a call)
-   - Can toggle if user wants "hard mode"
+3. **PrepPanel already exists** — Shows Quick Reference during practice via floating toggle button. Just needs to support generic categories.
 
-4. **How do we handle existing opponents when we add scenarioType?**
-   - Migration: Set all existing to scenarioType: "debate"
+4. **Existing data:** Development phase — drop database and start fresh. No migration needed.
 
 ---
 
@@ -892,7 +904,7 @@ if (analysis.analysisFramework === 'debate') {
 - Prep page routes to DebatePrepPage OR GenericPrepPage
 - Vapi gets system prompts from scenario config
 - Analysis uses scenario-specific frameworks
-- Debate screen shows cheat sheet with prep materials during practice
+- PrepPanel shows scenario-appropriate Quick Reference during practice
 
 **What Stays the Same:**
 - Core Vapi integration

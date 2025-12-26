@@ -9,6 +9,7 @@ import { Mic, MicOff, BarChart3, FileText } from "lucide-react";
 import siteConfig from "~/site.config";
 import { Id } from "@cvx/_generated/dataModel";
 import { PrepPanel } from "@/ui/prep-panel";
+import { SCENARIOS } from "@/scenarios";
 
 export const Route = createFileRoute("/_app/_auth/dashboard/debate")({
   component: Debate,
@@ -54,9 +55,9 @@ function Debate() {
     ),
   );
 
-  // Dynamic Debate Settings
-  const topic = opponent?.topic || "General Debate Practice";
-  const aiPosition = opponent?.position || "con";
+  // Dynamic Debate Settings - NO FALLBACKS
+  const topic = opponent?.topic;
+  const aiPosition = opponent?.position;
   const userPosition = aiPosition === "con" ? "pro" : "con";
 
   useEffect(() => {
@@ -169,13 +170,29 @@ function Debate() {
       return;
     }
 
+    // Validate opponent data before starting
+    if (!opponent) {
+      setError("No opponent selected. Please select an opponent first.");
+      return;
+    }
+    if (!opponent.topic) {
+      setError("Opponent missing topic. Cannot start practice.");
+      return;
+    }
+    if (!opponent.position) {
+      setError("Opponent missing position. Cannot start practice.");
+      return;
+    }
+
     try {
-      // Create debate record with dynamic values
+      // Create debate record with validated values
       const newDebateId = await createDebate({
         userId: user._id,
-        topic: topic,
+        topic: opponent.topic,
         userPosition: userPosition,
-        aiPosition: aiPosition,
+        aiPosition: opponent.position,
+        scenarioType: opponent.scenarioType,
+        opponentId: opponent._id,
       });
 
       setDebateId(newDebateId);
@@ -218,73 +235,145 @@ function Debate() {
       const selectedConfig =
         modelConfigs[selectedModel as keyof typeof modelConfigs];
 
-      // Determine debate settings (already calculated above)
-      const style = opponent?.style || "aggressive";
-      const difficulty = opponent?.difficulty || "medium";
-      // Use configured talking points if available, otherwise generic defaults
-      const talkingPoints = opponent?.talkingPoints || [
-        `I support the ${aiPosition} position on ${topic}.`,
-        "I will use facts and logic to support my case.",
-        "I will point out logical fallacies in your arguments.",
-      ];
+      // Get scenario configuration - NO FALLBACKS
+      if (!opponent?.scenarioType) {
+        setError("Opponent missing scenarioType. Cannot start practice.");
+        return;
+      }
+
+      const scenario = SCENARIOS[opponent.scenarioType];
+      if (!scenario) {
+        setError(`Unknown scenario type: ${opponent.scenarioType}`);
+        return;
+      }
+
+      // Validate required opponent fields - EXPLICIT FAILURES
+      if (!topic) {
+        setError("Opponent missing topic. Cannot start practice.");
+        return;
+      }
+      if (!aiPosition) {
+        setError("Opponent missing position. Cannot start practice.");
+        return;
+      }
+      if (!opponent.name) {
+        setError("Opponent missing name. Cannot start practice.");
+        return;
+      }
+      if (!opponent.style) {
+        setError("Opponent missing style. Cannot start practice.");
+        return;
+      }
+      if (!opponent.difficulty) {
+        setError("Opponent missing difficulty. Cannot start practice.");
+        return;
+      }
+      if (!scenario.assistant.voice) {
+        setError(
+          "Scenario missing voice configuration. Cannot start practice.",
+        );
+        return;
+      }
+
+      // Helper: Select random first message if array
+      const selectFirstMessage = (firstMessage: string | string[]): string => {
+        if (Array.isArray(firstMessage)) {
+          return firstMessage[Math.floor(Math.random() * firstMessage.length)];
+        }
+        return firstMessage;
+      };
+
+      // Helper: Replace placeholders in text - NO FALLBACKS
+      // All required fields validated above
+      const style: string = opponent.style;
+      const difficulty: string = opponent.difficulty;
+
+      const replacePlaceholders = (text: string): string => {
+        return text
+          .replace(/\{\{TOPIC\}\}/g, topic)
+          .replace(/\{\{AI_POSITION\}\}/g, aiPosition.toUpperCase())
+          .replace(/\{\{USER_POSITION\}\}/g, userPosition.toUpperCase())
+          .replace(
+            /\{\{AI_POSITION_DESC\}\}/g,
+            aiPosition === "con"
+              ? "we should oppose this"
+              : "we should support this",
+          )
+          .replace(/\{\{DIFFICULTY\}\}/g, difficulty)
+          .replace(/\{\{STYLE\}\}/g, style)
+          .replace(
+            /\{\{TALKING_POINTS\}\}/g,
+            opponent.talkingPoints && Array.isArray(opponent.talkingPoints)
+              ? opponent.talkingPoints.map((tp) => `- ${tp.content}`).join("\n")
+              : "- No talking points specified",
+          )
+          .replace(
+            /\{\{OPPONENT_DESC\}\}/g,
+            opponent.opponentDescription || "",
+          );
+      };
+
+      // Build first message from scenario config
+      const firstMessage = replacePlaceholders(
+        selectFirstMessage(scenario.assistant.firstMessage),
+      );
+
+      // Build system prompt from scenario config
+      const systemPrompt = replacePlaceholders(scenario.assistant.systemPrompt);
 
       // Build dynamic assistant configuration
       const assistantConfig = {
-        name: opponent?.name || "Debate Opponent",
+        name: opponent.name,
         maxDurationSeconds: 1800, // 30 minutes
-        firstMessage: `I'm ready to debate. The topic is: ${topic}. I'll argue that ${aiPosition === "con" ? "we should oppose this" : "we should support this"}. Would you like to make your opening statement first, or shall I begin?`,
+        firstMessage,
         firstMessageMode: "assistant-speaks-first" as const,
         model: {
           provider: selectedConfig.provider,
           model: selectedConfig.model,
-          temperature: 0.7,
+          temperature: scenario.assistant.temperature ?? 0.7, // Keep 0.7 as default if not specified in scenario
           messages: [
             {
               role: "system" as const,
-              content: `You are a skilled debater using Mehdi Hasan's debate techniques.
-
-DEBATE SETUP:
-- Topic: ${topic}
-- Your position: ${aiPosition.toUpperCase()}
-- User position: ${userPosition.toUpperCase()}
-- Difficulty: ${difficulty}
-- Style: ${style}
-
-YOUR KEY ARGUMENTS:
-${talkingPoints.map((tp: string) => `- ${tp}`).join("\n")}
-
-TECHNIQUES TO USE:
-1. Concession & Pivot - When user makes a good point, acknowledge it then pivot
-2. Receipts - Deploy specific evidence, statistics, citations
-3. Zinger - Memorable one-liners (under 20 words)
-4. Reframing - Change the premise of the question
-5. Preemption - Address arguments before they're made
-
-BEHAVIORAL RULES:
-- Speak naturally and conversationally
-- You CAN be interrupted - respond naturally
-- You CAN interrupt if user rambles > 45 seconds
-- Keep responses under 30 seconds of speech
-- Focus ONLY on debating - do not mention analysis, logging, or techniques
-- Be respectful but firm in your arguments
-- Use evidence and facts to support your position`,
+              content: systemPrompt,
             },
           ],
           // NO function calling - analysis happens separately via transcript webhooks
         } as any,
         voice: {
-          provider: "11labs" as const,
-          voiceId: "21m00Tcm4TlvDq8ikWAM", // Default voice, can be customized
-          stability: 0.75,
-          similarityBoost: 0.8,
-        },
+          provider: scenario.assistant.voice.provider,
+          voiceId: scenario.assistant.voice.voiceId,
+          stability: scenario.assistant.voice.stability,
+          similarityBoost: scenario.assistant.voice.similarityBoost,
+        } as any,
         transcriber: {
           provider: "deepgram" as const,
           model: "nova-2",
           language: "en-US" as const,
           smartFormat: true,
-          endpointing: 300,
+          endpointing: scenario.assistant.canInterrupt !== false ? 300 : 500, // Longer endpointing if interruption disabled
         },
+        // Interruption settings from scenario config
+        ...(scenario.assistant.canInterrupt !== undefined && {
+          clientMessages: scenario.assistant.canInterrupt
+            ? [
+                "transcript",
+                "hang",
+                "function-call",
+                "speech-update",
+                "metadata",
+                "conversation-update",
+              ]
+            : [
+                "transcript",
+                "hang",
+                "function-call",
+                "metadata",
+                "conversation-update",
+              ],
+        }),
+        ...(scenario.assistant.interruptionThreshold !== undefined && {
+          backgroundSound: "office" as const,
+        }),
         // Server URL for webhooks - REQUIRED for transient assistants
         // This tells Vapi where to send transcript and other events
         // We append debateId to ensuring it's available even if metadata propagation fails
@@ -490,7 +579,7 @@ BEHAVIORAL RULES:
       </div>
 
       {/* Floating Prep Materials Button */}
-      {opponent && (opponent.openingOptions || opponent.argumentFrames) && (
+      {opponent && (
         <button
           onClick={() => setIsPrepPanelOpen(!isPrepPanelOpen)}
           className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-110 active:scale-95"
