@@ -47,6 +47,7 @@ export const create = mutation({
     keyPointsToMake: v.optional(v.string()),
     thingsToAvoid: v.optional(v.string()),
     toneDirectives: v.optional(v.string()),
+    additionalContext: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await auth.getUserId(ctx);

@@ -221,6 +221,11 @@ const schema = defineSchema({
     toneDirectives: v.optional(v.string()), // How you want to come across
 
     // ==========================================
+    // ADDITIONAL CONTEXT (Free-form user guidance)
+    // ==========================================
+    additionalContext: v.optional(v.string()), // User-provided context to guide AI behavior
+
+    // ==========================================
     // AI-Generated Prep Materials (Buffet-Style)
     // ==========================================
     // New structured prep fields

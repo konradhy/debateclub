@@ -142,6 +142,13 @@ export const DebateScenario: ScenarioConfig = {
       helperText:
         "This shapes the zingers, openings, and overall rhetorical approach",
     },
+    additionalContext: {
+      label: "Additional Context (Optional)",
+      placeholder:
+        "Any specific instructions for the AI? Things to focus on, avoid, or unique situational context...",
+      helperText:
+        "Free-form guidance to customize AI behavior for your specific needs",
+    },
   },
 
   assistant: {
@@ -173,7 +180,9 @@ BEHAVIORAL RULES:
 - Keep responses under 30 seconds of speech
 - Focus ONLY on debating - do not mention analysis, logging, or techniques
 - Be respectful but firm in your arguments
-- Use evidence and facts to support your position`,
+- Use evidence and facts to support your position
+
+{{ADDITIONAL_CONTEXT}}`,
 
     voice: {
       provider: "11labs",

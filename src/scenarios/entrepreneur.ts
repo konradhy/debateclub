@@ -40,6 +40,12 @@ const entrepreneurInputs = {
     placeholder:
       "e.g., What's your CAC/LTV?, How are you different from X?, What's your moat?",
   },
+  additionalContext: {
+    label: "Additional Context (Optional)",
+    placeholder:
+      "Specific focus areas, investor concerns to simulate, or unique pitch context...",
+    helperText: "Free-form guidance to customize the investor's focus",
+  },
 };
 
 /**
@@ -121,7 +127,9 @@ INVESTOR PROFILE:
 BUSINESS PITCH:
 {{TOPIC}}
 
-YOUR GOAL: Be a realistic investor - experienced, pattern-matching, looking for red flags but genuinely open to being convinced. Give them a real practice experience.`,
+YOUR GOAL: Be a realistic investor - experienced, pattern-matching, looking for red flags but genuinely open to being convinced. Give them a real practice experience.
+
+{{ADDITIONAL_CONTEXT}}`,
 
     voice: {
       provider: "11labs",

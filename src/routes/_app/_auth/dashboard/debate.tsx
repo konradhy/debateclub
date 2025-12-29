@@ -289,6 +289,12 @@ function Debate() {
       const difficulty: string = opponent.difficulty;
 
       const replacePlaceholders = (text: string): string => {
+        // Build additional context - this is informational context, not strict rules
+        const additionalContextFormatted = opponent.additionalContext
+          ? `ADDITIONAL CONTEXT FROM USER:
+${opponent.additionalContext}`
+          : "The user has provided additional context. Interpret this intelligently - it may contain behavioral preferences, constraints, or situational details. Use if relevant";
+
         return text
           .replace(/\{\{TOPIC\}\}/g, topic)
           .replace(/\{\{AI_POSITION\}\}/g, aiPosition.toUpperCase())
@@ -307,10 +313,8 @@ function Debate() {
               ? opponent.talkingPoints.map((tp) => `- ${tp.content}`).join("\n")
               : "- No talking points specified",
           )
-          .replace(
-            /\{\{OPPONENT_DESC\}\}/g,
-            opponent.opponentDescription || "",
-          );
+          .replace(/\{\{OPPONENT_DESC\}\}/g, opponent.opponentDescription || "")
+          .replace(/\{\{ADDITIONAL_CONTEXT\}\}/g, additionalContextFormatted);
       };
 
       // Build first message from scenario config

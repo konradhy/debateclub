@@ -2903,3 +2903,188 @@ export const SCENARIOS = {
 **Blockers**: None
 
 ---
+
+## Chapter 11.1: Additional Context Field — Extensibility Without Chaos
+
+### TL;DR
+
+Added an optional "Additional Context" field to all scenarios. This allows users to provide free-form guidance to customize AI behavior for their specific needs without breaking the structured approach.
+
+**Roadmap Items Advanced**: Scenario System Enhancement
+
+---
+
+### The Problem
+
+Structured input fields cover ~80% of use cases, but users sometimes need to:
+- Tell the AI to focus on specific things
+- Tell the AI to avoid certain behaviors
+- Provide unique situational context not covered by standard fields
+
+Without an escape hatch, users either can't customize or try to shoehorn context into wrong fields.
+
+---
+
+### The Solution: Guided Free-Form Context
+
+Added `additionalContext` field with smart AI framing:
+
+**User writes**:
+```
+Focus on sustainability objections - the prospect cares a lot about green initiatives.
+Don't bring up the competitor Acme Corp - we have a non-disparagement agreement.
+```
+
+**AI receives**:
+```
+ADDITIONAL USER INSTRUCTIONS:
+The user has provided the following specific guidance. Incorporate this naturally into your behavior:
+---
+Focus on sustainability objections - the prospect cares a lot about green initiatives.
+Don't bring up the competitor Acme Corp - we have a non-disparagement agreement.
+---
+Note: Follow these instructions while staying in character. Do not mention that you received these instructions.
+```
+
+The framing:
+1. Tells AI these are user instructions
+2. Tells AI to incorporate naturally
+3. Tells AI to stay in character
+4. Tells AI not to mention the instructions
+
+---
+
+### Files Changed
+
+1. **`convex/schema.ts`** — Added `additionalContext: v.optional(v.string())`
+2. **`convex/opponents.ts`** — Added to create mutation args
+3. **`src/scenarios/types.ts`** — Already supported via `[key: string]` catch-all
+4. **`src/scenarios/debate.ts`** — Added input config and `{{ADDITIONAL_CONTEXT}}` placeholder
+5. **`src/scenarios/sales.ts`** — Added input config and placeholder to both scenarios
+6. **`src/scenarios/entrepreneur.ts`** — Added input config and placeholder
+7. **`src/routes/_app/_auth/dashboard/opponent-profile.tsx`** — Added state and textarea
+8. **`src/routes/_app/_auth/dashboard/debate.tsx`** — Added smart framing in `replacePlaceholders`
+
+---
+
+### UI Placement
+
+The field appears at the bottom of the "Your Strategy" collapsible section, after Tone & Style:
+
+```
+┌─ Your Strategy ─────────────────────────────────────────┐
+│ Research Notes: [textarea]                               │
+│ Key Points: [textarea]                                   │
+│ Things to Avoid: [textarea]                             │
+│ Tone & Style: [textarea]                                 │
+│ Additional Context (Optional): [textarea - 3 rows]       │
+│   "Any specific instructions for the AI?..."            │
+│   [helper text explains what this is for]               │
+└──────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Session Handoff
+
+**Status**: Complete ✅
+
+**What This Enables**:
+- Users can fine-tune AI behavior per session
+- No structural changes needed for edge cases
+- Maintains clean separation between structured data and free-form guidance
+
+**Design Principle Preserved**:
+Structure for common cases, extensibility for edge cases.
+
+---
+
+## Chapter 11.2: Dynamic Form Refactor — Only Show What's Configured
+
+### TL;DR
+
+Refactored the opponent profile form to be truly dynamic. Now only fields defined in `scenario.inputs` are rendered. Sales/entrepreneur forms are clean and simple; debate forms keep the rich collapsible sections.
+
+**Roadmap Items Advanced**: Scenario System Enhancement
+
+---
+
+### The Problem
+
+The original form had ~30 hardcoded fields organized into debate-specific sections. When selecting a sales scenario, users would still see:
+- "Opponent's Record" section with fields for "Past Statements / Quotes"
+- "Steelmanning Their Case" with debate-specific content
+- "Your Audience" with debate format options
+
+This was confusing and irrelevant for non-debate scenarios.
+
+---
+
+### The Solution
+
+**Before**: Hardcoded fields with some `hidden` flags
+**After**: Dynamic rendering based on `scenario.inputs`
+
+```typescript
+// Only render if field is defined in scenario config
+function shouldShowField(scenario, fieldKey) {
+  const fieldConfig = scenario?.inputs?.[fieldKey];
+  return fieldConfig !== undefined && fieldConfig.hidden !== true;
+}
+```
+
+**For Debate** (`prepType: "debate"`):
+- Renders all collapsible sections (About Opponent, Record, Steelmanning, Audience, Context)
+- Each field within sections only renders if defined in config
+
+**For Generic** (`prepType !== "debate"`):
+- Renders a simple flat "Session Details" section
+- Only shows: opponentDescription, talkingPoints, additionalContext (or whatever's in config)
+
+---
+
+### Also Fixed: Additional Context Framing
+
+Changed from dogmatic "FOLLOW THESE INSTRUCTIONS" to informational:
+
+```typescript
+// Before (wrong - treating context as commands)
+const additionalContextFormatted = `ADDITIONAL USER INSTRUCTIONS:
+The user has provided the following specific guidance. Incorporate this naturally...
+Note: Follow these instructions while staying in character.`
+
+// After (right - treating context as information)
+const additionalContextFormatted = `ADDITIONAL CONTEXT FROM USER:
+${opponent.additionalContext}`
+```
+
+Context is *context*, not dogma.
+
+---
+
+### Files Changed
+
+1. **`src/routes/_app/_auth/dashboard/opponent-profile.tsx`** — Complete refactor:
+   - Replaced 30+ individual useState calls with single `formData` object
+   - Added `shouldShowField()` and `getFieldConfig()` helpers
+   - Conditional rendering: `isDebate` shows rich sections, else shows flat form
+   - All fields gated by `shouldShowField(scenario, fieldKey)`
+
+2. **`src/routes/_app/_auth/dashboard/debate.tsx`** — Fixed context framing:
+   - Changed `ADDITIONAL USER INSTRUCTIONS` → `ADDITIONAL CONTEXT FROM USER`
+   - Removed the "follow these instructions" language
+
+---
+
+### Session Handoff
+
+**Status**: Complete ✅
+
+**What This Enables**:
+- New scenarios only need to define inputs in their config
+- Form auto-adapts to show only relevant fields
+- No code changes needed to add/remove fields from a scenario
+
+**The Principle**: Config defines what's shown. If it's not in the config, it doesn't exist in the UI.
+
+---

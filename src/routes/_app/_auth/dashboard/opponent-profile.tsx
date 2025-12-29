@@ -22,7 +22,6 @@ import {
   SCENARIOS,
   getScenariosByCategory,
   DEFAULT_SCENARIO_ID,
-  type ScenarioConfig,
 } from "@/scenarios";
 
 export const Route = createFileRoute("/_app/_auth/dashboard/opponent-profile")({
@@ -146,6 +145,34 @@ function LabeledSelect({
   );
 }
 
+/**
+ * Check if a field should be shown based on scenario config.
+ */
+function shouldShowField(
+  scenario: (typeof SCENARIOS)[string],
+  fieldKey: string,
+): boolean {
+  const fieldConfig = scenario?.inputs?.[fieldKey];
+  // Show if field is defined in config AND not explicitly hidden
+  return fieldConfig !== undefined && fieldConfig.hidden !== true;
+}
+
+/**
+ * Get field config with fallback.
+ */
+function getFieldConfig(
+  scenario: (typeof SCENARIOS)[string],
+  fieldKey: string,
+  defaults: { label: string; placeholder: string; helperText?: string },
+) {
+  const config = scenario?.inputs?.[fieldKey];
+  return {
+    label: config?.label || defaults.label,
+    placeholder: config?.placeholder || defaults.placeholder,
+    helperText: config?.helperText || defaults.helperText,
+  };
+}
+
 function OpponentProfile() {
   const navigate = useNavigate();
   const { data: user } = useQuery(convexQuery(api.app.getCurrentUser, {}));
@@ -159,60 +186,22 @@ function OpponentProfile() {
   const [scenarioType, setScenarioType] = useState(DEFAULT_SCENARIO_ID);
   const scenario = SCENARIOS[scenarioType];
   const scenariosByCategory = getScenariosByCategory();
+  const isDebate = scenario?.pipeline?.prepType === "debate";
 
   // ==========================================
-  // Required fields (Basic Info)
+  // Form Data - Single state object for all fields
   // ==========================================
-  const [name, setName] = useState("");
-  const [topic, setTopic] = useState("");
-  const [position, setPosition] = useState<"pro" | "con">("con");
-  const [style, setStyle] = useState("aggressive");
-  const [difficulty, setDifficulty] = useState("medium");
+  const [formData, setFormData] = useState<Record<string, string>>({
+    name: "",
+    topic: "",
+    position: "con",
+    style: "aggressive",
+    difficulty: "medium",
+  });
 
-  // ==========================================
-  // Audience Context (optional)
-  // ==========================================
-  const [audienceDescription, setAudienceDescription] = useState("");
-  const [audienceType, setAudienceType] = useState("");
-  const [audienceSize, setAudienceSize] = useState("");
-  const [audienceDisposition, setAudienceDisposition] = useState("");
-  const [debateFormat, setDebateFormat] = useState("");
-
-  // ==========================================
-  // Opponent Profile - About (optional)
-  // ==========================================
-  const [opponentDescription, setOpponentDescription] = useState("");
-  const [opponentOrganization, setOpponentOrganization] = useState("");
-  const [opponentCredentials, setOpponentCredentials] = useState("");
-  const [credentialWeaknesses, setCredentialWeaknesses] = useState("");
-  const [opponentDebateStyle, setOpponentDebateStyle] = useState("");
-  const [opponentRhetoricalTendencies, setOpponentRhetoricalTendencies] =
-    useState("");
-  const [opponentTriggers, setOpponentTriggers] = useState("");
-  const [opponentCharacterIssues, setOpponentCharacterIssues] = useState("");
-
-  // ==========================================
-  // Opponent Profile - Record (for traps)
-  // ==========================================
-  const [opponentPastStatements, setOpponentPastStatements] = useState("");
-  const [opponentContradictions, setOpponentContradictions] = useState("");
-  const [opponentTrackRecord, setOpponentTrackRecord] = useState("");
-
-  // ==========================================
-  // Opponent Profile - Steelmanning
-  // ==========================================
-  const [opponentStrongestArguments, setOpponentStrongestArguments] =
-    useState("");
-  const [opponentBestEvidence, setOpponentBestEvidence] = useState("");
-  const [opponentLikelyCritiques, setOpponentLikelyCritiques] = useState("");
-
-  // ==========================================
-  // User Context (optional)
-  // ==========================================
-  const [userResearch, setUserResearch] = useState("");
-  const [keyPointsToMake, setKeyPointsToMake] = useState("");
-  const [thingsToAvoid, setThingsToAvoid] = useState("");
-  const [toneDirectives, setToneDirectives] = useState("");
+  const updateField = (key: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
+  };
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -227,66 +216,41 @@ function OpponentProfile() {
     }
 
     // Validation for required fields
-    if (!name.trim()) {
+    if (!formData.name?.trim()) {
       setError("Opponent name is required");
       return;
     }
-    if (!topic.trim()) {
-      setError("Debate topic is required");
+    if (!formData.topic?.trim()) {
+      setError("Topic is required");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // Build the payload with all fields (optional fields will be undefined if empty)
-      const opponentId = await createOpponent({
-        // Required
-        name: name.trim(),
-        topic: topic.trim(),
-        position,
-        style,
-        difficulty,
-
-        // Scenario system
+      // Build payload - only include non-empty optional fields
+      const payload: Record<string, string | undefined> = {
+        name: formData.name.trim(),
+        topic: formData.topic.trim(),
+        position: formData.position || "con",
+        style: formData.style || "aggressive",
+        difficulty: formData.difficulty || "medium",
         scenarioType,
         prepType: scenario?.pipeline?.prepType || "debate",
+      };
 
-        // Audience context (only include if non-empty)
-        audienceDescription: audienceDescription.trim() || undefined,
-        audienceType: audienceType || undefined,
-        audienceSize: audienceSize || undefined,
-        audienceDisposition: audienceDisposition || undefined,
-        debateFormat: debateFormat || undefined,
-
-        // Opponent profile - about
-        opponentDescription: opponentDescription.trim() || undefined,
-        opponentOrganization: opponentOrganization.trim() || undefined,
-        opponentCredentials: opponentCredentials.trim() || undefined,
-        credentialWeaknesses: credentialWeaknesses.trim() || undefined,
-        opponentDebateStyle: opponentDebateStyle || undefined,
-        opponentRhetoricalTendencies:
-          opponentRhetoricalTendencies.trim() || undefined,
-        opponentTriggers: opponentTriggers.trim() || undefined,
-        opponentCharacterIssues: opponentCharacterIssues.trim() || undefined,
-
-        // Opponent profile - record (for traps)
-        opponentPastStatements: opponentPastStatements.trim() || undefined,
-        opponentContradictions: opponentContradictions.trim() || undefined,
-        opponentTrackRecord: opponentTrackRecord.trim() || undefined,
-
-        // Opponent profile - steelmanning
-        opponentStrongestArguments:
-          opponentStrongestArguments.trim() || undefined,
-        opponentBestEvidence: opponentBestEvidence.trim() || undefined,
-        opponentLikelyCritiques: opponentLikelyCritiques.trim() || undefined,
-
-        // User context
-        userResearch: userResearch.trim() || undefined,
-        keyPointsToMake: keyPointsToMake.trim() || undefined,
-        thingsToAvoid: thingsToAvoid.trim() || undefined,
-        toneDirectives: toneDirectives.trim() || undefined,
+      // Add all other fields that have values
+      Object.entries(formData).forEach(([key, value]) => {
+        if (
+          !["name", "topic", "position", "style", "difficulty"].includes(key)
+        ) {
+          if (typeof value === "string" && value.trim()) {
+            payload[key] = value.trim();
+          }
+        }
       });
+
+      const opponentId = await createOpponent(payload as any);
 
       // Navigate to prep screen with this opponent
       navigate({
@@ -312,8 +276,9 @@ function OpponentProfile() {
                 Create Opponent Profile
               </h2>
               <p className="text-sm font-normal text-primary/60">
-                Configure your debate. Required fields get you started. Optional
-                sections add context for more tailored AI prep.
+                {isDebate
+                  ? "Configure your debate. Required fields get you started. Optional sections add context for more tailored AI prep."
+                  : "Set up your practice session. Fill in the details to customize your AI practice partner."}
               </p>
             </div>
           </div>
@@ -363,7 +328,7 @@ function OpponentProfile() {
             </div>
 
             {/* ==========================================
-                SECTION 1: Basic Info (Always visible, required)
+                BASIC INFO (Always visible)
                 ========================================== */}
             <div className="flex flex-col gap-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
               <div className="flex items-center gap-2">
@@ -380,14 +345,18 @@ function OpponentProfile() {
                   htmlFor="name"
                   className="text-sm font-medium text-primary"
                 >
-                  Opponent Name
+                  {isDebate ? "Opponent Name" : "Practice Partner Name"}
                 </label>
                 <Input
                   id="name"
                   type="text"
-                  placeholder="e.g., Climate Skeptic, Senator Johnson, Policy Expert"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  placeholder={
+                    isDebate
+                      ? "e.g., Climate Skeptic, Senator Johnson, Policy Expert"
+                      : "e.g., Tough Prospect, Skeptical Investor"
+                  }
+                  value={formData.name || ""}
+                  onChange={(e) => updateField("name", e.target.value)}
                   required
                 />
               </div>
@@ -405,21 +374,21 @@ function OpponentProfile() {
                   type="text"
                   placeholder={
                     scenario?.inputs?.topic?.placeholder ||
-                    "e.g., Climate change requires immediate government intervention"
+                    "What is this session about?"
                   }
-                  value={topic}
-                  onChange={(e) => setTopic(e.target.value)}
+                  value={formData.topic || ""}
+                  onChange={(e) => updateField("topic", e.target.value)}
                   required
                 />
               </div>
 
-              {/* Your Position (hidden for non-debate scenarios) */}
-              {!scenario?.inputs?.position?.hidden && (
+              {/* Your Position (only for debate) */}
+              {shouldShowField(scenario, "position") && (
                 <LabeledSelect
                   id="position"
                   label={scenario?.inputs?.position?.label || "Your Position"}
-                  value={position}
-                  onChange={(v) => setPosition(v as "pro" | "con")}
+                  value={formData.position || "con"}
+                  onChange={(v) => updateField("position", v)}
                   options={[
                     { value: "pro", label: "Pro - I'm supporting this motion" },
                     { value: "con", label: "Con - I'm opposing this motion" },
@@ -432,12 +401,12 @@ function OpponentProfile() {
               )}
 
               <div className="grid grid-cols-2 gap-4">
-                {/* Debate Style */}
+                {/* AI Style */}
                 <LabeledSelect
                   id="style"
-                  label="AI Opponent Style"
-                  value={style}
-                  onChange={setStyle}
+                  label={isDebate ? "AI Opponent Style" : "AI Persona Style"}
+                  value={formData.style || "aggressive"}
+                  onChange={(v) => updateField("style", v)}
                   options={[
                     { value: "aggressive", label: "Aggressive" },
                     { value: "socratic", label: "Socratic" },
@@ -450,8 +419,8 @@ function OpponentProfile() {
                 <LabeledSelect
                   id="difficulty"
                   label="Difficulty Level"
-                  value={difficulty}
-                  onChange={setDifficulty}
+                  value={formData.difficulty || "medium"}
+                  onChange={(v) => updateField("difficulty", v)}
                   options={[
                     { value: "easy", label: "Easy" },
                     { value: "medium", label: "Medium" },
@@ -462,350 +431,592 @@ function OpponentProfile() {
             </div>
 
             {/* ==========================================
-                SECTION 2: About Your Opponent (collapsed)
+                GENERIC SCENARIOS: Simple flat fields
                 ========================================== */}
-            <CollapsibleSection
-              title="About Your Opponent"
-              description="Who are they? Background, style, and vulnerabilities (Chapter 4: The Three C's)"
-              icon={User}
-            >
-              <div className="flex flex-col gap-4">
-                <LabeledTextarea
-                  id="opponentDescription"
-                  label="Background"
-                  placeholder="Who is this person? What's their role, history, or relevance to this debate?"
-                  helperText="e.g., 'Conservative economist, former advisor to the Reagan administration, known for free-market advocacy'"
-                  value={opponentDescription}
-                  onChange={setOpponentDescription}
-                />
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label
-                      htmlFor="opponentOrganization"
-                      className="text-sm font-medium text-primary"
-                    >
-                      Organization / Affiliation
-                    </label>
-                    <Input
-                      id="opponentOrganization"
-                      type="text"
-                      placeholder="e.g., Cato Institute, Heritage Foundation"
-                      value={opponentOrganization}
-                      onChange={(e) => setOpponentOrganization(e.target.value)}
+            {!isDebate && (
+              <div className="flex flex-col gap-4 rounded-lg border border-border bg-card/50 p-4">
+                <div className="flex items-center gap-2">
+                  <User className="h-5 w-5 text-primary/60" />
+                  <h3 className="text-sm font-medium text-primary">
+                    Session Details
+                  </h3>
+                </div>
+                <div className="flex flex-col gap-4">
+                  {/* Opponent/Prospect Description */}
+                  {shouldShowField(scenario, "opponentDescription") && (
+                    <LabeledTextarea
+                      id="opponentDescription"
+                      {...getFieldConfig(scenario, "opponentDescription", {
+                        label: "Background",
+                        placeholder:
+                          "Who is this person? What's their context?",
+                      })}
+                      value={formData.opponentDescription || ""}
+                      onChange={(v) => updateField("opponentDescription", v)}
                     />
+                  )}
+
+                  {/* Talking Points / Objections */}
+                  {shouldShowField(scenario, "talkingPoints") && (
+                    <LabeledTextarea
+                      id="talkingPoints"
+                      {...getFieldConfig(scenario, "talkingPoints", {
+                        label: "Key Points",
+                        placeholder: "What should they focus on?",
+                      })}
+                      value={formData.talkingPoints || ""}
+                      onChange={(v) => updateField("talkingPoints", v)}
+                    />
+                  )}
+
+                  {/* Additional Context */}
+                  {shouldShowField(scenario, "additionalContext") && (
+                    <LabeledTextarea
+                      id="additionalContext"
+                      {...getFieldConfig(scenario, "additionalContext", {
+                        label: "Additional Context (Optional)",
+                        placeholder:
+                          "Any specific context or focus areas for this practice session...",
+                        helperText:
+                          "Free-form guidance to customize AI behavior",
+                      })}
+                      value={formData.additionalContext || ""}
+                      onChange={(v) => updateField("additionalContext", v)}
+                      rows={3}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ==========================================
+                DEBATE SCENARIOS: Rich collapsible sections
+                ========================================== */}
+            {isDebate && (
+              <>
+                {/* About Your Opponent */}
+                <CollapsibleSection
+                  title="About Your Opponent"
+                  description="Who are they? Background, style, and vulnerabilities (Chapter 4: The Three C's)"
+                  icon={User}
+                >
+                  <div className="flex flex-col gap-4">
+                    {shouldShowField(scenario, "opponentDescription") && (
+                      <LabeledTextarea
+                        id="opponentDescription"
+                        {...getFieldConfig(scenario, "opponentDescription", {
+                          label: "Background",
+                          placeholder:
+                            "Who is this person? What's their role, history, or relevance to this debate?",
+                          helperText:
+                            "e.g., 'Conservative economist, former advisor to the Reagan administration, known for free-market advocacy'",
+                        })}
+                        value={formData.opponentDescription || ""}
+                        onChange={(v) => updateField("opponentDescription", v)}
+                      />
+                    )}
+
+                    {shouldShowField(scenario, "opponentOrganization") && (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-1.5">
+                          <label
+                            htmlFor="opponentOrganization"
+                            className="text-sm font-medium text-primary"
+                          >
+                            Organization / Affiliation
+                          </label>
+                          <Input
+                            id="opponentOrganization"
+                            type="text"
+                            placeholder="e.g., Cato Institute, Heritage Foundation"
+                            value={formData.opponentOrganization || ""}
+                            onChange={(e) =>
+                              updateField(
+                                "opponentOrganization",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </div>
+
+                        {shouldShowField(scenario, "opponentDebateStyle") && (
+                          <LabeledSelect
+                            id="opponentDebateStyle"
+                            label="Their Debate Style"
+                            value={formData.opponentDebateStyle || ""}
+                            onChange={(v) =>
+                              updateField("opponentDebateStyle", v)
+                            }
+                            options={[
+                              { value: "", label: "— Select if known —" },
+                              {
+                                value: "gish galloper",
+                                label: "Gish Galloper (rapid-fire claims)",
+                              },
+                              {
+                                value: "academic",
+                                label: "Academic (evidence-heavy)",
+                              },
+                              {
+                                value: "emotional",
+                                label: "Emotional (appeals to feelings)",
+                              },
+                              {
+                                value: "socratic",
+                                label: "Socratic (trap questions)",
+                              },
+                              {
+                                value: "aggressive",
+                                label: "Aggressive (interrupts, bullies)",
+                              },
+                            ]}
+                          />
+                        )}
+                      </div>
+                    )}
+
+                    {shouldShowField(scenario, "opponentCredentials") && (
+                      <LabeledTextarea
+                        id="opponentCredentials"
+                        {...getFieldConfig(scenario, "opponentCredentials", {
+                          label: "Their Credentials",
+                          placeholder:
+                            "What expertise do they claim? Degrees, positions, experience?",
+                          helperText:
+                            "Hasan Chapter 4: 'Challenge their credentials — but only AFTER they've invoked them'",
+                        })}
+                        value={formData.opponentCredentials || ""}
+                        onChange={(v) => updateField("opponentCredentials", v)}
+                        rows={2}
+                      />
+                    )}
+
+                    {shouldShowField(scenario, "credentialWeaknesses") && (
+                      <LabeledTextarea
+                        id="credentialWeaknesses"
+                        {...getFieldConfig(scenario, "credentialWeaknesses", {
+                          label: "Credential Weaknesses",
+                          placeholder:
+                            "Where do their credentials fall short? Areas outside their expertise?",
+                          helperText:
+                            "e.g., 'PhD is in unrelated field', 'Funded by industry groups', 'No field experience'",
+                        })}
+                        value={formData.credentialWeaknesses || ""}
+                        onChange={(v) => updateField("credentialWeaknesses", v)}
+                        rows={2}
+                      />
+                    )}
+
+                    {shouldShowField(
+                      scenario,
+                      "opponentRhetoricalTendencies",
+                    ) && (
+                      <LabeledTextarea
+                        id="opponentRhetoricalTendencies"
+                        {...getFieldConfig(
+                          scenario,
+                          "opponentRhetoricalTendencies",
+                          {
+                            label: "Rhetorical Tendencies",
+                            placeholder:
+                              "How do they typically argue? Any patterns, habits, or tells?",
+                          },
+                        )}
+                        value={formData.opponentRhetoricalTendencies || ""}
+                        onChange={(v) =>
+                          updateField("opponentRhetoricalTendencies", v)
+                        }
+                        rows={2}
+                      />
+                    )}
+
+                    {shouldShowField(scenario, "opponentTriggers") && (
+                      <LabeledTextarea
+                        id="opponentTriggers"
+                        {...getFieldConfig(scenario, "opponentTriggers", {
+                          label: "Emotional Triggers",
+                          placeholder:
+                            "What topics make them defensive or emotional? What sets them off?",
+                          helperText:
+                            "Strategic provocation can expose weaknesses — Hasan Chapter 12: 'Keep Calm'",
+                        })}
+                        value={formData.opponentTriggers || ""}
+                        onChange={(v) => updateField("opponentTriggers", v)}
+                        rows={2}
+                      />
+                    )}
+
+                    {shouldShowField(scenario, "opponentCharacterIssues") && (
+                      <LabeledTextarea
+                        id="opponentCharacterIssues"
+                        {...getFieldConfig(
+                          scenario,
+                          "opponentCharacterIssues",
+                          {
+                            label: "Character / Credibility Issues",
+                            placeholder:
+                              "Conflicts of interest? Bias? Funding sources? Past scandals?",
+                            helperText:
+                              "Hasan's First C: 'Challenge their CHARACTER' — but use judiciously",
+                          },
+                        )}
+                        value={formData.opponentCharacterIssues || ""}
+                        onChange={(v) =>
+                          updateField("opponentCharacterIssues", v)
+                        }
+                        rows={2}
+                      />
+                    )}
                   </div>
+                </CollapsibleSection>
 
-                  <LabeledSelect
-                    id="opponentDebateStyle"
-                    label="Their Debate Style"
-                    value={opponentDebateStyle}
-                    onChange={setOpponentDebateStyle}
-                    options={[
-                      { value: "", label: "— Select if known —" },
-                      {
-                        value: "gish galloper",
-                        label: "Gish Galloper (rapid-fire claims)",
-                      },
-                      {
-                        value: "academic",
-                        label: "Academic (evidence-heavy)",
-                      },
-                      {
-                        value: "emotional",
-                        label: "Emotional (appeals to feelings)",
-                      },
-                      {
-                        value: "socratic",
-                        label: "Socratic (trap questions)",
-                      },
-                      {
-                        value: "aggressive",
-                        label: "Aggressive (interrupts, bullies)",
-                      },
-                    ]}
-                  />
-                </div>
+                {/* Opponent's Record */}
+                <CollapsibleSection
+                  title="Opponent's Record"
+                  description="Past statements and contradictions — for setting traps (Chapter 10: Booby Traps)"
+                  icon={AlertTriangle}
+                >
+                  <div className="flex flex-col gap-4">
+                    {shouldShowField(scenario, "opponentPastStatements") && (
+                      <LabeledTextarea
+                        id="opponentPastStatements"
+                        {...getFieldConfig(scenario, "opponentPastStatements", {
+                          label: "Past Statements / Quotes",
+                          placeholder:
+                            "Notable quotes, positions they've taken on record, past claims...",
+                          helperText:
+                            "Hasan's favorite trap: Quote them without attribution, get them to disagree, then reveal the source",
+                        })}
+                        value={formData.opponentPastStatements || ""}
+                        onChange={(v) =>
+                          updateField("opponentPastStatements", v)
+                        }
+                        rows={4}
+                      />
+                    )}
 
-                <LabeledTextarea
-                  id="opponentCredentials"
-                  label="Their Credentials"
-                  placeholder="What expertise do they claim? Degrees, positions, experience?"
-                  helperText="Hasan Chapter 4: 'Challenge their credentials — but only AFTER they've invoked them'"
-                  value={opponentCredentials}
-                  onChange={setOpponentCredentials}
-                  rows={2}
-                />
+                    {shouldShowField(scenario, "opponentContradictions") && (
+                      <LabeledTextarea
+                        id="opponentContradictions"
+                        {...getFieldConfig(scenario, "opponentContradictions", {
+                          label: "Known Contradictions",
+                          placeholder:
+                            "Times they've contradicted themselves, changed positions, or been inconsistent...",
+                          helperText:
+                            "'Earlier you said X, but now you're saying Y. Which is it?' — devastating if you have the receipts",
+                        })}
+                        value={formData.opponentContradictions || ""}
+                        onChange={(v) =>
+                          updateField("opponentContradictions", v)
+                        }
+                        rows={3}
+                      />
+                    )}
 
-                <LabeledTextarea
-                  id="credentialWeaknesses"
-                  label="Credential Weaknesses"
-                  placeholder="Where do their credentials fall short? Areas outside their expertise?"
-                  helperText="e.g., 'PhD is in unrelated field', 'Funded by industry groups', 'No field experience'"
-                  value={credentialWeaknesses}
-                  onChange={setCredentialWeaknesses}
-                  rows={2}
-                />
+                    {shouldShowField(scenario, "opponentTrackRecord") && (
+                      <LabeledTextarea
+                        id="opponentTrackRecord"
+                        {...getFieldConfig(scenario, "opponentTrackRecord", {
+                          label: "Track Record",
+                          placeholder:
+                            "Wrong predictions, debunked claims, failed policies they advocated...",
+                          helperText:
+                            "Hasan's Third C: 'Challenge their CLAIMS' — especially their track record of being wrong",
+                        })}
+                        value={formData.opponentTrackRecord || ""}
+                        onChange={(v) => updateField("opponentTrackRecord", v)}
+                        rows={3}
+                      />
+                    )}
+                  </div>
+                </CollapsibleSection>
 
-                <LabeledTextarea
-                  id="opponentRhetoricalTendencies"
-                  label="Rhetorical Tendencies"
-                  placeholder="How do they typically argue? Any patterns, habits, or tells?"
-                  value={opponentRhetoricalTendencies}
-                  onChange={setOpponentRhetoricalTendencies}
-                  rows={2}
-                />
+                {/* Steelmanning Their Case */}
+                <CollapsibleSection
+                  title="Steelmanning Their Case"
+                  description="Their best arguments, strongest evidence — know thy enemy (Chapter 15: Do Your Homework)"
+                  icon={Lightbulb}
+                >
+                  <div className="flex flex-col gap-4">
+                    {shouldShowField(
+                      scenario,
+                      "opponentStrongestArguments",
+                    ) && (
+                      <LabeledTextarea
+                        id="opponentStrongestArguments"
+                        {...getFieldConfig(
+                          scenario,
+                          "opponentStrongestArguments",
+                          {
+                            label: "Their Strongest Arguments",
+                            placeholder:
+                              "What's the best version of their case? Steelman it — don't strawman.",
+                            helperText:
+                              "Hasan: 'Constructing the most compelling form of your opponent's argument' prepares you to counter it",
+                          },
+                        )}
+                        value={formData.opponentStrongestArguments || ""}
+                        onChange={(v) =>
+                          updateField("opponentStrongestArguments", v)
+                        }
+                        rows={4}
+                      />
+                    )}
 
-                <LabeledTextarea
-                  id="opponentTriggers"
-                  label="Emotional Triggers"
-                  placeholder="What topics make them defensive or emotional? What sets them off?"
-                  helperText="Strategic provocation can expose weaknesses — Hasan Chapter 12: 'Keep Calm'"
-                  value={opponentTriggers}
-                  onChange={setOpponentTriggers}
-                  rows={2}
-                />
+                    {shouldShowField(scenario, "opponentBestEvidence") && (
+                      <LabeledTextarea
+                        id="opponentBestEvidence"
+                        {...getFieldConfig(scenario, "opponentBestEvidence", {
+                          label: "Their Best Evidence",
+                          placeholder:
+                            "What's their strongest proof? Which stats, studies, or examples will they cite?",
+                        })}
+                        value={formData.opponentBestEvidence || ""}
+                        onChange={(v) => updateField("opponentBestEvidence", v)}
+                        rows={3}
+                      />
+                    )}
 
-                <LabeledTextarea
-                  id="opponentCharacterIssues"
-                  label="Character / Credibility Issues"
-                  placeholder="Conflicts of interest? Bias? Funding sources? Past scandals?"
-                  helperText="Hasan's First C: 'Challenge their CHARACTER' — but use judiciously"
-                  value={opponentCharacterIssues}
-                  onChange={setOpponentCharacterIssues}
-                  rows={2}
-                />
-              </div>
-            </CollapsibleSection>
+                    {shouldShowField(scenario, "opponentLikelyCritiques") && (
+                      <LabeledTextarea
+                        id="opponentLikelyCritiques"
+                        {...getFieldConfig(
+                          scenario,
+                          "opponentLikelyCritiques",
+                          {
+                            label: "How They'll Attack You",
+                            placeholder:
+                              "What will they say against YOUR position? Anticipated critiques?",
+                            helperText:
+                              "Prepare counters for their most likely attacks — don't be caught off guard",
+                          },
+                        )}
+                        value={formData.opponentLikelyCritiques || ""}
+                        onChange={(v) =>
+                          updateField("opponentLikelyCritiques", v)
+                        }
+                        rows={3}
+                      />
+                    )}
+                  </div>
+                </CollapsibleSection>
 
-            {/* ==========================================
-                SECTION 3: Opponent's Record (for traps)
-                ========================================== */}
-            <CollapsibleSection
-              title="Opponent's Record"
-              description="Past statements and contradictions — for setting traps (Chapter 10: Booby Traps)"
-              icon={AlertTriangle}
-            >
-              <div className="flex flex-col gap-4">
-                <LabeledTextarea
-                  id="opponentPastStatements"
-                  label="Past Statements / Quotes"
-                  placeholder="Notable quotes, positions they've taken on record, past claims..."
-                  helperText="Hasan's favorite trap: Quote them without attribution, get them to disagree, then reveal the source"
-                  value={opponentPastStatements}
-                  onChange={setOpponentPastStatements}
-                  rows={4}
-                />
+                {/* Your Audience */}
+                <CollapsibleSection
+                  title="Your Audience"
+                  description="Who you're trying to persuade — the real judges (Chapter 1: Winning Over an Audience)"
+                  icon={Users}
+                >
+                  <div className="flex flex-col gap-4">
+                    {shouldShowField(scenario, "audienceDescription") && (
+                      <LabeledTextarea
+                        id="audienceDescription"
+                        {...getFieldConfig(scenario, "audienceDescription", {
+                          label: "Audience Description",
+                          placeholder:
+                            "Who will be watching? What are their concerns, values, knowledge level?",
+                          helperText:
+                            "Hasan: 'The audience is judge and jury — you're not convincing your opponent, you're convincing THEM'",
+                        })}
+                        value={formData.audienceDescription || ""}
+                        onChange={(v) => updateField("audienceDescription", v)}
+                        rows={3}
+                      />
+                    )}
 
-                <LabeledTextarea
-                  id="opponentContradictions"
-                  label="Known Contradictions"
-                  placeholder="Times they've contradicted themselves, changed positions, or been inconsistent..."
-                  helperText="'Earlier you said X, but now you're saying Y. Which is it?' — devastating if you have the receipts"
-                  value={opponentContradictions}
-                  onChange={setOpponentContradictions}
-                  rows={3}
-                />
+                    <div className="grid grid-cols-2 gap-4">
+                      {shouldShowField(scenario, "audienceType") && (
+                        <LabeledSelect
+                          id="audienceType"
+                          label="Audience Type"
+                          value={formData.audienceType || ""}
+                          onChange={(v) => updateField("audienceType", v)}
+                          options={[
+                            { value: "", label: "— Select type —" },
+                            { value: "general", label: "General Public" },
+                            { value: "academic", label: "Academic / Experts" },
+                            {
+                              value: "professional",
+                              label: "Professional / Industry",
+                            },
+                            {
+                              value: "political",
+                              label: "Political / Partisan",
+                            },
+                            { value: "legal", label: "Legal / Judicial" },
+                            { value: "media", label: "Media / Journalists" },
+                          ]}
+                        />
+                      )}
 
-                <LabeledTextarea
-                  id="opponentTrackRecord"
-                  label="Track Record"
-                  placeholder="Wrong predictions, debunked claims, failed policies they advocated..."
-                  helperText="Hasan's Third C: 'Challenge their CLAIMS' — especially their track record of being wrong"
-                  value={opponentTrackRecord}
-                  onChange={setOpponentTrackRecord}
-                  rows={3}
-                />
-              </div>
-            </CollapsibleSection>
+                      {shouldShowField(scenario, "audienceSize") && (
+                        <LabeledSelect
+                          id="audienceSize"
+                          label="Audience Size"
+                          value={formData.audienceSize || ""}
+                          onChange={(v) => updateField("audienceSize", v)}
+                          options={[
+                            { value: "", label: "— Select size —" },
+                            { value: "one-on-one", label: "One-on-One" },
+                            {
+                              value: "small group",
+                              label: "Small Group (5-20)",
+                            },
+                            { value: "large", label: "Large (50+)" },
+                            {
+                              value: "broadcast",
+                              label: "Broadcast / Recorded",
+                            },
+                          ]}
+                        />
+                      )}
+                    </div>
 
-            {/* ==========================================
-                SECTION 4: Steelmanning Their Case
-                ========================================== */}
-            <CollapsibleSection
-              title="Steelmanning Their Case"
-              description="Their best arguments, strongest evidence — know thy enemy (Chapter 15: Do Your Homework)"
-              icon={Lightbulb}
-            >
-              <div className="flex flex-col gap-4">
-                <LabeledTextarea
-                  id="opponentStrongestArguments"
-                  label="Their Strongest Arguments"
-                  placeholder="What's the best version of their case? Steelman it — don't strawman."
-                  helperText="Hasan: 'Constructing the most compelling form of your opponent's argument' prepares you to counter it"
-                  value={opponentStrongestArguments}
-                  onChange={setOpponentStrongestArguments}
-                  rows={4}
-                />
+                    <div className="grid grid-cols-2 gap-4">
+                      {shouldShowField(scenario, "audienceDisposition") && (
+                        <LabeledSelect
+                          id="audienceDisposition"
+                          label="Audience Disposition"
+                          value={formData.audienceDisposition || ""}
+                          onChange={(v) =>
+                            updateField("audienceDisposition", v)
+                          }
+                          options={[
+                            { value: "", label: "— Select disposition —" },
+                            {
+                              value: "friendly",
+                              label: "Friendly (already on your side)",
+                            },
+                            {
+                              value: "neutral",
+                              label: "Neutral (open to persuasion)",
+                            },
+                            {
+                              value: "skeptical",
+                              label: "Skeptical (needs convincing)",
+                            },
+                            {
+                              value: "hostile",
+                              label: "Hostile (against you)",
+                            },
+                          ]}
+                        />
+                      )}
 
-                <LabeledTextarea
-                  id="opponentBestEvidence"
-                  label="Their Best Evidence"
-                  placeholder="What's their strongest proof? Which stats, studies, or examples will they cite?"
-                  value={opponentBestEvidence}
-                  onChange={setOpponentBestEvidence}
-                  rows={3}
-                />
+                      {shouldShowField(scenario, "debateFormat") && (
+                        <LabeledSelect
+                          id="debateFormat"
+                          label="Debate Format"
+                          value={formData.debateFormat || ""}
+                          onChange={(v) => updateField("debateFormat", v)}
+                          options={[
+                            { value: "", label: "— Select format —" },
+                            { value: "formal debate", label: "Formal Debate" },
+                            { value: "panel", label: "Panel Discussion" },
+                            { value: "interview", label: "Interview / Q&A" },
+                            { value: "town hall", label: "Town Hall" },
+                            {
+                              value: "podcast",
+                              label: "Podcast / Conversation",
+                            },
+                            { value: "written", label: "Written Exchange" },
+                          ]}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </CollapsibleSection>
 
-                <LabeledTextarea
-                  id="opponentLikelyCritiques"
-                  label="How They'll Attack You"
-                  placeholder="What will they say against YOUR position? Anticipated critiques?"
-                  helperText="Prepare counters for their most likely attacks — don't be caught off guard"
-                  value={opponentLikelyCritiques}
-                  onChange={setOpponentLikelyCritiques}
-                  rows={3}
-                />
-              </div>
-            </CollapsibleSection>
+                {/* Your Context & Directives */}
+                <CollapsibleSection
+                  title="Your Context & Directives"
+                  description="Your research, points to emphasize, things to avoid — guide the AI"
+                  icon={FileText}
+                >
+                  <div className="flex flex-col gap-4">
+                    {shouldShowField(scenario, "userResearch") && (
+                      <LabeledTextarea
+                        id="userResearch"
+                        {...getFieldConfig(scenario, "userResearch", {
+                          label: "Your Research / Notes",
+                          placeholder:
+                            "Paste articles, notes, data, anything you've gathered that should inform the prep...",
+                          helperText:
+                            "This will be synthesized with AI research to create tailored debate materials",
+                        })}
+                        value={formData.userResearch || ""}
+                        onChange={(v) => updateField("userResearch", v)}
+                        rows={5}
+                      />
+                    )}
 
-            {/* ==========================================
-                SECTION 5: Your Audience
-                ========================================== */}
-            <CollapsibleSection
-              title="Your Audience"
-              description="Who you're trying to persuade — the real judges (Chapter 1: Winning Over an Audience)"
-              icon={Users}
-            >
-              <div className="flex flex-col gap-4">
-                <LabeledTextarea
-                  id="audienceDescription"
-                  label="Audience Description"
-                  placeholder="Who will be watching? What are their concerns, values, knowledge level?"
-                  helperText="Hasan: 'The audience is judge and jury — you're not convincing your opponent, you're convincing THEM'"
-                  value={audienceDescription}
-                  onChange={setAudienceDescription}
-                  rows={3}
-                />
+                    {shouldShowField(scenario, "keyPointsToMake") && (
+                      <LabeledTextarea
+                        id="keyPointsToMake"
+                        {...getFieldConfig(scenario, "keyPointsToMake", {
+                          label: "Key Points to Emphasize",
+                          placeholder:
+                            "What arguments or themes do you definitely want to include?",
+                          helperText:
+                            "The AI will ensure these points are woven into your prep materials",
+                        })}
+                        value={formData.keyPointsToMake || ""}
+                        onChange={(v) => updateField("keyPointsToMake", v)}
+                        rows={3}
+                      />
+                    )}
 
-                <div className="grid grid-cols-2 gap-4">
-                  <LabeledSelect
-                    id="audienceType"
-                    label="Audience Type"
-                    value={audienceType}
-                    onChange={setAudienceType}
-                    options={[
-                      { value: "", label: "— Select type —" },
-                      { value: "general", label: "General Public" },
-                      { value: "academic", label: "Academic / Experts" },
-                      {
-                        value: "professional",
-                        label: "Professional / Industry",
-                      },
-                      { value: "political", label: "Political / Partisan" },
-                      { value: "legal", label: "Legal / Judicial" },
-                      { value: "media", label: "Media / Journalists" },
-                    ]}
-                  />
+                    {shouldShowField(scenario, "thingsToAvoid") && (
+                      <LabeledTextarea
+                        id="thingsToAvoid"
+                        {...getFieldConfig(scenario, "thingsToAvoid", {
+                          label: "Things to Avoid",
+                          placeholder:
+                            "Topics, arguments, or approaches you want to steer clear of...",
+                          helperText:
+                            "e.g., 'Don't engage on inflation — I'm less prepared there', 'Avoid personal attacks'",
+                        })}
+                        value={formData.thingsToAvoid || ""}
+                        onChange={(v) => updateField("thingsToAvoid", v)}
+                        rows={2}
+                      />
+                    )}
 
-                  <LabeledSelect
-                    id="audienceSize"
-                    label="Audience Size"
-                    value={audienceSize}
-                    onChange={setAudienceSize}
-                    options={[
-                      { value: "", label: "— Select size —" },
-                      { value: "one-on-one", label: "One-on-One" },
-                      { value: "small group", label: "Small Group (5-20)" },
-                      { value: "large", label: "Large (50+)" },
-                      { value: "broadcast", label: "Broadcast / Recorded" },
-                    ]}
-                  />
-                </div>
+                    {shouldShowField(scenario, "toneDirectives") && (
+                      <LabeledTextarea
+                        id="toneDirectives"
+                        {...getFieldConfig(scenario, "toneDirectives", {
+                          label: "Tone & Style Preferences",
+                          placeholder:
+                            "How do you want to come across? Aggressive, measured, humorous, academic...?",
+                          helperText:
+                            "This shapes the zingers, openings, and overall rhetorical approach",
+                        })}
+                        value={formData.toneDirectives || ""}
+                        onChange={(v) => updateField("toneDirectives", v)}
+                        rows={2}
+                      />
+                    )}
 
-                <div className="grid grid-cols-2 gap-4">
-                  <LabeledSelect
-                    id="audienceDisposition"
-                    label="Audience Disposition"
-                    value={audienceDisposition}
-                    onChange={setAudienceDisposition}
-                    options={[
-                      { value: "", label: "— Select disposition —" },
-                      {
-                        value: "friendly",
-                        label: "Friendly (already on your side)",
-                      },
-                      {
-                        value: "neutral",
-                        label: "Neutral (open to persuasion)",
-                      },
-                      {
-                        value: "skeptical",
-                        label: "Skeptical (needs convincing)",
-                      },
-                      { value: "hostile", label: "Hostile (against you)" },
-                    ]}
-                  />
-
-                  <LabeledSelect
-                    id="debateFormat"
-                    label="Debate Format"
-                    value={debateFormat}
-                    onChange={setDebateFormat}
-                    options={[
-                      { value: "", label: "— Select format —" },
-                      { value: "formal debate", label: "Formal Debate" },
-                      { value: "panel", label: "Panel Discussion" },
-                      { value: "interview", label: "Interview / Q&A" },
-                      { value: "town hall", label: "Town Hall" },
-                      { value: "podcast", label: "Podcast / Conversation" },
-                      { value: "written", label: "Written Exchange" },
-                    ]}
-                  />
-                </div>
-              </div>
-            </CollapsibleSection>
-
-            {/* ==========================================
-                SECTION 6: Your Context & Directives
-                ========================================== */}
-            <CollapsibleSection
-              title="Your Context & Directives"
-              description="Your research, points to emphasize, things to avoid — guide the AI"
-              icon={FileText}
-            >
-              <div className="flex flex-col gap-4">
-                <LabeledTextarea
-                  id="userResearch"
-                  label="Your Research / Notes"
-                  placeholder="Paste articles, notes, data, anything you've gathered that should inform the prep..."
-                  helperText="This will be synthesized with AI research to create tailored debate materials"
-                  value={userResearch}
-                  onChange={setUserResearch}
-                  rows={5}
-                />
-
-                <LabeledTextarea
-                  id="keyPointsToMake"
-                  label="Key Points to Emphasize"
-                  placeholder="What arguments or themes do you definitely want to include?"
-                  helperText="The AI will ensure these points are woven into your prep materials"
-                  value={keyPointsToMake}
-                  onChange={setKeyPointsToMake}
-                  rows={3}
-                />
-
-                <LabeledTextarea
-                  id="thingsToAvoid"
-                  label="Things to Avoid"
-                  placeholder="Topics, arguments, or approaches you want to steer clear of..."
-                  helperText="e.g., 'Don't engage on inflation — I'm less prepared there', 'Avoid personal attacks'"
-                  value={thingsToAvoid}
-                  onChange={setThingsToAvoid}
-                  rows={2}
-                />
-
-                <LabeledTextarea
-                  id="toneDirectives"
-                  label="Tone & Style Preferences"
-                  placeholder="How do you want to come across? Aggressive, measured, humorous, academic...?"
-                  helperText="This shapes the zingers, openings, and overall rhetorical approach"
-                  value={toneDirectives}
-                  onChange={setToneDirectives}
-                  rows={2}
-                />
-              </div>
-            </CollapsibleSection>
+                    {shouldShowField(scenario, "additionalContext") && (
+                      <LabeledTextarea
+                        id="additionalContext"
+                        {...getFieldConfig(scenario, "additionalContext", {
+                          label: "Additional Context (Optional)",
+                          placeholder:
+                            "Any specific context for this practice session...",
+                          helperText:
+                            "Free-form guidance to customize AI behavior",
+                        })}
+                        value={formData.additionalContext || ""}
+                        onChange={(v) => updateField("additionalContext", v)}
+                        rows={3}
+                      />
+                    )}
+                  </div>
+                </CollapsibleSection>
+              </>
+            )}
 
             {/* ==========================================
                 Error and Actions

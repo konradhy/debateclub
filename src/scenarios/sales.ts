@@ -39,6 +39,12 @@ const salesInputs = {
     placeholder:
       "e.g., Too expensive, Already have a solution, Need to think about it, Need approval from...",
   },
+  additionalContext: {
+    label: "Additional Context (Optional)",
+    placeholder:
+      "Specific things to focus on, avoid, or unique situational details for this practice...",
+    helperText: "Free-form guidance to customize the prospect's behavior",
+  },
 };
 
 /**
@@ -120,7 +126,9 @@ BACKGROUND:
 PRODUCT/SERVICE THEY'RE SELLING:
 {{TOPIC}}
 
-YOUR GOAL: Be a realistic cold prospect - skeptical, short on time, needs convincing. Make them earn your attention.`,
+YOUR GOAL: Be a realistic cold prospect - skeptical, short on time, needs convincing. Make them earn your attention.
+
+{{ADDITIONAL_CONTEXT}}`,
 
     voice: {
       provider: "11labs",
@@ -175,7 +183,9 @@ BACKGROUND:
 PRODUCT/SERVICE:
 {{TOPIC}}
 
-YOUR GOAL: Be a warm prospect with legitimate concerns. You WANT to buy if they can address your concerns, but you won't be a pushover.`,
+YOUR GOAL: Be a warm prospect with legitimate concerns. You WANT to buy if they can address your concerns, but you won't be a pushover.
+
+{{ADDITIONAL_CONTEXT}}`,
 
     voice: {
       provider: "11labs",
