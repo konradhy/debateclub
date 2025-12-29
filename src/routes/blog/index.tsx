@@ -111,6 +111,25 @@ function BlogIndex() {
       iconBgColor: "#3C4A32",
       iconColor: "#C8D4B8",
     },
+    {
+      to: "/blog/scenario-customer-discovery",
+      badge: "Entrepreneur Practice",
+      badgeColor: "#A8B08C",
+      badgeTextColor: "#3A4030",
+      title: "How to Learn What Customers Actually Need Before You Build",
+      description:
+        "Stop pitching your solution in discovery interviews. Learn how to uncover real customer needs by asking about the past, not hypothetical futures. Avoid building what nobody wants.",
+      techniques: [
+        "Past-Focused Questions",
+        "Problem Focus",
+        "Discovery Depth",
+        "Validation Quality",
+      ],
+      readTime: "14 min read",
+      icon: "🔍",
+      iconBgColor: "#3C4A32",
+      iconColor: "#C8D4B8",
+    },
   ];
 
   // Shuffle and limit practice guides
@@ -233,7 +252,7 @@ function BlogIndex() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
           className="mb-16"
         >
           <p className="mb-4 text-sm font-medium" style={{ color: "#888880" }}>
@@ -286,7 +305,7 @@ function BlogIndex() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
           className="mb-16"
         >
           <p className="mb-4 text-sm font-medium" style={{ color: "#888880" }}>
@@ -409,7 +428,7 @@ function BlogIndex() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.17 }}
+          transition={{ duration: 0.5, delay: 0.25 }}
           className="mb-16"
         >
           <p className="mb-4 text-sm font-medium" style={{ color: "#888880" }}>
@@ -467,7 +486,10 @@ function BlogIndex() {
                       </span>
                       <h3
                         className="mb-2 text-2xl font-bold transition-colors group-hover:opacity-70"
-                        style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+                        style={{
+                          color: "#2A2A20",
+                          fontFamily: "Georgia, serif",
+                        }}
                       >
                         {guide.title}
                       </h3>
@@ -523,7 +545,7 @@ function BlogIndex() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
           className="mb-16"
         >
           <p className="mb-4 text-sm font-medium" style={{ color: "#888880" }}>
@@ -610,7 +632,7 @@ function BlogIndex() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.25 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
         >
           <h2
             className="mb-4 text-3xl font-bold lg:text-4xl"
@@ -709,6 +731,88 @@ function BlogIndex() {
           </p>
         </div>
       </footer>
+
+      {/* Structured Data (JSON-LD) for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "WebSite",
+                "@id": "https://debateclub.ai/#website",
+                url: "https://debateclub.ai/",
+                name: "DebateClub",
+                description:
+                  "AI-powered practice platform for high-stakes conversations",
+                publisher: {
+                  "@id": "https://debateclub.ai/#organization",
+                },
+              },
+              {
+                "@type": "Organization",
+                "@id": "https://debateclub.ai/#organization",
+                name: "DebateClub",
+                url: "https://debateclub.ai/",
+                logo: {
+                  "@type": "ImageObject",
+                  url: "https://debateclub.ai/images/landingpage.png",
+                },
+              },
+              {
+                "@type": "Blog",
+                "@id": "https://debateclub.ai/blog#blog",
+                url: "https://debateclub.ai/blog",
+                name: "DebateClub Blog",
+                description:
+                  "Practice guides for sales, negotiations, and debate",
+                publisher: {
+                  "@id": "https://debateclub.ai/#organization",
+                },
+                blogPost: practiceGuides.map((guide) => ({
+                  "@type": "BlogPosting",
+                  headline: guide.title,
+                  description: guide.description,
+                  url: `https://debateclub.ai${guide.to}`,
+                  articleSection: guide.badge,
+                  keywords: guide.techniques.join(", "),
+                })),
+              },
+              {
+                "@type": "ItemList",
+                itemListElement: practiceGuides.map((guide, index) => ({
+                  "@type": "ListItem",
+                  position: index + 1,
+                  item: {
+                    "@type": "Article",
+                    name: guide.title,
+                    description: guide.description,
+                    url: `https://debateclub.ai${guide.to}`,
+                  },
+                })),
+              },
+              {
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                  {
+                    "@type": "ListItem",
+                    position: 1,
+                    name: "Home",
+                    item: "https://debateclub.ai/",
+                  },
+                  {
+                    "@type": "ListItem",
+                    position: 2,
+                    name: "Blog",
+                    item: "https://debateclub.ai/blog",
+                  },
+                ],
+              },
+            ],
+          }),
+        }}
+      />
     </div>
   );
 }

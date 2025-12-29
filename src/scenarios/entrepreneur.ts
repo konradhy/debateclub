@@ -333,9 +333,225 @@ YOUR GOAL: Give them a realistic early-stage sales experience. Be skeptical but 
 };
 
 /**
+ * Customer Discovery Input Config
+ */
+const customerDiscoveryInputs = {
+  topic: {
+    label: "What problem are you researching?",
+    placeholder:
+      "e.g., Team collaboration workflows, project management pain points, customer onboarding challenges",
+  },
+  position: {
+    label: "Position",
+    placeholder: "",
+    hidden: true,
+  },
+  opponentDescription: {
+    label: "Who are you interviewing?",
+    placeholder:
+      "What's their role, company type, and relevance to the problem? (e.g., Product Manager at Series B SaaS, handles team collaboration daily)",
+    helperText:
+      "The person should have recently experienced the problem you're researching",
+  },
+  talkingPoints: {
+    label: "Your hypothesis about the problem",
+    placeholder:
+      "e.g., Teams struggle with version control, Current tools are too complicated, Nobody knows who's working on what",
+    helperText:
+      "What do you think their pain points are? (The interview will test this)",
+  },
+  additionalContext: {
+    label: "Additional Context (Optional)",
+    placeholder:
+      "Specific behaviors to simulate (e.g., make them slightly skeptical, have them mention trying 2-3 solutions already)...",
+    helperText:
+      "Customize the prospect's personality, receptiveness, or specific details to practice",
+  },
+};
+
+/**
+ * Customer Discovery Analysis Config
+ *
+ * Based on Rob Fitzpatrick's "The Mom Test", Steve Blank's "Customer Development",
+ * Cindy Alvarez's "Lean Customer Development", and LEANFoundry best practices.
+ */
+const customerDiscoveryAnalysis: AnalysisConfig = {
+  framework: "customer-discovery",
+  scoreCategories: [
+    {
+      name: "Problem Focus",
+      description:
+        "Did they stay focused on the customer's problem, or pitch their solution? (Fitzpatrick, Blank)",
+    },
+    {
+      name: "Specificity",
+      description:
+        'Did they ask about past events ("last time"), or hypothetical futures ("would you")? (Fitzpatrick)',
+    },
+    {
+      name: "Discovery Depth",
+      description:
+        "Did they dig beneath surface answers with 'why,' or accept the first answer? (Alvarez)",
+    },
+    {
+      name: "Validation Quality",
+      description:
+        "Did they seek concrete evidence (spend, commitment), or accept enthusiasm? (Fitzpatrick, LEANFoundry)",
+    },
+  ],
+  systemPrompt: `Analyze this customer discovery interview using Rob Fitzpatrick's "The Mom Test", Steve Blank's "Customer Development", and Cindy Alvarez's "Lean Customer Development" frameworks.
+
+TRANSCRIPT:
+{{TRANSCRIPT}}
+
+PROBLEM BEING RESEARCHED:
+{{TOPIC}}
+
+INTERVIEWEE BACKGROUND:
+{{OPPONENT_DESC}}
+
+Evaluate each category with specific examples from the transcript:
+
+PROBLEM FOCUS (1-10):
+- Did they keep conversation entirely on the customer's problem?
+- Did they avoid mentioning or pitching their solution?
+- Did they ask about the customer's current workflow and challenges?
+- Red flags: Explaining their idea, asking "would this solve your problem?", describing features
+- Good signals: "Tell me about...", "How are you dealing with...", "What's the hardest part..."
+
+SPECIFICITY (1-10):
+- Did they ask about specific past events ("Tell me about the last time...")?
+- Did they avoid hypothetical questions ("Would you buy this?")?
+- Did they get concrete details (tools used, time spent, money paid)?
+- Red flags: "Would you...", "Do you think...", "How much would you pay..."
+- Good signals: "Last time", "What happened", "What did you do", "How long did it take"
+
+DISCOVERY DEPTH (1-10):
+- Did they dig 2-3 levels deep with "why" questions?
+- Did they uncover root causes beyond surface complaints?
+- Did they explore what they've already tried to solve the problem?
+- Red flags: Accepting first answer, moving to next topic quickly, surface-level exploration
+- Good signals: "Why was that hard?", "Why does that matter?", "What else have you tried?"
+
+VALIDATION QUALITY (1-10):
+- Did they ask about current spend on workarounds/solutions?
+- Did they seek commitment (intro to others, follow-up time) vs compliments?
+- Did they avoid accepting vague enthusiasm as validation?
+- Red flags: Accepting "That sounds interesting!", asking for opinions, satisfied with "I'd probably use that"
+- Good signals: "What are you using now?", "What does that cost?", "Can you introduce me to others?", "What have you paid for?"
+
+For each category, provide:
+1. Specific score (1-10) with justification
+2. Quote 2-3 examples from the transcript showing good or bad technique
+3. Actionable feedback on what to improve next time
+
+Overall assessment: Did this interview produce useful, unbiased information about whether the problem is real and urgent?`,
+};
+
+/**
+ * Entrepreneur - Customer Discovery
+ *
+ * Interview someone to understand their problems before building a solution.
+ * Tests ability to ask unbiased questions, avoid pitching, dig deep, and validate
+ * whether a problem is real.
+ *
+ * Based on Rob Fitzpatrick's "The Mom Test", Steve Blank's "Customer Development",
+ * and Cindy Alvarez's "Lean Customer Development".
+ */
+export const CustomerDiscoveryScenario: ScenarioConfig = {
+  id: "entrepreneur-customer-discovery",
+  name: "Entrepreneur - Customer Discovery",
+  category: "entrepreneur",
+
+  pipeline: entrepreneurPipeline,
+  inputs: customerDiscoveryInputs,
+  analysis: customerDiscoveryAnalysis,
+
+  assistant: {
+    firstMessage: [
+      "Hi! Yeah, I got your message. I have about 20 minutes – what did you want to know?",
+      "Hey there. I'm between meetings, but I can chat for a bit. You mentioned wanting to learn about project management workflows?",
+      "Sure, I can talk. Just so you know, I've done a few of these startup interviews before – are you going to pitch me something?",
+      "Good morning. Yes, we can discuss this. What specific aspect were you hoping to understand?",
+      "Okay, I'm interested to hear what this is about. How did you find me exactly?",
+    ],
+
+    systemPrompt: `You are a professional who recently dealt with the problem the interviewer is researching. You're willing to help but slightly guarded – this is a real conversation, not a sales pitch.
+
+CONTEXT:
+You have real experience with the problem area and have tried existing solutions. You're willing to share your experience if asked good questions, but you're not going to volunteer everything upfront.
+
+PROBLEM AREA BEING RESEARCHED:
+{{TOPIC}}
+
+YOUR BACKGROUND:
+{{OPPONENT_DESC}}
+
+YOUR HYPOTHESIS ABOUT THEIR IDEA:
+{{TALKING_POINTS}}
+
+BEHAVIORAL RULES:
+
+OPENING STANCE:
+- Be polite but slightly guarded – you're giving them time but not unlimited enthusiasm
+- Don't volunteer details about your problem upfront – make them ask
+- If they mention a product/solution early, become skeptical
+
+REWARD GOOD TECHNIQUE:
+- IF they ask about specific past events ("last time this happened") → Become detailed, share concrete stories with timelines, costs, tools used
+- IF they ask "How are you dealing with it now?" → Reveal current workarounds, what you're paying, time spent
+- IF they dig deeper with "Why was that hard?" or "Why does that matter?" → Open up more, reveal deeper motivations (budget impact, competitive pressure, career risk)
+- IF they stay curious about your world without pitching → Share more freely, become more detailed
+- IF they ask permission before probing ("Mind if I ask...") → Appreciate the respect, become warmer
+- IF they ask about what you've already tried → Share failed solutions, what you've paid for, what didn't work
+
+PUNISH BAD TECHNIQUE:
+- IF they pitch their solution or explain their idea → Give polite but vague enthusiasm: "That sounds interesting!" (but don't commit to anything)
+- IF they ask hypothetical questions ("Would you buy this?", "Do you think...") → Give optimistic lies to be polite: "Probably!", "I'd definitely use that!" (meaningless responses)
+- IF they ask leading questions or assume your problems → Correct them: "Well, actually that's not quite right..."
+- IF they accept your first surface-level answer without digging → Stay at surface level, don't reveal deeper insights
+- IF they talk more than 40% of the time → Lose interest, give shorter answers, become less engaged
+- IF they ask for your opinion on their idea → Give fake enthusiasm with zero commitment
+- IF they don't ask about current solutions/spend → Don't volunteer cost/budget information
+
+REALISTIC DYNAMICS:
+- Start with guarded/professional tone, warm up if they ask good questions about your experience
+- Give surface-level answers first ("It's annoying", "It takes too long")
+- Only reveal deeper layers (real cost, emotional stakes, budget impact) after 2-3 "why" follow-ups
+- If they haven't tried solutions themselves, you can mention that (signals low urgency)
+- You have a real problem but it's not urgent unless they make you feel it through good questions
+- If they end without asking for commitment (intro, follow-up, feedback), give vague "Let me think about it"
+- If they seek concrete commitment, either demonstrate real interest OR reveal hesitation (testing urgency)
+
+INFORMATION YOU CAN SHARE (if asked good questions):
+- Specific story about last time you encountered the problem
+- Current tools/workarounds you use and their limitations
+- Time spent or money paid on current solutions
+- What you've tried in the past that didn't work
+- Why this problem matters to you (if they dig with "why" questions)
+- Whether you'd introduce them to others with same problem (real test of urgency)
+
+YOUR GOAL: Give them a realistic customer discovery experience. Reward past-focused, problem-focused questions with detailed insights. Punish pitching and hypotheticals with polite enthusiasm that means nothing. Test whether they can uncover truth or just collect polite lies.
+
+{{ADDITIONAL_CONTEXT}}`,
+
+    voice: {
+      provider: "11labs",
+      voiceId: "21m00Tcm4TlvDq8ikWAM", // Professional but approachable
+      stability: 0.75,
+      similarityBoost: 0.8,
+    },
+
+    temperature: 0.7,
+    canInterrupt: false, // Customer discovery should let them talk
+  },
+};
+
+/**
  * Grouped export for entrepreneur scenarios.
  */
 export const EntrepreneurScenarios = {
   pitch: InvestorPitchScenario,
   "early-sales": EarlyCustomerSalesScenario,
+  "customer-discovery": CustomerDiscoveryScenario,
 };

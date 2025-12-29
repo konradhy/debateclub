@@ -13,13 +13,17 @@ Instead of all this pause/mute /toggle idea, tha's wrong. Rather we should have 
 14. Major - The ability to set what skill you want to improve and either drill or get specific analysis or something. Something that allows conscious practice on dinvidual elements. 
 15. Minor - Redo design and ux for major pages
 16. Translate all pages to every languge, using i18next? Or alternative. Slow and steady. Create bug tracker so users can let me know when i have grammar or other language related bugs.and show a warning when user uses non english that i'll need their help. 
+17. Some scenarios break when you add the extra context and other lower fields. Suggesting that they aren't even used. Investigate. 
+18. A nice error page for all error prone scenarios. Do it indivudally. 
+19. Better waiting state for analysis page. Use tiny llm to generate a couple phrases of what's happening to help make time move faster. This should be a component/hook that can be used across the app. 
+20. Analys page should 1. Link to the approprite scenario blog posts for further reading. 2. Should recommend books or studies for frther reading. This probably means me mapping like a large list of items they can pick and win. . But this would be great seo fodder. 
 
 LONG TERM
 1. Story Mode (homework for life, drills from book, auto sorting)
 2. Legal Mode that follows the rules of Jamaican court
 3. Podcast Mode (back and forth communication about a topic)
 4. Interview Mode 
-5. 
+5. (NEXT) Multiplayer - Challange someone to a debate. Friend or Random. Debate coach listens in. Follows set structure. Link sent to friends or internet at large to vote on the winner. CATER TO THE EGOS OF STREAMERS ANd InFLuencers. 
 
 
 

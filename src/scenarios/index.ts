@@ -16,6 +16,7 @@ import {
   EntrepreneurScenarios,
   InvestorPitchScenario,
   EarlyCustomerSalesScenario,
+  CustomerDiscoveryScenario,
 } from "./entrepreneur";
 import type {
   ScenarioConfig,
@@ -37,6 +38,7 @@ export const SCENARIOS: Record<string, ScenarioConfig> = {
   "sales-contract-negotiation": ContractNegotiationScenario,
   "entrepreneur-pitch": InvestorPitchScenario,
   "entrepreneur-early-sales": EarlyCustomerSalesScenario,
+  "entrepreneur-customer-discovery": CustomerDiscoveryScenario,
 };
 
 /**
@@ -100,4 +102,5 @@ export {
   EntrepreneurScenarios,
   InvestorPitchScenario,
   EarlyCustomerSalesScenario,
+  CustomerDiscoveryScenario,
 } from "./entrepreneur";

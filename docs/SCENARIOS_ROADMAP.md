@@ -1,6 +1,6 @@
 # Scenarios Roadmap
 
-**Last Updated:** December 28, 2025
+**Last Updated:** December 29, 2025
 
 Master tracking document for all practice scenarios. An LLM can use this to systematically build scenarios by following `SCENARIO_CONTENT_RUBRIC.md` and `SCENARIO_IMPLEMENTATION_RUBRIC.md`.
 
@@ -40,7 +40,7 @@ Master tracking document for all practice scenarios. An LLM can use this to syst
 | Demo Follow-up | sales | ✅ | `convex/scenarios/sales.ts` | - | - |
 | Investor Pitch | entrepreneur | ✅ | `convex/scenarios/entrepreneur.ts` | - | - |
 | Contract Negotiation | sales | ✅ | `convex/scenarios/sales.ts` | `research/scenario-contract-negotiation-research.md` | `marketing-plans/scenario-contract-negotiation.md`, `src/routes/blog/scenario-contract-negotiation.tsx` |
-| Customer Discovery | entrepreneur | 🚧 | `convex/scenarios/entrepreneur.ts` | - | - |
+| Customer Discovery | entrepreneur | ✅ | `src/scenarios/entrepreneur.ts` | `research/scenario-customer-discovery-research.md` | `marketing-plans/scenario-customer-discovery.md`, `src/routes/blog/scenario-customer-discovery.tsx` |
 | Early Customer Sales | entrepreneur | ✅ | `src/scenarios/entrepreneur.ts` | `research/scenario-early-customer-sales-research.md` | `marketing-plans/scenario-early-customer-sales.md`, `src/routes/blog/scenario-early-customer-sales.tsx` |
 | Treatment Refusal | healthcare | 📋 | `convex/scenarios/healthcare.ts` | - | - |
 | Bad News Delivery | healthcare | 📋 | `convex/scenarios/healthcare.ts` | - | - |
@@ -60,13 +60,9 @@ Each brief provides enough context for an LLM to begin the research phase.
 
 ### 🚧 In Progress
 
-ALSOOOO DON'T FORGET AN ELEVATOR PITCH. GOOD OLD FASHIONED ELEVATOR PITCH. 
-#### Customer Discovery
-- **Category:** Entrepreneur
-- **Core tension:** Interviewing potential customers to validate problem/solution without pitching
-- **Why it matters:** Most startups fail because they build something nobody wants
-- **What users will practice:** Asking questions that reveal truth vs. polite lies, listening vs. pitching
-- **Compellability:** VERY HIGH - every entrepreneur needs this, often done wrong
+None currently. See Backlog below for next priorities.
+
+ALSOOOO DON'T FORGET AN ELEVATOR PITCH. GOOD OLD FASHIONED ELEVATOR PITCH.
 
 ### 📋 Backlog (Priority Order)
 

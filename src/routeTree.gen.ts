@@ -29,6 +29,7 @@ import { Route as BlogStrikeEmotionalChordRouteImport } from './routes/blog/stri
 import { Route as BlogStickTheLandingRouteImport } from './routes/blog/stick-the-landing'
 import { Route as BlogSpotTheWeaknessRouteImport } from './routes/blog/spot-the-weakness'
 import { Route as BlogScenarioEarlyCustomerSalesRouteImport } from './routes/blog/scenario-early-customer-sales'
+import { Route as BlogScenarioCustomerDiscoveryRouteImport } from './routes/blog/scenario-customer-discovery'
 import { Route as BlogScenarioContractNegotiationRouteImport } from './routes/blog/scenario-contract-negotiation'
 import { Route as BlogReadAnyRoomRouteImport } from './routes/blog/read-any-room'
 import { Route as BlogOwnYourWeaknessesRouteImport } from './routes/blog/own-your-weaknesses'
@@ -164,6 +165,12 @@ const BlogScenarioEarlyCustomerSalesRoute =
   BlogScenarioEarlyCustomerSalesRouteImport.update({
     id: '/blog/scenario-early-customer-sales',
     path: '/blog/scenario-early-customer-sales',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const BlogScenarioCustomerDiscoveryRoute =
+  BlogScenarioCustomerDiscoveryRouteImport.update({
+    id: '/blog/scenario-customer-discovery',
+    path: '/blog/scenario-customer-discovery',
     getParentRoute: () => rootRouteImport,
   } as any)
 const BlogScenarioContractNegotiationRoute =
@@ -338,6 +345,7 @@ export interface FileRoutesByFullPath {
   '/blog/own-your-weaknesses': typeof BlogOwnYourWeaknessesRoute
   '/blog/read-any-room': typeof BlogReadAnyRoomRoute
   '/blog/scenario-contract-negotiation': typeof BlogScenarioContractNegotiationRoute
+  '/blog/scenario-customer-discovery': typeof BlogScenarioCustomerDiscoveryRoute
   '/blog/scenario-early-customer-sales': typeof BlogScenarioEarlyCustomerSalesRoute
   '/blog/spot-the-weakness': typeof BlogSpotTheWeaknessRoute
   '/blog/stick-the-landing': typeof BlogStickTheLandingRoute
@@ -387,6 +395,7 @@ export interface FileRoutesByTo {
   '/blog/own-your-weaknesses': typeof BlogOwnYourWeaknessesRoute
   '/blog/read-any-room': typeof BlogReadAnyRoomRoute
   '/blog/scenario-contract-negotiation': typeof BlogScenarioContractNegotiationRoute
+  '/blog/scenario-customer-discovery': typeof BlogScenarioCustomerDiscoveryRoute
   '/blog/scenario-early-customer-sales': typeof BlogScenarioEarlyCustomerSalesRoute
   '/blog/spot-the-weakness': typeof BlogSpotTheWeaknessRoute
   '/blog/stick-the-landing': typeof BlogStickTheLandingRoute
@@ -436,6 +445,7 @@ export interface FileRoutesById {
   '/blog/own-your-weaknesses': typeof BlogOwnYourWeaknessesRoute
   '/blog/read-any-room': typeof BlogReadAnyRoomRoute
   '/blog/scenario-contract-negotiation': typeof BlogScenarioContractNegotiationRoute
+  '/blog/scenario-customer-discovery': typeof BlogScenarioCustomerDiscoveryRoute
   '/blog/scenario-early-customer-sales': typeof BlogScenarioEarlyCustomerSalesRoute
   '/blog/spot-the-weakness': typeof BlogSpotTheWeaknessRoute
   '/blog/stick-the-landing': typeof BlogStickTheLandingRoute
@@ -487,6 +497,7 @@ export interface FileRouteTypes {
     | '/blog/own-your-weaknesses'
     | '/blog/read-any-room'
     | '/blog/scenario-contract-negotiation'
+    | '/blog/scenario-customer-discovery'
     | '/blog/scenario-early-customer-sales'
     | '/blog/spot-the-weakness'
     | '/blog/stick-the-landing'
@@ -536,6 +547,7 @@ export interface FileRouteTypes {
     | '/blog/own-your-weaknesses'
     | '/blog/read-any-room'
     | '/blog/scenario-contract-negotiation'
+    | '/blog/scenario-customer-discovery'
     | '/blog/scenario-early-customer-sales'
     | '/blog/spot-the-weakness'
     | '/blog/stick-the-landing'
@@ -584,6 +596,7 @@ export interface FileRouteTypes {
     | '/blog/own-your-weaknesses'
     | '/blog/read-any-room'
     | '/blog/scenario-contract-negotiation'
+    | '/blog/scenario-customer-discovery'
     | '/blog/scenario-early-customer-sales'
     | '/blog/spot-the-weakness'
     | '/blog/stick-the-landing'
@@ -635,6 +648,7 @@ export interface RootRouteChildren {
   BlogOwnYourWeaknessesRoute: typeof BlogOwnYourWeaknessesRoute
   BlogReadAnyRoomRoute: typeof BlogReadAnyRoomRoute
   BlogScenarioContractNegotiationRoute: typeof BlogScenarioContractNegotiationRoute
+  BlogScenarioCustomerDiscoveryRoute: typeof BlogScenarioCustomerDiscoveryRoute
   BlogScenarioEarlyCustomerSalesRoute: typeof BlogScenarioEarlyCustomerSalesRoute
   BlogSpotTheWeaknessRoute: typeof BlogSpotTheWeaknessRoute
   BlogStickTheLandingRoute: typeof BlogStickTheLandingRoute
@@ -793,6 +807,13 @@ declare module '@tanstack/react-router' {
       path: '/blog/scenario-early-customer-sales'
       fullPath: '/blog/scenario-early-customer-sales'
       preLoaderRoute: typeof BlogScenarioEarlyCustomerSalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/scenario-customer-discovery': {
+      id: '/blog/scenario-customer-discovery'
+      path: '/blog/scenario-customer-discovery'
+      fullPath: '/blog/scenario-customer-discovery'
+      preLoaderRoute: typeof BlogScenarioCustomerDiscoveryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/scenario-contract-negotiation': {
@@ -1117,6 +1138,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogOwnYourWeaknessesRoute: BlogOwnYourWeaknessesRoute,
   BlogReadAnyRoomRoute: BlogReadAnyRoomRoute,
   BlogScenarioContractNegotiationRoute: BlogScenarioContractNegotiationRoute,
+  BlogScenarioCustomerDiscoveryRoute: BlogScenarioCustomerDiscoveryRoute,
   BlogScenarioEarlyCustomerSalesRoute: BlogScenarioEarlyCustomerSalesRoute,
   BlogSpotTheWeaknessRoute: BlogSpotTheWeaknessRoute,
   BlogStickTheLandingRoute: BlogStickTheLandingRoute,

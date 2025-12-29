@@ -525,13 +525,11 @@ Styled quote with attribution. Use for impactful quotes from sources.
 - ❌ "simulation" → Use "practice," "practice engine," "DebateClub"
 - ❌ "AI" or "AI opponent" → Use "buyer," "investor," "patient" (the actual role)
 - ❌ "the AI responds" → Use "the system responds," "the buyer responds"
-- ❌ Em dashes (—) or double hyphens (--) → Use en dash (–) or restructure
 
 ### Always Use
 - ✅ "practice engine" for the system
 - ✅ Role names for the opponent (buyer, investor, patient, etc.)
 - ✅ "system detects," "system measures," "the practice"
-- ✅ En dash (–) for parenthetical thoughts if needed
 
 ### Source Balance
 - ✅ Cite 3-5 different authors/frameworks throughout the article
