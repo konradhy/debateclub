@@ -400,34 +400,37 @@ function OpponentProfile() {
                 />
               )}
 
-              <div className="grid grid-cols-2 gap-4">
-                {/* AI Style */}
-                <LabeledSelect
-                  id="style"
-                  label={isDebate ? "AI Opponent Style" : "AI Persona Style"}
-                  value={formData.style || "aggressive"}
-                  onChange={(v) => updateField("style", v)}
-                  options={[
-                    { value: "aggressive", label: "Aggressive" },
-                    { value: "socratic", label: "Socratic" },
-                    { value: "academic", label: "Academic" },
-                    { value: "political", label: "Political" },
-                  ]}
-                />
+              {/* Only show style and difficulty for debate scenarios */}
+              {isDebate && (
+                <div className="grid grid-cols-2 gap-4">
+                  {/* AI Style */}
+                  <LabeledSelect
+                    id="style"
+                    label="AI Opponent Style"
+                    value={formData.style || "aggressive"}
+                    onChange={(v) => updateField("style", v)}
+                    options={[
+                      { value: "aggressive", label: "Aggressive" },
+                      { value: "socratic", label: "Socratic" },
+                      { value: "academic", label: "Academic" },
+                      { value: "political", label: "Political" },
+                    ]}
+                  />
 
-                {/* Difficulty */}
-                <LabeledSelect
-                  id="difficulty"
-                  label="Difficulty Level"
-                  value={formData.difficulty || "medium"}
-                  onChange={(v) => updateField("difficulty", v)}
-                  options={[
-                    { value: "easy", label: "Easy" },
-                    { value: "medium", label: "Medium" },
-                    { value: "hard", label: "Hard" },
-                  ]}
-                />
-              </div>
+                  {/* Difficulty */}
+                  <LabeledSelect
+                    id="difficulty"
+                    label="Difficulty Level"
+                    value={formData.difficulty || "medium"}
+                    onChange={(v) => updateField("difficulty", v)}
+                    options={[
+                      { value: "easy", label: "Easy" },
+                      { value: "medium", label: "Medium" },
+                      { value: "hard", label: "Hard" },
+                    ]}
+                  />
+                </div>
+              )}
             </div>
 
             {/* ==========================================

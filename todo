@@ -1,19 +1,18 @@
-1. ✅ Login with passwords or something easier than email OTP [Ch.6]
-Absolutely critical and next step. A way to control the AI behaviour so it can be a petulant teenage, a spouse, a witness being cross examined. etc, to make my marketing claims true. Look at each use case and what i promised, include a version for that. 
-Redesign the oponent page. There are so many fields, it needs tabs, adnvanced features sections and a whole redesign. 
+
+1.Major -Redesign the oponent page. There are so many fields, it needs tabs, adnvanced features sections and a whole redesign. Note Debate should be the main thing. The scenarios is like switching to a side thing. This hierarchy must be respected somehow.
 2. New debate style, aimed at casual conversations with friends, family etc. 
 Instead of all this pause/mute /toggle idea, tha's wrong. Rather we should have some ai modes that will interrupt you and some that wont. A default then a toggle. 
 3. I want to be able to write into an llm some context after research generation. LLM will take this context, along with the prior generated items and redo all the fields. 
-4. I want a list of other points to consider for the debate
-5. MAJOR - The evidence for the argument frames is currently empty. This is important, and should be fleshed out with sources when possible. Perhaps it might need an expandable tab so that things can fit
-6. argument frame should also show an example quote of the frame work in action. 
-8. ✅ Ability to add a text description of the audience as well as the opponent before hand. This might include things such as demographics, past statements, theories, etc [Ch.7]
+4. MAJOR - The evidence for the argument frames is currently empty. This is important, and should be fleshed out with sources when possible. Perhaps it might need an expandable tab so that things can fit
+5. argument frame should also show an example quote of the frame work in action. 
 9. ✅ Opponent intelligence should have a supporting evidence section as well. Both for their argument as well as my counters to them [Ch.7 - steelmanning section: opponentBestEvidence, opponentStrongestArguments]
 10. I need to be able to edit opponent intelligence. I should ask, why this wasn't originally included. That might be important. 
 11. Receipts should include examples of how to deploy in action. 
 12. The length of the Opening and closing statements feel short. Perhaps make them adjustable, what does the book suggest. We also need an easy to read and skim booklet so that someone can at least understand the argument their supposed to be mating. Like we need a thing that you read, should be a 7 minute read or so and when you're done you have a mental model of wha tyou're about to get into. 
 13. More interactive loading state. Showing exactly where each thing is. For things that can be run in parallel. do so. Begin showing the fields as they populate... Have an automatic filled in version with glash, while we wait on more. with a clear caveat. Three forms. of waiting, instant with flash, deepresearch and the firecrawl method. Will need to time those last two, and get an average of how long each takes. 
-14. Major - 
+14. Major - The ability to set what skill you want to improve and either drill or get specific analysis or something. Something that allows conscious practice on dinvidual elements. 
+15. Minor - Redo design and ux for major pages
+16. Translate all pages to every languge, using i18next? Or alternative. Slow and steady. Create bug tracker so users can let me know when i have grammar or other language related bugs.and show a warning when user uses non english that i'll need their help. 
 
 LONG TERM
 1. Story Mode (homework for life, drills from book, auto sorting)
@@ -21,3 +20,6 @@ LONG TERM
 3. Podcast Mode (back and forth communication about a topic)
 4. Interview Mode 
 5. 
+
+
+

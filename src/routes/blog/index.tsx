@@ -15,24 +15,50 @@ import { useState } from "react";
 export const Route = createFileRoute("/blog/")({
   head: () => ({
     meta: [
-      { title: "12 Debate Techniques to Win Any Argument | DebateClub" },
+      {
+        title:
+          "Practice Guides for Sales, Negotiations & Debate | DebateClub Blog",
+      },
       {
         name: "description",
         content:
-          "Evidence timing, emotional appeals, killer questions, handling Gish Gallops. Deep guides on every technique from Mehdi Hasan's Win Every Argument.",
+          "Research-backed practice guides for contract negotiation, early customer sales, investor pitches, and debate. Master high-stakes conversations with AI-powered training across 12 Mehdi Hasan techniques.",
       },
       {
+        name: "keywords",
+        content:
+          "sales negotiation, customer sales, debate techniques, contract negotiation, sales training, negotiation training, Mehdi Hasan, Win Every Argument",
+      },
+      // Open Graph tags
+      {
         property: "og:title",
-        content: "12 Debate Techniques to Win Any Argument | DebateClub",
+        content:
+          "Practice Guides for Sales, Negotiations & Debate | DebateClub Blog",
       },
       {
         property: "og:description",
         content:
-          "Evidence timing, emotional appeals, killer questions, handling Gish Gallops. Deep guides on every technique from Mehdi Hasan's Win Every Argument.",
+          "Research-backed practice guides for contract negotiation, early customer sales, investor pitches, and debate. Master high-stakes conversations with AI-powered training.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://debateclub.ai/blog" },
       { property: "og:image", content: "/images/landingpage.png" },
       { property: "og:site_name", content: "DebateClub" },
+      // Twitter Card tags
+      { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:title",
+        content:
+          "Practice Guides for Sales, Negotiations & Debate | DebateClub",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Research-backed guides for contract negotiation, early customer sales, and debate techniques. Practice high-stakes conversations with AI.",
+      },
+      { name: "twitter:image", content: "/images/landingpage.png" },
+      // Canonical URL
+      { tagName: "link", rel: "canonical", href: "https://debateclub.ai/blog" },
     ],
   }),
   component: BlogIndex,
@@ -44,6 +70,54 @@ export const Route = createFileRoute("/blog/")({
 function BlogIndex() {
   const [showAllUseCases, setShowAllUseCases] = useState(false);
   const [showAllTechniques, setShowAllTechniques] = useState(false);
+  const [showAllGuides, setShowAllGuides] = useState(false);
+
+  const practiceGuides = [
+    {
+      to: "/blog/scenario-contract-negotiation",
+      badge: "Sales Negotiation",
+      badgeColor: "#A8B08C",
+      badgeTextColor: "#3A4030",
+      title: "How to Negotiate Contracts Without Leaving Money on the Table",
+      description:
+        "They want 30% off, extended terms, and a free pilot. You panic and cave. Learn the 8 research-backed techniques from FBI negotiator Chris Voss and sales expert Reed Holden that help you defend value without being combative.",
+      techniques: [
+        "Tactical Empathy",
+        "Anchoring",
+        "Trade Don't Discount",
+        "Calibrated Questions",
+      ],
+      readTime: "12 min read",
+      icon: "$",
+      iconBgColor: "#3C4A32",
+      iconColor: "#C8D4B8",
+    },
+    {
+      to: "/blog/scenario-early-customer-sales",
+      badge: "Entrepreneur Practice",
+      badgeColor: "#A8B08C",
+      badgeTextColor: "#3A4030",
+      title: "How to Land Your First 10 Customers Without Case Studies",
+      description:
+        "No logos. No references. No social proof. Learn the research-backed techniques for selling to early customers when conviction is all you have.",
+      techniques: [
+        "Problem Amplification",
+        "Vision Selling",
+        "Objection Reframing",
+        "Commitment Extraction",
+      ],
+      readTime: "12 min read",
+      icon: "🚀",
+      iconBgColor: "#3C4A32",
+      iconColor: "#C8D4B8",
+    },
+  ];
+
+  // Shuffle and limit practice guides
+  const shuffledGuides = [...practiceGuides].sort(() => Math.random() - 0.5);
+  const displayedGuides = showAllGuides
+    ? shuffledGuides
+    : shuffledGuides.slice(0, 3);
 
   const useCases = [
     {
@@ -137,6 +211,24 @@ function BlogIndex() {
 
       {/* Main Content */}
       <main className="mx-auto max-w-4xl px-8 py-16">
+        {/* Page Title (H1) - Visually subtle but SEO important */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-12 text-center"
+        >
+          <h1
+            className="mb-3 text-4xl font-bold lg:text-5xl"
+            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+          >
+            Practice Guides for High-Stakes Conversations
+          </h1>
+          <p className="text-lg" style={{ color: "#5C5C54" }}>
+            Research-backed techniques for sales, negotiations, and debate
+          </p>
+        </motion.div>
+
         {/* Featured Article */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -313,6 +405,120 @@ function BlogIndex() {
           </div>
         </motion.div>
 
+        {/* Practice Guides Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.17 }}
+          className="mb-16"
+        >
+          <p className="mb-4 text-sm font-medium" style={{ color: "#888880" }}>
+            Practice Guides
+          </p>
+          <h2
+            className="mb-4 text-3xl font-bold lg:text-4xl"
+            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+          >
+            Real-World Scenarios
+          </h2>
+          <p className="mb-8 text-lg" style={{ color: "#5C5C54" }}>
+            Deep dives into the high-stakes conversations you actually face.
+            Research-backed techniques you can practice today.
+          </p>
+
+          <div className="space-y-6">
+            {displayedGuides.map((guide, index) => (
+              <motion.div
+                key={guide.to}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1, duration: 0.3 }}
+              >
+                <Link
+                  to={guide.to as "/blog/scenario-contract-negotiation"}
+                  className="group block overflow-hidden rounded-xl transition-all duration-300 hover:shadow-xl"
+                  style={{
+                    backgroundColor: "#FAFAF8",
+                    border: "1px solid #E8E4DA",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+                  }}
+                >
+                  <div className="flex flex-col md:flex-row md:items-center gap-6 p-8">
+                    <div
+                      className="flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-xl"
+                      style={{ backgroundColor: guide.iconBgColor }}
+                    >
+                      <span
+                        className="text-3xl font-bold"
+                        style={{ color: guide.iconColor }}
+                      >
+                        {guide.icon}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <span
+                        className="mb-2 inline-block rounded-md px-3 py-1 text-xs font-medium"
+                        style={{
+                          backgroundColor: guide.badgeColor,
+                          color: guide.badgeTextColor,
+                        }}
+                      >
+                        {guide.badge}
+                      </span>
+                      <h3
+                        className="mb-2 text-2xl font-bold transition-colors group-hover:opacity-70"
+                        style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+                      >
+                        {guide.title}
+                      </h3>
+                      <p
+                        className="mb-3 leading-relaxed"
+                        style={{ color: "#5C5C54" }}
+                      >
+                        {guide.description}
+                      </p>
+                      <div
+                        className="flex flex-wrap gap-2 text-xs"
+                        style={{ color: "#888880" }}
+                      >
+                        {guide.techniques.map((technique) => (
+                          <span key={technique}>• {technique}</span>
+                        ))}
+                        <span>• {guide.readTime}</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+
+          {practiceGuides.length > 3 && (
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={() => setShowAllGuides(!showAllGuides)}
+                className="flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-medium transition-all duration-200 hover:shadow-md"
+                style={{
+                  backgroundColor: "#FAFAF8",
+                  color: "#2A2A20",
+                  border: "1px solid #E8E4DA",
+                }}
+              >
+                {showAllGuides ? (
+                  <>
+                    Show Less <ChevronUp className="h-4 w-4" />
+                  </>
+                ) : (
+                  <>
+                    Show All {practiceGuides.length} Guides{" "}
+                    <ChevronDown className="h-4 w-4" />
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+        </motion.div>
+
         {/* Who It's For Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -334,7 +540,7 @@ function BlogIndex() {
             and perform.
           </p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {displayedUseCases.map((useCase, index) => (
+            {displayedUseCases.map((useCase) => (
               <Link
                 key={useCase.to}
                 to={useCase.to}
@@ -365,7 +571,10 @@ function BlogIndex() {
                 >
                   {useCase.title}
                 </h3>
-                <p className="text-sm leading-relaxed" style={{ color: "#5C5C54" }}>
+                <p
+                  className="text-sm leading-relaxed"
+                  style={{ color: "#5C5C54" }}
+                >
                   {useCase.desc}
                 </p>
               </Link>
@@ -425,7 +634,7 @@ function BlogIndex() {
               transition={{ delay: index * 0.05, duration: 0.3 }}
             >
               <Link
-                to={`/blog/${technique.id}`}
+                to={`/blog/${technique.id}` as "/blog/read-any-room"}
                 className="block rounded-xl border-l-4 p-6 transition-all duration-200 hover:shadow-lg"
                 style={{
                   backgroundColor: "#FAFAF8",

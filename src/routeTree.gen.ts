@@ -28,6 +28,8 @@ import { Route as BlogTheCrossedQuillsRouteImport } from './routes/blog/the-cros
 import { Route as BlogStrikeEmotionalChordRouteImport } from './routes/blog/strike-emotional-chord'
 import { Route as BlogStickTheLandingRouteImport } from './routes/blog/stick-the-landing'
 import { Route as BlogSpotTheWeaknessRouteImport } from './routes/blog/spot-the-weakness'
+import { Route as BlogScenarioEarlyCustomerSalesRouteImport } from './routes/blog/scenario-early-customer-sales'
+import { Route as BlogScenarioContractNegotiationRouteImport } from './routes/blog/scenario-contract-negotiation'
 import { Route as BlogReadAnyRoomRouteImport } from './routes/blog/read-any-room'
 import { Route as BlogOwnYourWeaknessesRouteImport } from './routes/blog/own-your-weaknesses'
 import { Route as BlogMakeItStickRouteImport } from './routes/blog/make-it-stick'
@@ -158,6 +160,18 @@ const BlogSpotTheWeaknessRoute = BlogSpotTheWeaknessRouteImport.update({
   path: '/blog/spot-the-weakness',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogScenarioEarlyCustomerSalesRoute =
+  BlogScenarioEarlyCustomerSalesRouteImport.update({
+    id: '/blog/scenario-early-customer-sales',
+    path: '/blog/scenario-early-customer-sales',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const BlogScenarioContractNegotiationRoute =
+  BlogScenarioContractNegotiationRouteImport.update({
+    id: '/blog/scenario-contract-negotiation',
+    path: '/blog/scenario-contract-negotiation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const BlogReadAnyRoomRoute = BlogReadAnyRoomRouteImport.update({
   id: '/blog/read-any-room',
   path: '/blog/read-any-room',
@@ -323,6 +337,8 @@ export interface FileRoutesByFullPath {
   '/blog/make-it-stick': typeof BlogMakeItStickRoute
   '/blog/own-your-weaknesses': typeof BlogOwnYourWeaknessesRoute
   '/blog/read-any-room': typeof BlogReadAnyRoomRoute
+  '/blog/scenario-contract-negotiation': typeof BlogScenarioContractNegotiationRoute
+  '/blog/scenario-early-customer-sales': typeof BlogScenarioEarlyCustomerSalesRoute
   '/blog/spot-the-weakness': typeof BlogSpotTheWeaknessRoute
   '/blog/stick-the-landing': typeof BlogStickTheLandingRoute
   '/blog/strike-emotional-chord': typeof BlogStrikeEmotionalChordRoute
@@ -370,6 +386,8 @@ export interface FileRoutesByTo {
   '/blog/make-it-stick': typeof BlogMakeItStickRoute
   '/blog/own-your-weaknesses': typeof BlogOwnYourWeaknessesRoute
   '/blog/read-any-room': typeof BlogReadAnyRoomRoute
+  '/blog/scenario-contract-negotiation': typeof BlogScenarioContractNegotiationRoute
+  '/blog/scenario-early-customer-sales': typeof BlogScenarioEarlyCustomerSalesRoute
   '/blog/spot-the-weakness': typeof BlogSpotTheWeaknessRoute
   '/blog/stick-the-landing': typeof BlogStickTheLandingRoute
   '/blog/strike-emotional-chord': typeof BlogStrikeEmotionalChordRoute
@@ -417,6 +435,8 @@ export interface FileRoutesById {
   '/blog/make-it-stick': typeof BlogMakeItStickRoute
   '/blog/own-your-weaknesses': typeof BlogOwnYourWeaknessesRoute
   '/blog/read-any-room': typeof BlogReadAnyRoomRoute
+  '/blog/scenario-contract-negotiation': typeof BlogScenarioContractNegotiationRoute
+  '/blog/scenario-early-customer-sales': typeof BlogScenarioEarlyCustomerSalesRoute
   '/blog/spot-the-weakness': typeof BlogSpotTheWeaknessRoute
   '/blog/stick-the-landing': typeof BlogStickTheLandingRoute
   '/blog/strike-emotional-chord': typeof BlogStrikeEmotionalChordRoute
@@ -466,6 +486,8 @@ export interface FileRouteTypes {
     | '/blog/make-it-stick'
     | '/blog/own-your-weaknesses'
     | '/blog/read-any-room'
+    | '/blog/scenario-contract-negotiation'
+    | '/blog/scenario-early-customer-sales'
     | '/blog/spot-the-weakness'
     | '/blog/stick-the-landing'
     | '/blog/strike-emotional-chord'
@@ -513,6 +535,8 @@ export interface FileRouteTypes {
     | '/blog/make-it-stick'
     | '/blog/own-your-weaknesses'
     | '/blog/read-any-room'
+    | '/blog/scenario-contract-negotiation'
+    | '/blog/scenario-early-customer-sales'
     | '/blog/spot-the-weakness'
     | '/blog/stick-the-landing'
     | '/blog/strike-emotional-chord'
@@ -559,6 +583,8 @@ export interface FileRouteTypes {
     | '/blog/make-it-stick'
     | '/blog/own-your-weaknesses'
     | '/blog/read-any-room'
+    | '/blog/scenario-contract-negotiation'
+    | '/blog/scenario-early-customer-sales'
     | '/blog/spot-the-weakness'
     | '/blog/stick-the-landing'
     | '/blog/strike-emotional-chord'
@@ -608,6 +634,8 @@ export interface RootRouteChildren {
   BlogMakeItStickRoute: typeof BlogMakeItStickRoute
   BlogOwnYourWeaknessesRoute: typeof BlogOwnYourWeaknessesRoute
   BlogReadAnyRoomRoute: typeof BlogReadAnyRoomRoute
+  BlogScenarioContractNegotiationRoute: typeof BlogScenarioContractNegotiationRoute
+  BlogScenarioEarlyCustomerSalesRoute: typeof BlogScenarioEarlyCustomerSalesRoute
   BlogSpotTheWeaknessRoute: typeof BlogSpotTheWeaknessRoute
   BlogStickTheLandingRoute: typeof BlogStickTheLandingRoute
   BlogStrikeEmotionalChordRoute: typeof BlogStrikeEmotionalChordRoute
@@ -758,6 +786,20 @@ declare module '@tanstack/react-router' {
       path: '/blog/spot-the-weakness'
       fullPath: '/blog/spot-the-weakness'
       preLoaderRoute: typeof BlogSpotTheWeaknessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/scenario-early-customer-sales': {
+      id: '/blog/scenario-early-customer-sales'
+      path: '/blog/scenario-early-customer-sales'
+      fullPath: '/blog/scenario-early-customer-sales'
+      preLoaderRoute: typeof BlogScenarioEarlyCustomerSalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/scenario-contract-negotiation': {
+      id: '/blog/scenario-contract-negotiation'
+      path: '/blog/scenario-contract-negotiation'
+      fullPath: '/blog/scenario-contract-negotiation'
+      preLoaderRoute: typeof BlogScenarioContractNegotiationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/read-any-room': {
@@ -1074,6 +1116,8 @@ const rootRouteChildren: RootRouteChildren = {
   BlogMakeItStickRoute: BlogMakeItStickRoute,
   BlogOwnYourWeaknessesRoute: BlogOwnYourWeaknessesRoute,
   BlogReadAnyRoomRoute: BlogReadAnyRoomRoute,
+  BlogScenarioContractNegotiationRoute: BlogScenarioContractNegotiationRoute,
+  BlogScenarioEarlyCustomerSalesRoute: BlogScenarioEarlyCustomerSalesRoute,
   BlogSpotTheWeaknessRoute: BlogSpotTheWeaknessRoute,
   BlogStickTheLandingRoute: BlogStickTheLandingRoute,
   BlogStrikeEmotionalChordRoute: BlogStrikeEmotionalChordRoute,

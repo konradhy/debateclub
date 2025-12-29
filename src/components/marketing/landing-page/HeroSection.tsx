@@ -54,21 +54,20 @@ export function HeroSection() {
             </Link>
           </motion.div>
 
-          <motion.a
-            href="https://www.amazon.com/Win-Every-Argument-Debating-Persuading/dp/1250853478"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="transition-transform hover:scale-105"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            <img
-              src="/images/badgetopright.png"
-              alt="Based on Mehdi Hasan's Win Every Argument"
-              className="h-24 sm:h-32 lg:h-44 w-auto"
-            />
-          </motion.a>
+          <Link to="/win-every-argument" className="flex-shrink-0">
+            <motion.div
+              className="transition-transform hover:scale-105"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <img
+                src="/images/badgetopright.png"
+                alt="Based on Mehdi Hasan's Win Every Argument"
+                className="h-24 sm:h-32 lg:h-44 w-auto"
+              />
+            </motion.div>
+          </Link>
         </header>
 
         <motion.main

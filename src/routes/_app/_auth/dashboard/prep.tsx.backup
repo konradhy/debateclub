@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
+import { useAction } from "convex/react";
+import { api } from "@cvx/_generated/api";
 import { Id } from "@cvx/_generated/dataModel";
-import { useState, useMemo } from "react";
-import { usePrepData } from "@/hooks/prep/usePrepData";
-import { usePrepChat } from "@/hooks/prep/usePrepChat";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { Button } from "@/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import siteConfig from "~/site.config";
@@ -81,32 +83,81 @@ function PrepScreen() {
   const navigate = useNavigate();
   const { opponentId } = Route.useSearch();
 
-  // Data hooks
-  const {
-    opponent,
-    research,
-    progress,
-    geminiProgress,
-    chatMessages,
-    refetchProgress,
-    refetchChat,
-    generateStrategy,
-    generateGemini,
-    generateGenericPrep,
-    sendChatMessage,
-    processResearchText,
-    updateSelection,
-    updateField,
-    addFieldItem,
-    deleteFieldItem,
-    updateGenericPrepText,
-  } = usePrepData(opponentId);
+  const { data: opponent } = useQuery(
+    convexQuery(
+      api.opponents.get,
+      opponentId ? { opponentId: opponentId as Id<"opponents"> } : "skip",
+    ),
+  );
 
-  // Chat hook
-  const { chatInput, setChatInput, isSendingChat, setIsSendingChat, chatScrollRef } =
-    usePrepChat(chatMessages);
+  const { data: research } = useQuery(
+    convexQuery(
+      api.research.get,
+      opponentId ? { opponentId: opponentId as Id<"opponents"> } : "skip",
+    ),
+  );
 
-  // Component state
+  // Progress tracking
+  const { data: progress, refetch: refetchProgress } = useQuery({
+    ...convexQuery(
+      api.prepProgress.getProgress,
+      opponentId ? { opponentId: opponentId as Id<"opponents"> } : "skip",
+    ),
+    refetchInterval: (query) => {
+      // Poll every 1 second while generating
+      const data = query.state.data;
+      if (
+        data &&
+        data.status !== "complete" &&
+        data.status !== "error" &&
+        data.status !== "idle"
+      ) {
+        return 1000;
+      }
+      return false;
+    },
+  });
+
+  // Chat messages
+  const { data: chatMessages, refetch: refetchChat } = useQuery(
+    convexQuery(
+      api.prepChat.getMessages,
+      opponentId ? { opponentId: opponentId as Id<"opponents"> } : "skip",
+    ),
+  );
+
+  const generateStrategy = useAction(api.actions.prep.generateStrategy);
+  const generateGemini = useAction(
+    api.actions.geminiPrep.generateStrategyGemini,
+  );
+  const generateGenericPrep = useAction(api.actions.genericPrep.generate);
+  const sendChatMessage = useAction(api.actions.prepChatAction.sendMessage);
+  const processResearchText = useAction(api.actions.prep.processResearchText);
+  const updateSelection = useConvexMutation(api.opponents.updateSelection);
+  const updateField = useConvexMutation(api.opponents.updateOpponentField);
+  const addFieldItem = useConvexMutation(api.opponents.addOpponentFieldItem);
+  const deleteFieldItem = useConvexMutation(
+    api.opponents.deleteOpponentFieldItem,
+  );
+  const updateGenericPrepText = useConvexMutation(
+    api.opponents.updateGenericPrepText,
+  );
+
+  // Gemini progress tracking
+  const { data: geminiProgress } = useQuery({
+    ...convexQuery(
+      api.geminiResearchProgress.getProgress,
+      opponentId ? { opponentId: opponentId as Id<"opponents"> } : "skip",
+    ),
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      if (data && data.status !== "complete" && data.status !== "error") {
+        return 2000; // Poll every 2 seconds
+      }
+      return false;
+    },
+  });
+
   const [isGenerating, setIsGenerating] = useState(false);
 
   // User research input state
@@ -114,12 +165,24 @@ function PrepScreen() {
   const [isProcessingResearch, setIsProcessingResearch] = useState(false);
   const [processedResearch, setProcessedResearch] = useState<any>(null);
 
+  // Chat state
+  const [chatInput, setChatInput] = useState("");
+  const [isSendingChat, setIsSendingChat] = useState(false);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
+
   // UI State
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
     {},
   );
   const [editingId, setEditingId] = useState<string | null>(null);
   const [addingType, setAddingType] = useState<string | null>(null);
+
+  // Auto-scroll chat to bottom
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+    }
+  }, [chatMessages]);
 
   const toggleExpand = (id: string) => {
     setExpandedItems((prev) => ({ ...prev, [id]: !prev[id] }));

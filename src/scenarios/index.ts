@@ -10,8 +10,13 @@ import {
   SalesScenarios,
   ColdProspectScenario,
   DemoFollowupScenario,
+  ContractNegotiationScenario,
 } from "./sales";
-import { EntrepreneurScenarios, InvestorPitchScenario } from "./entrepreneur";
+import {
+  EntrepreneurScenarios,
+  InvestorPitchScenario,
+  EarlyCustomerSalesScenario,
+} from "./entrepreneur";
 import type {
   ScenarioConfig,
   PipelineConfig,
@@ -29,7 +34,9 @@ export const SCENARIOS: Record<string, ScenarioConfig> = {
   debate: DebateScenario,
   "sales-cold-prospect": ColdProspectScenario,
   "sales-demo-followup": DemoFollowupScenario,
+  "sales-contract-negotiation": ContractNegotiationScenario,
   "entrepreneur-pitch": InvestorPitchScenario,
+  "entrepreneur-early-sales": EarlyCustomerSalesScenario,
 };
 
 /**
@@ -87,5 +94,10 @@ export {
   SalesScenarios,
   ColdProspectScenario,
   DemoFollowupScenario,
+  ContractNegotiationScenario,
 } from "./sales";
-export { EntrepreneurScenarios, InvestorPitchScenario } from "./entrepreneur";
+export {
+  EntrepreneurScenarios,
+  InvestorPitchScenario,
+  EarlyCustomerSalesScenario,
+} from "./entrepreneur";

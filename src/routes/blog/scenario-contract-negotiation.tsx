@@ -1,0 +1,1323 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Shield,
+  MessageCircle,
+  Scale,
+  Brain,
+  TrendingUp,
+  Target,
+} from "lucide-react";
+
+export const Route = createFileRoute("/blog/scenario-contract-negotiation")({
+  head: () => ({
+    meta: [
+      {
+        title:
+          "Contract Negotiation: How to Hold Your Ground and Close | DebateClub",
+      },
+      {
+        name: "description",
+        content:
+          "80% of deals are won or lost in negotiation. Learn the techniques top sellers use to protect margins without losing the deal.",
+      },
+      {
+        property: "og:title",
+        content:
+          "Contract Negotiation: How to Hold Your Ground and Close | DebateClub",
+      },
+      {
+        property: "og:description",
+        content:
+          "80% of deals are won or lost in negotiation. Learn the techniques top sellers use to protect margins without losing the deal.",
+      },
+      { property: "og:type", content: "article" },
+      { property: "og:image", content: "/images/landingpage.png" },
+      { property: "og:site_name", content: "DebateClub" },
+    ],
+  }),
+  component: ContractNegotiationArticle,
+});
+
+/**
+ * Blog article: Contract Negotiation scenario deep dive.
+ * Explores negotiation techniques from multiple frameworks and how
+ * DebateClub trains users to hold value during deal negotiations.
+ */
+function ContractNegotiationArticle() {
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: "#F5F3EF" }}>
+      {/* Header */}
+      <header
+        className="border-b py-6"
+        style={{ backgroundColor: "#FAFAF8", borderColor: "#E8E4DA" }}
+      >
+        <div className="mx-auto flex max-w-3xl items-center justify-between px-8">
+          <Link
+            to="/blog"
+            className="flex items-center gap-2 text-sm transition-opacity hover:opacity-70"
+            style={{ color: "#5C5C54" }}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            All Articles
+          </Link>
+          <Link to="/">
+            <span className="text-xl font-bold" style={{ color: "#2A2A20" }}>
+              DebateClub
+            </span>
+          </Link>
+        </div>
+      </header>
+
+      {/* Article Content */}
+      <article className="mx-auto max-w-3xl px-8 py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* Badge */}
+          <span
+            className="mb-4 inline-block rounded-md px-3 py-1 text-xs font-medium"
+            style={{ backgroundColor: "#A8B08C", color: "#3A4030" }}
+          >
+            Sales Practice
+          </span>
+
+          {/* Title */}
+          <h1
+            className="mb-6 text-4xl font-bold leading-tight lg:text-5xl"
+            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+          >
+            Contract Negotiation: Hold Your Ground Without Losing the Deal
+          </h1>
+
+          {/* Meta */}
+          <p className="mb-12 text-sm" style={{ color: "#888880" }}>
+            10 min read · Sales Scenarios
+          </p>
+        </motion.div>
+
+        {/* Article Body */}
+        <motion.div
+          className="prose-custom"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+        >
+          {/* Opening Story */}
+          <p className="text-lg leading-relaxed" style={{ color: "#3A3A35" }}>
+            Sarah had done everything right. Six months of building the
+            relationship. Perfect discovery calls. A demo that had the entire
+            buying committee nodding. The verbal yes came on a Thursday. On
+            Friday, procurement called: "We love your solution, but we need to
+            talk about that price. It's 30% higher than what we budgeted."
+          </p>
+
+          <p className="mt-6 leading-relaxed" style={{ color: "#5C5C54" }}>
+            Sarah panicked. She offered 15% off before the sentence was
+            finished. Procurement thanked her, then asked about payment terms.
+            She extended to Net-60. They asked about implementation fees. She
+            waived them. By the time the contract was signed, Sarah had given
+            away $47,000 in value. Her manager was not pleased.
+          </p>
+
+          <p className="mt-6 leading-relaxed" style={{ color: "#5C5C54" }}>
+            What Sarah experienced is not uncommon. According to a Gong.io
+            analysis of over 100,000 sales calls,{" "}
+            <strong>
+              salespeople who discount on the first ask close 35% fewer deals
+            </strong>{" "}
+            than those who push back. The data is counterintuitive: holding firm
+            actually increases close rates. But in the heat of the moment, with
+            a deal on the line, most sellers cave.
+          </p>
+
+          {/* Connection to Framework */}
+          <blockquote
+            className="my-8 border-l-4 py-2 pl-6 italic"
+            style={{ borderColor: "#9A9A6D", color: "#5C5C54" }}
+          >
+            "Never be so sure of what you want that you wouldn't take something
+            better. But never split the difference."
+            <span className="mt-2 block text-sm not-italic">
+              — Chris Voss, "Never Split the Difference"
+            </span>
+          </blockquote>
+
+          <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
+            Chris Voss, former FBI lead hostage negotiator, argues that most
+            people negotiate like hostages themselves: afraid to lose what they
+            have, they give away everything to avoid conflict. The techniques
+            that work in hostage negotiations (staying calm, asking calibrated
+            questions, never caving under pressure) work equally well in
+            contract negotiations.
+          </p>
+
+          {/* Section: Why This Is Hard */}
+          <h2
+            className="mb-4 mt-12 text-2xl font-bold"
+            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+          >
+            Why Contract Negotiation Is So Hard
+          </h2>
+
+          <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
+            The problem is not knowledge. Most salespeople know they should not
+            cave on price. They have read the books. They have attended the
+            trainings. The problem is execution under pressure.
+          </p>
+
+          <div className="my-8 grid gap-4 md:grid-cols-2">
+            <motion.div
+              className="rounded-xl p-6 shadow-lg"
+              style={{ backgroundColor: "#3C4A32" }}
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.2 }}
+            >
+              <p className="text-5xl font-bold" style={{ color: "#FAFAF8" }}>
+                80%
+              </p>
+              <p
+                className="mt-3 text-sm font-medium leading-relaxed"
+                style={{ color: "#E8E4DA" }}
+              >
+                of deals are won or lost in negotiation, not the sales process
+              </p>
+              <p className="mt-2 text-xs" style={{ color: "#A8B08C" }}>
+                Source: Sales Benchmark Index, 2019
+              </p>
+            </motion.div>
+            <motion.div
+              className="rounded-xl p-6 shadow-lg"
+              style={{ backgroundColor: "#9A9A6D" }}
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.2 }}
+            >
+              <p className="text-5xl font-bold" style={{ color: "#FAFAF8" }}>
+                35%
+              </p>
+              <p
+                className="mt-3 text-sm font-medium leading-relaxed"
+                style={{ color: "#2A2A20" }}
+              >
+                fewer closes when sellers discount on the first ask
+              </p>
+              <p className="mt-2 text-xs" style={{ color: "#3C4A32" }}>
+                Source: Gong.io, 2020
+              </p>
+            </motion.div>
+          </div>
+
+          <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
+            When a buyer says "your price is too high," your nervous system
+            activates. Fight, flight, or freeze. Most salespeople freeze, then
+            flight. They offer a discount to make the discomfort go away. The
+            deal closes, but at terms that erode margin and train the buyer to
+            always push on price.
+          </p>
+
+          {/* Section: The Framework */}
+          <h2
+            className="mb-4 mt-12 text-2xl font-bold"
+            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+          >
+            The Framework: Tactical Empathy Meets Value Defense
+          </h2>
+
+          <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
+            Effective negotiation combines insights from multiple disciplines.
+            Voss's tactical empathy from hostage negotiation. Fisher and Ury's
+            principled negotiation from "Getting to Yes." Holden's value-based
+            selling from "Pricing with Confidence." The core insight across all
+            frameworks:{" "}
+            <strong>
+              understanding what the other side really needs creates more
+              leverage than any discount ever could
+            </strong>
+            .
+          </p>
+
+          {/* Techniques */}
+          <h2
+            className="mb-4 mt-12 text-2xl font-bold"
+            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+          >
+            Six Techniques That Work
+          </h2>
+
+          {/* Technique 1 */}
+          <div
+            className="my-6 rounded-xl border-l-4 p-6"
+            style={{ backgroundColor: "#FAFAF8", borderColor: "#3C4A32" }}
+          >
+            <div className="mb-3 flex items-center gap-2">
+              <MessageCircle className="h-5 w-5" style={{ color: "#3C4A32" }} />
+              <h3 className="font-bold" style={{ color: "#2A2A20" }}>
+                1. The Calibrated Question
+              </h3>
+            </div>
+            <p className="mb-3 text-sm" style={{ color: "#5C5C54" }}>
+              <strong>What it is:</strong> Open-ended questions starting with
+              "How" or "What" that make the buyer solve your problems. The
+              signature move: "How am I supposed to do that?"
+            </p>
+            <p className="mb-3 text-sm" style={{ color: "#5C5C54" }}>
+              <strong>Why it works:</strong> Forces the buyer to consider your
+              constraints without you arguing. Creates empathy. Avoids direct
+              confrontation while revealing their real flexibility.
+            </p>
+            <div
+              className="rounded-lg p-3 text-sm"
+              style={{ backgroundColor: "#E5DFD3" }}
+            >
+              <strong>Example:</strong> Buyer says "Your price is too high." You
+              respond: "How am I supposed to make this work within your budget
+              constraints?"
+            </div>
+          </div>
+
+          {/* Technique 2 */}
+          <div
+            className="my-6 rounded-xl border-l-4 p-6"
+            style={{ backgroundColor: "#FAFAF8", borderColor: "#3C4A32" }}
+          >
+            <div className="mb-3 flex items-center gap-2">
+              <Shield className="h-5 w-5" style={{ color: "#3C4A32" }} />
+              <h3 className="font-bold" style={{ color: "#2A2A20" }}>
+                2. Value Defense
+              </h3>
+            </div>
+            <p className="mb-3 text-sm" style={{ color: "#5C5C54" }}>
+              <strong>What it is:</strong> Defending your price and terms
+              without caving. Explaining the value of your solution rather than
+              apologizing for its cost.
+            </p>
+            <p className="mb-3 text-sm" style={{ color: "#5C5C54" }}>
+              <strong>Why it works:</strong> When you cave quickly, buyers
+              interpret it as proof you were overcharging. Every concession
+              without reciprocity trains them to push harder. (Holden, "Pricing
+              with Confidence")
+            </p>
+            <div
+              className="rounded-lg p-3 text-sm"
+              style={{ backgroundColor: "#E5DFD3" }}
+            >
+              <strong>Example:</strong> "I understand price is a concern. Help
+              me understand what outcomes are most important to you, so we can
+              make sure the investment makes sense."
+            </div>
+          </div>
+
+          {/* Technique 3 */}
+          <div
+            className="my-6 rounded-xl border-l-4 p-6"
+            style={{ backgroundColor: "#FAFAF8", borderColor: "#3C4A32" }}
+          >
+            <div className="mb-3 flex items-center gap-2">
+              <Scale className="h-5 w-5" style={{ color: "#3C4A32" }} />
+              <h3 className="font-bold" style={{ color: "#2A2A20" }}>
+                3. Strategic Trading
+              </h3>
+            </div>
+            <p className="mb-3 text-sm" style={{ color: "#5C5C54" }}>
+              <strong>What it is:</strong> Trading concessions rather than
+              giving them away. Every "give" requires a "get." Offering creative
+              alternatives to price cuts.
+            </p>
+            <p className="mb-3 text-sm" style={{ color: "#5C5C54" }}>
+              <strong>Why it works:</strong> Creates value for both sides.
+              Demonstrates flexibility without desperation. Maintains perceived
+              value while addressing buyer needs. (Fisher & Ury, "Getting to
+              Yes")
+            </p>
+            <div
+              className="rounded-lg p-3 text-sm"
+              style={{ backgroundColor: "#E5DFD3" }}
+            >
+              <strong>Example:</strong> "I can look at the payment terms if we
+              can lock in a 3-year commitment instead of annual renewal."
+            </div>
+          </div>
+
+          {/* Technique 4 */}
+          <div
+            className="my-6 rounded-xl border-l-4 p-6"
+            style={{ backgroundColor: "#FAFAF8", borderColor: "#3C4A32" }}
+          >
+            <div className="mb-3 flex items-center gap-2">
+              <Brain className="h-5 w-5" style={{ color: "#3C4A32" }} />
+              <h3 className="font-bold" style={{ color: "#2A2A20" }}>
+                4. Labeling
+              </h3>
+            </div>
+            <p className="mb-3 text-sm" style={{ color: "#5C5C54" }}>
+              <strong>What it is:</strong> Acknowledging the buyer's emotions
+              and concerns without agreeing to their demands. Tactical empathy
+              in action.
+            </p>
+            <p className="mb-3 text-sm" style={{ color: "#5C5C54" }}>
+              <strong>Why it works:</strong> Makes the buyer feel heard. Defuses
+              tension. Creates psychological safety for honest conversation.
+            </p>
+            <div
+              className="rounded-lg p-3 text-sm"
+              style={{ backgroundColor: "#E5DFD3" }}
+            >
+              <strong>Example:</strong> "It sounds like getting this approved
+              internally is creating some real pressure for you."
+            </div>
+          </div>
+
+          {/* Technique 5 */}
+          <div
+            className="my-6 rounded-xl border-l-4 p-6"
+            style={{ backgroundColor: "#FAFAF8", borderColor: "#3C4A32" }}
+          >
+            <div className="mb-3 flex items-center gap-2">
+              <Target className="h-5 w-5" style={{ color: "#3C4A32" }} />
+              <h3 className="font-bold" style={{ color: "#2A2A20" }}>
+                5. The "What Happens If" Test
+              </h3>
+            </div>
+            <p className="mb-3 text-sm" style={{ color: "#5C5C54" }}>
+              <strong>What it is:</strong> When buyers give ultimatums ("25% off
+              or no deal"), ask what happens if you cannot meet their demand.
+              Often, the ultimatum is a bluff.
+            </p>
+            <p className="mb-3 text-sm" style={{ color: "#5C5C54" }}>
+              <strong>Why it works:</strong> This question reveals whether they
+              have real flexibility or are simply testing you. It shifts the
+              pressure back to them.
+            </p>
+            <div
+              className="rounded-lg p-3 text-sm"
+              style={{ backgroundColor: "#E5DFD3" }}
+            >
+              <strong>Example:</strong> "What happens if I genuinely cannot do
+              that?"
+            </div>
+          </div>
+
+          {/* Technique 6 */}
+          <div
+            className="my-6 rounded-xl border-l-4 p-6"
+            style={{ backgroundColor: "#FAFAF8", borderColor: "#3C4A32" }}
+          >
+            <div className="mb-3 flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" style={{ color: "#3C4A32" }} />
+              <h3 className="font-bold" style={{ color: "#2A2A20" }}>
+                6. Composure as Signal
+              </h3>
+            </div>
+            <p className="mb-3 text-sm" style={{ color: "#5C5C54" }}>
+              <strong>What it is:</strong> Your emotional state communicates
+              more than your words. When you stay calm under pressure, buyers
+              interpret it as confidence.
+            </p>
+            <p className="mb-3 text-sm" style={{ color: "#5C5C54" }}>
+              <strong>Why it works:</strong> Composure signals you have
+              alternatives, you are not desperate. When you get flustered,
+              apologetic, or defensive, they push harder.
+            </p>
+            <div
+              className="rounded-lg p-3 text-sm"
+              style={{ backgroundColor: "#E5DFD3" }}
+            >
+              <strong>Key insight:</strong> "The fastest way to make the other
+              party feel unsafe is to react emotionally." (Voss)
+            </div>
+          </div>
+
+          {/* Common Mistakes Section */}
+          <h2
+            className="mb-4 mt-12 text-2xl font-bold"
+            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+          >
+            Five Mistakes That Kill Deals
+          </h2>
+
+          <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
+            These are the behaviors that experienced buyers exploit. In real
+            negotiations, these mistakes invite more pressure:
+          </p>
+
+          <div
+            className="my-6 rounded-xl p-6"
+            style={{ backgroundColor: "#FAFAF8" }}
+          >
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <span
+                  className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold"
+                  style={{ backgroundColor: "#E5DFD3", color: "#3C4A32" }}
+                >
+                  1
+                </span>
+                <div>
+                  <p className="font-medium" style={{ color: "#2A2A20" }}>
+                    Caving on the First Ask
+                  </p>
+                  <p className="text-sm" style={{ color: "#5C5C54" }}>
+                    Offering a discount before exploring the objection trains
+                    buyers to always push on price.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span
+                  className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold"
+                  style={{ backgroundColor: "#E5DFD3", color: "#3C4A32" }}
+                >
+                  2
+                </span>
+                <div>
+                  <p className="font-medium" style={{ color: "#2A2A20" }}>
+                    Justifying Instead of Questioning
+                  </p>
+                  <p className="text-sm" style={{ color: "#5C5C54" }}>
+                    Long defensive explanations sound weak. Questions reveal
+                    what they actually need.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span
+                  className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold"
+                  style={{ backgroundColor: "#E5DFD3", color: "#3C4A32" }}
+                >
+                  3
+                </span>
+                <div>
+                  <p className="font-medium" style={{ color: "#2A2A20" }}>
+                    Getting Emotionally Reactive
+                  </p>
+                  <p className="text-sm" style={{ color: "#5C5C54" }}>
+                    Defensive or apologetic language signals you can be pushed
+                    around.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span
+                  className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold"
+                  style={{ backgroundColor: "#E5DFD3", color: "#3C4A32" }}
+                >
+                  4
+                </span>
+                <div>
+                  <p className="font-medium" style={{ color: "#2A2A20" }}>
+                    Accepting Their Frame
+                  </p>
+                  <p className="text-sm" style={{ color: "#5C5C54" }}>
+                    When they say "competitor is cheaper," arguing within that
+                    frame means you have already lost.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span
+                  className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold"
+                  style={{ backgroundColor: "#E5DFD3", color: "#3C4A32" }}
+                >
+                  5
+                </span>
+                <div>
+                  <p className="font-medium" style={{ color: "#2A2A20" }}>
+                    Giving Without Getting
+                  </p>
+                  <p className="text-sm" style={{ color: "#5C5C54" }}>
+                    Every unilateral concession teaches buyers that pushing
+                    works.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* How DebateClub Works */}
+          <h2
+            className="mb-4 mt-12 text-2xl font-bold"
+            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+          >
+            How DebateClub Trains This Skill
+          </h2>
+
+          <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
+            Reading about negotiation is easy. Executing under pressure is hard.
+            That is the gap DebateClub fills. Here's exactly how the practice
+            engine works:
+          </p>
+
+          {/* The Setup */}
+          <h3
+            className="mb-3 mt-8 text-xl font-bold"
+            style={{ color: "#2A2A20" }}
+          >
+            The Setup
+          </h3>
+
+          <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
+            You create an opponent by describing the deal context: what you're
+            selling, who the buyer is, what objections you expect. The system
+            generates a realistic buyer persona with appropriate budget
+            constraints, competitive pressures, and negotiation tactics.
+          </p>
+
+          <p className="mt-4 leading-relaxed" style={{ color: "#5C5C54" }}>
+            The conversation starts late-stage. The buyer has already seen the
+            demo, they want to buy, but now they're pushing on price and terms.
+            This is where most deals are won or lost.
+          </p>
+
+          {/* Contract Negotiation System Diagram */}
+          <div
+            className="my-8 rounded-xl p-8"
+            style={{ backgroundColor: "#2A2A20" }}
+          >
+            <h3
+              className="mb-6 text-center text-xl font-bold"
+              style={{ color: "#FAFAF8", fontFamily: "Georgia, serif" }}
+            >
+              The Practice Engine: A Real Example
+            </h3>
+
+            {/* Main Flow */}
+            <div className="space-y-6">
+              {/* Opening */}
+              <div>
+                <div
+                  className="mb-3 rounded-lg p-4"
+                  style={{ backgroundColor: "#5C5C54" }}
+                >
+                  <p
+                    className="mb-2 text-xs font-bold uppercase tracking-wide"
+                    style={{ color: "#A8B08C" }}
+                  >
+                    The Buyer Opens
+                  </p>
+                  <p
+                    className="text-sm italic leading-relaxed"
+                    style={{ color: "#FAFAF8" }}
+                  >
+                    "We're ready to move forward, but before we sign, we need to
+                    talk about that price. It's about 30% higher than what we
+                    budgeted. What can you do to help us here?"
+                  </p>
+                </div>
+                <p
+                  className="text-xs leading-relaxed"
+                  style={{ color: "#C8C8B8" }}
+                >
+                  This is the moment of truth. Your nervous system activates.
+                  Most sellers immediately offer a discount. The system is
+                  watching what you do next.
+                </p>
+              </div>
+
+              {/* Bad Response Path */}
+              <div
+                className="rounded-xl p-6"
+                style={{
+                  backgroundColor: "#3C4A32",
+                  borderLeft: "4px solid #E57373",
+                }}
+              >
+                <div className="mb-4 flex items-center gap-2">
+                  <span className="text-lg" style={{ color: "#E57373" }}>
+                    ✗
+                  </span>
+                  <p className="font-bold" style={{ color: "#E57373" }}>
+                    Path 1: The Cave
+                  </p>
+                </div>
+
+                <div
+                  className="mb-4 rounded-lg p-3"
+                  style={{ backgroundColor: "#2A2A20" }}
+                >
+                  <p
+                    className="mb-1 text-xs font-bold"
+                    style={{ color: "#A8B08C" }}
+                  >
+                    You say:
+                  </p>
+                  <p className="text-sm italic" style={{ color: "#E8E4DA" }}>
+                    "Okay, let me see what I can do. How about 15% off?"
+                  </p>
+                </div>
+
+                <div className="mb-4 space-y-2">
+                  <p className="text-xs font-bold" style={{ color: "#FAFAF8" }}>
+                    What the system detects:
+                  </p>
+                  <ul
+                    className="space-y-1 text-xs"
+                    style={{ color: "#C8C8B8" }}
+                  >
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5" style={{ color: "#E57373" }}>
+                        •
+                      </span>
+                      <span>
+                        <strong>Immediate concession</strong> — You offered a
+                        discount before exploring the objection
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5" style={{ color: "#E57373" }}>
+                        •
+                      </span>
+                      <span>
+                        <strong>No value defense</strong> — You didn't anchor to
+                        outcomes or ROI
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5" style={{ color: "#E57373" }}>
+                        •
+                      </span>
+                      <span>
+                        <strong>Unilateral give</strong> — You gave without
+                        asking for anything in return
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5" style={{ color: "#E57373" }}>
+                        •
+                      </span>
+                      <span>
+                        <strong>Weak language</strong> — "Let me see what I can
+                        do" signals desperation
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div
+                  className="rounded-lg p-3"
+                  style={{ backgroundColor: "#2A2A20" }}
+                >
+                  <p
+                    className="mb-1 text-xs font-bold"
+                    style={{ color: "#E57373" }}
+                  >
+                    Buyer responds:
+                  </p>
+                  <p className="text-sm italic" style={{ color: "#E8E4DA" }}>
+                    "That's a start. But we also need to talk about payment
+                    terms. Can we do Net-90 instead of Net-30? And we'll need
+                    implementation support included at no extra cost."
+                  </p>
+                </div>
+
+                <p
+                  className="mt-3 text-xs leading-relaxed"
+                  style={{ color: "#C8C8B8" }}
+                >
+                  <strong style={{ color: "#E57373" }}>
+                    The buyer smelled blood.
+                  </strong>{" "}
+                  Your immediate discount signaled weakness. Now they're pushing
+                  for more. This is exactly what happens in real negotiations
+                  when you cave early. The system is teaching you the
+                  consequence.
+                </p>
+              </div>
+
+              {/* Good Response Path */}
+              <div
+                className="rounded-xl p-6"
+                style={{
+                  backgroundColor: "#3C4A32",
+                  borderLeft: "4px solid #A8B08C",
+                }}
+              >
+                <div className="mb-4 flex items-center gap-2">
+                  <span className="text-lg" style={{ color: "#A8B08C" }}>
+                    ✓
+                  </span>
+                  <p className="font-bold" style={{ color: "#A8B08C" }}>
+                    Path 2: The Defense
+                  </p>
+                </div>
+
+                <div
+                  className="mb-4 rounded-lg p-3"
+                  style={{ backgroundColor: "#2A2A20" }}
+                >
+                  <p
+                    className="mb-1 text-xs font-bold"
+                    style={{ color: "#A8B08C" }}
+                  >
+                    You say:
+                  </p>
+                  <p className="text-sm italic" style={{ color: "#E8E4DA" }}>
+                    "I understand price is a concern. Help me understand —
+                    compared to what? What are you using as the benchmark here?"
+                  </p>
+                </div>
+
+                <div className="mb-4 space-y-2">
+                  <p className="text-xs font-bold" style={{ color: "#FAFAF8" }}>
+                    What the system detects:
+                  </p>
+                  <ul
+                    className="space-y-1 text-xs"
+                    style={{ color: "#C8C8B8" }}
+                  >
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5" style={{ color: "#A8B08C" }}>
+                        •
+                      </span>
+                      <span>
+                        <strong>Calibrated question</strong> — "Compared to
+                        what?" shifts burden back to buyer
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5" style={{ color: "#A8B08C" }}>
+                        •
+                      </span>
+                      <span>
+                        <strong>Tactical empathy</strong> — Acknowledged concern
+                        without agreeing to discount
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5" style={{ color: "#A8B08C" }}>
+                        •
+                      </span>
+                      <span>
+                        <strong>Held composure</strong> — No panic, no immediate
+                        concession
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5" style={{ color: "#A8B08C" }}>
+                        •
+                      </span>
+                      <span>
+                        <strong>Discovery mode</strong> — Exploring the
+                        objection before responding
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div
+                  className="rounded-lg p-3"
+                  style={{ backgroundColor: "#2A2A20" }}
+                >
+                  <p
+                    className="mb-1 text-xs font-bold"
+                    style={{ color: "#A8B08C" }}
+                  >
+                    Buyer responds:
+                  </p>
+                  <p className="text-sm italic" style={{ color: "#E8E4DA" }}>
+                    "Well, we had budgeted based on what we're currently
+                    spending with our existing vendor. But honestly, they're not
+                    solving the problem the way your solution does. The real
+                    issue is getting this past the CFO."
+                  </p>
+                </div>
+
+                <p
+                  className="mt-3 text-xs leading-relaxed"
+                  style={{ color: "#C8C8B8" }}
+                >
+                  <strong style={{ color: "#A8B08C" }}>
+                    The buyer respected your confidence.
+                  </strong>{" "}
+                  Instead of pushing harder, they revealed the real concern:
+                  internal approval. Now you can solve the actual problem
+                  instead of just cutting price. The system is teaching you that
+                  good technique opens doors.
+                </p>
+              </div>
+
+              {/* The Analysis */}
+              <div
+                className="rounded-xl p-6"
+                style={{ backgroundColor: "#3C4A32" }}
+              >
+                <p
+                  className="mb-4 text-sm font-bold"
+                  style={{ color: "#FAFAF8" }}
+                >
+                  After the Session: Detailed Analysis
+                </p>
+
+                <div className="space-y-3">
+                  <div
+                    className="rounded-lg p-3"
+                    style={{ backgroundColor: "#2A2A20" }}
+                  >
+                    <div className="mb-2 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Shield
+                          className="h-4 w-4"
+                          style={{ color: "#A8B08C" }}
+                        />
+                        <p
+                          className="text-sm font-bold"
+                          style={{ color: "#FAFAF8" }}
+                        >
+                          Value Defense
+                        </p>
+                      </div>
+                      <p
+                        className="text-sm font-bold"
+                        style={{ color: "#A8B08C" }}
+                      >
+                        8/10
+                      </p>
+                    </div>
+                    <p
+                      className="text-xs leading-relaxed"
+                      style={{ color: "#C8C8B8" }}
+                    >
+                      You held price well and used calibrated questions to
+                      explore the objection. Could have quantified the cost of
+                      their current problem to strengthen the value anchor.
+                    </p>
+                  </div>
+
+                  <div
+                    className="rounded-lg p-3"
+                    style={{ backgroundColor: "#2A2A20" }}
+                  >
+                    <div className="mb-2 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <MessageCircle
+                          className="h-4 w-4"
+                          style={{ color: "#A8B08C" }}
+                        />
+                        <p
+                          className="text-sm font-bold"
+                          style={{ color: "#FAFAF8" }}
+                        >
+                          Calibrated Questions
+                        </p>
+                      </div>
+                      <p
+                        className="text-sm font-bold"
+                        style={{ color: "#A8B08C" }}
+                      >
+                        9/10
+                      </p>
+                    </div>
+                    <p
+                      className="text-xs leading-relaxed"
+                      style={{ color: "#C8C8B8" }}
+                    >
+                      Excellent use of "Compared to what?" This shifted the
+                      frame and revealed the real concern. Follow-up question
+                      about the CFO was strategic.
+                    </p>
+                  </div>
+
+                  <div
+                    className="rounded-lg p-3"
+                    style={{ backgroundColor: "#2A2A20" }}
+                  >
+                    <div className="mb-2 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Scale
+                          className="h-4 w-4"
+                          style={{ color: "#E57373" }}
+                        />
+                        <p
+                          className="text-sm font-bold"
+                          style={{ color: "#FAFAF8" }}
+                        >
+                          Strategic Trading
+                        </p>
+                      </div>
+                      <p
+                        className="text-sm font-bold"
+                        style={{ color: "#E57373" }}
+                      >
+                        4/10
+                      </p>
+                    </div>
+                    <p
+                      className="text-xs leading-relaxed"
+                      style={{ color: "#C8C8B8" }}
+                    >
+                      When you eventually offered a concession, you didn't ask
+                      for anything in return. Should have traded: "I can look at
+                      payment terms if we can lock in a 3-year commitment."
+                    </p>
+                  </div>
+                </div>
+
+                <p
+                  className="mt-4 text-xs leading-relaxed"
+                  style={{ color: "#C8C8B8" }}
+                >
+                  The analysis shows you exactly where you succeeded and where
+                  you left money on the table. You can replay the conversation,
+                  see the transcript, and understand the specific moments where
+                  different techniques would have changed the outcome.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <p className="mt-6 leading-relaxed" style={{ color: "#5C5C54" }}>
+            This is not a generic chatbot. The system is specifically trained on
+            negotiation dynamics. It knows that immediate concessions invite
+            more pressure. It knows that calibrated questions earn respect. It
+            knows that defensive language signals weakness. Every response you
+            give is analyzed for these patterns, and the buyer's behavior adapts
+            accordingly.
+          </p>
+
+          <p className="mt-4 leading-relaxed" style={{ color: "#5C5C54" }}>
+            After 5-10 practice sessions, the patterns become automatic. You
+            stop panicking at discount requests. You start asking questions
+            instead of justifying. You trade instead of giving. The muscle
+            memory transfers to real negotiations.
+          </p>
+
+          <h3
+            className="mb-3 mt-8 text-xl font-bold"
+            style={{ color: "#2A2A20" }}
+          >
+            Opening Scenarios
+          </h3>
+          <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
+            Each practice session opens with a realistic late-stage negotiation.
+            The buyer has verbally committed but now wants better terms:
+          </p>
+
+          <div
+            className="my-4 space-y-3 rounded-lg p-4"
+            style={{ backgroundColor: "#FAFAF8" }}
+          >
+            <p className="text-sm italic" style={{ color: "#5C5C54" }}>
+              "We're ready to move forward. But before we sign, we need to talk
+              about that price. It's about 30% higher than what we budgeted."
+            </p>
+            <p className="text-sm italic" style={{ color: "#5C5C54" }}>
+              "I've got a proposal from your competitor that's significantly
+              cheaper. You're going to need to come down if you want this deal."
+            </p>
+            <p className="text-sm italic" style={{ color: "#5C5C54" }}>
+              "My CFO is going to kill this unless we get better terms. What can
+              you do on price?"
+            </p>
+          </div>
+
+          <h3
+            className="mb-3 mt-8 text-xl font-bold"
+            style={{ color: "#2A2A20" }}
+          >
+            Behavioral Rules
+          </h3>
+          <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
+            The buyer responds to your technique, not just your words:
+          </p>
+
+          <ul className="my-4 space-y-2">
+            <li className="flex items-start gap-3" style={{ color: "#5C5C54" }}>
+              <span
+                className="mt-1 h-2 w-2 flex-shrink-0 rounded-full"
+                style={{ backgroundColor: "#9A9A6D" }}
+              />
+              <span>
+                <strong>If you cave immediately:</strong> The buyer smells blood
+                and pushes for more (extended terms, additional features, bigger
+                discount).
+              </span>
+            </li>
+            <li className="flex items-start gap-3" style={{ color: "#5C5C54" }}>
+              <span
+                className="mt-1 h-2 w-2 flex-shrink-0 rounded-full"
+                style={{ backgroundColor: "#9A9A6D" }}
+              />
+              <span>
+                <strong>If you defend value and ask questions:</strong> The
+                buyer respects your confidence and shifts the conversation to
+                something more solvable.
+              </span>
+            </li>
+            <li className="flex items-start gap-3" style={{ color: "#5C5C54" }}>
+              <span
+                className="mt-1 h-2 w-2 flex-shrink-0 rounded-full"
+                style={{ backgroundColor: "#9A9A6D" }}
+              />
+              <span>
+                <strong>If you trade instead of give:</strong> The buyer engages
+                with the trade rather than dismissing it.
+              </span>
+            </li>
+            <li className="flex items-start gap-3" style={{ color: "#5C5C54" }}>
+              <span
+                className="mt-1 h-2 w-2 flex-shrink-0 rounded-full"
+                style={{ backgroundColor: "#9A9A6D" }}
+              />
+              <span>
+                <strong>If you sound defensive:</strong> The buyer doubles down
+                with more pressure.
+              </span>
+            </li>
+          </ul>
+
+          <h3
+            className="mb-3 mt-8 text-xl font-bold"
+            style={{ color: "#2A2A20" }}
+          >
+            What Gets Measured
+          </h3>
+          <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
+            After each practice session, you receive detailed analysis across
+            four dimensions:
+          </p>
+
+          <div className="my-4 grid gap-3 md:grid-cols-2">
+            <div
+              className="rounded-lg p-4"
+              style={{ backgroundColor: "#E5DFD3" }}
+            >
+              <h4 className="mb-1 font-bold" style={{ color: "#3C4A32" }}>
+                Value Defense
+              </h4>
+              <p className="text-sm" style={{ color: "#5C5C54" }}>
+                Did you hold price? Did you require trade-offs for concessions?
+              </p>
+            </div>
+            <div
+              className="rounded-lg p-4"
+              style={{ backgroundColor: "#E5DFD3" }}
+            >
+              <h4 className="mb-1 font-bold" style={{ color: "#3C4A32" }}>
+                Calibrated Questions
+              </h4>
+              <p className="text-sm" style={{ color: "#5C5C54" }}>
+                Did you ask "How" and "What" questions to explore objections?
+              </p>
+            </div>
+            <div
+              className="rounded-lg p-4"
+              style={{ backgroundColor: "#E5DFD3" }}
+            >
+              <h4 className="mb-1 font-bold" style={{ color: "#3C4A32" }}>
+                Strategic Trading
+              </h4>
+              <p className="text-sm" style={{ color: "#5C5C54" }}>
+                Did you trade concessions or give them away?
+              </p>
+            </div>
+            <div
+              className="rounded-lg p-4"
+              style={{ backgroundColor: "#E5DFD3" }}
+            >
+              <h4 className="mb-1 font-bold" style={{ color: "#3C4A32" }}>
+                Composure
+              </h4>
+              <p className="text-sm" style={{ color: "#5C5C54" }}>
+                Did you stay calm under pressure?
+              </p>
+            </div>
+          </div>
+
+          {/* Real-World Impact */}
+          <h2
+            className="mb-4 mt-12 text-2xl font-bold"
+            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+          >
+            What Changes After Practice
+          </h2>
+
+          <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
+            After practicing contract negotiation across multiple sessions, you
+            will notice:
+          </p>
+
+          <ul className="my-6 space-y-3">
+            <li className="flex items-start gap-3" style={{ color: "#5C5C54" }}>
+              <span
+                className="mt-1 h-2 w-2 flex-shrink-0 rounded-full"
+                style={{ backgroundColor: "#9A9A6D" }}
+              />
+              <span>
+                <strong>Slower reactions:</strong> You stop panicking at
+                discount requests. The pause becomes natural.
+              </span>
+            </li>
+            <li className="flex items-start gap-3" style={{ color: "#5C5C54" }}>
+              <span
+                className="mt-1 h-2 w-2 flex-shrink-0 rounded-full"
+                style={{ backgroundColor: "#9A9A6D" }}
+              />
+              <span>
+                <strong>Better questions:</strong> "How am I supposed to do
+                that?" becomes second nature.
+              </span>
+            </li>
+            <li className="flex items-start gap-3" style={{ color: "#5C5C54" }}>
+              <span
+                className="mt-1 h-2 w-2 flex-shrink-0 rounded-full"
+                style={{ backgroundColor: "#9A9A6D" }}
+              />
+              <span>
+                <strong>Trade instincts:</strong> You stop giving and start
+                trading. Every concession has a condition.
+              </span>
+            </li>
+            <li className="flex items-start gap-3" style={{ color: "#5C5C54" }}>
+              <span
+                className="mt-1 h-2 w-2 flex-shrink-0 rounded-full"
+                style={{ backgroundColor: "#9A9A6D" }}
+              />
+              <span>
+                <strong>Protected margins:</strong> Deals close at better terms.
+                Your finance team notices.
+              </span>
+            </li>
+          </ul>
+
+          {/* Closing */}
+          <h2
+            className="mb-4 mt-12 text-2xl font-bold"
+            style={{ color: "#2A2A20", fontFamily: "Georgia, serif" }}
+          >
+            The Bottom Line
+          </h2>
+
+          <p className="leading-relaxed" style={{ color: "#5C5C54" }}>
+            Sarah's mistake was not that she wanted to close the deal. It was
+            that she let fear drive her response. Every discount she offered
+            without being asked, every term she extended without trading,
+            communicated one message: I am desperate.
+          </p>
+
+          <p className="mt-4 leading-relaxed" style={{ color: "#5C5C54" }}>
+            The best negotiators are not aggressive. They are calm, curious, and
+            prepared. They ask questions instead of arguing. They trade instead
+            of giving. They stay composed when buyers push hard. These are
+            skills that can be practiced.
+          </p>
+
+          <p
+            className="mt-4 text-lg font-medium leading-relaxed"
+            style={{ color: "#3A3A35" }}
+          >
+            Contract negotiation is where deals are made or lost. The techniques
+            are learnable. The muscle memory requires practice. DebateClub
+            provides the reps.
+          </p>
+
+          {/* CTA */}
+          <motion.div
+            className="mt-12 rounded-xl p-8 text-center"
+            style={{ backgroundColor: "#3C4A32" }}
+          >
+            <h3
+              className="mb-4 text-2xl font-bold"
+              style={{ color: "#FAFAF8", fontFamily: "Georgia, serif" }}
+            >
+              Practice Contract Negotiation
+            </h3>
+            <p className="mb-6" style={{ color: "#C8C8B8" }}>
+              Face realistic buyer pressure. Learn to hold value. Build the
+              muscle memory that protects your margins.
+            </p>
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-2 rounded-full px-8 py-3 font-semibold transition-all hover:gap-3"
+              style={{ backgroundColor: "#FAFAF8", color: "#3C4A32" }}
+            >
+              Start Practicing
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </motion.div>
+
+          {/* Sources */}
+          <div
+            className="mt-16 border-t pt-8"
+            style={{ borderColor: "#E8E4DA" }}
+          >
+            <h3 className="mb-4 text-xl font-bold" style={{ color: "#2A2A20" }}>
+              Sources & Further Reading
+            </h3>
+            <ol className="space-y-2 text-sm" style={{ color: "#5C5C54" }}>
+              <li>
+                1. Voss, Chris with Raz, Tahl. (2016).{" "}
+                <em>
+                  Never Split the Difference: Negotiating As If Your Life
+                  Depended On It
+                </em>
+                . Crown Business.
+              </li>
+              <li>
+                2. Fisher, Roger, Ury, William, & Patton, Bruce. (2011).{" "}
+                <em>Getting to Yes: Negotiating Agreement Without Giving In</em>{" "}
+                (3rd ed.). Penguin Books.
+              </li>
+              <li>
+                3. Holden, Reed K. & Burton, Mark R. (2012).{" "}
+                <em>
+                  Pricing with Confidence: 10 Ways to Stop Leaving Money on the
+                  Table
+                </em>
+                . Wiley.
+              </li>
+              <li>
+                4. Gong.io. (2020). The Biggest Mistake Salespeople Make When
+                Prospects Ask for a Discount. Research analysis of 100,000+
+                sales calls.
+              </li>
+              <li>
+                5. Camp, Jim. (2002).{" "}
+                <em>
+                  Start with No: The Negotiating Tools that the Pros Don't Want
+                  You to Know
+                </em>
+                . Crown Business.
+              </li>
+            </ol>
+          </div>
+
+          {/* Article Navigation */}
+          <div
+            className="mt-12 flex justify-between border-t pt-8"
+            style={{ borderColor: "#E8E4DA" }}
+          >
+            <Link
+              to="/blog"
+              className="flex items-center gap-2 text-sm transition-opacity hover:opacity-70"
+              style={{ color: "#3C4A32" }}
+            >
+              <ArrowLeft className="h-4 w-4" />
+              All Articles
+            </Link>
+            <Link
+              to="/login"
+              className="flex items-center gap-2 text-sm transition-opacity hover:opacity-70"
+              style={{ color: "#3C4A32" }}
+            >
+              Try It Yourself
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </motion.div>
+      </article>
+
+      {/* Footer */}
+      <footer className="py-8" style={{ backgroundColor: "#E8E4DA" }}>
+        <div className="mx-auto max-w-3xl px-8 text-center">
+          <p className="text-sm" style={{ color: "#5C5C54" }}>
+            © {new Date().getFullYear()} DebateClub. Negotiation techniques
+            based on research from multiple frameworks.
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+}
