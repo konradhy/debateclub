@@ -1,10 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, Users, Swords, Trash2, MoreVertical, History } from "lucide-react";
+import { Plus, Trash2, MoreVertical } from "lucide-react";
 import siteConfig from "~/site.config";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { api } from "@cvx/_generated/api";
-import { Button } from "@/ui/button";
 import { Id } from "@cvx/_generated/dataModel";
 import {
   DropdownMenu,
@@ -12,7 +11,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/ui/dropdown-menu";
-import { useState } from "react";
+
+// Color constants matching marketing pages
+const colors = {
+  background: "#F5F3EF",
+  cardBg: "#FAFAF8",
+  headerBg: "#FAFAF8",
+  border: "#E8E4DA",
+  primary: "#3C4A32",
+  primaryLight: "#5C6B4A",
+  text: "#2A2A20",
+  textMuted: "#5C5C54",
+  textLight: "#888880",
+};
 
 interface Opponent {
   _id: Id<"opponents">;
@@ -66,129 +77,181 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-full w-full bg-secondary px-6 py-8 dark:bg-black">
-      <div className="z-10 mx-auto flex h-full w-full max-w-screen-xl gap-12">
-        <div className="flex w-full flex-col rounded-lg border border-border bg-card dark:bg-black">
-          <div className="flex w-full flex-col rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex flex-col gap-2">
-                <h2 className="text-xl font-medium text-primary">
-                  Your Opponents
-                </h2>
-                <p className="text-sm font-normal text-primary/60">
-                  Create and manage your debate opponents.
+    <div
+      className="min-h-screen"
+      style={{ backgroundColor: colors.background }}
+    >
+      {/* Simple Header - just logo */}
+      <header
+        className="border-b py-5"
+        style={{ backgroundColor: colors.headerBg, borderColor: colors.border }}
+      >
+        <div className="mx-auto max-w-5xl px-6">
+          <Link to="/" className="flex-shrink-0">
+            <img
+              src="/images/logotext.png"
+              alt="DebateClub"
+              className="h-8 w-auto"
+            />
+          </Link>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <div className="mx-auto max-w-5xl px-6 py-10">
+        {/* Page Header */}
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1
+              className="text-3xl font-bold"
+              style={{ color: colors.text, fontFamily: "Georgia, serif" }}
+            >
+              Your Sessions
+            </h1>
+            <p className="mt-1" style={{ color: colors.textMuted }}>
+              Pick up where you left off or start something new
+            </p>
+          </div>
+          <Link to="/dashboard/opponent-profile">
+            <button
+              className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium text-white transition-all hover:brightness-110"
+              style={{ backgroundColor: colors.primary }}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              New Session
+            </button>
+          </Link>
+        </div>
+
+        {/* Cards Grid - wider cards */}
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          {/* Default Opponent Card */}
+          <div
+            className="flex flex-col rounded-xl border-2 p-6 transition-shadow hover:shadow-md"
+            style={{
+              borderColor: colors.border,
+              backgroundColor: colors.cardBg,
+            }}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <h3
+                  className="text-lg font-semibold"
+                  style={{ color: colors.text }}
+                >
+                  Flo Jo Debate
+                </h3>
+                <p
+                  className="text-xs mt-0.5"
+                  style={{ color: colors.textLight }}
+                >
+                  Default Scenario
                 </p>
               </div>
-              <div className="flex items-center gap-2">
-                <Link to="/dashboard/history">
-                  <Button variant="outline">
-                    <History className="mr-2 h-4 w-4" />
-                    History
-                  </Button>
-                </Link>
-                <Link to="/dashboard/opponent-profile">
-                  <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create Opponent
-                  </Button>
-                </Link>
-              </div>
             </div>
-          </div>
-
-          <div className="flex w-full px-6">
-            <div className="w-full border-b border-border" />
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 p-6 md:grid-cols-2 lg:grid-cols-3">
-            {/* Default Opponent Card */}
-            <div className="flex flex-col gap-4 rounded-lg border border-border bg-secondary p-6 dark:bg-card">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <Swords className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-primary">Flo Jo Debate</h3>
-                    <p className="text-xs text-primary/60">Default Scenario</p>
-                  </div>
-                </div>
-              </div>
-              <p className="line-clamp-2 text-sm text-primary/80">
-                Debate whether Florence Griffith-Joyner's records should be
-                removed.
-              </p>
-              <div className="mt-auto pt-4">
-                <Link to="/dashboard/debate" className="w-full">
-                  <Button className="w-full" variant="outline">
-                    Practice Now
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            {/* Custom Opponents */}
-            {opponents?.map((opponent: Opponent) => (
-              <div
-                key={opponent._id}
-                className="flex flex-col gap-4 rounded-lg border border-border bg-secondary p-6 dark:bg-card"
+            <p
+              className="text-sm mb-5 flex-grow"
+              style={{ color: colors.textMuted }}
+            >
+              Debate whether Florence Griffith-Joyner's records should be
+              removed.
+            </p>
+            <Link to="/dashboard/debate" className="w-full">
+              <button
+                className="w-full rounded-lg border-2 py-2.5 text-sm font-medium transition-all hover:shadow-sm"
+                style={{
+                  borderColor: colors.border,
+                  color: colors.text,
+                  backgroundColor: colors.cardBg,
+                }}
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10">
-                      <Users className="h-5 w-5 text-blue-500" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-primary">
-                        {opponent.name}
-                      </h3>
-                      <p className="text-xs text-primary/60 capitalize">
-                        {opponent.style} Style
-                      </p>
-                    </div>
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        className="text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(opponent._id, opponent.name);
-                        }}
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                <p className="line-clamp-2 text-sm text-primary/80">
-                  Topic: {opponent.topic}
-                </p>
-                <div className="mt-auto pt-4">
-                  <Link
-                    to="/dashboard/prep"
-                    search={{ opponentId: opponent._id }}
-                    className="w-full"
-                  >
-                    <Button className="w-full" variant="outline">
-                      Challenge
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            ))}
+                Practice Now
+              </button>
+            </Link>
           </div>
+
+          {/* Custom Opponents */}
+          {opponents?.map((opponent: Opponent) => (
+            <div
+              key={opponent._id}
+              className="flex flex-col rounded-xl border-2 p-6 transition-shadow hover:shadow-md"
+              style={{
+                borderColor: colors.border,
+                backgroundColor: colors.cardBg,
+              }}
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <h3
+                    className="text-lg font-semibold"
+                    style={{ color: colors.text }}
+                  >
+                    {opponent.name}
+                  </h3>
+                  <p
+                    className="text-xs capitalize mt-0.5"
+                    style={{ color: colors.textLight }}
+                  >
+                    {opponent.style} Style
+                  </p>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-black/5"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <MoreVertical
+                        className="h-4 w-4"
+                        style={{ color: colors.textLight }}
+                      />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      className="text-red-600 focus:text-red-600"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(opponent._id, opponent.name);
+                      }}
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <p
+                className="text-sm mb-5 flex-grow"
+                style={{ color: colors.textMuted }}
+              >
+                {opponent.topic}
+              </p>
+              <Link
+                to="/dashboard/prep"
+                search={{ opponentId: opponent._id }}
+                className="w-full"
+              >
+                <button
+                  className="w-full rounded-lg py-2.5 text-sm font-medium text-white transition-all hover:brightness-110"
+                  style={{ backgroundColor: colors.primaryLight }}
+                >
+                  Continue
+                </button>
+              </Link>
+            </div>
+          ))}
+        </div>
+
+        {/* History link at bottom */}
+        <div className="mt-8 text-center">
+          <Link
+            to="/dashboard/history"
+            className="text-sm transition-opacity hover:opacity-70"
+            style={{ color: colors.textMuted }}
+          >
+            View session history →
+          </Link>
         </div>
       </div>
     </div>

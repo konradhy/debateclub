@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { Id } from "@cvx/_generated/dataModel";
 import { useState, useMemo } from "react";
 import { usePrepData } from "@/hooks/prep/usePrepData";
@@ -8,7 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import siteConfig from "~/site.config";
 import ReactMarkdown from "react-markdown";
 import {
-  Swords,
   Brain,
   Loader2,
   ChevronDown,
@@ -22,12 +21,27 @@ import {
   Eye,
   AlertTriangle,
   FileText,
-  Sparkles,
   MessageSquare,
   Send,
   Check,
   Circle,
+  ArrowLeft,
+  FileSearch,
 } from "lucide-react";
+
+// Color constants matching marketing pages
+const colors = {
+  background: "#F5F3EF",
+  cardBg: "#FAFAF8",
+  headerBg: "#FAFAF8",
+  border: "#E8E4DA",
+  primary: "#3C4A32",
+  primaryLight: "#5C6B4A",
+  text: "#2A2A20",
+  textMuted: "#5C5C54",
+  textLight: "#888880",
+  accent: "#A8B08C",
+};
 import { cn } from "@/utils/misc";
 import { Checkbox } from "@/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/ui/radio-group";
@@ -358,48 +372,76 @@ function PrepScreen() {
     ) || [];
 
   return (
-    <div className="flex h-full w-full bg-secondary px-6 py-8 dark:bg-black">
-      <div className="z-10 mx-auto flex h-full w-full max-w-screen-xl gap-12">
-        <div className="flex w-full flex-col rounded-lg border border-border bg-card dark:bg-black">
-          {/* Header */}
-          <div className="flex w-full flex-col rounded-lg p-6">
-            <div className="flex items-start justify-between">
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  {isDebatePrep ? (
-                    <Swords className="h-5 w-5 text-primary" />
-                  ) : (
-                    <Target className="h-5 w-5 text-primary" />
-                  )}
-                  <h2 className="text-xl font-medium text-primary">
-                    {isDebatePrep
-                      ? "Debate Preparation"
-                      : "Practice Preparation"}
-                    : {opponent.name}
-                  </h2>
+    <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
+      {/* Site Header */}
+      <header
+        className="sticky top-0 z-50 border-b py-4"
+        style={{ backgroundColor: colors.headerBg, borderColor: colors.border }}
+      >
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6">
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-70"
+            style={{ color: colors.textMuted }}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Dashboard
+          </Link>
+          <Link to="/" className="flex-shrink-0">
+            <img
+              src="/images/logotext.png"
+              alt="DebateClub"
+              className="h-8 w-auto"
+            />
+          </Link>
                 </div>
-                <p className="text-sm font-normal text-primary/60">
-                  Topic: {opponent.topic}
-                </p>
-                <p className="text-sm font-normal text-primary/60">
+      </header>
+
+      {/* Main Content */}
+      <div className="mx-auto max-w-6xl px-6 py-8">
+        <div
+          className="overflow-hidden rounded-2xl border-2"
+          style={{
+            backgroundColor: colors.cardBg,
+            borderColor: colors.border,
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.06)",
+          }}
+        >
+          {/* Page Header */}
+          <div className="p-6 lg:p-8" style={{ borderBottom: `1px solid ${colors.border}` }}>
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+              <div className="flex flex-col gap-3">
+                <div>
+                  <h1
+                    className="text-2xl font-bold"
+                    style={{ color: colors.text, fontFamily: "Georgia, serif" }}
+                  >
+                    {opponent.name}
+                  </h1>
+                  <p className="text-sm mt-1" style={{ color: colors.textMuted }}>
+                    {opponent.topic}
+                  </p>
+                </div>
+                {isDebatePrep && (
+                  <div className="flex items-center gap-4 text-sm" style={{ color: colors.textLight }}>
+                    <span>
                   Your position:{" "}
-                  <span className="font-medium capitalize">{userPosition}</span>{" "}
-                  | Opponent position:{" "}
-                  <span className="font-medium capitalize">
-                    {opponent.position}
+                      <span className="font-medium capitalize" style={{ color: colors.text }}>{userPosition}</span>
                   </span>
-                </p>
+                    <span>•</span>
+                    <span>
+                      Opponent:{" "}
+                      <span className="font-medium capitalize" style={{ color: colors.text }}>{opponent.position}</span>
+                    </span>
               </div>
-              <div className="flex gap-2">
+                )}
+              </div>
+              <div className="flex flex-wrap gap-3">
                 {!hasStrategy && !isGenerating && !progress?.status && (
                   <>
                     {isDebatePrep ? (
                       <>
-                        <Button onClick={handleGenerateStrategy}>
-                          <Brain className="mr-2 h-4 w-4" />
-                          Generate Strategy (GPT-4o)
-                        </Button>
-                        <Button
+                        <button
                           onClick={() => {
                             if (opponentId) {
                               generateGemini({
@@ -411,21 +453,22 @@ function PrepScreen() {
                           }}
                           disabled={
                             geminiProgress?.status &&
-                            !["complete", "error"].includes(
-                              geminiProgress.status,
-                            )
+                            !["complete", "error"].includes(geminiProgress.status)
                           }
-                          variant="outline"
+                          className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium text-white transition-all hover:brightness-110 disabled:opacity-50"
+                          style={{ backgroundColor: colors.primaryLight }}
                         >
-                          <Sparkles className="mr-2 h-4 w-4" />
-                          Generate Strategy (Gemini)
-                        </Button>
+                          Generate Strategy
+                        </button>
                       </>
                     ) : (
-                      <Button onClick={handleGenerateGenericPrep}>
-                        <Sparkles className="mr-2 h-4 w-4" />
+                      <button
+                        onClick={handleGenerateGenericPrep}
+                        className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium text-white transition-all hover:brightness-110"
+                        style={{ backgroundColor: colors.primaryLight }}
+                      >
                         Generate Prep Materials
-                      </Button>
+                      </button>
                     )}
                   </>
                 )}
@@ -434,28 +477,28 @@ function PrepScreen() {
                     progress.status !== "complete" &&
                     progress.status !== "error" &&
                     progress.status !== "idle")) && (
-                  <Button disabled>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <button
+                    disabled
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium text-white opacity-70"
+                    style={{ backgroundColor: colors.primaryLight }}
+                  >
+                    <Loader2 className="h-4 w-4 animate-spin" />
                     Generating...
-                  </Button>
+                  </button>
                 )}
-                <Button
+                <button
                   onClick={handleStartDebate}
-                  variant={hasStrategy ? "default" : "outline"}
+                  className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-semibold transition-all hover:brightness-110"
+                  style={{
+                    backgroundColor: hasStrategy ? colors.primary : colors.cardBg,
+                    border: hasStrategy ? "none" : `2px solid ${colors.border}`,
+                    color: hasStrategy ? "white" : colors.text,
+                  }}
                 >
-                  {isDebatePrep ? (
-                    <Swords className="mr-2 h-4 w-4" />
-                  ) : (
-                    <Zap className="mr-2 h-4 w-4" />
-                  )}
                   {isDebatePrep ? "Start Debate" : "Start Practice"}
-                </Button>
+                </button>
               </div>
             </div>
-          </div>
-
-          <div className="flex w-full px-6">
-            <div className="w-full border-b border-border" />
           </div>
 
           {/* Progress Indicator */}
@@ -528,21 +571,20 @@ function PrepScreen() {
           {geminiProgress &&
             geminiProgress.status !== "complete" &&
             geminiProgress.status !== "error" && (
-              <div className="px-6 py-4 bg-purple-500/10 border-b border-purple-500/20">
+              <div className="px-6 py-4" style={{ backgroundColor: `${colors.accent}20`, borderBottom: `1px solid ${colors.border}` }}>
                 <div className="flex items-center gap-3">
-                  <Loader2 className="h-5 w-5 animate-spin text-purple-600" />
+                  <Loader2 className="h-5 w-5 animate-spin" style={{ color: colors.primary }} />
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <Sparkles className="h-4 w-4 text-purple-600" />
-                      <span className="font-medium text-purple-900 dark:text-purple-100">
-                        Gemini Deep Research System
+                      <span className="font-medium" style={{ color: colors.text }}>
+                        Gemini Deep Research
                       </span>
                     </div>
-                    <p className="text-sm text-purple-700 dark:text-purple-300">
+                    <p className="text-sm" style={{ color: colors.textMuted }}>
                       {geminiProgress.message}
                     </p>
                     {geminiProgress.status.startsWith("deep_research") && (
-                      <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                      <p className="text-xs mt-1" style={{ color: colors.textLight }}>
                         Deep Research can take 3-20 minutes for comprehensive
                         analysis
                       </p>
@@ -591,7 +633,7 @@ function PrepScreen() {
                         value="gemini-report"
                         className="flex items-center gap-1.5"
                       >
-                        <Sparkles className="h-4 w-4" />
+                        <FileSearch className="h-4 w-4" />
                         Gemini Report
                       </TabsTrigger>
                     </>
@@ -1437,7 +1479,7 @@ function PrepScreen() {
                         <section className="space-y-4">
                           <div className="flex items-center justify-between">
                             <h3 className="text-lg font-semibold flex items-center gap-2">
-                              <BookOpen className="h-5 w-5 text-purple-500" />
+                              <BookOpen className="h-5 w-5 text-primary" />
                               Closing Statements
                             </h3>
                             <span className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -1813,7 +1855,7 @@ function PrepScreen() {
                         <section className="space-y-4">
                           <div className="flex items-center justify-between">
                             <h3 className="text-lg font-semibold flex items-center gap-2">
-                              <ShieldAlert className="h-5 w-5 text-purple-500" />
+                              <ShieldAlert className="h-5 w-5 text-primary" />
                               Response Map
                             </h3>
                             <span className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -1855,11 +1897,11 @@ function PrepScreen() {
                                     <span className="text-muted-foreground">
                                       When they say:
                                     </span>
-                                    <span className="font-medium text-purple-600 dark:text-purple-400">
+                                    <span className="font-medium text-primary dark:text-primary">
                                       "{item.trigger}"
                                     </span>
                                   </div>
-                                  <div className="pl-4 border-l-2 border-purple-500/30">
+                                  <div className="pl-4 border-l-2 border-primary/30">
                                     <p className="text-sm leading-relaxed">
                                       {item.response}
                                     </p>
@@ -1908,7 +1950,7 @@ function PrepScreen() {
                         <section className="space-y-4">
                           <div className="flex items-center justify-between">
                             <h3 className="text-lg font-semibold flex items-center gap-2">
-                              <Target className="h-5 w-5 text-purple-500" />
+                              <Target className="h-5 w-5 text-primary" />
                               Closing Approach
                             </h3>
                           </div>
@@ -1985,8 +2027,8 @@ function PrepScreen() {
                           </Card>
 
                           <Card className="h-auto">
-                            <CardHeader className="py-3 bg-purple-500/10">
-                              <CardTitle className="text-sm font-bold text-purple-600">
+                            <CardHeader className="py-3 bg-primary/10">
+                              <CardTitle className="text-sm font-bold text-primary">
                                 CLOSING
                               </CardTitle>
                             </CardHeader>
@@ -2179,8 +2221,8 @@ function PrepScreen() {
 
                         {/* Closing */}
                         <Card>
-                          <CardHeader className="py-3 bg-purple-500/10">
-                            <CardTitle className="text-sm font-bold text-purple-600 dark:text-purple-400">
+                          <CardHeader className="py-3 bg-primary/10">
+                            <CardTitle className="text-sm font-bold text-primary dark:text-primary">
                               CLOSING
                             </CardTitle>
                           </CardHeader>
@@ -2252,8 +2294,8 @@ function PrepScreen() {
 
                         {/* Response Map - Full Width */}
                         <Card className="md:col-span-2">
-                          <CardHeader className="py-3 bg-purple-500/10">
-                            <CardTitle className="text-sm font-bold text-purple-600 dark:text-purple-400">
+                          <CardHeader className="py-3 bg-primary/10">
+                            <CardTitle className="text-sm font-bold text-primary dark:text-primary">
                               RESPONSE MAP
                             </CardTitle>
                           </CardHeader>
@@ -2265,7 +2307,7 @@ function PrepScreen() {
                                     <div className="font-medium text-muted-foreground">
                                       If they say: "{item.trigger}"
                                     </div>
-                                    <div className="ml-4 mt-1 border-l-2 border-purple-300 pl-3">
+                                    <div className="ml-4 mt-1 border-l-2 border-primary/50 pl-3">
                                       → {item.response}
                                     </div>
                                   </div>
@@ -2335,7 +2377,7 @@ function PrepScreen() {
                         <div className="flex items-center justify-between">
                           <div>
                             <h3 className="text-lg font-semibold flex items-center gap-2">
-                              <FileText className="h-5 w-5 text-indigo-500" />
+                              <FileText className="h-5 w-5 text-primary" />
                               Paste Your Research Material
                             </h3>
                             <p className="text-sm text-muted-foreground mt-1">
@@ -2379,7 +2421,7 @@ Example content:
                                 </>
                               ) : (
                                 <>
-                                  <Sparkles className="mr-2 h-4 w-4" />
+                                  <Brain className="mr-2 h-4 w-4" />
                                   Extract Insights
                                 </>
                               )}
@@ -2391,7 +2433,7 @@ Example content:
                         {processedResearch && (
                           <div className="space-y-6 mt-6 pt-6 border-t border-border">
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <Sparkles className="h-4 w-4 text-indigo-500" />
+                              <Brain className="h-4 w-4 text-primary" />
                               <span className="font-medium">AI Analysis:</span>
                               <span>{processedResearch.summary}</span>
                             </div>
@@ -2746,8 +2788,8 @@ Example content:
                       {opponent.geminiResearchReport ? (
                         <div className="space-y-4">
                           <div className="flex items-center gap-2 pb-2 border-b">
-                            <Sparkles className="h-5 w-5 text-purple-600" />
-                            <h3 className="text-lg font-semibold text-purple-900 dark:text-purple-100">
+                            <FileSearch className="h-5 w-5 text-primary" />
+                            <h3 className="text-lg font-semibold text-primary">
                               Gemini Deep Research Report
                             </h3>
                           </div>
@@ -2909,7 +2951,7 @@ Example content:
                         </div>
                       ) : (
                         <div className="flex flex-col items-center justify-center h-64 text-center">
-                          <Sparkles className="h-12 w-12 mx-auto mb-3 opacity-30 text-purple-500" />
+                          <FileSearch className="h-12 w-12 mx-auto mb-3 opacity-30 text-muted-foreground" />
                           <h3 className="text-lg font-medium mb-2">
                             No Gemini Research Report Yet
                           </h3>
@@ -2990,7 +3032,7 @@ Example content:
                     {isDebatePrep ? (
                       <Brain className="h-12 w-12 text-muted-foreground mb-4" />
                     ) : (
-                      <Sparkles className="h-12 w-12 text-muted-foreground mb-4" />
+                      <Brain className="h-12 w-12 text-muted-foreground mb-4" />
                     )}
                     <h3 className="text-lg font-medium mb-2">
                       {isDebatePrep

@@ -56,6 +56,67 @@ export interface InputFieldConfig {
 
   /** Whether to hide this field for this scenario */
   hidden?: boolean;
+
+  /** Field type (defaults to textarea) */
+  type?: "text" | "textarea" | "select";
+
+  /** Number of rows for textarea */
+  rows?: number;
+
+  /** Options for select fields */
+  options?: Array<{ value: string; label: string }>;
+}
+
+/**
+ * A section groups related fields together in the UI.
+ * Sections can be nested (e.g., "Deep Intel" inside "Opponent Profile")
+ */
+export interface FormSection {
+  /** Unique section identifier */
+  id: string;
+
+  /** Display title */
+  title: string;
+
+  /** Subtitle/description */
+  description?: string;
+
+  /** Lucide icon name (e.g., 'User', 'Target') */
+  icon?: string;
+
+  /** Shows "optional" badge, defaults collapsed */
+  optional?: boolean;
+
+  /** Override collapse state */
+  defaultOpen?: boolean;
+
+  /** Field keys from inputs (order matters) */
+  fields: string[];
+
+  /** Nested sections (for Deep Intel pattern) */
+  subsections?: FormSection[];
+}
+
+/**
+ * Core fields configuration - fields that are ALWAYS visible (not in accordions)
+ */
+export interface CoreFieldsConfig {
+  /** Field keys always visible at top */
+  fields: string[];
+
+  /** Show AI style/difficulty selectors (debate only) */
+  showStyleDifficulty?: boolean;
+}
+
+/**
+ * Complete form layout configuration
+ */
+export interface FormLayoutConfig {
+  /** Always-visible fields */
+  core: CoreFieldsConfig;
+
+  /** Collapsible accordion sections */
+  sections: FormSection[];
 }
 
 /**
@@ -123,6 +184,9 @@ export interface ScenarioConfig {
     talkingPoints?: InputFieldConfig;
     [key: string]: InputFieldConfig | undefined;
   };
+
+  /** Form layout configuration (optional, for new accordion-based UI) */
+  formLayout?: FormLayoutConfig;
 
   /** Assistant (Vapi) configuration */
   assistant: AssistantConfig;

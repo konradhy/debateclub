@@ -11,6 +11,7 @@ import {
   Target,
   AlertTriangle,
   ArrowRight,
+  ArrowLeft,
   TrendingUp,
   Brain,
   MessageSquare,
@@ -20,6 +21,20 @@ import {
   Shield,
   Eye
 } from "lucide-react";
+
+// Color constants matching marketing pages
+const colors = {
+  background: "#F5F3EF",
+  cardBg: "#FAFAF8",
+  headerBg: "#FAFAF8",
+  border: "#E8E4DA",
+  primary: "#3C4A32",
+  primaryLight: "#5C6B4A",
+  text: "#2A2A20",
+  textMuted: "#5C5C54",
+  textLight: "#888880",
+  accent: "#A8B08C",
+};
 
 export const Route = createFileRoute("/_app/_auth/dashboard/analysis")({
   component: Analysis,
@@ -46,10 +61,15 @@ function Analysis() {
 
   if (isLoading) {
     return (
-      <div className="flex h-full w-full items-center justify-center p-8">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-muted-foreground">Analyzing your performance...</p>
+      <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
+        <div className="flex h-screen items-center justify-center p-8">
+          <div className="flex flex-col items-center gap-4">
+            <div
+              className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"
+              style={{ borderColor: colors.primary, borderTopColor: "transparent" }}
+            />
+            <p style={{ color: colors.textMuted }}>Analyzing your performance...</p>
+          </div>
         </div>
       </div>
     );
@@ -57,38 +77,82 @@ function Analysis() {
 
   if (!analysis) {
     return (
-      <div className="flex h-full w-full items-center justify-center p-8">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <Brain className="h-12 w-12 text-muted-foreground/50" />
-          <h2 className="text-xl font-semibold">Analysis Not Ready</h2>
-          <p className="max-w-md text-muted-foreground">
-            The debate analysis is still being generated. Please check back in a moment.
-          </p>
-          <Link to="/dashboard">
-            <Button variant="outline">Return to Dashboard</Button>
-          </Link>
+      <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
+        <div className="flex h-screen items-center justify-center p-8">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <Brain className="h-12 w-12" style={{ color: colors.textLight }} />
+            <h2 className="text-xl font-semibold" style={{ color: colors.text }}>
+              Analysis Not Ready
+            </h2>
+            <p className="max-w-md" style={{ color: colors.textMuted }}>
+              The analysis is still being generated. Please check back in a moment.
+            </p>
+            <Link to="/dashboard">
+              <button
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border-2 px-5 text-sm font-medium transition-all hover:shadow-md"
+                style={{ borderColor: colors.border, color: colors.text }}
+              >
+                Return to Dashboard
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <ScrollArea className="h-full w-full">
-      <div className="container mx-auto flex max-w-6xl flex-col gap-8 p-6 pb-24">
-        {/* Header */}
-        <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <h1 className="text-3xl font-bold tracking-tight">
+    <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
+      {/* Site Header */}
+      <header
+        className="sticky top-0 z-50 border-b py-4"
+        style={{ backgroundColor: colors.headerBg, borderColor: colors.border }}
+      >
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6">
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-70"
+            style={{ color: colors.textMuted }}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Dashboard
+          </Link>
+          <Link to="/" className="flex-shrink-0">
+            <img
+              src="/images/logotext.png"
+              alt="DebateClub"
+              className="h-8 w-auto"
+            />
+          </Link>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <div className="mx-auto max-w-6xl px-6 py-8 pb-24">
+        {/* Page Header */}
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1
+              className="text-3xl font-bold"
+              style={{ color: colors.text, fontFamily: "Georgia, serif" }}
+            >
               {isDebateAnalysis ? "Debate Analysis" : "Performance Analysis"}
             </h1>
-            <p className="text-muted-foreground">
+            <p style={{ color: colors.textMuted }}>
               Detailed breakdown of your performance
             </p>
           </div>
-          <Link to="/dashboard">
-            <Button variant="outline">Back to Dashboard</Button>
+          <Link to="/dashboard/history">
+            <button
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border-2 px-5 text-sm font-medium transition-all hover:shadow-md"
+              style={{ borderColor: colors.border, color: colors.text, backgroundColor: colors.cardBg }}
+            >
+              View History
+            </button>
           </Link>
         </div>
+
+        <div className="flex flex-col gap-8">
 
         {/* Executive Summary - Hero Section */}
         <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
@@ -585,9 +649,9 @@ function Analysis() {
             </CardContent>
           </Card>
         )}
-
+        </div>
       </div>
-    </ScrollArea>
+    </div>
   );
 }
 

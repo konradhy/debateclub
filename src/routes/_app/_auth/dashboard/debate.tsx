@@ -5,11 +5,25 @@ import { api } from "@cvx/_generated/api";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/ui/button";
 import Vapi from "@vapi-ai/web";
-import { Mic, MicOff, BarChart3, FileText } from "lucide-react";
+import { Mic, MicOff, BarChart3, FileText, ArrowLeft } from "lucide-react";
 import siteConfig from "~/site.config";
 import { Id } from "@cvx/_generated/dataModel";
 import { PrepPanel } from "@/ui/prep-panel";
 import { SCENARIOS } from "@/scenarios";
+
+// Color constants matching marketing pages
+const colors = {
+  background: "#F5F3EF",
+  cardBg: "#FAFAF8",
+  headerBg: "#FAFAF8",
+  border: "#E8E4DA",
+  primary: "#3C4A32",
+  primaryLight: "#5C6B4A",
+  text: "#2A2A20",
+  textMuted: "#5C5C54",
+  textLight: "#888880",
+  accent: "#A8B08C",
+};
 
 export const Route = createFileRoute("/_app/_auth/dashboard/debate")({
   component: Debate,
@@ -44,7 +58,6 @@ function Debate() {
   const [error, setError] = useState<string | null>(null);
 
   const [hasStarted, setHasStarted] = useState(false);
-  const [selectedModel, setSelectedModel] = useState("gpt-4o");
   const [isPrepPanelOpen, setIsPrepPanelOpen] = useState(false);
 
   const { opponentId } = Route.useSearch();
@@ -216,24 +229,11 @@ function Debate() {
         CONVEX_SITE_URL ? `${CONVEX_SITE_URL}/vapi-webhook` : "NOT SET",
       );
 
-      // Model configurations
-      const modelConfigs = {
-        "gpt-4o": {
-          provider: "openai" as const,
-          model: "gpt-4o" as const,
-        },
-        "gpt-4o-mini": {
-          provider: "openai" as const,
-          model: "gpt-4o-mini" as const,
-        },
-        "groq-llama-3": {
-          provider: "groq" as const,
-          model: "llama-3.1-70b-versatile" as const,
-        },
+      // Hardcoded model config - GPT-4o for voice AI
+      const selectedConfig = {
+        provider: "openai" as const,
+        model: "gpt-4o" as const,
       };
-
-      const selectedConfig =
-        modelConfigs[selectedModel as keyof typeof modelConfigs];
 
       // Get scenario configuration - NO FALLBACKS
       if (!opponent?.scenarioType) {
@@ -444,140 +444,195 @@ ${opponent.additionalContext}`
   };
 
   return (
-    <div className="flex h-full w-full bg-secondary px-6 py-8 dark:bg-black">
-      <div className="z-10 mx-auto flex h-full w-full max-w-screen-xl gap-12">
-        <div className="flex w-full flex-col rounded-lg border border-border bg-card dark:bg-black">
-          <div className="flex w-full flex-col rounded-lg p-6">
-            <div className="flex flex-col gap-2">
-              <h2 className="text-xl font-medium text-primary">
-                Practice Debate
-              </h2>
-              <p className="text-sm font-normal text-primary/60">
-                Topic: {topic}
-              </p>
-              <p className="text-sm font-normal text-primary/60">
-                Your position: {userPosition} | AI position: {aiPosition}
-              </p>
+    <div
+      className="min-h-screen"
+      style={{ backgroundColor: colors.background }}
+    >
+      {/* Site Header */}
+      <header
+        className="sticky top-0 z-50 border-b py-4"
+        style={{ backgroundColor: colors.headerBg, borderColor: colors.border }}
+      >
+        <div className="mx-auto flex max-w-4xl items-center justify-between px-6">
+          <Link
+            to="/dashboard/prep"
+            search={{ opponentId }}
+            className="flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-70"
+            style={{ color: colors.textMuted }}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Prep
+          </Link>
+          <Link to="/" className="flex-shrink-0">
+            <img
+              src="/images/logotext.png"
+              alt="DebateClub"
+              className="h-8 w-auto"
+            />
+          </Link>
+        </div>
+      </header>
 
-              {/* Model Switcher */}
-              <div className="mt-4 flex items-center gap-2">
-                <span className="text-sm font-medium text-primary">
-                  AI Model:
-                </span>
-                <select
-                  value={selectedModel}
-                  onChange={(e) => setSelectedModel(e.target.value)}
-                  disabled={isSessionActive}
-                  className="rounded-md border border-border bg-secondary px-3 py-1 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
-                >
-                  <option value="gpt-4o">GPT-4o (Smartest)</option>
-                  <option value="gpt-4o-mini">GPT-4o Mini (Balanced)</option>
-                  <option value="groq-llama-3">Groq Llama 3 (Fastest)</option>
-                </select>
-              </div>
+      {/* Main Content */}
+      <div className="mx-auto max-w-4xl px-6 py-8">
+        <div
+          className="overflow-hidden rounded-2xl border-2"
+          style={{
+            backgroundColor: colors.cardBg,
+            borderColor: colors.border,
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.06)",
+          }}
+        >
+          {/* Page Header */}
+          <div
+            className="p-6 lg:p-8"
+            style={{ borderBottom: `1px solid ${colors.border}` }}
+          >
+            <h1
+              className="text-2xl font-bold mb-2"
+              style={{ color: colors.text, fontFamily: "Georgia, serif" }}
+            >
+              {opponent?.name || "Practice Session"}
+            </h1>
+            <p className="text-sm" style={{ color: colors.textMuted }}>
+              {topic}
+            </p>
+            {aiPosition && (
+              <p className="text-sm mt-1" style={{ color: colors.textLight }}>
+                Your position: {userPosition} • Opponent: {aiPosition}
+              </p>
+            )}
+          </div>
+
+          {/* Practice Area */}
+          <div className="flex flex-col items-center p-8 lg:p-12">
+            {/* Timer */}
+            <div
+              className="text-5xl font-bold mb-8"
+              style={{ color: colors.primary }}
+            >
+              {formatTime(timer)}
             </div>
-          </div>
-          <div className="flex w-full px-6">
-            <div className="w-full border-b border-border" />
-          </div>
-          <div className="relative mx-auto flex w-full flex-col items-center p-6">
-            <div className="flex w-full flex-col items-center gap-6">
-              {/* Timer */}
-              <div className="text-4xl font-bold text-primary">
-                {formatTime(timer)}
-              </div>
 
-              {/* Speaking Indicators */}
-              <div className="flex gap-4">
-                <div
-                  className={`flex items-center gap-2 rounded-lg px-4 py-2 ${
-                    isListening
-                      ? "bg-green-500/20 text-green-700 dark:text-green-400"
-                      : "bg-secondary text-primary/60"
-                  }`}
-                >
-                  {isListening ? (
-                    <Mic className="h-5 w-5" />
-                  ) : (
-                    <MicOff className="h-5 w-5" />
-                  )}
-                  <span className="text-sm font-medium">You</span>
-                </div>
-                <div
-                  className={`flex items-center gap-2 rounded-lg px-4 py-2 ${
-                    isSpeaking
-                      ? "bg-blue-500/20 text-blue-700 dark:text-blue-400"
-                      : "bg-secondary text-primary/60"
-                  }`}
-                >
-                  {isSpeaking ? (
-                    <div className="h-5 w-5 animate-pulse rounded-full bg-blue-500" />
-                  ) : (
-                    <div className="h-5 w-5 rounded-full bg-primary/20" />
-                  )}
-                  <span className="text-sm font-medium">AI</span>
-                </div>
-              </div>
-
-              {/* Control Buttons */}
-              <div className="flex gap-4">
-                {!isSessionActive ? (
-                  <Button onClick={handleStart} size="lg">
-                    Start Debate
-                  </Button>
+            {/* Speaking Indicators */}
+            <div className="flex gap-4 mb-8">
+              <div
+                className="flex items-center gap-2 rounded-xl px-5 py-3 border-2 transition-all"
+                style={{
+                  backgroundColor: isListening
+                    ? `${colors.accent}40`
+                    : colors.cardBg,
+                  borderColor: isListening
+                    ? colors.primaryLight
+                    : colors.border,
+                  color: isListening ? colors.primary : colors.textMuted,
+                }}
+              >
+                {isListening ? (
+                  <Mic className="h-5 w-5" />
                 ) : (
-                  <div className="flex gap-4">
-                    <Button
-                      onClick={handleStop}
-                      size="lg"
-                      variant="destructive"
-                      className="min-w-[120px]"
-                    >
-                      End Debate
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        if (vapiRef.current) vapiRef.current.stop();
-                        setIsSessionActive(false);
-                        // Don't navigate, just stop
-                      }}
-                      size="lg"
-                      variant="outline"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
+                  <MicOff className="h-5 w-5" />
                 )}
+                <span className="text-sm font-medium">You</span>
               </div>
+              <div
+                className="flex items-center gap-2 rounded-xl px-5 py-3 border-2 transition-all"
+                style={{
+                  backgroundColor: isSpeaking
+                    ? `${colors.accent}40`
+                    : colors.cardBg,
+                  borderColor: isSpeaking ? colors.primaryLight : colors.border,
+                  color: isSpeaking ? colors.primary : colors.textMuted,
+                }}
+              >
+                {isSpeaking ? (
+                  <div
+                    className="h-5 w-5 animate-pulse rounded-full"
+                    style={{ backgroundColor: colors.primary }}
+                  />
+                ) : (
+                  <div
+                    className="h-5 w-5 rounded-full"
+                    style={{ backgroundColor: colors.border }}
+                  />
+                )}
+                <span className="text-sm font-medium">AI</span>
+              </div>
+            </div>
 
-              {/* View Analysis Button - Show when debate is complete */}
-              {!isSessionActive && debateId && (
-                <div className="flex w-full justify-center">
-                  <Link
-                    to="/dashboard/analysis"
-                    search={{ debateId: debateId }}
+            {/* Control Buttons */}
+            <div className="flex gap-4">
+              {!isSessionActive ? (
+                <button
+                  onClick={handleStart}
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-xl px-8 text-base font-semibold text-white transition-all hover:brightness-110"
+                  style={{ backgroundColor: colors.primary }}
+                >
+                  Start Practice
+                </button>
+              ) : (
+                <div className="flex gap-4">
+                  <button
+                    onClick={handleStop}
+                    className="inline-flex h-12 items-center justify-center rounded-xl px-6 text-base font-medium text-white transition-all hover:brightness-110"
+                    style={{ backgroundColor: "#DC2626" }}
                   >
-                    <Button variant="default" size="lg">
-                      <BarChart3 className="mr-2 h-4 w-4" />
-                      View Full Analysis
-                    </Button>
-                  </Link>
-                </div>
-              )}
-
-              {error && (
-                <div className="rounded-lg bg-red-500/20 p-4 text-sm text-red-700 dark:text-red-400">
-                  Error: {error}
-                </div>
-              )}
-
-              {!VAPI_PUBLIC_API_KEY && (
-                <div className="rounded-lg bg-yellow-500/20 p-4 text-sm text-yellow-700 dark:text-yellow-400">
-                  Warning: Missing environment variable:
-                  VITE_VAPI_PUBLIC_API_KEY
+                    End Session
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (vapiRef.current) vapiRef.current.stop();
+                      setIsSessionActive(false);
+                    }}
+                    className="inline-flex h-12 items-center justify-center rounded-xl border-2 px-6 text-base font-medium transition-all hover:shadow-md"
+                    style={{ borderColor: colors.border, color: colors.text }}
+                  >
+                    Cancel
+                  </button>
                 </div>
               )}
             </div>
+
+            {/* View Analysis Button */}
+            {!isSessionActive && debateId && (
+              <div className="mt-8">
+                <Link to="/dashboard/analysis" search={{ debateId: debateId }}>
+                  <button
+                    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl px-8 text-base font-semibold text-white transition-all hover:brightness-110"
+                    style={{ backgroundColor: colors.primaryLight }}
+                  >
+                    <BarChart3 className="h-5 w-5" />
+                    View Full Analysis
+                  </button>
+                </Link>
+              </div>
+            )}
+
+            {error && (
+              <div
+                className="mt-6 rounded-xl border-2 p-4 text-sm"
+                style={{
+                  backgroundColor: "#FEF2F2",
+                  borderColor: "#FCA5A5",
+                  color: "#DC2626",
+                }}
+              >
+                Error: {error}
+              </div>
+            )}
+
+            {!VAPI_PUBLIC_API_KEY && (
+              <div
+                className="mt-6 rounded-xl border-2 p-4 text-sm"
+                style={{
+                  backgroundColor: "#FEFCE8",
+                  borderColor: "#FDE047",
+                  color: "#A16207",
+                }}
+              >
+                Warning: Missing environment variable: VITE_VAPI_PUBLIC_API_KEY
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -586,7 +641,8 @@ ${opponent.additionalContext}`
       {opponent && (
         <button
           onClick={() => setIsPrepPanelOpen(!isPrepPanelOpen)}
-          className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-110 active:scale-95"
+          className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
+          style={{ backgroundColor: colors.primary }}
           aria-label="Toggle prep materials"
         >
           <FileText className="h-6 w-6" />

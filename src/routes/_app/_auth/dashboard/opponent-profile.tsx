@@ -1,71 +1,71 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { api } from "@cvx/_generated/api";
 import { useState } from "react";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
 import { Textarea } from "@/ui/textarea";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/ui/accordion";
+import { Popover, PopoverTrigger, PopoverContent } from "@/ui/popover";
 import siteConfig from "~/site.config";
 import {
   Save,
-  ChevronDown,
-  User,
-  FileText,
   Target,
-  Users,
-  Lightbulb,
   AlertTriangle,
-  Sparkles,
+  ArrowLeft,
+  ChevronRight,
+  ChevronDown,
 } from "lucide-react";
 import {
   SCENARIOS,
   getScenariosByCategory,
   DEFAULT_SCENARIO_ID,
+  type ScenarioConfig,
+  type FormSection,
+  type InputFieldConfig,
 } from "@/scenarios";
+import { cn } from "@/utils/misc";
+import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/_app/_auth/dashboard/opponent-profile")({
   component: OpponentProfile,
   beforeLoad: () => ({
-    title: `${siteConfig.siteTitle} - Create Opponent Profile`,
-    headerTitle: "Create Opponent Profile",
-    headerDescription: "Configure a custom debate opponent",
+    title: `${siteConfig.siteTitle} - Create Practice Session`,
+    headerTitle: "Create Practice Session",
+    headerDescription: "Configure your practice partner",
   }),
 });
 
-/**
- * Collapsible section component for progressive disclosure of optional fields.
- */
-function CollapsibleSection({
-  title,
-  description,
-  icon: Icon,
-  children,
-  defaultOpen = false,
-}: {
-  title: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}) {
-  return (
-    <details
-      className="group rounded-lg border border-border bg-card/50"
-      open={defaultOpen}
-    >
-      <summary className="flex cursor-pointer items-center gap-3 p-4 list-none [&::-webkit-details-marker]:hidden">
-        <Icon className="h-5 w-5 text-primary/60" />
-        <div className="flex-1">
-          <h3 className="text-sm font-medium text-primary">{title}</h3>
-          <p className="text-xs text-primary/50">{description}</p>
-        </div>
-        <ChevronDown className="h-4 w-4 text-primary/40 transition-transform group-open:rotate-180" />
-      </summary>
-      <div className="border-t border-border p-4">{children}</div>
-    </details>
-  );
-}
+// ==========================================
+// Color Constants (matching marketing pages)
+// ==========================================
+const colors = {
+  background: "#F5F3EF",
+  cardBg: "#FAFAF8",
+  headerBg: "#FAFAF8",
+  border: "#E8E4DA",
+  borderLight: "#EBE7DD",
+  primary: "#3C4A32",
+  primaryLight: "#5C6B4A",
+  primaryLighter: "#7B8A6F",
+  text: "#2A2A20",
+  textMuted: "#5C5C54",
+  textLight: "#888880",
+  accent: "#A8B08C",
+  accentDark: "#3A4030",
+  cream: "#E8DFC8",
+  creamDark: "#5C5444",
+};
+
+// ==========================================
+// Helper Components
+// ==========================================
 
 /**
  * Labeled textarea with helper text for form fields.
@@ -89,7 +89,11 @@ function LabeledTextarea({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium text-primary">
+      <label
+        htmlFor={id}
+        className="text-sm font-medium"
+        style={{ color: colors.text }}
+      >
         {label}
       </label>
       <Textarea
@@ -98,9 +102,58 @@ function LabeledTextarea({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={rows}
-        className="resize-none"
+        className="resize-none border-2 bg-white transition-all focus:border-[#7B8A6F] focus:ring-0"
+        style={{ borderColor: colors.border }}
       />
-      {helperText && <p className="text-xs text-primary/50">{helperText}</p>}
+      {helperText && (
+        <p className="text-xs" style={{ color: colors.textLight }}>
+          {helperText}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Labeled input for text fields.
+ */
+function LabeledInput({
+  id,
+  label,
+  placeholder,
+  helperText,
+  value,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  placeholder: string;
+  helperText?: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label
+        htmlFor={id}
+        className="text-sm font-medium"
+        style={{ color: colors.text }}
+      >
+        {label}
+      </label>
+      <Input
+        id={id}
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="border-2 bg-white transition-all focus:border-[#7B8A6F] focus:ring-0"
+        style={{ borderColor: colors.border }}
+      />
+      {helperText && (
+        <p className="text-xs" style={{ color: colors.textLight }}>
+          {helperText}
+        </p>
+      )}
     </div>
   );
 }
@@ -125,14 +178,19 @@ function LabeledSelect({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium text-primary">
+      <label
+        htmlFor={id}
+        className="text-sm font-medium"
+        style={{ color: colors.text }}
+      >
         {label}
       </label>
       <select
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="flex h-10 w-full rounded-md border-2 bg-white px-3 py-2 text-sm transition-all focus:border-[#7B8A6F] focus:outline-none focus:ring-0"
+        style={{ borderColor: colors.border }}
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -140,57 +198,237 @@ function LabeledSelect({
           </option>
         ))}
       </select>
-      {helperText && <p className="text-xs text-primary/50">{helperText}</p>}
+      {helperText && (
+        <p className="text-xs" style={{ color: colors.textLight }}>
+          {helperText}
+        </p>
+      )}
     </div>
   );
 }
 
 /**
- * Check if a field should be shown based on scenario config.
+ * Generic field renderer based on field config.
  */
-function shouldShowField(
-  scenario: (typeof SCENARIOS)[string],
-  fieldKey: string,
-): boolean {
-  const fieldConfig = scenario?.inputs?.[fieldKey];
-  // Show if field is defined in config AND not explicitly hidden
-  return fieldConfig !== undefined && fieldConfig.hidden !== true;
+function FormField({
+  fieldKey,
+  config,
+  value,
+  onChange,
+}: {
+  fieldKey: string;
+  config: InputFieldConfig;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const fieldType = config.type || "textarea";
+
+  switch (fieldType) {
+    case "text":
+      return (
+        <LabeledInput
+          id={fieldKey}
+          label={config.label}
+          placeholder={config.placeholder}
+          helperText={config.helperText}
+          value={value}
+          onChange={onChange}
+        />
+      );
+    case "select":
+      return (
+        <LabeledSelect
+          id={fieldKey}
+          label={config.label}
+          value={value}
+          onChange={onChange}
+          options={config.options || []}
+          helperText={config.helperText}
+        />
+      );
+    case "textarea":
+    default:
+      return (
+        <LabeledTextarea
+          id={fieldKey}
+          label={config.label}
+          placeholder={config.placeholder}
+          helperText={config.helperText}
+          value={value}
+          onChange={onChange}
+          rows={config.rows || 3}
+        />
+      );
+  }
 }
 
 /**
- * Get field config with fallback.
+ * Simple accordion section renderer - discreet styling.
  */
-function getFieldConfig(
-  scenario: (typeof SCENARIOS)[string],
-  fieldKey: string,
-  defaults: { label: string; placeholder: string; helperText?: string },
-) {
-  const config = scenario?.inputs?.[fieldKey];
-  return {
-    label: config?.label || defaults.label,
-    placeholder: config?.placeholder || defaults.placeholder,
-    helperText: config?.helperText || defaults.helperText,
-  };
+function AccordionSection({
+  section,
+  scenario,
+  formData,
+  updateField,
+}: {
+  section: FormSection;
+  scenario: ScenarioConfig;
+  formData: Record<string, string>;
+  updateField: (key: string, value: string) => void;
+}) {
+  return (
+    <AccordionItem
+      value={section.id}
+      className="border-b last:border-b-0"
+      style={{ borderColor: colors.border }}
+    >
+      <AccordionTrigger className="py-3 hover:no-underline">
+        <span className="text-sm" style={{ color: colors.textMuted }}>
+          {section.title}
+        </span>
+      </AccordionTrigger>
+      <AccordionContent>
+        <div className="flex flex-col gap-4 pb-4 pl-4">
+          {section.fields.map((fieldKey: string) => {
+            const fieldConfig = scenario.inputs[fieldKey];
+            if (!fieldConfig || fieldConfig.hidden) return null;
+            return (
+              <FormField
+                key={fieldKey}
+                fieldKey={fieldKey}
+                config={fieldConfig}
+                value={formData[fieldKey] || ""}
+                onChange={(v) => updateField(fieldKey, v)}
+              />
+            );
+          })}
+          {section.subsections && section.subsections.length > 0 && (
+            <Accordion type="multiple">
+              {section.subsections.map((sub: FormSection) => (
+                <AccordionSection
+                  key={sub.id}
+                  section={sub}
+                  scenario={scenario}
+                  formData={formData}
+                  updateField={updateField}
+                />
+              ))}
+            </Accordion>
+          )}
+        </div>
+      </AccordionContent>
+    </AccordionItem>
+  );
 }
+
+/**
+ * Scenario selector popover - closes on selection.
+ */
+function ScenarioPopover({
+  currentScenario,
+  onScenarioChange,
+}: {
+  currentScenario: string;
+  onScenarioChange: (id: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const scenariosByCategory = getScenariosByCategory();
+
+  const handleSelect = (id: string) => {
+    onScenarioChange(id);
+    setOpen(false);
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          className="flex items-center gap-1.5 text-sm transition-opacity hover:opacity-70"
+          style={{ color: colors.textMuted }}
+        >
+          Change practice type
+          <ChevronDown className="h-3 w-3" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-64 p-0 overflow-hidden"
+        align="start"
+        style={{
+          backgroundColor: colors.cardBg,
+          border: `1px solid ${colors.border}`,
+        }}
+      >
+        <div className="flex flex-col">
+          {Object.entries(scenariosByCategory).map(
+            ([category, scenarios], idx) => (
+              <div
+                key={category}
+                className={idx > 0 ? "border-t" : ""}
+                style={{ borderColor: colors.border }}
+              >
+                <div
+                  className="px-3 py-1.5 text-xs font-medium uppercase tracking-wide"
+                  style={{
+                    backgroundColor: colors.background,
+                    color: colors.textLight,
+                  }}
+                >
+                  {category}
+                </div>
+                <div className="p-1">
+                  {scenarios.map((s) => (
+                    <button
+                      key={s.id}
+                      onClick={() => handleSelect(s.id)}
+                      className={cn(
+                        "w-full text-left px-3 py-2 rounded text-sm transition-colors",
+                        currentScenario === s.id
+                          ? "font-medium"
+                          : "hover:bg-black/5",
+                      )}
+                      style={{
+                        backgroundColor:
+                          currentScenario === s.id
+                            ? colors.accent
+                            : "transparent",
+                        color:
+                          currentScenario === s.id
+                            ? colors.accentDark
+                            : colors.text,
+                      }}
+                    >
+                      {s.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ),
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// ==========================================
+// Main Component
+// ==========================================
 
 function OpponentProfile() {
   const navigate = useNavigate();
-  const { data: user } = useQuery(convexQuery(api.app.getCurrentUser, {}));
-  const { mutateAsync: createOpponent } = useMutation({
-    mutationFn: useConvexMutation(api.opponents.create),
-  });
 
-  // ==========================================
-  // Scenario Selection
-  // ==========================================
+  // Fetch current user
+  const { data: user } = useQuery(convexQuery(api.app.getCurrentUser, {}));
+
+  // Create opponent mutation
+  const createOpponent = useConvexMutation(api.opponents.create);
+
+  // Scenario selection
   const [scenarioType, setScenarioType] = useState(DEFAULT_SCENARIO_ID);
   const scenario = SCENARIOS[scenarioType];
-  const scenariosByCategory = getScenariosByCategory();
   const isDebate = scenario?.pipeline?.prepType === "debate";
 
-  // ==========================================
-  // Form Data - Single state object for all fields
-  // ==========================================
+  // Form data
   const [formData, setFormData] = useState<Record<string, string>>({
     name: "",
     topic: "",
@@ -206,6 +444,19 @@ function OpponentProfile() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Handle scenario change
+  const handleScenarioChange = (newScenarioId: string) => {
+    setScenarioType(newScenarioId);
+    // Reset form to defaults for new scenario
+    setFormData({
+      name: "",
+      topic: "",
+      position: "con",
+      style: "aggressive",
+      difficulty: "medium",
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -217,7 +468,7 @@ function OpponentProfile() {
 
     // Validation for required fields
     if (!formData.name?.trim()) {
-      setError("Opponent name is required");
+      setError("Practice partner name is required");
       return;
     }
     if (!formData.topic?.trim()) {
@@ -259,793 +510,306 @@ function OpponentProfile() {
       });
     } catch (err) {
       console.error("Error creating opponent:", err);
-      setError(
-        err instanceof Error ? err.message : "Failed to create opponent",
-      );
+      setError(err instanceof Error ? err.message : "Failed to create session");
       setIsSubmitting(false);
     }
   };
 
+  // Get form layout from scenario (with fallback for legacy scenarios)
+  const formLayout = scenario?.formLayout;
+  const hasFormLayout = !!formLayout;
+
   return (
-    <div className="flex h-full w-full bg-secondary px-6 py-8 dark:bg-black">
-      <div className="z-10 mx-auto flex h-full w-full max-w-screen-xl gap-12">
-        <div className="flex w-full flex-col rounded-lg border border-border bg-card dark:bg-black">
-          <div className="flex w-full flex-col rounded-lg p-6">
-            <div className="flex flex-col gap-2">
-              <h2 className="text-xl font-medium text-primary">
-                Create Opponent Profile
-              </h2>
-              <p className="text-sm font-normal text-primary/60">
-                {isDebate
-                  ? "Configure your debate. Required fields get you started. Optional sections add context for more tailored AI prep."
-                  : "Set up your practice session. Fill in the details to customize your AI practice partner."}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex w-full px-6">
-            <div className="w-full border-b border-border" />
-          </div>
-
-          <form
-            onSubmit={handleSubmit}
-            className="flex w-full flex-col gap-4 overflow-y-auto p-6"
+    <div
+      className="min-h-screen"
+      style={{ backgroundColor: colors.background }}
+    >
+      {/* Header */}
+      <header
+        className="sticky top-0 z-50 border-b py-4"
+        style={{ backgroundColor: colors.headerBg, borderColor: colors.border }}
+      >
+        <div className="mx-auto flex max-w-3xl items-center justify-between px-6">
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-70"
+            style={{ color: colors.textMuted }}
           >
-            {/* ==========================================
-                SCENARIO TYPE SELECTOR
-                ========================================== */}
-            <div className="flex flex-col gap-3 rounded-lg border border-primary/30 bg-gradient-to-r from-primary/5 to-primary/10 p-4">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-primary" />
-                <h3 className="text-sm font-semibold text-primary">
-                  Practice Type
-                </h3>
-              </div>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                {Object.entries(scenariosByCategory).map(
-                  ([category, scenarios]) =>
-                    scenarios.map((s) => (
-                      <button
-                        key={s.id}
-                        type="button"
-                        onClick={() => setScenarioType(s.id)}
-                        className={`rounded-lg border p-3 text-left transition-all ${
-                          scenarioType === s.id
-                            ? "border-primary bg-primary/10 ring-2 ring-primary/20"
-                            : "border-border bg-card hover:border-primary/50 hover:bg-primary/5"
-                        }`}
-                      >
-                        <div className="text-sm font-medium text-primary">
-                          {s.name}
-                        </div>
-                        <div className="text-xs text-primary/50 capitalize">
-                          {s.category}
-                        </div>
-                      </button>
-                    )),
-                )}
-              </div>
-            </div>
-
-            {/* ==========================================
-                BASIC INFO (Always visible)
-                ========================================== */}
-            <div className="flex flex-col gap-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
-              <div className="flex items-center gap-2">
-                <Target className="h-5 w-5 text-primary" />
-                <h3 className="text-sm font-semibold text-primary">
-                  Basic Info
-                </h3>
-                <span className="text-xs text-primary/50">(required)</span>
-              </div>
-
-              {/* Opponent Name */}
-              <div className="flex flex-col gap-1.5">
-                <label
-                  htmlFor="name"
-                  className="text-sm font-medium text-primary"
-                >
-                  {isDebate ? "Opponent Name" : "Practice Partner Name"}
-                </label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder={
-                    isDebate
-                      ? "e.g., Climate Skeptic, Senator Johnson, Policy Expert"
-                      : "e.g., Tough Prospect, Skeptical Investor"
-                  }
-                  value={formData.name || ""}
-                  onChange={(e) => updateField("name", e.target.value)}
-                  required
-                />
-              </div>
-
-              {/* Topic (label from scenario config) */}
-              <div className="flex flex-col gap-1.5">
-                <label
-                  htmlFor="topic"
-                  className="text-sm font-medium text-primary"
-                >
-                  {scenario?.inputs?.topic?.label || "Topic"}
-                </label>
-                <Input
-                  id="topic"
-                  type="text"
-                  placeholder={
-                    scenario?.inputs?.topic?.placeholder ||
-                    "What is this session about?"
-                  }
-                  value={formData.topic || ""}
-                  onChange={(e) => updateField("topic", e.target.value)}
-                  required
-                />
-              </div>
-
-              {/* Your Position (only for debate) */}
-              {shouldShowField(scenario, "position") && (
-                <LabeledSelect
-                  id="position"
-                  label={scenario?.inputs?.position?.label || "Your Position"}
-                  value={formData.position || "con"}
-                  onChange={(v) => updateField("position", v)}
-                  options={[
-                    { value: "pro", label: "Pro - I'm supporting this motion" },
-                    { value: "con", label: "Con - I'm opposing this motion" },
-                  ]}
-                  helperText={
-                    scenario?.inputs?.position?.helperText ||
-                    "The AI will take the opposite position"
-                  }
-                />
-              )}
-
-              {/* Only show style and difficulty for debate scenarios */}
-              {isDebate && (
-                <div className="grid grid-cols-2 gap-4">
-                  {/* AI Style */}
-                  <LabeledSelect
-                    id="style"
-                    label="AI Opponent Style"
-                    value={formData.style || "aggressive"}
-                    onChange={(v) => updateField("style", v)}
-                    options={[
-                      { value: "aggressive", label: "Aggressive" },
-                      { value: "socratic", label: "Socratic" },
-                      { value: "academic", label: "Academic" },
-                      { value: "political", label: "Political" },
-                    ]}
-                  />
-
-                  {/* Difficulty */}
-                  <LabeledSelect
-                    id="difficulty"
-                    label="Difficulty Level"
-                    value={formData.difficulty || "medium"}
-                    onChange={(v) => updateField("difficulty", v)}
-                    options={[
-                      { value: "easy", label: "Easy" },
-                      { value: "medium", label: "Medium" },
-                      { value: "hard", label: "Hard" },
-                    ]}
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* ==========================================
-                GENERIC SCENARIOS: Simple flat fields
-                ========================================== */}
-            {!isDebate && (
-              <div className="flex flex-col gap-4 rounded-lg border border-border bg-card/50 p-4">
-                <div className="flex items-center gap-2">
-                  <User className="h-5 w-5 text-primary/60" />
-                  <h3 className="text-sm font-medium text-primary">
-                    Session Details
-                  </h3>
-                </div>
-                <div className="flex flex-col gap-4">
-                  {/* Opponent/Prospect Description */}
-                  {shouldShowField(scenario, "opponentDescription") && (
-                    <LabeledTextarea
-                      id="opponentDescription"
-                      {...getFieldConfig(scenario, "opponentDescription", {
-                        label: "Background",
-                        placeholder:
-                          "Who is this person? What's their context?",
-                      })}
-                      value={formData.opponentDescription || ""}
-                      onChange={(v) => updateField("opponentDescription", v)}
-                    />
-                  )}
-
-                  {/* Talking Points / Objections */}
-                  {shouldShowField(scenario, "talkingPoints") && (
-                    <LabeledTextarea
-                      id="talkingPoints"
-                      {...getFieldConfig(scenario, "talkingPoints", {
-                        label: "Key Points",
-                        placeholder: "What should they focus on?",
-                      })}
-                      value={formData.talkingPoints || ""}
-                      onChange={(v) => updateField("talkingPoints", v)}
-                    />
-                  )}
-
-                  {/* Additional Context */}
-                  {shouldShowField(scenario, "additionalContext") && (
-                    <LabeledTextarea
-                      id="additionalContext"
-                      {...getFieldConfig(scenario, "additionalContext", {
-                        label: "Additional Context (Optional)",
-                        placeholder:
-                          "Any specific context or focus areas for this practice session...",
-                        helperText:
-                          "Free-form guidance to customize AI behavior",
-                      })}
-                      value={formData.additionalContext || ""}
-                      onChange={(v) => updateField("additionalContext", v)}
-                      rows={3}
-                    />
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* ==========================================
-                DEBATE SCENARIOS: Rich collapsible sections
-                ========================================== */}
-            {isDebate && (
-              <>
-                {/* About Your Opponent */}
-                <CollapsibleSection
-                  title="About Your Opponent"
-                  description="Who are they? Background, style, and vulnerabilities (Chapter 4: The Three C's)"
-                  icon={User}
-                >
-                  <div className="flex flex-col gap-4">
-                    {shouldShowField(scenario, "opponentDescription") && (
-                      <LabeledTextarea
-                        id="opponentDescription"
-                        {...getFieldConfig(scenario, "opponentDescription", {
-                          label: "Background",
-                          placeholder:
-                            "Who is this person? What's their role, history, or relevance to this debate?",
-                          helperText:
-                            "e.g., 'Conservative economist, former advisor to the Reagan administration, known for free-market advocacy'",
-                        })}
-                        value={formData.opponentDescription || ""}
-                        onChange={(v) => updateField("opponentDescription", v)}
-                      />
-                    )}
-
-                    {shouldShowField(scenario, "opponentOrganization") && (
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1.5">
-                          <label
-                            htmlFor="opponentOrganization"
-                            className="text-sm font-medium text-primary"
-                          >
-                            Organization / Affiliation
-                          </label>
-                          <Input
-                            id="opponentOrganization"
-                            type="text"
-                            placeholder="e.g., Cato Institute, Heritage Foundation"
-                            value={formData.opponentOrganization || ""}
-                            onChange={(e) =>
-                              updateField(
-                                "opponentOrganization",
-                                e.target.value,
-                              )
-                            }
-                          />
-                        </div>
-
-                        {shouldShowField(scenario, "opponentDebateStyle") && (
-                          <LabeledSelect
-                            id="opponentDebateStyle"
-                            label="Their Debate Style"
-                            value={formData.opponentDebateStyle || ""}
-                            onChange={(v) =>
-                              updateField("opponentDebateStyle", v)
-                            }
-                            options={[
-                              { value: "", label: "— Select if known —" },
-                              {
-                                value: "gish galloper",
-                                label: "Gish Galloper (rapid-fire claims)",
-                              },
-                              {
-                                value: "academic",
-                                label: "Academic (evidence-heavy)",
-                              },
-                              {
-                                value: "emotional",
-                                label: "Emotional (appeals to feelings)",
-                              },
-                              {
-                                value: "socratic",
-                                label: "Socratic (trap questions)",
-                              },
-                              {
-                                value: "aggressive",
-                                label: "Aggressive (interrupts, bullies)",
-                              },
-                            ]}
-                          />
-                        )}
-                      </div>
-                    )}
-
-                    {shouldShowField(scenario, "opponentCredentials") && (
-                      <LabeledTextarea
-                        id="opponentCredentials"
-                        {...getFieldConfig(scenario, "opponentCredentials", {
-                          label: "Their Credentials",
-                          placeholder:
-                            "What expertise do they claim? Degrees, positions, experience?",
-                          helperText:
-                            "Hasan Chapter 4: 'Challenge their credentials — but only AFTER they've invoked them'",
-                        })}
-                        value={formData.opponentCredentials || ""}
-                        onChange={(v) => updateField("opponentCredentials", v)}
-                        rows={2}
-                      />
-                    )}
-
-                    {shouldShowField(scenario, "credentialWeaknesses") && (
-                      <LabeledTextarea
-                        id="credentialWeaknesses"
-                        {...getFieldConfig(scenario, "credentialWeaknesses", {
-                          label: "Credential Weaknesses",
-                          placeholder:
-                            "Where do their credentials fall short? Areas outside their expertise?",
-                          helperText:
-                            "e.g., 'PhD is in unrelated field', 'Funded by industry groups', 'No field experience'",
-                        })}
-                        value={formData.credentialWeaknesses || ""}
-                        onChange={(v) => updateField("credentialWeaknesses", v)}
-                        rows={2}
-                      />
-                    )}
-
-                    {shouldShowField(
-                      scenario,
-                      "opponentRhetoricalTendencies",
-                    ) && (
-                      <LabeledTextarea
-                        id="opponentRhetoricalTendencies"
-                        {...getFieldConfig(
-                          scenario,
-                          "opponentRhetoricalTendencies",
-                          {
-                            label: "Rhetorical Tendencies",
-                            placeholder:
-                              "How do they typically argue? Any patterns, habits, or tells?",
-                          },
-                        )}
-                        value={formData.opponentRhetoricalTendencies || ""}
-                        onChange={(v) =>
-                          updateField("opponentRhetoricalTendencies", v)
-                        }
-                        rows={2}
-                      />
-                    )}
-
-                    {shouldShowField(scenario, "opponentTriggers") && (
-                      <LabeledTextarea
-                        id="opponentTriggers"
-                        {...getFieldConfig(scenario, "opponentTriggers", {
-                          label: "Emotional Triggers",
-                          placeholder:
-                            "What topics make them defensive or emotional? What sets them off?",
-                          helperText:
-                            "Strategic provocation can expose weaknesses — Hasan Chapter 12: 'Keep Calm'",
-                        })}
-                        value={formData.opponentTriggers || ""}
-                        onChange={(v) => updateField("opponentTriggers", v)}
-                        rows={2}
-                      />
-                    )}
-
-                    {shouldShowField(scenario, "opponentCharacterIssues") && (
-                      <LabeledTextarea
-                        id="opponentCharacterIssues"
-                        {...getFieldConfig(
-                          scenario,
-                          "opponentCharacterIssues",
-                          {
-                            label: "Character / Credibility Issues",
-                            placeholder:
-                              "Conflicts of interest? Bias? Funding sources? Past scandals?",
-                            helperText:
-                              "Hasan's First C: 'Challenge their CHARACTER' — but use judiciously",
-                          },
-                        )}
-                        value={formData.opponentCharacterIssues || ""}
-                        onChange={(v) =>
-                          updateField("opponentCharacterIssues", v)
-                        }
-                        rows={2}
-                      />
-                    )}
-                  </div>
-                </CollapsibleSection>
-
-                {/* Opponent's Record */}
-                <CollapsibleSection
-                  title="Opponent's Record"
-                  description="Past statements and contradictions — for setting traps (Chapter 10: Booby Traps)"
-                  icon={AlertTriangle}
-                >
-                  <div className="flex flex-col gap-4">
-                    {shouldShowField(scenario, "opponentPastStatements") && (
-                      <LabeledTextarea
-                        id="opponentPastStatements"
-                        {...getFieldConfig(scenario, "opponentPastStatements", {
-                          label: "Past Statements / Quotes",
-                          placeholder:
-                            "Notable quotes, positions they've taken on record, past claims...",
-                          helperText:
-                            "Hasan's favorite trap: Quote them without attribution, get them to disagree, then reveal the source",
-                        })}
-                        value={formData.opponentPastStatements || ""}
-                        onChange={(v) =>
-                          updateField("opponentPastStatements", v)
-                        }
-                        rows={4}
-                      />
-                    )}
-
-                    {shouldShowField(scenario, "opponentContradictions") && (
-                      <LabeledTextarea
-                        id="opponentContradictions"
-                        {...getFieldConfig(scenario, "opponentContradictions", {
-                          label: "Known Contradictions",
-                          placeholder:
-                            "Times they've contradicted themselves, changed positions, or been inconsistent...",
-                          helperText:
-                            "'Earlier you said X, but now you're saying Y. Which is it?' — devastating if you have the receipts",
-                        })}
-                        value={formData.opponentContradictions || ""}
-                        onChange={(v) =>
-                          updateField("opponentContradictions", v)
-                        }
-                        rows={3}
-                      />
-                    )}
-
-                    {shouldShowField(scenario, "opponentTrackRecord") && (
-                      <LabeledTextarea
-                        id="opponentTrackRecord"
-                        {...getFieldConfig(scenario, "opponentTrackRecord", {
-                          label: "Track Record",
-                          placeholder:
-                            "Wrong predictions, debunked claims, failed policies they advocated...",
-                          helperText:
-                            "Hasan's Third C: 'Challenge their CLAIMS' — especially their track record of being wrong",
-                        })}
-                        value={formData.opponentTrackRecord || ""}
-                        onChange={(v) => updateField("opponentTrackRecord", v)}
-                        rows={3}
-                      />
-                    )}
-                  </div>
-                </CollapsibleSection>
-
-                {/* Steelmanning Their Case */}
-                <CollapsibleSection
-                  title="Steelmanning Their Case"
-                  description="Their best arguments, strongest evidence — know thy enemy (Chapter 15: Do Your Homework)"
-                  icon={Lightbulb}
-                >
-                  <div className="flex flex-col gap-4">
-                    {shouldShowField(
-                      scenario,
-                      "opponentStrongestArguments",
-                    ) && (
-                      <LabeledTextarea
-                        id="opponentStrongestArguments"
-                        {...getFieldConfig(
-                          scenario,
-                          "opponentStrongestArguments",
-                          {
-                            label: "Their Strongest Arguments",
-                            placeholder:
-                              "What's the best version of their case? Steelman it — don't strawman.",
-                            helperText:
-                              "Hasan: 'Constructing the most compelling form of your opponent's argument' prepares you to counter it",
-                          },
-                        )}
-                        value={formData.opponentStrongestArguments || ""}
-                        onChange={(v) =>
-                          updateField("opponentStrongestArguments", v)
-                        }
-                        rows={4}
-                      />
-                    )}
-
-                    {shouldShowField(scenario, "opponentBestEvidence") && (
-                      <LabeledTextarea
-                        id="opponentBestEvidence"
-                        {...getFieldConfig(scenario, "opponentBestEvidence", {
-                          label: "Their Best Evidence",
-                          placeholder:
-                            "What's their strongest proof? Which stats, studies, or examples will they cite?",
-                        })}
-                        value={formData.opponentBestEvidence || ""}
-                        onChange={(v) => updateField("opponentBestEvidence", v)}
-                        rows={3}
-                      />
-                    )}
-
-                    {shouldShowField(scenario, "opponentLikelyCritiques") && (
-                      <LabeledTextarea
-                        id="opponentLikelyCritiques"
-                        {...getFieldConfig(
-                          scenario,
-                          "opponentLikelyCritiques",
-                          {
-                            label: "How They'll Attack You",
-                            placeholder:
-                              "What will they say against YOUR position? Anticipated critiques?",
-                            helperText:
-                              "Prepare counters for their most likely attacks — don't be caught off guard",
-                          },
-                        )}
-                        value={formData.opponentLikelyCritiques || ""}
-                        onChange={(v) =>
-                          updateField("opponentLikelyCritiques", v)
-                        }
-                        rows={3}
-                      />
-                    )}
-                  </div>
-                </CollapsibleSection>
-
-                {/* Your Audience */}
-                <CollapsibleSection
-                  title="Your Audience"
-                  description="Who you're trying to persuade — the real judges (Chapter 1: Winning Over an Audience)"
-                  icon={Users}
-                >
-                  <div className="flex flex-col gap-4">
-                    {shouldShowField(scenario, "audienceDescription") && (
-                      <LabeledTextarea
-                        id="audienceDescription"
-                        {...getFieldConfig(scenario, "audienceDescription", {
-                          label: "Audience Description",
-                          placeholder:
-                            "Who will be watching? What are their concerns, values, knowledge level?",
-                          helperText:
-                            "Hasan: 'The audience is judge and jury — you're not convincing your opponent, you're convincing THEM'",
-                        })}
-                        value={formData.audienceDescription || ""}
-                        onChange={(v) => updateField("audienceDescription", v)}
-                        rows={3}
-                      />
-                    )}
-
-                    <div className="grid grid-cols-2 gap-4">
-                      {shouldShowField(scenario, "audienceType") && (
-                        <LabeledSelect
-                          id="audienceType"
-                          label="Audience Type"
-                          value={formData.audienceType || ""}
-                          onChange={(v) => updateField("audienceType", v)}
-                          options={[
-                            { value: "", label: "— Select type —" },
-                            { value: "general", label: "General Public" },
-                            { value: "academic", label: "Academic / Experts" },
-                            {
-                              value: "professional",
-                              label: "Professional / Industry",
-                            },
-                            {
-                              value: "political",
-                              label: "Political / Partisan",
-                            },
-                            { value: "legal", label: "Legal / Judicial" },
-                            { value: "media", label: "Media / Journalists" },
-                          ]}
-                        />
-                      )}
-
-                      {shouldShowField(scenario, "audienceSize") && (
-                        <LabeledSelect
-                          id="audienceSize"
-                          label="Audience Size"
-                          value={formData.audienceSize || ""}
-                          onChange={(v) => updateField("audienceSize", v)}
-                          options={[
-                            { value: "", label: "— Select size —" },
-                            { value: "one-on-one", label: "One-on-One" },
-                            {
-                              value: "small group",
-                              label: "Small Group (5-20)",
-                            },
-                            { value: "large", label: "Large (50+)" },
-                            {
-                              value: "broadcast",
-                              label: "Broadcast / Recorded",
-                            },
-                          ]}
-                        />
-                      )}
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      {shouldShowField(scenario, "audienceDisposition") && (
-                        <LabeledSelect
-                          id="audienceDisposition"
-                          label="Audience Disposition"
-                          value={formData.audienceDisposition || ""}
-                          onChange={(v) =>
-                            updateField("audienceDisposition", v)
-                          }
-                          options={[
-                            { value: "", label: "— Select disposition —" },
-                            {
-                              value: "friendly",
-                              label: "Friendly (already on your side)",
-                            },
-                            {
-                              value: "neutral",
-                              label: "Neutral (open to persuasion)",
-                            },
-                            {
-                              value: "skeptical",
-                              label: "Skeptical (needs convincing)",
-                            },
-                            {
-                              value: "hostile",
-                              label: "Hostile (against you)",
-                            },
-                          ]}
-                        />
-                      )}
-
-                      {shouldShowField(scenario, "debateFormat") && (
-                        <LabeledSelect
-                          id="debateFormat"
-                          label="Debate Format"
-                          value={formData.debateFormat || ""}
-                          onChange={(v) => updateField("debateFormat", v)}
-                          options={[
-                            { value: "", label: "— Select format —" },
-                            { value: "formal debate", label: "Formal Debate" },
-                            { value: "panel", label: "Panel Discussion" },
-                            { value: "interview", label: "Interview / Q&A" },
-                            { value: "town hall", label: "Town Hall" },
-                            {
-                              value: "podcast",
-                              label: "Podcast / Conversation",
-                            },
-                            { value: "written", label: "Written Exchange" },
-                          ]}
-                        />
-                      )}
-                    </div>
-                  </div>
-                </CollapsibleSection>
-
-                {/* Your Context & Directives */}
-                <CollapsibleSection
-                  title="Your Context & Directives"
-                  description="Your research, points to emphasize, things to avoid — guide the AI"
-                  icon={FileText}
-                >
-                  <div className="flex flex-col gap-4">
-                    {shouldShowField(scenario, "userResearch") && (
-                      <LabeledTextarea
-                        id="userResearch"
-                        {...getFieldConfig(scenario, "userResearch", {
-                          label: "Your Research / Notes",
-                          placeholder:
-                            "Paste articles, notes, data, anything you've gathered that should inform the prep...",
-                          helperText:
-                            "This will be synthesized with AI research to create tailored debate materials",
-                        })}
-                        value={formData.userResearch || ""}
-                        onChange={(v) => updateField("userResearch", v)}
-                        rows={5}
-                      />
-                    )}
-
-                    {shouldShowField(scenario, "keyPointsToMake") && (
-                      <LabeledTextarea
-                        id="keyPointsToMake"
-                        {...getFieldConfig(scenario, "keyPointsToMake", {
-                          label: "Key Points to Emphasize",
-                          placeholder:
-                            "What arguments or themes do you definitely want to include?",
-                          helperText:
-                            "The AI will ensure these points are woven into your prep materials",
-                        })}
-                        value={formData.keyPointsToMake || ""}
-                        onChange={(v) => updateField("keyPointsToMake", v)}
-                        rows={3}
-                      />
-                    )}
-
-                    {shouldShowField(scenario, "thingsToAvoid") && (
-                      <LabeledTextarea
-                        id="thingsToAvoid"
-                        {...getFieldConfig(scenario, "thingsToAvoid", {
-                          label: "Things to Avoid",
-                          placeholder:
-                            "Topics, arguments, or approaches you want to steer clear of...",
-                          helperText:
-                            "e.g., 'Don't engage on inflation — I'm less prepared there', 'Avoid personal attacks'",
-                        })}
-                        value={formData.thingsToAvoid || ""}
-                        onChange={(v) => updateField("thingsToAvoid", v)}
-                        rows={2}
-                      />
-                    )}
-
-                    {shouldShowField(scenario, "toneDirectives") && (
-                      <LabeledTextarea
-                        id="toneDirectives"
-                        {...getFieldConfig(scenario, "toneDirectives", {
-                          label: "Tone & Style Preferences",
-                          placeholder:
-                            "How do you want to come across? Aggressive, measured, humorous, academic...?",
-                          helperText:
-                            "This shapes the zingers, openings, and overall rhetorical approach",
-                        })}
-                        value={formData.toneDirectives || ""}
-                        onChange={(v) => updateField("toneDirectives", v)}
-                        rows={2}
-                      />
-                    )}
-
-                    {shouldShowField(scenario, "additionalContext") && (
-                      <LabeledTextarea
-                        id="additionalContext"
-                        {...getFieldConfig(scenario, "additionalContext", {
-                          label: "Additional Context (Optional)",
-                          placeholder:
-                            "Any specific context for this practice session...",
-                          helperText:
-                            "Free-form guidance to customize AI behavior",
-                        })}
-                        value={formData.additionalContext || ""}
-                        onChange={(v) => updateField("additionalContext", v)}
-                        rows={3}
-                      />
-                    )}
-                  </div>
-                </CollapsibleSection>
-              </>
-            )}
-
-            {/* ==========================================
-                Error and Actions
-                ========================================== */}
-            {error && (
-              <div className="rounded-lg bg-red-500/20 p-4 text-sm text-red-700 dark:text-red-400">
-                {error}
-              </div>
-            )}
-
-            <div className="flex gap-3 border-t border-border pt-6">
-              <Button type="submit" disabled={isSubmitting} className="flex-1">
-                <Save className="mr-2 h-4 w-4" />
-                {isSubmitting ? "Creating..." : "Save & Continue to Prep"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate({ to: "/dashboard" })}
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
+            <ArrowLeft className="h-4 w-4" />
+            Back to Dashboard
+          </Link>
+          <Link to="/" className="flex-shrink-0">
+            <img
+              src="/images/logotext.png"
+              alt="DebateClub"
+              className="h-8 w-auto"
+            />
+          </Link>
         </div>
-      </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="mx-auto max-w-3xl px-6 py-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          {/* Page Title */}
+          <div className="mb-8 text-center">
+            <h1
+              className="mb-2 text-3xl font-bold lg:text-4xl"
+              style={{ color: colors.text, fontFamily: "Georgia, serif" }}
+            >
+              {isDebate
+                ? "Set Up Your Debate"
+                : `Create ${scenario?.name || "Practice"} Session`}
+            </h1>
+            <p style={{ color: colors.textMuted }}>
+              {isDebate
+                ? "Configure your practice partner and prepare for battle"
+                : "Configure your practice session details"}
+            </p>
+          </div>
+
+          {/* Form Card */}
+          <div
+            className="overflow-hidden rounded-2xl border-2"
+            style={{
+              backgroundColor: colors.cardBg,
+              borderColor: colors.border,
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.06)",
+            }}
+          >
+            <form onSubmit={handleSubmit}>
+              {/* Core Fields Section */}
+              <div
+                className="p-6 lg:p-8"
+                style={{ borderBottom: `1px solid ${colors.border}` }}
+              >
+                <div className="mb-6 flex items-center gap-3">
+                  <div
+                    className="flex h-10 w-10 items-center justify-center rounded-xl"
+                    style={{ backgroundColor: colors.primary }}
+                  >
+                    <Target className="h-5 w-5" style={{ color: "#C8D4B8" }} />
+                  </div>
+                  <div>
+                    <h2
+                      className="text-lg font-semibold"
+                      style={{ color: colors.text }}
+                    >
+                      Session Basics
+                    </h2>
+                    <p className="text-sm" style={{ color: colors.textLight }}>
+                      Required information for your practice session
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-5">
+                  {/* Practice Partner Name (always visible) */}
+                  <LabeledInput
+                    id="name"
+                    label="Practice Partner Name"
+                    placeholder="e.g., Tough Prospect, Skeptical Investor, Devil's Advocate"
+                    value={formData.name || ""}
+                    onChange={(v) => updateField("name", v)}
+                  />
+
+                  {/* Core fields from scenario formLayout */}
+                  {hasFormLayout ? (
+                    <>
+                      {formLayout.core.fields.map((fieldKey) => {
+                        const fieldConfig = scenario.inputs[fieldKey];
+                        if (!fieldConfig || fieldConfig.hidden) return null;
+
+                        // Special handling for position field (styled radio buttons)
+                        if (fieldKey === "position") {
+                          return (
+                            <div key={fieldKey} className="flex flex-col gap-2">
+                              <label
+                                className="text-sm font-medium"
+                                style={{ color: colors.text }}
+                              >
+                                {fieldConfig.label}
+                              </label>
+                              <div className="flex gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => updateField("position", "pro")}
+                                  className={cn(
+                                    "flex-1 rounded-xl border-2 py-3 text-sm font-medium transition-all",
+                                  )}
+                                  style={{
+                                    backgroundColor:
+                                      formData.position === "pro"
+                                        ? colors.accent
+                                        : "white",
+                                    borderColor:
+                                      formData.position === "pro"
+                                        ? colors.primaryLighter
+                                        : colors.border,
+                                    color:
+                                      formData.position === "pro"
+                                        ? colors.accentDark
+                                        : colors.textMuted,
+                                  }}
+                                >
+                                  Pro (For the motion)
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => updateField("position", "con")}
+                                  className={cn(
+                                    "flex-1 rounded-xl border-2 py-3 text-sm font-medium transition-all",
+                                  )}
+                                  style={{
+                                    backgroundColor:
+                                      formData.position === "con"
+                                        ? colors.accent
+                                        : "white",
+                                    borderColor:
+                                      formData.position === "con"
+                                        ? colors.primaryLighter
+                                        : colors.border,
+                                    color:
+                                      formData.position === "con"
+                                        ? colors.accentDark
+                                        : colors.textMuted,
+                                  }}
+                                >
+                                  Con (Against the motion)
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <FormField
+                            key={fieldKey}
+                            fieldKey={fieldKey}
+                            config={fieldConfig}
+                            value={formData[fieldKey] || ""}
+                            onChange={(v) => updateField(fieldKey, v)}
+                          />
+                        );
+                      })}
+                    </>
+                  ) : (
+                    /* Fallback for scenarios without formLayout */
+                    <>
+                      <FormField
+                        fieldKey="topic"
+                        config={
+                          scenario.inputs.topic || {
+                            label: "Topic",
+                            placeholder: "Enter topic",
+                          }
+                        }
+                        value={formData.topic || ""}
+                        onChange={(v) => updateField("topic", v)}
+                      />
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Optional Sections - discreet */}
+              {hasFormLayout && formLayout.sections.length > 0 && (
+                <div className="px-6 pb-6 lg:px-8 lg:pb-8">
+                  <Accordion type="multiple">
+                    {formLayout.sections.map((section) => (
+                      <AccordionSection
+                        key={section.id}
+                        section={section}
+                        scenario={scenario}
+                        formData={formData}
+                        updateField={updateField}
+                      />
+                    ))}
+                  </Accordion>
+                </div>
+              )}
+
+              {/* Hidden fields for style and difficulty */}
+              {formLayout?.core.showStyleDifficulty && (
+                <>
+                  <input
+                    type="hidden"
+                    name="style"
+                    value={formData.style || "aggressive"}
+                  />
+                  <input
+                    type="hidden"
+                    name="difficulty"
+                    value={formData.difficulty || "medium"}
+                  />
+                </>
+              )}
+
+              {/* Error Display */}
+              {error && (
+                <div
+                  className="mx-6 mb-6 rounded-xl border-2 p-4 lg:mx-8"
+                  style={{
+                    backgroundColor: "#FEF2F2",
+                    borderColor: "#FCA5A5",
+                    color: "#DC2626",
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5" />
+                    <span className="font-medium">{error}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Footer */}
+              <div
+                className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between lg:p-8"
+                style={{
+                  backgroundColor: colors.background,
+                  borderTop: `1px solid ${colors.border}`,
+                }}
+              >
+                <ScenarioPopover
+                  currentScenario={scenarioType}
+                  onScenarioChange={handleScenarioChange}
+                />
+
+                <div className="flex gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => navigate({ to: "/dashboard" })}
+                    className="border-2"
+                    style={{ borderColor: colors.border }}
+                  >
+                    Cancel
+                  </Button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-lg px-6 text-sm font-semibold text-white shadow-sm transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
+                    style={{ backgroundColor: colors.primaryLight }}
+                  >
+                    {isSubmitting ? (
+                      "Creating..."
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4" />
+                        Start Practice
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </motion.div>
+      </main>
     </div>
   );
 }

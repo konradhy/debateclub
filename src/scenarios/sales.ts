@@ -99,6 +99,30 @@ export const ColdProspectScenario: ScenarioConfig = {
   inputs: salesInputs,
   analysis: salesAnalysis,
 
+  formLayout: {
+    core: {
+      fields: ["topic"],
+      showStyleDifficulty: false,
+    },
+    sections: [
+      {
+        id: "prospect-context",
+        title: "Prospect Context",
+        description: "Background and expected objections",
+        icon: "User",
+        optional: true,
+        fields: ["opponentDescription", "talkingPoints"],
+      },
+      {
+        id: "additional",
+        title: "Additional Context",
+        icon: "FileText",
+        optional: true,
+        fields: ["additionalContext"],
+      },
+    ],
+  },
+
   assistant: {
     firstMessage: [
       "Who is this? How'd you get my number?",
@@ -156,6 +180,30 @@ export const DemoFollowupScenario: ScenarioConfig = {
   pipeline: salesPipeline,
   inputs: salesInputs,
   analysis: salesAnalysis,
+
+  formLayout: {
+    core: {
+      fields: ["topic"],
+      showStyleDifficulty: false,
+    },
+    sections: [
+      {
+        id: "prospect-context",
+        title: "Prospect Context",
+        description: "Background and expected objections",
+        icon: "User",
+        optional: true,
+        fields: ["opponentDescription", "talkingPoints"],
+      },
+      {
+        id: "additional",
+        title: "Additional Context",
+        icon: "FileText",
+        optional: true,
+        fields: ["additionalContext"],
+      },
+    ],
+  },
 
   assistant: {
     firstMessage: [
@@ -303,6 +351,23 @@ export const ContractNegotiationScenario: ScenarioConfig = {
   pipeline: salesPipeline,
   inputs: contractNegotiationInputs,
   analysis: contractNegotiationAnalysis,
+
+  formLayout: {
+    core: {
+      fields: ["topic"],
+      showStyleDifficulty: false,
+    },
+    sections: [
+      {
+        id: "negotiation-context",
+        title: "Negotiation Context",
+        description: "Buyer background and your constraints",
+        icon: "User",
+        optional: true,
+        fields: ["opponentDescription", "talkingPoints"],
+      },
+    ],
+  },
 
   assistant: {
     firstMessage: [

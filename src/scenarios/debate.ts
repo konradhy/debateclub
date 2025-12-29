@@ -151,6 +151,87 @@ export const DebateScenario: ScenarioConfig = {
     },
   },
 
+  formLayout: {
+    core: {
+      fields: ["topic", "position"],
+      showStyleDifficulty: true,
+    },
+    sections: [
+      {
+        id: "opponent-profile",
+        title: "Opponent Profile",
+        description: "Who are they? Background and vulnerabilities",
+        icon: "User",
+        optional: true,
+        fields: [
+          "opponentDescription",
+          "opponentOrganization",
+          "opponentDebateStyle",
+        ],
+        subsections: [
+          {
+            id: "deep-intel",
+            title: "Deep Intel",
+            description: "Credentials, contradictions, past statements",
+            icon: "AlertTriangle",
+            optional: true,
+            fields: [
+              "opponentCredentials",
+              "credentialWeaknesses",
+              "opponentPastStatements",
+              "opponentContradictions",
+              "opponentTrackRecord",
+              "opponentRhetoricalTendencies",
+              "opponentTriggers",
+              "opponentCharacterIssues",
+            ],
+          },
+        ],
+      },
+      {
+        id: "steelmanning",
+        title: "Their Strongest Arguments",
+        description: "Steelman their case - know thy enemy",
+        icon: "Lightbulb",
+        optional: true,
+        fields: [
+          "opponentStrongestArguments",
+          "opponentBestEvidence",
+          "opponentLikelyCritiques",
+        ],
+      },
+      {
+        id: "audience-format",
+        title: "Audience & Format",
+        description: "Who you are persuading and the context",
+        icon: "Users",
+        optional: true,
+        fields: [
+          "audienceDescription",
+          "audienceType",
+          "audienceSize",
+          "audienceDisposition",
+          "debateFormat",
+        ],
+      },
+      {
+        id: "your-strategy",
+        title: "Your Strategy",
+        description: "Research, key points, things to avoid",
+        icon: "FileText",
+        optional: true,
+        fields: [
+          "talkingPoints",
+          "userResearch",
+          "keyPointsToMake",
+          "thingsToAvoid",
+          "toneDirectives",
+          "additionalContext",
+        ],
+      },
+    ],
+  },
+
   assistant: {
     firstMessage: `I'm ready to debate. The topic is: {{TOPIC}}. I'll argue that {{AI_POSITION_DESC}}. Would you like to make your opening statement first, or shall I begin?`,
 

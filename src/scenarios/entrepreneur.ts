@@ -100,6 +100,30 @@ export const InvestorPitchScenario: ScenarioConfig = {
   inputs: entrepreneurInputs,
   analysis: entrepreneurAnalysis,
 
+  formLayout: {
+    core: {
+      fields: ["topic"],
+      showStyleDifficulty: false,
+    },
+    sections: [
+      {
+        id: "investor-context",
+        title: "Investor Context",
+        description: "Investor profile and anticipated questions",
+        icon: "User",
+        optional: true,
+        fields: ["opponentDescription", "talkingPoints"],
+      },
+      {
+        id: "additional",
+        title: "Additional Context",
+        icon: "FileText",
+        optional: true,
+        fields: ["additionalContext"],
+      },
+    ],
+  },
+
   assistant: {
     firstMessage: [
       "Walk me through your business. What problem are you solving?",
@@ -267,6 +291,30 @@ export const EarlyCustomerSalesScenario: ScenarioConfig = {
   pipeline: entrepreneurPipeline,
   inputs: earlyCustomerSalesInputs,
   analysis: earlyCustomerSalesAnalysis,
+
+  formLayout: {
+    core: {
+      fields: ["topic"],
+      showStyleDifficulty: false,
+    },
+    sections: [
+      {
+        id: "prospect-context",
+        title: "Prospect Context",
+        description: "Prospect background and your value props",
+        icon: "User",
+        optional: true,
+        fields: ["opponentDescription", "talkingPoints"],
+      },
+      {
+        id: "additional",
+        title: "Additional Context",
+        icon: "FileText",
+        optional: true,
+        fields: ["additionalContext"],
+      },
+    ],
+  },
 
   assistant: {
     firstMessage: [
@@ -466,6 +514,30 @@ export const CustomerDiscoveryScenario: ScenarioConfig = {
   pipeline: entrepreneurPipeline,
   inputs: customerDiscoveryInputs,
   analysis: customerDiscoveryAnalysis,
+
+  formLayout: {
+    core: {
+      fields: ["topic"],
+      showStyleDifficulty: false,
+    },
+    sections: [
+      {
+        id: "interviewee-context",
+        title: "Interviewee Context",
+        description: "Who you're interviewing and what to explore",
+        icon: "User",
+        optional: true,
+        fields: ["opponentDescription", "talkingPoints"],
+      },
+      {
+        id: "additional",
+        title: "Additional Context",
+        icon: "FileText",
+        optional: true,
+        fields: ["additionalContext"],
+      },
+    ],
+  },
 
   assistant: {
     firstMessage: [

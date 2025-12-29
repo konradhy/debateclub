@@ -25,6 +25,9 @@ import type {
   VoiceConfig,
   InputFieldConfig,
   ScoreCategory,
+  FormSection,
+  FormLayoutConfig,
+  CoreFieldsConfig,
 } from "./types";
 
 /**
@@ -88,6 +91,9 @@ export type {
   VoiceConfig,
   InputFieldConfig,
   ScoreCategory,
+  FormSection,
+  FormLayoutConfig,
+  CoreFieldsConfig,
 };
 
 // Re-export individual scenarios for direct import
