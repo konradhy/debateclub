@@ -501,11 +501,13 @@ Numbered citations. REQUIRED at end of article.
 ```tsx
 <SourcesList
   sources={[
-    { citation: 'Voss, Chris with Raz, Tahl. (2016). <em>Never Split the Difference</em>. Crown Business.' },
-    { citation: 'Fisher, Roger, et al. (2011). <em>Getting to Yes</em>. Penguin Books.' },
+    { citation: 'Voss, Chris with Raz, Tahl. (2016). Never Split the Difference. Crown Business.' },
+    { citation: 'Fisher, Roger, et al. (2011). Getting to Yes. Penguin Books.' },
   ]}
 />
 ```
+
+**Note:** Do NOT use `<em>` tags in citations - they will render as literal text. Just use plain text for book titles.
 
 ### Blockquote
 Styled quote with attribution. Use for impactful quotes from sources.
@@ -535,6 +537,126 @@ Styled quote with attribution. Use for impactful quotes from sources.
 - ✅ Cite 3-5 different authors/frameworks throughout the article
 - ❌ Do not over-focus on one author (e.g., citing Voss 10 times and no one else)
 - ✅ Name different experts in different sections
+
+---
+
+## VISUAL DESIGN ENHANCEMENTS
+
+Add visual contrast and hierarchy using these patterns:
+
+### 1. Colored Left Borders on H2 Headings
+All major section headings (H2) should have a green left border:
+
+```tsx
+<h2
+  className="mb-4 mt-12 text-2xl font-bold"
+  style={{
+    color: "#2A2A20",
+    fontFamily: "Georgia, serif",
+    borderLeft: "4px solid #A8B08C",
+    paddingLeft: "16px"
+  }}
+>
+  Section Title
+</h2>
+```
+
+### 2. Key Insight Callout Boxes
+Highlight important insights with a callout box (use dark green border to differentiate from H2):
+
+```tsx
+<div
+  className="my-6 rounded-lg p-6"
+  style={{
+    backgroundColor: "#F0F2E8",
+    borderLeft: "4px solid #3C4A32",
+  }}
+>
+  <p className="text-lg font-medium leading-relaxed" style={{ color: "#2A2A20" }}>
+    Key insight text that deserves emphasis
+  </p>
+</div>
+```
+
+### 3. Stats-Style Badges
+For highlighting key numbers or concepts (import icons as needed):
+
+```tsx
+<div
+  className="my-6 inline-flex items-center gap-3 rounded-lg px-5 py-4"
+  style={{
+    backgroundColor: "#3C4A32",
+    color: "#C8D4B8",
+  }}
+>
+  <div className="text-center">
+    <div className="text-3xl font-bold" style={{ color: "#C8D4B8" }}>
+      2-3
+    </div>
+    <div className="text-xs uppercase tracking-wide mt-1" style={{ color: "#A8B08C" }}>
+      Label
+    </div>
+  </div>
+  <div className="text-sm" style={{ color: "#C8D4B8" }}>
+    Brief explanation of the number
+  </div>
+</div>
+```
+
+### 4. Enhanced "What Changes After Practice" Section
+Import `CheckCircle` from lucide-react and convert bullets to cards:
+
+```tsx
+<div className="my-6 space-y-3">
+  <div
+    className="flex gap-3 rounded-lg p-4"
+    style={{
+      backgroundColor: "#F5F7F0",
+      borderLeft: "3px solid #A8B08C",
+    }}
+  >
+    <CheckCircle
+      className="h-5 w-5 flex-shrink-0 mt-0.5"
+      style={{ color: "#A8B08C" }}
+    />
+    <p style={{ color: "#3A3A35" }}>
+      <strong>Benefit statement.</strong> Details about what changes.
+    </p>
+  </div>
+</div>
+```
+
+### 5. Enhanced Opening Scenarios
+Import `MessageCircle` and use gradient borders (different shades of green):
+
+```tsx
+<div className="my-4 space-y-3">
+  <div
+    className="flex gap-3 rounded-lg border-l-4 p-4"
+    style={{
+      backgroundColor: "#FAFAF8",
+      borderLeftColor: "#A8B08C",
+    }}
+  >
+    <MessageCircle
+      className="h-4 w-4 flex-shrink-0 mt-1"
+      style={{ color: "#A8B08C" }}
+    />
+    <p className="text-sm italic" style={{ color: "#5C5C54" }}>
+      "First opening line example"
+    </p>
+  </div>
+  {/* Use #8B9A70 and #7A8960 for subsequent cards */}
+</div>
+```
+
+### Color Palette Reference
+- `#A8B08C` - Main green (H2 borders, primary accents)
+- `#3C4A32` - Dark green (callout borders, badge backgrounds)
+- `#F0F2E8` - Light green tint (callout backgrounds)
+- `#F5F7F0` - Lighter green (card backgrounds)
+- `#FAFAF8` - Off-white (card backgrounds)
+- `#8B9A70`, `#7A8960` - Medium greens (gradient variations)
 
 ---
 

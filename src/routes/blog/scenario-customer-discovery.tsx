@@ -747,23 +747,23 @@ function CustomerDiscoveryArticle() {
             sources={[
               {
                 citation:
-                  'Fitzpatrick, Rob. (2019). <em>The Mom Test: How to talk to customers & learn if your business is a good idea when everyone is lying to you</em>.',
+                  'Fitzpatrick, Rob. (2019). The Mom Test: How to talk to customers & learn if your business is a good idea when everyone is lying to you.',
               },
               {
                 citation:
-                  'Blank, Steve. (2013). <em>The Four Steps to the Epiphany</em>. K&S Ranch.',
+                  'Blank, Steve. (2013). The Four Steps to the Epiphany. K&S Ranch.',
               },
               {
                 citation:
-                  'Alvarez, Cindy. (2014). <em>Lean Customer Development: Building Products Your Customers Will Buy</em>. O\'Reilly Media.',
+                  'Alvarez, Cindy. (2014). Lean Customer Development: Building Products Your Customers Will Buy. O\'Reilly Media.',
               },
               {
                 citation:
-                  'Moore, Geoffrey. (2014). <em>Crossing the Chasm: Marketing and Selling Disruptive Products to Mainstream Customers</em>. HarperBusiness.',
+                  'Moore, Geoffrey. (2014). Crossing the Chasm: Marketing and Selling Disruptive Products to Mainstream Customers. HarperBusiness.',
               },
               {
                 citation:
-                  '"3 Common Customer Interviewing Mistakes." LEANFoundry. <em>https://www.leanfoundry.com/articles/3-common-customer-interviewing-mistakes</em>',
+                  '"3 Common Customer Interviewing Mistakes." LEANFoundry. https://www.leanfoundry.com/articles/3-common-customer-interviewing-mistakes',
               },
             ]}
           />
