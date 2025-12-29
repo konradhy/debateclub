@@ -8,7 +8,7 @@
 
 1. **Start each session** by reading the Chapter Summaries below
 2. **If you need deep context** on a specific feature, read the full chapter in `dev_journal.md` (Journal 1)
-3. **Increment chapter number** for your session (continue from Chapter 13)
+3. **Increment chapter number** for your session (continue from Chapter 14)
 4. **Document as you work** — decisions, problems, solutions
 5. **Complete chapter** before ending session
 6. **Never modify** past chapters — only add new ones
@@ -24,6 +24,34 @@ Journal 1 (`dev_journal.md`) contains Chapters 0-12 with rich implementation det
 ## Current Chapter (Full Text)
 
 The most recent chapter is included in full here for immediate context:
+
+---
+
+## Chapter 13: Dashboard & App UI Redesign — Marketing Page Consistency
+
+### TL;DR
+
+Redesigned all authenticated app pages (dashboard, opponent-profile, prep, analysis, debate) to match the marketing pages' warm color palette. Removed visual clutter (icons from buttons, colored icon boxes, double navigation). Simplified the dashboard layout and baked in the AI model selection.
+
+**Roadmap Items Advanced**: UX Enhancement, Visual Consistency
+
+---
+
+### Quick Reference
+
+**Color Palette**:
+- Background: `#F5F3EF` (warm cream)
+- Cards: `#FAFAF8` (off-white)
+- Primary: `#3C4A32` (deep olive)
+- Primary Light: `#5C6B4A` (button olive)
+- Text: `#2A2A20` / `#5C5C54` / `#888880`
+
+**Design Principles**:
+1. Text over icons in buttons
+2. Warm cream, not white/black
+3. Georgia serif for page titles
+4. Single navigation path
+5. Bake in defaults (no model dropdown)
 
 ---
 
@@ -670,6 +698,17 @@ Made opponent profile form truly dynamic — only fields defined in `scenario.in
 
 ---
 
+### Chapter 13: Dashboard & App UI Redesign
+**Date**: December 29, 2025
+
+Redesigned all authenticated pages to match marketing pages' warm color palette (`#F5F3EF` cream background, `#3C4A32` olive primary). Removed icons from buttons (Swords, Play, Sparkles). Fixed dashboard double navigation. Simplified to 2-column card grid. Removed AI model dropdown. Made advanced options discreet.
+
+**Key Files**: `_layout.index.tsx`, `opponent-profile.tsx`, `prep.tsx`, `analysis.tsx`, `debate.tsx`
+
+**Key Principle**: Text over icons, warm not cold, bake in defaults.
+
+---
+
 ---
 
 ## Key Patterns Reference
@@ -725,15 +764,207 @@ npx convex deploy    # Backend
 
 ---
 
-## Next Actions (From Chapter 12)
+## Next Actions (From Chapter 13)
 
-1. Consider adding icons to section headers
-2. Consider "Expand all" / "Collapse all" controls for power users
+1. Continue monitoring UI consistency across all pages
+2. Consider adding empty state illustrations
 3. Continue with marketing/blog content development
 
 ---
 
 *Future chapters will be appended below this line.*
+
+---
+
+## Chapter 13: Dashboard & App UI Redesign — Marketing Page Consistency
+
+### TL;DR
+
+Redesigned all authenticated app pages (dashboard, opponent-profile, prep, analysis, debate) to match the marketing pages' warm color palette. Removed visual clutter (icons from buttons, colored icon boxes, double navigation). Simplified the dashboard layout and baked in the AI model selection.
+
+**Roadmap Items Advanced**: UX Enhancement, Visual Consistency
+
+---
+
+### The Problem
+
+The authenticated app pages were visually inconsistent with the marketing pages:
+
+1. **Black and White Theme**: App pages used dark/neutral colors while marketing used warm creams and olive greens
+2. **No Navigation**: Dashboard pages had no logo or clear way back
+3. **Icon Overload**: Buttons had icons (Swords, Sparkles, Play) that felt "corny" and broke layouts
+4. **Double Navigation**: Dashboard had both a header "Back to Home" link AND a "History" button in the content area
+5. **Purple Hues**: Gemini progress indicators used purple colors that clashed with the theme
+6. **Narrow Cards**: Dashboard used 3-column grid with small cards
+7. **AI Model Dropdown**: Exposed implementation detail users didn't need
+
+---
+
+### The Solution: Marketing Page Alignment
+
+#### 1. **Unified Color Palette**
+
+Adopted across all authenticated pages:
+
+```typescript
+const colors = {
+  background: "#F5F3EF",    // Warm cream
+  cardBg: "#FAFAF8",        // Off-white
+  headerBg: "#FAFAF8",      // Clean header
+  border: "#E8E4DA",        // Soft border
+  primary: "#3C4A32",       // Deep olive
+  primaryLight: "#5C6B4A",  // Lighter olive (buttons)
+  text: "#2A2A20",          // Dark text
+  textMuted: "#5C5C54",     // Secondary text
+  textLight: "#888880",     // Light text
+  accent: "#A8B08C",        // Sage accent
+};
+```
+
+#### 2. **Page Structure Pattern**
+
+Every authenticated page now follows:
+
+```
+┌─────────────────────────────────────────────────┐
+│ [← Back to X]                    [Logo]         │  Header
+├─────────────────────────────────────────────────┤
+│                                                 │
+│  Page Title (Georgia serif)                     │
+│  Subtitle                          [Action]     │
+│                                                 │
+│  ┌───────────────────────────────────────┐      │
+│  │ Content Card                          │      │
+│  │                                       │      │
+│  └───────────────────────────────────────┘      │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+#### 3. **Dashboard Simplification**
+
+Before:
+- 3-column grid with green icon boxes
+- Header with "Back to Home" + "History" button + "New Session" button
+- "Documentation" link in top nav
+
+After:
+- 2-column grid (wider cards)
+- Just logo in header
+- Title + "New Session" button on same row
+- "View session history →" subtle link at bottom
+- No icon boxes, just text
+
+#### 4. **Icon Removal Strategy**
+
+Removed icons from action buttons:
+
+| Before | After |
+|--------|-------|
+| `<Swords /> Start Debate` | `Start Debate` |
+| `<Play /> Start Practice` | `Start Practice` |
+| `<Brain /> Generate Strategy` | `Generate Strategy` |
+| `<Sparkles /> Generate (Gemini)` | (removed, consolidated) |
+
+Kept icons only where semantically meaningful:
+- Mic/MicOff for speaking indicators
+- BarChart3 for analysis button
+- Loader2 for loading states
+- ArrowLeft for navigation
+
+#### 5. **Popover Auto-Close**
+
+Fixed scenario popover to close on selection:
+
+```typescript
+function ScenarioPopover({ currentScenario, onScenarioChange }) {
+  const [open, setOpen] = useState(false);
+  
+  const handleSelect = (id: string) => {
+    onScenarioChange(id);
+    setOpen(false);  // Close on selection
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      {/* ... */}
+    </Popover>
+  );
+}
+```
+
+#### 6. **Purple Hue Removal**
+
+Replaced all purple colors with theme colors:
+
+```diff
+- bg-purple-500/10 → bg-primary/10
+- text-purple-600 → text-primary
+- border-purple-500/30 → border-primary/30
+- text-indigo-500 → text-primary
+```
+
+#### 7. **AI Model Baked In**
+
+Removed dropdown, hardcoded model:
+
+```typescript
+// Before: User-selectable
+const [selectedModel, setSelectedModel] = useState("gpt-4o");
+// ... dropdown UI ...
+
+// After: Hardcoded
+const selectedConfig = {
+  provider: "openai" as const,
+  model: "gpt-4o" as const,
+};
+```
+
+#### 8. **Advanced Options Discretion**
+
+Made accordion sections minimal:
+
+Before:
+- Large header with icon box: "Advanced Options"
+- Colored accent backgrounds on each section
+- "Optional" badges
+
+After:
+- No header for optional sections
+- Simple border-bottom accordions
+- Plain text triggers
+
+---
+
+### Files Modified
+
+| File | Changes |
+|------|---------|
+| `dashboard/_layout.index.tsx` | New layout, removed icons, wider cards |
+| `dashboard/opponent-profile.tsx` | Header, colors, discreet accordions, popover fix |
+| `dashboard/prep.tsx` | Header, colors, removed button icons, removed icon box |
+| `dashboard/analysis.tsx` | Header, colors |
+| `dashboard/debate.tsx` | Header, colors, removed model dropdown |
+
+---
+
+### Design Principles Established
+
+1. **Text Over Icons**: Buttons use words, not pictograms
+2. **Warm Not Cold**: Cream backgrounds, not white/black
+3. **Georgia Headings**: Serif font for page titles
+4. **Single Navigation**: One way back, clearly labeled
+5. **Bake In Defaults**: Don't expose implementation choices
+6. **Consistency**: Same header pattern across all pages
+
+---
+
+### What's NOT Changed
+
+- Marketing pages (already styled correctly)
+- Blog pages (already styled correctly)
+- Login page (separate design system)
+- Scenario config system (logic unchanged)
 
 ---
 

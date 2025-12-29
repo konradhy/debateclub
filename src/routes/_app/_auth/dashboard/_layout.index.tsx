@@ -32,7 +32,7 @@ interface Opponent {
   topic: string;
   style: string;
   position: string;
-  talkingPoints: string[];
+  talkingPoints: string[] | { id: string; content: string }[];
   difficulty: string;
   userId: Id<"users">;
 }
@@ -81,21 +81,7 @@ export default function Dashboard() {
       className="min-h-screen"
       style={{ backgroundColor: colors.background }}
     >
-      {/* Simple Header - just logo */}
-      <header
-        className="border-b py-5"
-        style={{ backgroundColor: colors.headerBg, borderColor: colors.border }}
-      >
-        <div className="mx-auto max-w-5xl px-6">
-          <Link to="/" className="flex-shrink-0">
-            <img
-              src="/images/logotext.png"
-              alt="DebateClub"
-              className="h-8 w-auto"
-            />
-          </Link>
-        </div>
-      </header>
+
 
       {/* Main Content */}
       <div className="mx-auto max-w-5xl px-6 py-10">
