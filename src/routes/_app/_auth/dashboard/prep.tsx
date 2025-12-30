@@ -11,7 +11,10 @@ import { ProgressStep } from "@/components/prep/ProgressStep";
 import { PrepHeader } from "@/components/prep/PrepHeader";
 import { GenerationProgress } from "@/components/prep/GenerationProgress";
 import { GeminiProgress } from "@/components/prep/GeminiProgress";
-import ReactMarkdown from "react-markdown";
+import { ChatTab } from "@/components/prep/ChatTab";
+import { ResearchTab } from "@/components/prep/ResearchTab";
+import { GeminiReportTab } from "@/components/prep/GeminiReportTab";
+import { MyResearchTab } from "@/components/prep/MyResearchTab";
 import {
   Brain,
   Loader2,
@@ -25,9 +28,7 @@ import {
   ExternalLink,
   Eye,
   AlertTriangle,
-  FileText,
   MessageSquare,
-  Send,
   FileSearch,
 } from "lucide-react";
 import { cn } from "@/utils/misc";
@@ -37,8 +38,6 @@ import { Label } from "@/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { ScrollArea } from "@/ui/scroll-area";
 import { InlineEdit, AddButton } from "@/ui/inline-edit";
-import { Textarea } from "@/ui/textarea";
-import { Input } from "@/ui/input";
 
 export const Route = createFileRoute("/_app/_auth/dashboard/prep")({
   component: PrepScreen,
@@ -295,6 +294,46 @@ function PrepScreen() {
                         >
                           Deep Research
                         </button>
+                        {import.meta.env.DEV && (
+                          <button
+                            onClick={() => {
+                              const opponentPosition = userPosition === "con" ? "pro" : "con";
+                              const debugPrompt = `=== OPPONENT INTEL PROMPT DEBUG ===
+
+DEBATE SETUP:
+Topic: ${opponent.topic}
+Your debater's position: ${userPosition.toUpperCase()}
+Opponent's position: ${opponentPosition.toUpperCase()}
+
+This is the exact configuration that will be sent to the AI for generating Opponent Intelligence.
+
+The AI should predict arguments for the ${opponentPosition.toUpperCase()} position (opposite of your ${userPosition.toUpperCase()} position).
+
+---
+
+Full context includes:
+- Strategic Brief (audience, opponent intel, user preferences)
+- Research Data (if available)
+- The OPPONENT_INTEL_PROMPT template
+
+Expected Output: 4-6 predicted arguments that the ${opponentPosition.toUpperCase()} side will make, with counters using Concession, Preemption, or Reframing.`;
+
+                              console.log("=== OPPONENT INTEL DEBUG ===");
+                              console.log(debugPrompt);
+                              console.log("=== END DEBUG ===");
+
+                              navigator.clipboard.writeText(debugPrompt).then(() => {
+                                alert("✅ Opponent Intel debug info copied to clipboard!\n\nAlso logged to browser console (F12 > Console tab)");
+                              }).catch(() => {
+                                alert("⚠️ Debug info logged to browser console.\n\nOpen DevTools (F12) > Console tab to see full details");
+                              });
+                            }}
+                            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg px-6 text-sm font-medium border-2 transition-all hover:bg-gray-50"
+                            style={{ borderColor: colors.border, color: colors.text }}
+                          >
+                            DEBUG: Opponent Intel
+                          </button>
+                        )}
                       </>
                     ) : (
                       <button
@@ -2065,455 +2104,34 @@ function PrepScreen() {
                   {/* RESEARCH TAB (debate only) */}
                   {isDebatePrep && (
                     <TabsContent value="research" className="space-y-4">
-                      {research ? (
-                        <div className="space-y-4">
-                          {research.articles.map((article, i) => (
-                            <Card key={i}>
-                              <CardHeader className="pb-2">
-                                <CardTitle className="text-base font-medium">
-                                  <a
-                                    href={article.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="hover:underline flex items-center gap-2"
-                                  >
-                                    {article.title}
-                                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                                  </a>
-                                </CardTitle>
-                                <div className="text-sm text-muted-foreground flex gap-2">
-                                  <span>{article.source}</span>
-                                  {article.publishedDate && (
-                                    <span>• {article.publishedDate}</span>
-                                  )}
-                                </div>
-                              </CardHeader>
-                              <CardContent>
-                                <p className="text-sm text-muted-foreground mb-2">
-                                  {article.summary}
-                                </p>
-                                <div className="text-xs bg-secondary p-2 rounded max-h-32 overflow-y-auto">
-                                  {article.content}
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="p-4 rounded-lg border border-dashed border-border text-center text-sm text-muted-foreground">
-                          Research articles and raw data will appear here after
-                          generation.
-                        </div>
-                      )}
+                      <ResearchTab research={research} />
                     </TabsContent>
                   )}
 
                   {/* MY RESEARCH TAB - User-provided research material (debate only) */}
                   {isDebatePrep && (
                     <TabsContent value="myresearch" className="space-y-6">
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h3 className="text-lg font-semibold flex items-center gap-2">
-                              <FileText className="h-5 w-5 text-primary" />
-                              Paste Your Research Material
-                            </h3>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              Paste notes, articles, or any research material.
-                              AI will extract arguments, receipts, and potential
-                              openers.
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="space-y-3">
-                          <Textarea
-                            placeholder="Paste your research notes, articles, statistics, quotes, or any other material here...
-
-Example content:
-- Studies and statistics you've found
-- Quotes from experts or opponents
-- Case studies or examples
-- Counter-arguments to address
-- Interesting angles or hooks"
-                            value={userResearchText}
-                            onChange={(e) =>
-                              setUserResearchText(e.target.value)
-                            }
-                            className="min-h-[200px] font-mono text-sm"
-                          />
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted-foreground">
-                              {userResearchText.length} characters
-                            </span>
-                            <Button
-                              onClick={handleProcessResearch}
-                              disabled={
-                                isProcessingResearch || !userResearchText.trim()
-                              }
-                            >
-                              {isProcessingResearch ? (
-                                <>
-                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  Processing...
-                                </>
-                              ) : (
-                                <>
-                                  <Brain className="mr-2 h-4 w-4" />
-                                  Extract Insights
-                                </>
-                              )}
-                            </Button>
-                          </div>
-                        </div>
-
-                        {/* Processed Research Results */}
-                        {processedResearch && (
-                          <div className="space-y-6 mt-6 pt-6 border-t border-border">
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <Brain className="h-4 w-4 text-primary" />
-                              <span className="font-medium">AI Analysis:</span>
-                              <span>{processedResearch.summary}</span>
-                            </div>
-
-                            {/* Extracted Arguments */}
-                            {processedResearch.extractedArguments?.length >
-                              0 && (
-                              <Card>
-                                <CardHeader className="py-3 bg-green-500/10">
-                                  <CardTitle className="text-sm font-bold text-green-600 flex items-center gap-2">
-                                    <Target className="h-4 w-4" />
-                                    EXTRACTED ARGUMENTS (
-                                    {
-                                      processedResearch.extractedArguments
-                                        .length
-                                    }
-                                    )
-                                  </CardTitle>
-                                </CardHeader>
-                                <CardContent className="py-4 space-y-4">
-                                  {processedResearch.extractedArguments.map(
-                                    (arg: any) => (
-                                      <div
-                                        key={arg.id}
-                                        className="space-y-2 border-l-2 border-green-500/30 pl-3"
-                                      >
-                                        <div className="flex items-center justify-between">
-                                          <span className="font-medium">
-                                            {arg.claim}
-                                          </span>
-                                          <span
-                                            className={cn(
-                                              "text-xs px-2 py-0.5 rounded",
-                                              arg.strength === "Strong"
-                                                ? "bg-green-100 text-green-700"
-                                                : arg.strength === "Medium"
-                                                  ? "bg-yellow-100 text-yellow-700"
-                                                  : "bg-gray-100 text-gray-700",
-                                            )}
-                                          >
-                                            {arg.strength}
-                                          </span>
-                                        </div>
-                                        {arg.supportingPoints?.length > 0 && (
-                                          <ul className="text-sm text-muted-foreground list-disc list-inside">
-                                            {arg.supportingPoints.map(
-                                              (point: string, i: number) => (
-                                                <li key={i}>{point}</li>
-                                              ),
-                                            )}
-                                          </ul>
-                                        )}
-                                        {arg.source && (
-                                          <span className="text-xs text-muted-foreground">
-                                            Source: {arg.source}
-                                          </span>
-                                        )}
-                                      </div>
-                                    ),
-                                  )}
-                                </CardContent>
-                              </Card>
-                            )}
-
-                            {/* Extracted Receipts */}
-                            {processedResearch.extractedReceipts?.length >
-                              0 && (
-                              <Card>
-                                <CardHeader className="py-3 bg-orange-500/10">
-                                  <CardTitle className="text-sm font-bold text-orange-600 flex items-center gap-2">
-                                    <ShieldAlert className="h-4 w-4" />
-                                    EXTRACTED RECEIPTS (
-                                    {processedResearch.extractedReceipts.length}
-                                    )
-                                  </CardTitle>
-                                </CardHeader>
-                                <CardContent className="py-4 space-y-4">
-                                  {processedResearch.extractedReceipts.map(
-                                    (receipt: any) => (
-                                      <div
-                                        key={receipt.id}
-                                        className="space-y-1 border-l-2 border-orange-500/30 pl-3"
-                                      >
-                                        <div className="flex items-center gap-2">
-                                          <span className="text-xs uppercase font-bold text-orange-600">
-                                            {receipt.type}
-                                          </span>
-                                          {receipt.source && (
-                                            <span className="text-xs text-muted-foreground">
-                                              — {receipt.source}
-                                            </span>
-                                          )}
-                                        </div>
-                                        <p className="text-sm font-medium">
-                                          {receipt.content}
-                                        </p>
-                                        <p className="text-xs text-muted-foreground italic">
-                                          Use: {receipt.useCase}
-                                        </p>
-                                      </div>
-                                    ),
-                                  )}
-                                </CardContent>
-                              </Card>
-                            )}
-
-                            {/* Potential Openers */}
-                            {processedResearch.potentialOpeners?.length > 0 && (
-                              <Card>
-                                <CardHeader className="py-3 bg-blue-500/10">
-                                  <CardTitle className="text-sm font-bold text-blue-600 flex items-center gap-2">
-                                    <BookOpen className="h-4 w-4" />
-                                    POTENTIAL OPENERS (
-                                    {processedResearch.potentialOpeners.length})
-                                  </CardTitle>
-                                </CardHeader>
-                                <CardContent className="py-4 space-y-4">
-                                  {processedResearch.potentialOpeners.map(
-                                    (opener: any) => (
-                                      <div
-                                        key={opener.id}
-                                        className="space-y-1 border-l-2 border-blue-500/30 pl-3"
-                                      >
-                                        <span className="text-xs uppercase font-bold text-blue-600">
-                                          {opener.type}
-                                        </span>
-                                        <p className="text-sm italic">
-                                          "{opener.hook}"
-                                        </p>
-                                        <p className="text-xs text-muted-foreground">
-                                          {opener.content}
-                                        </p>
-                                      </div>
-                                    ),
-                                  )}
-                                </CardContent>
-                              </Card>
-                            )}
-
-                            {/* Potential Zingers */}
-                            {processedResearch.potentialZingers?.length > 0 && (
-                              <Card>
-                                <CardHeader className="py-3 bg-yellow-500/10">
-                                  <CardTitle className="text-sm font-bold text-yellow-600 flex items-center gap-2">
-                                    <Zap className="h-4 w-4" />
-                                    POTENTIAL ZINGERS (
-                                    {processedResearch.potentialZingers.length})
-                                  </CardTitle>
-                                </CardHeader>
-                                <CardContent className="py-4 space-y-3">
-                                  {processedResearch.potentialZingers.map(
-                                    (zinger: any) => (
-                                      <div
-                                        key={zinger.id}
-                                        className="p-2 bg-yellow-500/5 rounded border border-yellow-500/20"
-                                      >
-                                        <p className="text-sm font-medium">
-                                          "{zinger.text}"
-                                        </p>
-                                        <p className="text-xs text-muted-foreground mt-1">
-                                          {zinger.context}
-                                        </p>
-                                      </div>
-                                    ),
-                                  )}
-                                </CardContent>
-                              </Card>
-                            )}
-
-                            {/* Counter-Arguments */}
-                            {processedResearch.extractedCounterArguments
-                              ?.length > 0 && (
-                              <Card>
-                                <CardHeader className="py-3 bg-red-500/10">
-                                  <CardTitle className="text-sm font-bold text-red-600 flex items-center gap-2">
-                                    <Eye className="h-4 w-4" />
-                                    COUNTER-ARGUMENTS TO ADDRESS (
-                                    {
-                                      processedResearch
-                                        .extractedCounterArguments.length
-                                    }
-                                    )
-                                  </CardTitle>
-                                </CardHeader>
-                                <CardContent className="py-4 space-y-4">
-                                  {processedResearch.extractedCounterArguments.map(
-                                    (counter: any) => (
-                                      <div
-                                        key={counter.id}
-                                        className="space-y-2 border-l-2 border-red-500/30 pl-3"
-                                      >
-                                        <div className="flex items-center gap-2">
-                                          <AlertTriangle className="h-4 w-4 text-red-500" />
-                                          <span className="font-medium text-red-700 dark:text-red-400">
-                                            {counter.argument}
-                                          </span>
-                                        </div>
-                                        <p className="text-sm text-muted-foreground">
-                                          <span className="font-semibold text-green-600">
-                                            Response:
-                                          </span>{" "}
-                                          {counter.suggestedResponse}
-                                        </p>
-                                      </div>
-                                    ),
-                                  )}
-                                </CardContent>
-                              </Card>
-                            )}
-                          </div>
-                        )}
-                      </div>
+                      <MyResearchTab
+                        userResearchText={userResearchText}
+                        setUserResearchText={setUserResearchText}
+                        isProcessingResearch={isProcessingResearch}
+                        handleProcessResearch={handleProcessResearch}
+                        processedResearch={processedResearch}
+                      />
                     </TabsContent>
                   )}
 
                   {/* CHAT TAB - RAG-powered research chatbot (debate only) */}
                   {isDebatePrep && (
                     <TabsContent value="chat" className="h-full flex flex-col">
-                      <div className="flex flex-col h-[600px] border rounded-lg overflow-hidden">
-                        {/* Chat Header */}
-                        <div className="px-4 py-3 bg-secondary/30 border-b flex items-center gap-2">
-                          <MessageSquare className="h-5 w-5 text-primary" />
-                          <div>
-                            <h3 className="font-semibold text-sm">
-                              Research Assistant
-                            </h3>
-                            <p className="text-xs text-muted-foreground">
-                              Ask questions about your research and debate topic
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Chat Messages */}
-                        <div
-                          ref={chatScrollRef}
-                          className="flex-1 overflow-y-auto p-4 space-y-4 bg-background"
-                        >
-                          {!chatMessages || chatMessages.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center h-full text-center">
-                              <MessageSquare className="h-12 w-12 text-muted-foreground/30 mb-4" />
-                              <h4 className="font-medium text-muted-foreground mb-2">
-                                Start a conversation
-                              </h4>
-                              <p className="text-sm text-muted-foreground max-w-md">
-                                Ask questions about your research, debate topic,
-                                or strategy. The AI has access to all your
-                                research articles and prep materials.
-                              </p>
-                              <div className="mt-4 space-y-2 text-left w-full max-w-md">
-                                <p className="text-xs font-semibold text-muted-foreground">
-                                  Try asking:
-                                </p>
-                                <div className="space-y-1">
-                                  {[
-                                    "What are the strongest arguments for my position?",
-                                    "What evidence do I have to counter economic arguments?",
-                                    "Summarize the key statistics from my research",
-                                    "What weaknesses should I prepare for?",
-                                  ].map((suggestion, i) => (
-                                    <button
-                                      key={i}
-                                      onClick={() => setChatInput(suggestion)}
-                                      className="block w-full text-left text-xs p-2 rounded bg-secondary/50 hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
-                                    >
-                                      "{suggestion}"
-                                    </button>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          ) : (
-                            chatMessages.map((msg) => (
-                              <div
-                                key={msg._id}
-                                className={cn(
-                                  "flex",
-                                  msg.role === "user"
-                                    ? "justify-end"
-                                    : "justify-start",
-                                )}
-                              >
-                                <div
-                                  className={cn(
-                                    "max-w-[80%] rounded-lg px-4 py-2",
-                                    msg.role === "user"
-                                      ? "bg-primary text-primary-foreground"
-                                      : "bg-secondary text-secondary-foreground",
-                                  )}
-                                >
-                                  <p className="text-sm whitespace-pre-wrap">
-                                    {msg.content}
-                                  </p>
-                                  <span className="text-[10px] opacity-60 mt-1 block">
-                                    {new Date(
-                                      msg.timestamp,
-                                    ).toLocaleTimeString()}
-                                  </span>
-                                </div>
-                              </div>
-                            ))
-                          )}
-                          {isSendingChat && (
-                            <div className="flex justify-start">
-                              <div className="bg-secondary rounded-lg px-4 py-2 flex items-center gap-2">
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                                <span className="text-sm text-muted-foreground">
-                                  Thinking...
-                                </span>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Chat Input */}
-                        <div className="p-4 border-t bg-background">
-                          <form
-                            onSubmit={(e) => {
-                              e.preventDefault();
-                              handleSendChat();
-                            }}
-                            className="flex gap-2"
-                          >
-                            <Input
-                              value={chatInput}
-                              onChange={(e) => setChatInput(e.target.value)}
-                              placeholder="Ask about your research or debate strategy..."
-                              disabled={isSendingChat}
-                              className="flex-1"
-                            />
-                            <Button
-                              type="submit"
-                              disabled={isSendingChat || !chatInput.trim()}
-                            >
-                              {isSendingChat ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : (
-                                <Send className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </form>
-                        </div>
-                      </div>
+                      <ChatTab
+                        messages={chatMessages}
+                        input={chatInput}
+                        setInput={setChatInput}
+                        isSending={isSendingChat}
+                        onSend={handleSendChat}
+                        scrollRef={chatScrollRef}
+                      />
                     </TabsContent>
                   )}
 
@@ -2523,187 +2141,10 @@ Example content:
                       value="gemini-report"
                       className="space-y-4 pb-10"
                     >
-                      {opponent.geminiResearchReport ? (
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-2 pb-2 border-b">
-                            <FileSearch className="h-5 w-5 text-primary" />
-                            <h3 className="text-lg font-semibold text-primary">
-                              AI Research Report
-                            </h3>
-                          </div>
-                          <div className="space-y-6 max-w-4xl">
-                            <ReactMarkdown
-                              components={{
-                                h1: ({ node, children, ...props }) => {
-                                  const isSourcesSection =
-                                    String(children)
-                                      .toLowerCase()
-                                      .includes("source") ||
-                                    String(children)
-                                      .toLowerCase()
-                                      .includes("reference") ||
-                                    String(children)
-                                      .toLowerCase()
-                                      .includes("citation");
-                                  return isSourcesSection ? (
-                                    <div className="mt-12 mb-6">
-                                      <div className="flex items-center gap-3 mb-6">
-                                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent" />
-                                        <h1
-                                          className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight"
-                                          {...props}
-                                        >
-                                          {children}
-                                        </h1>
-                                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent" />
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    <h1
-                                      className="text-4xl font-bold mt-10 mb-6 text-gray-900 dark:text-gray-100 tracking-tight leading-tight"
-                                      {...props}
-                                    >
-                                      {children}
-                                    </h1>
-                                  );
-                                },
-                                h2: ({ node, children, ...props }) => (
-                                  <h2
-                                    className="text-2xl font-bold mt-8 mb-5 text-gray-900 dark:text-gray-100 tracking-tight border-b border-gray-200 dark:border-gray-700 pb-2"
-                                    {...props}
-                                  >
-                                    {children}
-                                  </h2>
-                                ),
-                                h3: ({ node, children, ...props }) => (
-                                  <h3
-                                    className="text-xl font-semibold mt-6 mb-4 text-gray-800 dark:text-gray-200 tracking-tight"
-                                    {...props}
-                                  >
-                                    {children}
-                                  </h3>
-                                ),
-                                p: ({ node, children, ...props }) => (
-                                  <p
-                                    className="mb-5 leading-8 text-base text-gray-700 dark:text-gray-300"
-                                    {...props}
-                                  >
-                                    {children}
-                                  </p>
-                                ),
-                                ul: ({ node, children, ...props }) => (
-                                  <ul
-                                    className="mb-6 space-y-3 text-gray-700 dark:text-gray-300"
-                                    {...props}
-                                  >
-                                    {children}
-                                  </ul>
-                                ),
-                                ol: ({ node, children, ...props }) => (
-                                  <ol
-                                    className="mb-6 space-y-3 text-gray-700 dark:text-gray-300 counter-reset"
-                                    {...props}
-                                  >
-                                    {children}
-                                  </ol>
-                                ),
-                                li: ({ node, children, ...props }) => (
-                                  <li
-                                    className="ml-6 pl-2 leading-7"
-                                    {...props}
-                                  >
-                                    <span className="text-gray-600 dark:text-gray-400 mr-3">
-                                      •
-                                    </span>
-                                    {children}
-                                  </li>
-                                ),
-                                strong: ({ node, children, ...props }) => (
-                                  <strong
-                                    className="font-semibold text-gray-900 dark:text-gray-100"
-                                    {...props}
-                                  >
-                                    {children}
-                                  </strong>
-                                ),
-                                em: ({ node, children, ...props }) => (
-                                  <em
-                                    className="italic text-gray-600 dark:text-gray-400"
-                                    {...props}
-                                  >
-                                    {children}
-                                  </em>
-                                ),
-                                a: ({ node, children, href, ...props }) => (
-                                  <a
-                                    href={href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline decoration-blue-300 dark:decoration-blue-600 underline-offset-2 transition-colors"
-                                    {...props}
-                                  >
-                                    {children}
-                                  </a>
-                                ),
-                                code: ({ node, children, ...props }) => (
-                                  <code
-                                    className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700"
-                                    {...props}
-                                  >
-                                    {children}
-                                  </code>
-                                ),
-                                blockquote: ({ node, children, ...props }) => (
-                                  <blockquote
-                                    className="border-l-4 border-blue-500 dark:border-blue-600 bg-blue-50 dark:bg-blue-950/20 pl-6 pr-4 py-4 my-6 italic text-gray-700 dark:text-gray-300 rounded-r-lg"
-                                    {...props}
-                                  >
-                                    {children}
-                                  </blockquote>
-                                ),
-                                hr: ({ node, ...props }) => (
-                                  <hr
-                                    className="my-8 border-0 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent"
-                                    {...props}
-                                  />
-                                ),
-                              }}
-                            >
-                              {opponent.geminiResearchReport}
-                            </ReactMarkdown>
-                          </div>
-                          {opponent.geminiResearchMetadata && (
-                            <div className="mt-6 pt-4 border-t text-xs text-muted-foreground">
-                              Generated on{" "}
-                              {new Date(
-                                opponent.geminiResearchMetadata.generatedAt,
-                              ).toLocaleString()}
-                              {" • "}
-                              {Math.round(
-                                opponent.geminiResearchMetadata.reportLength /
-                                  1000,
-                              )}
-                              k characters
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center h-64 text-center">
-                          <FileSearch className="h-12 w-12 mx-auto mb-3 opacity-30 text-muted-foreground" />
-                          <h3 className="text-lg font-medium mb-2">
-                            Research Report Not Yet Ready
-                          </h3>
-                          <p className="text-sm text-muted-foreground max-w-md">
-                            Click "Generate Strategy (Gemini)" to create a
-                            comprehensive research report using Gemini Deep
-                            Research.
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-2">
-                            This process can take 3-20 minutes for thorough
-                            analysis.
-                          </p>
-                        </div>
-                      )}
+                      <GeminiReportTab
+                        geminiResearchReport={opponent.geminiResearchReport}
+                        geminiResearchMetadata={opponent.geminiResearchMetadata}
+                      />
                     </TabsContent>
                   )}
                 </div>

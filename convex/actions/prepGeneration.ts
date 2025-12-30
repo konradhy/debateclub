@@ -162,10 +162,17 @@ export const generateOpponentIntel = internalAction({
   returns: v.array(v.any()),
   handler: async (ctx, args) => {
     const researchContext = JSON.stringify(args.research);
-    const prompt = OPPONENT_INTEL_PROMPT.replace(
-      "{strategicBrief}",
-      args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
-    ).replace("{research}", researchContext);
+    const opponentPosition = args.position === "pro" ? "con" : "pro";
+
+    const prompt = OPPONENT_INTEL_PROMPT
+      .replace("{topic}", args.topic)
+      .replace("{userPosition}", args.position.toUpperCase())
+      .replace(/{opponentPosition}/g, opponentPosition.toUpperCase())
+      .replace(
+        "{strategicBrief}",
+        args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
+      )
+      .replace("{research}", researchContext);
 
     const data = await generateWithPrompt(prompt);
     return data.opponentIntel || [];

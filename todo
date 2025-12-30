@@ -1,7 +1,7 @@
 1. Switch out all the icons. Use custom, ones all designed to a specific theme. There shouldn't be a single lucide icon!
 
 2. I need to test out how the interruption profocol is going...Instead of all this pause/mute /toggle idea, tha's wrong. Rather we should have some ai modes that will interrupt you and some that wont. A default then a toggle. 
-3. I want to be able to write into an llm some context after research generation. LLM will take this context, along with the prior generated items and redo all the fields. I think u essentially do this with paste your research method field. Investigate. 
+3. I want to be able to write into an llm some context after research generation. LLM will take this context, along with the prior generated items and redo all the fields. I think u essentially do this with paste your research method field. Investigate. After a bit of invesitgation, i see that we do crearte a bunch of usful extracted shit. I should be able. To click and send it to study mode and auto plp into quick reference. 
 
 4. MAJOR - The evidence for the argument frames is currently empty. This is important, and should be fleshed out with sources when possible. Perhaps it might need an expandable tab so that things can fit
 5. argument frame should also show an example quote of the frame work in action. 

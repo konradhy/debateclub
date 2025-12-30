@@ -501,6 +501,11 @@ Create a detailed synthesis (800-1200 words) structured as follows. Return valid
 export const OPPONENT_INTEL_PROMPT = `
 You are a debate strategist generating opponent intelligence and counter-moves using Mehdi Hasan's Judo methodology.
 
+=== DEBATE SETUP ===
+Topic: {topic}
+Your debater's position: {userPosition}
+Opponent's position: {opponentPosition}
+
 === STRATEGIC BRIEF ===
 {strategicBrief}
 
@@ -508,7 +513,7 @@ You are a debate strategist generating opponent intelligence and counter-moves u
 {research}
 
 === YOUR TASK ===
-Generate comprehensive opponent intelligence and prepared counters.
+Predict the strongest arguments for the {opponentPosition} position.
 
 ## USING THE STRATEGIC BRIEF
 This is critical — the strategic brief contains detailed opponent intel that should DIRECTLY inform your predictions:
