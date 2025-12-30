@@ -1,7 +1,6 @@
 import { Target, MessageSquare, Zap, ShieldAlert } from "lucide-react";
 import { Id } from "@cvx/_generated/dataModel";
-import { InlineEdit } from "./InlineEdit";
-import { AddButton } from "./AddButton";
+import { InlineEdit, AddButton } from "@/ui/inline-edit";
 
 type OpponentField =
   | "talkingPoints"
