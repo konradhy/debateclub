@@ -968,4 +968,437 @@ After:
 
 ---
 
+## Chapter 14: Debate Style & Difficulty Architecture — Dynamic Prompt Injection
+
+### TL;DR
+
+Re-implemented style and difficulty selection for debate scenarios with proper two-dimensional architecture: **Style = WHO the opponent is (persona)**, **Difficulty = HOW SKILLED they are (competence)**. Upgraded from GPT-4o to Claude Sonnet 4. Added comprehensive Hasan technique arsenal for hard mode. Implemented debug tooling (dev-only) to verify actual prompts sent to Vapi.
+
+**Roadmap Items Advanced**: AI Prompt Engineering, Voice AI Integration, Developer Tooling
+
+---
+
+### Quick Reference
+
+**Architecture Pattern**: Two independent dimensions combined via template injection
+
+```
+System Prompt Template:
+# YOUR ROLE & PERSONA
+{{STYLE}}
+
+# YOUR SKILL LEVEL & TECHNIQUES
+{{DIFFICULTY}}
+
+# DEBATE CONTEXT
+[...debate topic, positions...]
+```
+
+**Style Options** (6 personas):
+- `friendly` - Supportive family member helping you practice
+- `aggressive` - Combative opponent who interrupts and dominates
+- `academic` - Evidence-heavy professor with formal reasoning
+- `emotional` - Passionate advocate using stories and feelings
+- `socratic` - Uses questioning to trap you
+- `gish gallop` - Rapid-fire dubious claims to overwhelm
+
+**Difficulty Levels** (3 skill tiers):
+- `easy` - Basic arguments, no strategic techniques
+- `medium` - 5 core techniques (Concession, Preemption, Reframing, Rule of Three, Receipts)
+- `hard` - Full Hasan arsenal (12+ techniques with deployment conditions)
+
+**Model**: `anthropic/claude-sonnet-4-20250514` (upgraded from `openai/gpt-4o`)
+
+**Files Modified**:
+- `src/routes/_app/_auth/dashboard/debate.tsx` - Dynamic prompt building, debug button
+- `src/scenarios/debate.ts` - Template structure, form layout
+- `convex/scenarios/debate.ts` - Backend config sync
+
+---
+
+### The Problem
+
+Chapter 12 hid style/difficulty selection with hardcoded defaults (`style: "aggressive"`, `difficulty: "medium"`). This was done to reduce form clutter, but users wanted control back.
+
+**User feedback**: "What happened to the ability to select difficulty and debate type in opponent profile? Did it actually really change anything?"
+
+**Additional issues**:
+1. **Unclear separation**: Old system conflated persona with skill level
+2. **"Friendly ≠ Skilled"**: Base prompt said "You are a skilled debater" even for supportive family member persona
+3. **Limited hard mode**: Only 3 techniques listed, not the full Hasan methodology
+4. **No visibility**: Users couldn't verify what prompts Vapi actually received
+5. **Chapter references**: Helper text referenced book chapters instead of explaining impact
+
+---
+
+### The Solution: Two-Node Dynamic Injection
+
+#### 1. **Style = Persona (WHO YOU ARE)**
+
+Each style injects a complete identity and behavioral guidelines:
+
+```typescript
+const getStyleInstructions = (styleValue: string): string => {
+  switch (styleValue) {
+    case "friendly":
+      return `You are a supportive friend or family member having a discussion.
+You disagree with their position, but you're here to help them think
+through their arguments, not to win. You care about them and want them
+to improve.
+
+BEHAVIORAL GUIDELINES:
+- Be conversational, warm, and encouraging
+- Challenge their ideas but stay constructive
+- Offer praise when they make good points
+- Point out weaknesses gently
+- Your goal: Help them become a better debater`;
+
+    case "aggressive":
+      return `You are a combative opponent in a formal debate. You're here
+to win. You view this as intellectual combat and won't give ground easily.
+
+BEHAVIORAL GUIDELINES:
+- Be confrontational and assertive
+- Interrupt when you sense weakness
+- Challenge them directly
+- Use a forceful, commanding tone
+- Try to control the flow of conversation
+- Don't concede points without a fight`;
+    // ... 4 more styles
+  }
+};
+```
+
+#### 2. **Difficulty = Competence (HOW SKILLED YOU ARE)**
+
+Independent of persona, difficulty determines argumentation sophistication:
+
+**Easy** (no techniques section):
+```
+SKILL LEVEL: BEGINNER
+
+ARGUMENT QUALITY:
+- Make basic, straightforward arguments
+- Use simple reasoning that's easy to follow
+- Cite general knowledge rather than specific studies
+- Make occasional logical errors that can be caught
+- Don't use advanced rhetorical tactics
+- Argue naturally and directly without strategic moves
+```
+
+**Medium** (5 core techniques):
+```
+SKILL LEVEL: COMPETENT
+
+ARGUMENT QUALITY:
+- Present solid, well-reasoned arguments
+- Cite specific evidence and examples
+- Build logical chains of reasoning
+- Challenge their points effectively
+
+TECHNIQUES TO DEPLOY:
+- CONCESSION & PIVOT: When they make a good point, acknowledge briefly then redirect
+- PREEMPTION: Address their likely counterarguments before they make them
+- REFRAMING: When cornered, change the frame of the debate
+- RULE OF THREE: Structure arguments in threes for memorability
+- RECEIPTS: Deploy specific facts, dates, statistics to support claims
+
+WHEN TO USE EACH:
+- CONCESSION: When they score a point (builds credibility)
+- PREEMPTION: At the start of your arguments
+- REFRAMING: When current framing doesn't favor you
+- RULE OF THREE: For memorable key points
+- RECEIPTS: When making factual claims
+```
+
+**Hard** (full Hasan arsenal):
+```
+SKILL LEVEL: EXPERT
+
+ARGUMENT QUALITY:
+- Present sophisticated, well-researched arguments
+- Cite specific studies, expert quotes, historical precedents
+- Build multi-layered logical frameworks
+- Anticipate and counter their moves before they make them
+- Exploit every weakness in their reasoning
+
+FULL HASAN TECHNIQUE ARSENAL:
+
+FUNDAMENTALS (Deploy Throughout):
+- AUDIENCE AWARENESS: Tailor arguments to resonate with values mentioned
+- EMOTIONAL APPEAL: Lead with pathos, use stories that connect emotionally
+- RECEIPTS: Always cite specific evidence - studies, dates, names, statistics
+- AD HOMINEM (Judicious): When they cite expertise, question if warranted
+- LISTENING: Notice when they concede points or make contradictions
+- HUMOR: Use wit and light mockery to undermine weak arguments (sparingly)
+
+TACTICAL TECHNIQUES (Deploy Strategically):
+- CONCESSION & PIVOT: Acknowledge valid points then pivot to your strength
+- PREEMPTION: Start arguments with "I know you'll say X, but here's why that fails..."
+- REFRAMING: When the question/premise disadvantages you, challenge it
+- RULE OF THREE: Structure key arguments in threes for rhetorical power
+- ZINGERS: Deploy memorable one-liners (under 15 words) when they make errors
+- BOOBY TRAPS: If you know their past statements, quote without attribution,
+  get them to disagree, then reveal it was them
+
+GISH GALLOP COUNTER (If They Use It):
+- Pick their weakest claim and demolish it thoroughly
+- Use: "You just threw out 10 claims. Let me address the most absurd one..."
+
+WHEN TO USE EACH:
+- CONCESSION: Immediately when they make a legitimately good point (builds trust)
+- PREEMPTION: At the start of making a controversial claim
+- REFRAMING: When current frame of debate disadvantages you
+- RULE OF THREE: For your most important arguments
+- ZINGERS: When they make an obvious error or contradiction (max 1-2 per debate)
+- BOOBY TRAPS: Only if you have specific past statements to reference
+- EMOTIONAL APPEAL: Lead with this, especially in openings
+- RECEIPTS: Every factual claim should have a source
+- HUMOR: Sparingly, when you're winning (not when defensive)
+
+EXECUTION PRIORITY:
+1. Start with strong emotional hook
+2. Use PREEMPTION to address obvious counters
+3. Build argument with RULE OF THREE structure
+4. Support with RECEIPTS (specific evidence)
+5. Use CONCESSION to build credibility when needed
+6. Deploy ZINGERS only when opportunity is perfect
+7. Close with emotional resonance
+```
+
+#### 3. **Template Structure**
+
+Removed "You are a skilled debater" from base template. Style now provides full identity:
+
+```typescript
+systemPrompt: `# YOUR ROLE & PERSONA
+{{STYLE}}
+
+# YOUR SKILL LEVEL & TECHNIQUES
+{{DIFFICULTY}}
+
+# DEBATE CONTEXT
+- Topic: {{TOPIC}}
+- Your position: {{AI_POSITION}}
+- User position: {{USER_POSITION}}
+
+# YOUR KEY ARGUMENTS
+{{TALKING_POINTS}}
+
+# BEHAVIORAL RULES
+- Speak naturally and conversationally
+- You CAN be interrupted - respond naturally
+- You CAN interrupt if user rambles > 45 seconds
+- Keep responses under 30 seconds of speech
+- Focus ONLY on debating - do not mention analysis, logging, or techniques
+- Use evidence and facts to support your position
+
+{{ADDITIONAL_CONTEXT}}`
+```
+
+#### 4. **Form Layout - Practice Settings Section**
+
+Added new accordion section for style/difficulty:
+
+```typescript
+formLayout: {
+  core: {
+    fields: ["topic", "position"],
+    showStyleDifficulty: false, // Don't show in core
+  },
+  sections: [
+    {
+      id: "practice-settings",
+      title: "Practice Settings",
+      description: "Adjust opponent behavior and challenge level",
+      icon: "Settings",
+      optional: true,
+      fields: ["style", "difficulty"],
+    },
+    // ... opponent-profile, steelmanning, audience, strategy sections
+  ]
+}
+```
+
+#### 5. **Helper Text - Impact Not Chapters**
+
+Changed from chapter references to impact descriptions:
+
+❌ Before: `"Hasan Chapter 4: 'Challenge their credentials...'"`
+✅ After: `"Helps identify when and how to challenge their claimed authority"`
+
+❌ Before: `"The AI will take the opposite position"`
+✅ After: `"The system will take the opposite position"`
+
+#### 6. **Model Upgrade**
+
+Vapi model research (web search) found Claude Sonnet 4 available as of May 2025:
+
+```typescript
+const selectedConfig = {
+  provider: "anthropic" as const,
+  model: "claude-sonnet-4-20250514" as const,
+};
+```
+
+#### 7. **Debug Tooling (Dev-Only)**
+
+Added debug button to verify actual prompts sent to Vapi:
+
+```typescript
+{import.meta.env.DEV && (
+  <button
+    onClick={() => {
+      const style = opponent.style || "aggressive";
+      const difficulty = opponent.difficulty || "medium";
+      const styleInstructions = getStyleInstructions(style);
+      const difficultyInstructions = getDifficultyInstructions(difficulty);
+      const fullPrompt = `# YOUR ROLE & PERSONA\n${styleInstructions}\n\n# YOUR SKILL LEVEL & TECHNIQUES\n${difficultyInstructions}\n\n# DEBATE CONTEXT\n- Topic: ${opponent.topic}\n- Your position: ${opponent.position === "pro" ? "CON" : "PRO"}\n- User position: ${opponent.position?.toUpperCase()}`;
+
+      // Log to console (unlimited length)
+      console.log("=== FULL VAPI SYSTEM PROMPT ===");
+      console.log(fullPrompt);
+      console.log("=== END PROMPT ===");
+
+      // Copy to clipboard
+      navigator.clipboard.writeText(fullPrompt).then(() => {
+        alert("✅ Full prompt copied to clipboard!\n\nAlso logged to browser console (F12 > Console tab)");
+      }).catch(() => {
+        alert("⚠️ Prompt logged to browser console.\n\nOpen DevTools (F12) > Console tab to see full prompt");
+      });
+    }}
+    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl px-6 text-sm font-medium border-2 transition-all hover:bg-gray-50"
+    style={{ borderColor: colors.border, color: colors.text }}
+  >
+    DEBUG: Show Prompt
+  </button>
+)}
+```
+
+**Why console.log instead of alert()?**: Alert has character limits that truncate long prompts. Console + clipboard gives full prompt visibility.
+
+---
+
+### Implementation Details
+
+**Switch Statement Pattern**:
+
+Used switch statements (not object maps) for clarity and maintainability:
+
+```typescript
+// ❌ Object map - harder to read, no default handling
+const styleMap = {
+  friendly: "...",
+  aggressive: "...",
+};
+
+// ✅ Switch statement - clear flow, explicit default
+const getStyleInstructions = (styleValue: string): string => {
+  switch (styleValue) {
+    case "friendly":
+      return `...`;
+    case "aggressive":
+      return `...`;
+    default:
+      return `...`; // Fallback behavior
+  }
+};
+```
+
+**Helper Function Placement**:
+
+Moved `getStyleInstructions()` and `getDifficultyInstructions()` to component level (outside `handleStart()`) to avoid redefinition on every call.
+
+**Dev Mode Check**:
+
+```typescript
+import.meta.env.DEV // Vite's built-in dev mode check
+// true in development (npm run dev)
+// false in production builds
+```
+
+---
+
+### What Changed
+
+**Frontend** (`src/scenarios/debate.ts`):
+- Added `style` and `difficulty` inputs with 6 and 3 options respectively
+- Created "Practice Settings" section in `formLayout`
+- Restructured `systemPrompt` template with clear section headers
+- Removed chapter references from all helper text
+
+**Backend** (`convex/scenarios/debate.ts`):
+- Synced style/difficulty field definitions with frontend
+- Maintained consistent option values and labels
+
+**Debate Page** (`src/routes/_app/_auth/dashboard/debate.tsx`):
+- Added `getStyleInstructions()` and `getDifficultyInstructions()` helper functions
+- Implemented switch-case logic for all 6 styles and 3 difficulties
+- Expanded hard mode from 3 to 12+ techniques with deployment conditions
+- Upgraded Vapi model from `openai/gpt-4o` to `anthropic/claude-sonnet-4-20250514`
+- Added dev-only debug button with console logging and clipboard copy
+
+---
+
+### Design Decisions
+
+**Why separate style and difficulty?**
+- Style is about CHARACTER (who they are as a person)
+- Difficulty is about COMPETENCE (how good they are at arguing)
+- A friendly family member can still be highly skilled (or not)
+- An aggressive opponent can be unsophisticated (or expert)
+- Making them independent gives users full control over practice conditions
+
+**Why no techniques section for easy mode?**
+- Easy mode opponents should argue naturally without strategic moves
+- Mentioning "TECHNIQUES AVAILABLE: None" draws attention to what's not there
+- Better to simply describe the argument quality and omit the techniques concept entirely
+
+**Why switch statements over object maps?**
+- More readable code with better IDE support
+- Explicit default handling for edge cases
+- Clearer control flow
+- Easier to add comments and complex logic
+
+**Why upgrade to Claude Sonnet 4?**
+- More recent training data (Jan 2025 cutoff)
+- Better instruction following for complex prompts
+- Improved conversational abilities for voice AI
+- Available via Vapi as of May 2025
+
+**Why dev-only debug button?**
+- Temporary tooling for verifying prompt construction
+- Should not be visible to end users
+- Using `import.meta.env.DEV` ensures it's tree-shaken from production builds
+
+---
+
+### Testing Checklist
+
+- [ ] Easy difficulty shows no techniques section in prompt
+- [ ] Medium difficulty shows 5 core techniques with deployment conditions
+- [ ] Hard difficulty shows full 12+ technique arsenal with priority ordering
+- [ ] Friendly style creates supportive persona (not "skilled debater")
+- [ ] Aggressive style creates combative persona
+- [ ] Debug button only visible in dev mode (`npm run dev`)
+- [ ] Debug button logs full prompt to console without truncation
+- [ ] Debug button copies prompt to clipboard
+- [ ] Style and difficulty sections appear in Practice Settings accordion
+- [ ] Vapi receives correct model: `claude-sonnet-4-20250514`
+
+---
+
+### What's Next
+
+Potential improvements for future sessions:
+
+1. **Voice Calibration**: Test different 11Labs voice settings for each style (friendly should sound warmer, aggressive should sound sharper)
+2. **Dynamic Interruption**: Adjust `interruptionThreshold` based on style (aggressive interrupts more, academic waits longer)
+3. **Technique Tracking**: Log which techniques are actually deployed during debates for analysis
+4. **Custom Styles**: Allow users to define their own opponent personas
+5. **Difficulty Progression**: Auto-suggest difficulty increase based on user performance
+
+---
+
+
 

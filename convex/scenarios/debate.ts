@@ -13,7 +13,7 @@ export const DebateScenario: ScenarioConfig = {
   category: "debate",
 
   pipeline: {
-    research: true, // Run Firecrawl/Gemini research
+    research: true, // Run web research
     prep: true,
     prepType: "debate", // Uses DebatePrepPage
   },
@@ -36,16 +36,18 @@ export const DebateScenario: ScenarioConfig = {
     position: {
       label: "Your Position",
       placeholder: "",
-      helperText: "The AI will take the opposite position",
+      helperText: "The system will take the opposite position",
       required: true,
     },
     style: {
-      label: "AI Opponent Style",
-      placeholder: "",
+      label: "Opponent Debate Style",
+      placeholder: "Select style",
+      helperText: "Determines how your practice opponent will debate against you",
     },
     difficulty: {
       label: "Difficulty Level",
-      placeholder: "",
+      placeholder: "Select difficulty",
+      helperText: "Controls how challenging your practice opponent will be",
     },
 
     // ==========================================

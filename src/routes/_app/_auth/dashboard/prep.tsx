@@ -117,8 +117,13 @@ function PrepScreen() {
   } = usePrepData(opponentId);
 
   // Chat hook
-  const { chatInput, setChatInput, isSendingChat, setIsSendingChat, chatScrollRef } =
-    usePrepChat(chatMessages);
+  const {
+    chatInput,
+    setChatInput,
+    isSendingChat,
+    setIsSendingChat,
+    chatScrollRef,
+  } = usePrepChat(chatMessages);
 
   // Component state
   const [isGenerating, setIsGenerating] = useState(false);
@@ -372,7 +377,10 @@ function PrepScreen() {
     ) || [];
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
+    <div
+      className="min-h-screen"
+      style={{ backgroundColor: colors.background }}
+    >
       {/* Site Header */}
       <header
         className="sticky top-0 z-50 border-b py-4"
@@ -394,7 +402,7 @@ function PrepScreen() {
               className="h-8 w-auto"
             />
           </Link>
-                </div>
+        </div>
       </header>
 
       {/* Main Content */}
@@ -408,7 +416,10 @@ function PrepScreen() {
           }}
         >
           {/* Page Header */}
-          <div className="p-6 lg:p-8" style={{ borderBottom: `1px solid ${colors.border}` }}>
+          <div
+            className="p-6 lg:p-8"
+            style={{ borderBottom: `1px solid ${colors.border}` }}
+          >
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
               <div className="flex flex-col gap-3">
                 <div>
@@ -418,22 +429,38 @@ function PrepScreen() {
                   >
                     {opponent.name}
                   </h1>
-                  <p className="text-sm mt-1" style={{ color: colors.textMuted }}>
+                  <p
+                    className="text-sm mt-1"
+                    style={{ color: colors.textMuted }}
+                  >
                     {opponent.topic}
                   </p>
                 </div>
                 {isDebatePrep && (
-                  <div className="flex items-center gap-4 text-sm" style={{ color: colors.textLight }}>
+                  <div
+                    className="flex items-center gap-4 text-sm"
+                    style={{ color: colors.textLight }}
+                  >
                     <span>
-                  Your position:{" "}
-                      <span className="font-medium capitalize" style={{ color: colors.text }}>{userPosition}</span>
-                  </span>
+                      Your position:{" "}
+                      <span
+                        className="font-medium capitalize"
+                        style={{ color: colors.text }}
+                      >
+                        {userPosition}
+                      </span>
+                    </span>
                     <span>•</span>
                     <span>
                       Opponent:{" "}
-                      <span className="font-medium capitalize" style={{ color: colors.text }}>{opponent.position}</span>
+                      <span
+                        className="font-medium capitalize"
+                        style={{ color: colors.text }}
+                      >
+                        {opponent.position}
+                      </span>
                     </span>
-              </div>
+                  </div>
                 )}
               </div>
               <div className="flex flex-wrap gap-3">
@@ -453,7 +480,9 @@ function PrepScreen() {
                           }}
                           disabled={
                             geminiProgress?.status &&
-                            !["complete", "error"].includes(geminiProgress.status)
+                            !["complete", "error"].includes(
+                              geminiProgress.status,
+                            )
                           }
                           className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium text-white transition-all hover:brightness-110 disabled:opacity-50"
                           style={{ backgroundColor: colors.primaryLight }}
@@ -488,10 +517,14 @@ function PrepScreen() {
                 )}
                 <button
                   onClick={handleStartDebate}
-                  className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-semibold transition-all hover:brightness-110"
+                  className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-semibold transition-all hover:opacity-80"
                   style={{
-                    backgroundColor: hasStrategy ? colors.primary : colors.cardBg,
-                    border: hasStrategy ? "none" : `2px solid ${colors.border}`,
+                    backgroundColor: hasStrategy
+                      ? colors.primary
+                      : colors.cardBg,
+                    border: hasStrategy
+                      ? "none"
+                      : `2px solid ${colors.border} `,
                     color: hasStrategy ? "white" : colors.text,
                   }}
                 >
@@ -571,20 +604,35 @@ function PrepScreen() {
           {geminiProgress &&
             geminiProgress.status !== "complete" &&
             geminiProgress.status !== "error" && (
-              <div className="px-6 py-4" style={{ backgroundColor: `${colors.accent}20`, borderBottom: `1px solid ${colors.border}` }}>
+              <div
+                className="px-6 py-4"
+                style={{
+                  backgroundColor: `${colors.accent}20`,
+                  borderBottom: `1px solid ${colors.border}`,
+                }}
+              >
                 <div className="flex items-center gap-3">
-                  <Loader2 className="h-5 w-5 animate-spin" style={{ color: colors.primary }} />
+                  <Loader2
+                    className="h-5 w-5 animate-spin"
+                    style={{ color: colors.primary }}
+                  />
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium" style={{ color: colors.text }}>
-                        Gemini Deep Research
+                      <span
+                        className="font-medium"
+                        style={{ color: colors.text }}
+                      >
+                        AI Deep Research
                       </span>
                     </div>
                     <p className="text-sm" style={{ color: colors.textMuted }}>
                       {geminiProgress.message}
                     </p>
                     {geminiProgress.status.startsWith("deep_research") && (
-                      <p className="text-xs mt-1" style={{ color: colors.textLight }}>
+                      <p
+                        className="text-xs mt-1"
+                        style={{ color: colors.textLight }}
+                      >
                         Deep Research can take 3-20 minutes for comprehensive
                         analysis
                       </p>
@@ -627,14 +675,14 @@ function PrepScreen() {
                         className="flex items-center gap-1.5"
                       >
                         <MessageSquare className="h-4 w-4" />
-                        Ask AI
+                        Talk to the system
                       </TabsTrigger>
                       <TabsTrigger
                         value="gemini-report"
                         className="flex items-center gap-1.5"
                       >
                         <FileSearch className="h-4 w-4" />
-                        Gemini Report
+                        Deep Research Report
                       </TabsTrigger>
                     </>
                   )}
@@ -2779,7 +2827,7 @@ Example content:
                     </TabsContent>
                   )}
 
-                  {/* GEMINI REPORT TAB (debate only) */}
+                  {/* AI RESEARCH REPORT TAB (debate only) */}
                   {isDebatePrep && (
                     <TabsContent
                       value="gemini-report"
@@ -2790,7 +2838,7 @@ Example content:
                           <div className="flex items-center gap-2 pb-2 border-b">
                             <FileSearch className="h-5 w-5 text-primary" />
                             <h3 className="text-lg font-semibold text-primary">
-                              Gemini Deep Research Report
+                              AI Research Report
                             </h3>
                           </div>
                           <div className="space-y-6 max-w-4xl">
@@ -2953,7 +3001,7 @@ Example content:
                         <div className="flex flex-col items-center justify-center h-64 text-center">
                           <FileSearch className="h-12 w-12 mx-auto mb-3 opacity-30 text-muted-foreground" />
                           <h3 className="text-lg font-medium mb-2">
-                            No Gemini Research Report Yet
+                            Research Report Not Yet Ready
                           </h3>
                           <p className="text-sm text-muted-foreground max-w-md">
                             Click "Generate Strategy (Gemini)" to create a

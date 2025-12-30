@@ -16,7 +16,7 @@ export const DebateScenario: ScenarioConfig = {
   category: "debate",
 
   pipeline: {
-    research: true, // Run Firecrawl/Gemini research
+    research: true, // Run web research
     prep: true, // Show full prep page
     prepType: "debate", // Use debate-specific prep page
   },
@@ -39,13 +39,38 @@ export const DebateScenario: ScenarioConfig = {
       label: "Key Points to Make",
       placeholder: "Main arguments you want to emphasize",
     },
+    style: {
+      label: "Debate Style",
+      placeholder: "Select style",
+      type: "select",
+      options: [
+        { value: "friendly", label: "Friendly - Conversational, supportive, helps you practice with encouragement" },
+        { value: "aggressive", label: "Aggressive - Interrupts, challenges directly, tries to dominate" },
+        { value: "academic", label: "Academic - Evidence-heavy, methodical, formal reasoning" },
+        { value: "emotional", label: "Emotional - Appeals to feelings, uses stories and anecdotes" },
+        { value: "socratic", label: "Socratic - Uses questioning to trap you, forces you to defend assumptions" },
+        { value: "gish gallop", label: "Gish Gallop (Aggressive+) - Aggressive debate style with rapid-fire dubious claims" },
+      ],
+      helperText: "Determines how your practice opponent will behave and argue",
+    },
+    difficulty: {
+      label: "Challenge Level",
+      placeholder: "Select difficulty",
+      type: "select",
+      options: [
+        { value: "easy", label: "Easy - Basic arguments, straightforward rebuttals" },
+        { value: "medium", label: "Medium - Solid arguments, some strategic moves" },
+        { value: "hard", label: "Hard - Advanced tactics, well-researched, strategic" },
+      ],
+      helperText: "Controls the sophistication and strength of arguments",
+    },
 
-    // Audience context (Chapter 1)
+    // Audience context
     audienceDescription: {
       label: "Describe Your Audience",
       placeholder:
         "Who will be watching/listening? What do they care about? What are their biases?",
-      helperText: "Chapter 1: Winning Over an Audience",
+      helperText: "Arguments and examples will be tailored to resonate with this audience's values",
     },
     audienceType: {
       label: "Audience Type",
@@ -64,7 +89,7 @@ export const DebateScenario: ScenarioConfig = {
       placeholder: "Select format",
     },
 
-    // Opponent profile fields (Chapters 4, 10, 15)
+    // Opponent profile fields
     opponentOrganization: {
       label: "Organization/Affiliation",
       placeholder: "Where do they work? What group do they represent?",
@@ -72,25 +97,28 @@ export const DebateScenario: ScenarioConfig = {
     opponentCredentials: {
       label: "Their Credentials",
       placeholder: "What expertise or authority do they claim?",
-      helperText: "Chapter 4: Play the Ball... AND the Man",
+      helperText: "Helps identify when and how to challenge their claimed authority",
     },
     credentialWeaknesses: {
       label: "Credential Weaknesses",
       placeholder:
         "Any gaps in their expertise? Are they speaking outside their field?",
+      helperText: "Identifies vulnerabilities in their claim to expertise",
     },
     opponentPastStatements: {
       label: "Past Statements (for traps)",
       placeholder: "Quotes, tweets, articles they've written that you can use",
-      helperText: "Chapter 10: Booby Traps",
+      helperText: "These can be used strategically to catch them in contradictions",
     },
     opponentContradictions: {
       label: "Known Contradictions",
       placeholder: "Have they changed positions? Said conflicting things?",
+      helperText: "Creates opportunities to question their consistency and credibility",
     },
     opponentTrackRecord: {
       label: "Track Record",
       placeholder: "Wrong predictions? Debunked claims? Failed policies?",
+      helperText: "Past failures undermine their current claims and predictions",
     },
     opponentDebateStyle: {
       label: "Their Debate Style",
@@ -99,6 +127,7 @@ export const DebateScenario: ScenarioConfig = {
     opponentRhetoricalTendencies: {
       label: "Rhetorical Tendencies",
       placeholder: "Do they interrupt? Appeal to emotion? Cite lots of stats?",
+      helperText: "Anticipate their debate tactics and prepare appropriate responses",
     },
     opponentTriggers: {
       label: "Known Triggers",
@@ -107,19 +136,22 @@ export const DebateScenario: ScenarioConfig = {
     opponentStrongestArguments: {
       label: "Their Strongest Arguments",
       placeholder: "Steelman their best case - what's hardest to counter?",
-      helperText: "Chapter 15: Do Your Homework",
+      helperText: "Prep will include preemptive counters to their most compelling points",
     },
     opponentBestEvidence: {
       label: "Their Best Evidence",
       placeholder: "What studies, data, or examples will they cite?",
+      helperText: "Allows preparation of counter-evidence and alternative interpretations",
     },
     opponentLikelyCritiques: {
       label: "Likely Critiques of You",
       placeholder: "How will they attack your position or credibility?",
+      helperText: "Enables you to address their attacks before they make them",
     },
     opponentCharacterIssues: {
       label: "Character Issues",
       placeholder: "Conflicts of interest? Funding sources? Biases?",
+      helperText: "Raises questions about their motivations and objectivity",
     },
 
     // User context
@@ -130,10 +162,12 @@ export const DebateScenario: ScenarioConfig = {
     keyPointsToMake: {
       label: "Key Points to Emphasize",
       placeholder: "What MUST you get across? Your non-negotiable arguments",
+      helperText: "Strategy will ensure these core messages get delivered",
     },
     thingsToAvoid: {
       label: "Things to Avoid",
       placeholder: "Topics where you're weak? Areas to not engage on?",
+      helperText: "Helps steer the debate away from your vulnerabilities",
     },
     toneDirectives: {
       label: "Tone & Style Preferences",
@@ -154,9 +188,17 @@ export const DebateScenario: ScenarioConfig = {
   formLayout: {
     core: {
       fields: ["topic", "position"],
-      showStyleDifficulty: true,
+      showStyleDifficulty: false,
     },
     sections: [
+      {
+        id: "practice-settings",
+        title: "Practice Settings",
+        description: "Adjust opponent behavior and challenge level",
+        icon: "Settings",
+        optional: true,
+        fields: ["style", "difficulty"],
+      },
       {
         id: "opponent-profile",
         title: "Opponent Profile",
@@ -235,32 +277,26 @@ export const DebateScenario: ScenarioConfig = {
   assistant: {
     firstMessage: `I'm ready to debate. The topic is: {{TOPIC}}. I'll argue that {{AI_POSITION_DESC}}. Would you like to make your opening statement first, or shall I begin?`,
 
-    systemPrompt: `You are a skilled debater using Mehdi Hasan's debate techniques.
+    systemPrompt: `# YOUR ROLE & PERSONA
+{{STYLE}}
 
-DEBATE SETUP:
+# YOUR SKILL LEVEL & TECHNIQUES
+{{DIFFICULTY}}
+
+# DEBATE CONTEXT
 - Topic: {{TOPIC}}
 - Your position: {{AI_POSITION}}
 - User position: {{USER_POSITION}}
-- Difficulty: {{DIFFICULTY}}
-- Style: {{STYLE}}
 
-YOUR KEY ARGUMENTS:
+# YOUR KEY ARGUMENTS
 {{TALKING_POINTS}}
 
-TECHNIQUES TO USE:
-1. Concession & Pivot - When user makes a good point, acknowledge it then pivot
-2. Receipts - Deploy specific evidence, statistics, citations
-3. Zinger - Memorable one-liners (under 20 words)
-4. Reframing - Change the premise of the question
-5. Preemption - Address arguments before they're made
-
-BEHAVIORAL RULES:
+# BEHAVIORAL RULES
 - Speak naturally and conversationally
 - You CAN be interrupted - respond naturally
 - You CAN interrupt if user rambles > 45 seconds
 - Keep responses under 30 seconds of speech
 - Focus ONLY on debating - do not mention analysis, logging, or techniques
-- Be respectful but firm in your arguments
 - Use evidence and facts to support your position
 
 {{ADDITIONAL_CONTEXT}}`,

@@ -432,7 +432,7 @@ function OpponentProfile() {
   const [formData, setFormData] = useState<Record<string, string>>({
     name: "",
     topic: "",
-    position: "con",
+    position: "pro",
     style: "aggressive",
     difficulty: "medium",
   });
@@ -451,7 +451,7 @@ function OpponentProfile() {
     setFormData({
       name: "",
       topic: "",
-      position: "con",
+      position: "pro",
       style: "aggressive",
       difficulty: "medium",
     });
@@ -483,7 +483,7 @@ function OpponentProfile() {
       const payload: Record<string, string | undefined> = {
         name: formData.name.trim(),
         topic: formData.topic.trim(),
-        position: formData.position || "con",
+        position: formData.position || "pro",
         style: formData.style || "aggressive",
         difficulty: formData.difficulty || "medium",
         scenarioType,
