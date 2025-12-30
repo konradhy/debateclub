@@ -1,4 +1,4 @@
-
+1. Switch out all the icons. Use custom, ones all designed to a specific theme. There shouldn't be a single lucide icon!
 
 2. I need to test out how the interruption profocol is going...Instead of all this pause/mute /toggle idea, tha's wrong. Rather we should have some ai modes that will interrupt you and some that wont. A default then a toggle. 
 3. I want to be able to write into an llm some context after research generation. LLM will take this context, along with the prior generated items and redo all the fields. I think u essentially do this with paste your research method field. Investigate. 
@@ -20,6 +20,7 @@
 Major - At the end of the day we need a thorough happy task test. Do the fields make difference? Look at the helper text for each field, and ask if that's happending. Similarly look at the promises in the blog posts, and ask if those things are happening. When they are, then the app is ready. 
 21. Add pricing, rate limits, featues vailable based on plan. And token tracking system as described in marketing for the scenarios and drills. 
 22. Calibrate how the win every argument score happens. Sometimes i get 11/10 for behind the scense. right now it is far to generous. Is it doubling the score? Maybe we gotter thing the rubericks over
+23. could be due to leftovers but the oponent intelligence secion felt like the pro con argument was flipped
 
 
 LONG TERM

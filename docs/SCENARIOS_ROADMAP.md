@@ -42,7 +42,7 @@ Master tracking document for all practice scenarios. An LLM can use this to syst
 | Contract Negotiation | sales | ✅ | `convex/scenarios/sales.ts` | `research/scenario-contract-negotiation-research.md` | `marketing-plans/scenario-contract-negotiation.md`, `src/routes/blog/scenario-contract-negotiation.tsx` |
 | Customer Discovery | entrepreneur | ✅ | `src/scenarios/entrepreneur.ts` | `research/scenario-customer-discovery-research.md` | `marketing-plans/scenario-customer-discovery.md`, `src/routes/blog/scenario-customer-discovery.tsx` |
 | Early Customer Sales | entrepreneur | ✅ | `src/scenarios/entrepreneur.ts` | `research/scenario-early-customer-sales-research.md` | `marketing-plans/scenario-early-customer-sales.md`, `src/routes/blog/scenario-early-customer-sales.tsx` |
-| Treatment Refusal | healthcare | 📋 | `convex/scenarios/healthcare.ts` | - | - |
+| Treatment Refusal | healthcare | ✅ | `convex/scenarios/healthcare.ts` | `research/scenario-treatment-refusal-research.md` | `marketing-plans/scenario-treatment-refusal.md`, `src/routes/blog/scenario-treatment-refusal.tsx` |
 | Bad News Delivery | healthcare | 📋 | `convex/scenarios/healthcare.ts` | - | - |
 | Family Conflict | healthcare | 📋 | `convex/scenarios/healthcare.ts` | - | - |
 | Renewal Conversation | sales | 📋 | `convex/scenarios/sales.ts` | - | - |
@@ -65,20 +65,6 @@ None currently. See Backlog below for next priorities.
 ALSOOOO DON'T FORGET AN ELEVATOR PITCH. GOOD OLD FASHIONED ELEVATOR PITCH.
 
 ### 📋 Backlog (Priority Order)
-
-#### Early Customer Sales
-- **Category:** Entrepreneur
-- **Core tension:** Selling to first 10 customers with no brand, no case studies, no proof
-- **Why it matters:** Different from enterprise sales - selling vision and belief
-- **What users will practice:** Scrappy, adaptive selling when you have nothing but conviction
-- **Compellability:** HIGH - early-stage specific but deeply relevant
-
-#### Treatment Refusal
-- **Category:** Healthcare
-- **Core tension:** Patient refusing recommended treatment due to fear, misinformation, or mistrust
-- **Why it matters:** Happens daily. Providers either give up or become condescending. Both fail.
-- **What users will practice:** Motivational interviewing, navigating autonomy vs. medical advice
-- **Compellability:** VERY HIGH - universal, emotionally charged, core skill
 
 #### Bad News Delivery
 - **Category:** Healthcare
@@ -155,6 +141,7 @@ From `SCENARIO_IMPLEMENTATION_RUBRIC.md`:
 
 - [ ] **Research (2-3 hrs)** - Create `research/scenario-[name]-research.md` with config field mappings
 - [ ] **Marketing (1-2 hrs)** - Create `marketing-plans/scenario-[name].md` explaining design intent
+- [ ] ** Blog - Create the blog post
 - [ ] **Config (2-3 hrs)** - Add to appropriate `convex/scenarios/[category].ts`
 - [ ] **Testing (1 hr)** - Human tests happy path, failure path, analysis quality
 - [ ] **Update Roadmap** - Move to Implemented, fill in file paths

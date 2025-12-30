@@ -9,6 +9,7 @@ import { ScenarioConfig, ScenarioRegistry } from "./types";
 import { DebateScenario } from "./debate";
 import { SalesScenarios } from "./sales";
 import { EntrepreneurScenarios } from "./entrepreneur";
+import { HealthcareScenarios } from "./healthcare";
 
 /**
  * All available scenarios indexed by ID.
@@ -27,6 +28,9 @@ export const SCENARIOS: ScenarioRegistry = {
 
   // Entrepreneur variations
   "entrepreneur-pitch": EntrepreneurScenarios["pitch"],
+
+  // Healthcare variations
+  "healthcare-treatment-refusal": HealthcareScenarios["treatment-refusal"],
 };
 
 /**

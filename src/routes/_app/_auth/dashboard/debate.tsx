@@ -70,8 +70,8 @@ function Debate() {
 
   // Dynamic Debate Settings - NO FALLBACKS
   const topic = opponent?.topic;
-  const aiPosition = opponent?.position;
-  const userPosition = aiPosition === "con" ? "pro" : "con";
+  const userPosition = opponent?.position;
+  const aiPosition = userPosition === "con" ? "pro" : "con";
 
   useEffect(() => {
     if (!VAPI_PUBLIC_API_KEY) {

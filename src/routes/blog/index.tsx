@@ -130,6 +130,25 @@ function BlogIndex() {
       iconBgColor: "#3C4A32",
       iconColor: "#C8D4B8",
     },
+    {
+      to: "/blog/scenario-treatment-refusal",
+      badge: "Healthcare Practice",
+      badgeColor: "#A8B08C",
+      badgeTextColor: "#3A4030",
+      title: "How to Navigate Treatment Refusal Without Lecturing or Giving Up",
+      description:
+        "Patient refuses your recommendation. You either lecture about risks or give up. Neither works. Learn the motivational interviewing techniques that help you understand why they're refusing, honor autonomy, and partner on solutions they can accept.",
+      techniques: [
+        "Reflective Listening",
+        "Open Questions",
+        "Evoking Motivation",
+        "Respecting Autonomy",
+      ],
+      readTime: "12 min read",
+      icon: "💊",
+      iconBgColor: "#3C4A32",
+      iconColor: "#C8D4B8",
+    },
   ];
 
   // Shuffle and limit practice guides

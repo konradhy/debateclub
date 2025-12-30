@@ -46,6 +46,7 @@ import type * as r2 from "../r2.js";
 import type * as research from "../research.js";
 import type * as scenarios_debate from "../scenarios/debate.js";
 import type * as scenarios_entrepreneur from "../scenarios/entrepreneur.js";
+import type * as scenarios_healthcare from "../scenarios/healthcare.js";
 import type * as scenarios_index from "../scenarios/index.js";
 import type * as scenarios_sales from "../scenarios/sales.js";
 import type * as scenarios_types from "../scenarios/types.js";
@@ -96,6 +97,7 @@ declare const fullApi: ApiFromModules<{
   research: typeof research;
   "scenarios/debate": typeof scenarios_debate;
   "scenarios/entrepreneur": typeof scenarios_entrepreneur;
+  "scenarios/healthcare": typeof scenarios_healthcare;
   "scenarios/index": typeof scenarios_index;
   "scenarios/sales": typeof scenarios_sales;
   "scenarios/types": typeof scenarios_types;

@@ -1,11 +1,16 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Id } from "@cvx/_generated/dataModel";
-import { useState, useMemo } from "react";
 import { usePrepData } from "@/hooks/prep/usePrepData";
 import { usePrepChat } from "@/hooks/prep/usePrepChat";
+import { usePrepHandlers } from "@/hooks/prep/usePrepHandlers";
 import { Button } from "@/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import siteConfig from "~/site.config";
+import { colors } from "@/lib/prep-colors";
+import { ProgressStep } from "@/components/prep/ProgressStep";
+import { PrepHeader } from "@/components/prep/PrepHeader";
+import { GenerationProgress } from "@/components/prep/GenerationProgress";
+import { GeminiProgress } from "@/components/prep/GeminiProgress";
 import ReactMarkdown from "react-markdown";
 import {
   Brain,
@@ -23,25 +28,8 @@ import {
   FileText,
   MessageSquare,
   Send,
-  Check,
-  Circle,
-  ArrowLeft,
   FileSearch,
 } from "lucide-react";
-
-// Color constants matching marketing pages
-const colors = {
-  background: "#F5F3EF",
-  cardBg: "#FAFAF8",
-  headerBg: "#FAFAF8",
-  border: "#E8E4DA",
-  primary: "#3C4A32",
-  primaryLight: "#5C6B4A",
-  text: "#2A2A20",
-  textMuted: "#5C5C54",
-  textLight: "#888880",
-  accent: "#A8B08C",
-};
 import { cn } from "@/utils/misc";
 import { Checkbox } from "@/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/ui/radio-group";
@@ -51,31 +39,6 @@ import { ScrollArea } from "@/ui/scroll-area";
 import { InlineEdit, AddButton } from "@/ui/inline-edit";
 import { Textarea } from "@/ui/textarea";
 import { Input } from "@/ui/input";
-
-function ProgressStep({
-  label,
-  status,
-}: {
-  label: string;
-  status: "pending" | "active" | "complete";
-}) {
-  return (
-    <div
-      className={cn(
-        "flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium transition-all",
-        status === "complete" &&
-          "bg-green-500/20 text-green-700 dark:text-green-400",
-        status === "active" && "bg-primary/20 text-primary animate-pulse",
-        status === "pending" && "bg-muted text-muted-foreground",
-      )}
-    >
-      {status === "complete" && <Check className="h-3 w-3" />}
-      {status === "active" && <Loader2 className="h-3 w-3 animate-spin" />}
-      {status === "pending" && <Circle className="h-3 w-3" />}
-      {label}
-    </div>
-  );
-}
 
 export const Route = createFileRoute("/_app/_auth/dashboard/prep")({
   component: PrepScreen,
@@ -125,200 +88,56 @@ function PrepScreen() {
     chatScrollRef,
   } = usePrepChat(chatMessages);
 
-  // Component state
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  // User research input state
-  const [userResearchText, setUserResearchText] = useState("");
-  const [isProcessingResearch, setIsProcessingResearch] = useState(false);
-  const [processedResearch, setProcessedResearch] = useState<any>(null);
-
-  // UI State
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
-    {},
-  );
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [addingType, setAddingType] = useState<string | null>(null);
-
-  const toggleExpand = (id: string) => {
-    setExpandedItems((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const handleSelectionUpdate = async (updates: any) => {
-    if (!opponentId) return;
-    await updateSelection({
-      opponentId: opponentId as Id<"opponents">,
-      ...updates,
-    });
-  };
-
-  const toggleFrame = (id: string) => {
-    const current = opponent?.selectedFrameIds || [];
-    const updated = current.includes(id)
-      ? current.filter((x) => x !== id)
-      : [...current, id];
-    handleSelectionUpdate({ selectedFrameIds: updated });
-  };
-
-  const toggleZinger = (id: string) => {
-    const current = opponent?.selectedZingerIds || [];
-    const updated = current.includes(id)
-      ? current.filter((x) => x !== id)
-      : [...current, id];
-    handleSelectionUpdate({ selectedZingerIds: updated });
-  };
-
-  const toggleCounter = (id: string) => {
-    const current = opponent?.selectedCounterIds || [];
-    const updated = current.includes(id)
-      ? current.filter((x) => x !== id)
-      : [...current, id];
-    handleSelectionUpdate({ selectedCounterIds: updated });
-  };
-
-  const handleGenerateStrategy = async () => {
-    if (!opponent) return;
-    setIsGenerating(true);
-    try {
-      await generateStrategy({
-        opponentId: opponent._id,
-        topic: opponent.topic,
-        position: opponent.position, // User's position
-      });
-    } catch (error) {
-      console.error("Error generating strategy:", error);
-    } finally {
-      setIsGenerating(false);
-      refetchProgress();
-    }
-  };
-
-  const handleGenerateGenericPrep = async () => {
-    if (!opponent) return;
-    setIsGenerating(true);
-    try {
-      await generateGenericPrep({
-        opponentId: opponent._id,
-        scenarioType: opponent.scenarioType || "sales-cold-prospect",
-        topic: opponent.topic,
-        opponentDescription: opponent.opponentDescription || "",
-      });
-    } catch (error) {
-      console.error("Error generating generic prep:", error);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  const handleSendChat = async () => {
-    if (!opponent || !chatInput.trim()) return;
-    setIsSendingChat(true);
-    const message = chatInput;
-    setChatInput("");
-    try {
-      await sendChatMessage({
-        opponentId: opponent._id,
-        message,
-      });
-      refetchChat();
-    } catch (error) {
-      console.error("Error sending chat message:", error);
-    } finally {
-      setIsSendingChat(false);
-    }
-  };
+  // Handlers hook
+  const {
+    isGenerating,
+    editingId,
+    setEditingId,
+    addingType,
+    setAddingType,
+    expandedItems,
+    toggleExpand,
+    userResearchText,
+    setUserResearchText,
+    isProcessingResearch,
+    processedResearch,
+    handleGenerateStrategy,
+    handleGenerateGenericPrep,
+    handleSendChat,
+    handleProcessResearch,
+    handleSelectionUpdate,
+    handleEdit,
+    handleAdd,
+    handleDelete,
+    toggleFrame,
+    toggleZinger,
+    toggleCounter,
+    groupedReceipts,
+    renderComplex,
+    getStepStatus,
+  } = usePrepHandlers({
+    opponentId,
+    opponent,
+    generateStrategy,
+    generateGenericPrep,
+    sendChatMessage,
+    processResearchText,
+    updateSelection,
+    updateField,
+    addFieldItem,
+    deleteFieldItem,
+    refetchProgress,
+    refetchChat,
+    chatInput,
+    setChatInput,
+    setIsSendingChat,
+  });
 
   const handleStartDebate = () => {
     navigate({
       to: "/dashboard/debate",
       search: { opponentId },
     });
-  };
-
-  const handleProcessResearch = async () => {
-    if (!opponent || !userResearchText.trim()) return;
-    setIsProcessingResearch(true);
-    try {
-      const result = await processResearchText({
-        opponentId: opponent._id,
-        topic: opponent.topic,
-        position: opponent.position,
-        researchText: userResearchText,
-      });
-      setProcessedResearch(result);
-    } catch (error) {
-      console.error("Error processing research:", error);
-    } finally {
-      setIsProcessingResearch(false);
-    }
-  };
-
-  // Group receipts by category
-  const groupedReceipts = useMemo(() => {
-    if (!opponent?.receipts) return {};
-    return opponent.receipts.reduce(
-      (acc, receipt) => {
-        if (!acc[receipt.category]) acc[receipt.category] = [];
-        acc[receipt.category].push(receipt);
-        return acc;
-      },
-      {} as Record<string, typeof opponent.receipts>,
-    );
-  }, [opponent?.receipts]);
-
-  // Helper to render complex fields
-  const renderComplex = (val: any) => {
-    if (typeof val === "string") return val;
-    if (typeof val === "object" && val !== null) {
-      // Try to extract meaningful text from known structures
-      if (val.timing) return `${val.timing} - ${val.setup}`;
-      if (val.trigger) return `When: ${val.trigger}`;
-      return JSON.stringify(val);
-    }
-    return String(val);
-  };
-
-  // Generic handlers for edit/add/delete
-  const handleEdit = async (field: string, itemId: string, updates: any) => {
-    if (!opponentId) return;
-    await updateField({
-      opponentId: opponentId as Id<"opponents">,
-      field: field as any,
-      itemId,
-      updates,
-    });
-    setEditingId(null);
-  };
-
-  const handleAdd = async (field: string, item: any) => {
-    if (!opponentId) return;
-    await addFieldItem({
-      opponentId: opponentId as Id<"opponents">,
-      field: field as any,
-      item,
-    });
-    setAddingType(null);
-  };
-
-  const handleDelete = async (field: string, itemId: string) => {
-    if (!opponentId) return;
-    if (!confirm("Are you sure you want to delete this item?")) return;
-    await deleteFieldItem({
-      opponentId: opponentId as Id<"opponents">,
-      field: field as any,
-      itemId,
-    });
-  };
-
-  // Helper to determine step status
-  const getStepStatus = (
-    step: string,
-    progressData: typeof progress,
-  ): "pending" | "active" | "complete" => {
-    if (!progressData) return "pending";
-    if (progressData.completedSteps.includes(step)) return "complete";
-    if (progressData.status === step) return "active";
-    return "pending";
   };
 
   if (!opponent) {
@@ -330,6 +149,7 @@ function PrepScreen() {
   }
 
   const userPosition = opponent.position;
+  const aiPosition = userPosition === "con" ? "pro" : "con";
 
   // Determine prep type (debate vs generic)
   const isDebatePrep = opponent.prepType !== "generic";
@@ -382,28 +202,7 @@ function PrepScreen() {
       style={{ backgroundColor: colors.background }}
     >
       {/* Site Header */}
-      <header
-        className="sticky top-0 z-50 border-b py-4"
-        style={{ backgroundColor: colors.headerBg, borderColor: colors.border }}
-      >
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6">
-          <Link
-            to="/dashboard"
-            className="flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-70"
-            style={{ color: colors.textMuted }}
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Dashboard
-          </Link>
-          <Link to="/" className="flex-shrink-0">
-            <img
-              src="/images/logotext.png"
-              alt="DebateClub"
-              className="h-8 w-auto"
-            />
-          </Link>
-        </div>
-      </header>
+      <PrepHeader />
 
       {/* Main Content */}
       <div className="mx-auto max-w-6xl px-6 py-8">
@@ -457,7 +256,7 @@ function PrepScreen() {
                         className="font-medium capitalize"
                         style={{ color: colors.text }}
                       >
-                        {opponent.position}
+                        {aiPosition}
                       </span>
                     </span>
                   </div>
@@ -541,125 +340,9 @@ function PrepScreen() {
             </div>
           </div>
 
-          {/* Progress Indicator */}
-          {progress &&
-            progress.status !== "idle" &&
-            progress.status !== "complete" && (
-              <div className="px-6 py-4 bg-secondary/30 border-b border-border">
-                <div className="flex items-center gap-3 mb-3">
-                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                  <span className="font-medium text-primary">
-                    {progress.message}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <ProgressStep
-                    label="Research"
-                    status={getStepStatus("researching", progress)}
-                  />
-                  <ProgressStep
-                    label="Extract"
-                    status={getStepStatus("extracting", progress)}
-                  />
-                  <ProgressStep
-                    label="Synthesis"
-                    status={getStepStatus("synthesizing", progress)}
-                  />
-                  <ProgressStep
-                    label="Openings"
-                    status={getStepStatus("generating_openings", progress)}
-                  />
-                  <ProgressStep
-                    label="Arguments"
-                    status={getStepStatus("generating_frames", progress)}
-                  />
-                  <ProgressStep
-                    label="Receipts"
-                    status={getStepStatus("generating_receipts", progress)}
-                  />
-                  <ProgressStep
-                    label="Zingers"
-                    status={getStepStatus("generating_zingers", progress)}
-                  />
-                  <ProgressStep
-                    label="Closings"
-                    status={getStepStatus("generating_closings", progress)}
-                  />
-                  <ProgressStep
-                    label="Intel"
-                    status={getStepStatus("generating_intel", progress)}
-                  />
-                  <ProgressStep
-                    label="Save"
-                    status={getStepStatus("storing", progress)}
-                  />
-                </div>
-              </div>
-            )}
-
-          {/* Error Display */}
-          {progress?.status === "error" && progress.error && (
-            <div className="px-6 py-4 bg-red-500/10 border-b border-red-500/30">
-              <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
-                <AlertTriangle className="h-5 w-5" />
-                <span className="font-medium">Error: {progress.error}</span>
-              </div>
-            </div>
-          )}
-
-          {/* Gemini Progress Indicator */}
-          {geminiProgress &&
-            geminiProgress.status !== "complete" &&
-            geminiProgress.status !== "error" && (
-              <div
-                className="px-6 py-4"
-                style={{
-                  backgroundColor: `${colors.accent}20`,
-                  borderBottom: `1px solid ${colors.border}`,
-                }}
-              >
-                <div className="flex items-center gap-3">
-                  <Loader2
-                    className="h-5 w-5 animate-spin"
-                    style={{ color: colors.primary }}
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span
-                        className="font-medium"
-                        style={{ color: colors.text }}
-                      >
-                        AI Deep Research
-                      </span>
-                    </div>
-                    <p className="text-sm" style={{ color: colors.textMuted }}>
-                      {geminiProgress.message}
-                    </p>
-                    {geminiProgress.status.startsWith("deep_research") && (
-                      <p
-                        className="text-xs mt-1"
-                        style={{ color: colors.textLight }}
-                      >
-                        Deep Research can take 3-20 minutes for comprehensive
-                        analysis
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-          {/* Gemini Error Display */}
-          {geminiProgress?.status === "error" && geminiProgress.error && (
-            <div className="px-6 py-4 bg-red-500/10 border-b border-red-500/30">
-              <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
-                <AlertTriangle className="h-5 w-5" />
-                <span className="font-medium">
-                  Gemini Error: {geminiProgress.error}
-                </span>
-              </div>
-            </div>
-          )}
+          {/* Progress Indicators */}
+          <GenerationProgress progress={progress} />
+          <GeminiProgress geminiProgress={geminiProgress} />
 
           {/* Content */}
           <div className="flex-1 p-6 overflow-hidden">
