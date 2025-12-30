@@ -183,7 +183,7 @@ function PrepScreen() {
       await generateStrategy({
         opponentId: opponent._id,
         topic: opponent.topic,
-        position: opponent.position === "con" ? "pro" : "con", // User's position
+        position: opponent.position, // User's position
       });
     } catch (error) {
       console.error("Error generating strategy:", error);
@@ -242,7 +242,7 @@ function PrepScreen() {
       const result = await processResearchText({
         opponentId: opponent._id,
         topic: opponent.topic,
-        position: opponent.position === "con" ? "pro" : "con",
+        position: opponent.position,
         researchText: userResearchText,
       });
       setProcessedResearch(result);
@@ -329,7 +329,7 @@ function PrepScreen() {
     );
   }
 
-  const userPosition = opponent.position === "con" ? "pro" : "con";
+  const userPosition = opponent.position;
 
   // Determine prep type (debate vs generic)
   const isDebatePrep = opponent.prepType !== "generic";
@@ -469,6 +469,13 @@ function PrepScreen() {
                     {isDebatePrep ? (
                       <>
                         <button
+                          onClick={handleGenerateStrategy}
+                          className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium text-white transition-all hover:brightness-110"
+                          style={{ backgroundColor: colors.primaryLight }}
+                        >
+                          Fast Research
+                        </button>
+                        <button
                           onClick={() => {
                             if (opponentId) {
                               generateGemini({
@@ -487,7 +494,7 @@ function PrepScreen() {
                           className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium text-white transition-all hover:brightness-110 disabled:opacity-50"
                           style={{ backgroundColor: colors.primaryLight }}
                         >
-                          Generate Strategy
+                          Deep Research
                         </button>
                       </>
                     ) : (
