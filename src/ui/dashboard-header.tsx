@@ -4,7 +4,6 @@ import {
     ChevronDown,
     LogOut,
     Settings,
-    CreditCard,
 } from "lucide-react";
 import { cn, useSignOut } from "@/utils/misc";
 
@@ -23,9 +22,7 @@ import { User } from "~/types";
 // Route imports - using strings for links now to avoid type errors
 // but keeping imports if needed for route matching logic logic that accepts Route objects
 import { Route as DashboardRoute } from "@/routes/_app/_auth/dashboard/_layout.index";
-
 import { Route as SettingsRoute } from "@/routes/_app/_auth/dashboard/_layout.settings.index";
-import { Route as BillingSettingsRoute } from "@/routes/_app/_auth/dashboard/_layout.settings.billing";
 
 // Color constants matching marketing pages & dashboard styling
 const colors = {
@@ -47,9 +44,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
 
     // Route matching helpers
     const isDashboardPath = matchRoute({ to: DashboardRoute.fullPath });
-
     const isSettingsPath = matchRoute({ to: SettingsRoute.fullPath });
-    const isBillingPath = matchRoute({ to: BillingSettingsRoute.fullPath });
 
     if (!user) return null;
 
@@ -97,17 +92,6 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                             )}
                         >
                             Settings
-                        </Link>
-                        <Link
-                            to="/dashboard/settings/billing"
-                            className={cn(
-                                `${buttonVariants({ variant: "ghost", size: "sm" })} text-sm font-medium transition-colors`,
-                                isBillingPath
-                                    ? "bg-black/5 text-primary"
-                                    : "text-primary/70 hover:text-primary hover:bg-black/5"
-                            )}
-                        >
-                            Billing
                         </Link>
                     </nav>
                 </div>
@@ -164,17 +148,6 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                                 </span>
                                 <Settings className="h-4 w-4 text-primary/60 group-hover:text-primary" />
                             </DropdownMenuItem>
-
-                            <DropdownMenuItem
-                                className="group h-9 w-full cursor-pointer justify-between rounded-md px-2 focus:bg-primary/5"
-                                onClick={() => navigate({ to: "/dashboard/settings/billing" })}
-                            >
-                                <span className="text-sm text-primary/80 group-hover:text-primary">
-                                    Billing
-                                </span>
-                                <CreditCard className="h-4 w-4 text-primary/60 group-hover:text-primary" />
-                            </DropdownMenuItem>
-
 
                             <DropdownMenuSeparator className="mx-0 my-1 bg-border" />
 

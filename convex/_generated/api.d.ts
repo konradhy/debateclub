@@ -27,7 +27,6 @@ import type * as email_templates_subscriptionEmail from "../email/templates/subs
 import type * as env from "../env.js";
 import type * as geminiResearchProgress from "../geminiResearchProgress.js";
 import type * as http from "../http.js";
-import type * as init from "../init.js";
 import type * as lib_aiConfig from "../lib/aiConfig.js";
 import type * as lib_firecrawl from "../lib/firecrawl.js";
 import type * as lib_geminiDeepResearch from "../lib/geminiDeepResearch.js";
@@ -50,7 +49,6 @@ import type * as scenarios_healthcare from "../scenarios/healthcare.js";
 import type * as scenarios_index from "../scenarios/index.js";
 import type * as scenarios_sales from "../scenarios/sales.js";
 import type * as scenarios_types from "../scenarios/types.js";
-import type * as stripe from "../stripe.js";
 
 import type {
   ApiFromModules,
@@ -78,7 +76,6 @@ declare const fullApi: ApiFromModules<{
   env: typeof env;
   geminiResearchProgress: typeof geminiResearchProgress;
   http: typeof http;
-  init: typeof init;
   "lib/aiConfig": typeof lib_aiConfig;
   "lib/firecrawl": typeof lib_firecrawl;
   "lib/geminiDeepResearch": typeof lib_geminiDeepResearch;
@@ -101,7 +98,6 @@ declare const fullApi: ApiFromModules<{
   "scenarios/index": typeof scenarios_index;
   "scenarios/sales": typeof scenarios_sales;
   "scenarios/types": typeof scenarios_types;
-  stripe: typeof stripe;
 }>;
 
 /**
