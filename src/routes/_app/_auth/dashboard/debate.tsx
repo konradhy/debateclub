@@ -45,6 +45,9 @@ function Debate() {
   const { mutateAsync: createDebate } = useMutation({
     mutationFn: useConvexMutation(api.debates.create),
   });
+  const { mutateAsync: completeDebate } = useMutation({
+    mutationFn: useConvexMutation(api.debates.completeWithClientDuration),
+  });
 
   const vapiRef = useRef<Vapi | null>(null);
   const [isSessionActive, setIsSessionActive] = useState(false);
@@ -538,20 +541,20 @@ ${opponent.additionalContext}`
         ...(scenario.assistant.canInterrupt !== undefined && {
           clientMessages: scenario.assistant.canInterrupt
             ? [
-                "transcript",
-                "hang",
-                "function-call",
-                "speech-update",
-                "metadata",
-                "conversation-update",
-              ]
+              "transcript",
+              "hang",
+              "function-call",
+              "speech-update",
+              "metadata",
+              "conversation-update",
+            ]
             : [
-                "transcript",
-                "hang",
-                "function-call",
-                "metadata",
-                "conversation-update",
-              ],
+              "transcript",
+              "hang",
+              "function-call",
+              "metadata",
+              "conversation-update",
+            ],
         }),
         ...(scenario.assistant.interruptionThreshold !== undefined && {
           backgroundSound: "office" as const,
@@ -605,6 +608,14 @@ ${opponent.additionalContext}`
 
   const handleStop = async () => {
     try {
+      // Complete the debate with the accurate timer duration BEFORE stopping Vapi
+      if (debateId && timer > 0) {
+        await completeDebate({
+          debateId,
+          duration: timer,
+        });
+      }
+
       if (vapiRef.current) {
         await vapiRef.current.stop();
       }

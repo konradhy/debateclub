@@ -90,6 +90,38 @@ export const complete = internalMutation({
   },
 });
 
+export const completeWithClientDuration = mutation({
+  args: {
+    debateId: v.id("debates"),
+    duration: v.number(),
+  },
+  handler: async (ctx, args) => {
+    // Verify authentication
+    const authenticatedUserId = await auth.getUserId(ctx);
+    if (!authenticatedUserId) {
+      throw new Error("Not authenticated");
+    }
+
+    // Get the debate to verify ownership
+    const debate = await ctx.db.get(args.debateId);
+    if (!debate) {
+      throw new Error("Debate not found");
+    }
+
+    // Ensure the debate belongs to the authenticated user
+    if (debate.userId !== authenticatedUserId) {
+      throw new Error("Cannot complete debate for another user");
+    }
+
+    // Update the debate with client-provided duration
+    await ctx.db.patch(args.debateId, {
+      status: "completed",
+      completedAt: Date.now(),
+      duration: args.duration,
+    });
+  },
+});
+
 export const get = query({
   args: {
     debateId: v.union(v.id("debates"), v.null()),
@@ -189,9 +221,9 @@ export const listUserDebates = query({
           ...debate,
           analysis: analysis
             ? {
-                hasanScores: analysis.hasanScores,
-                executiveSummary: analysis.executiveSummary,
-              }
+              hasanScores: analysis.hasanScores,
+              executiveSummary: analysis.executiveSummary,
+            }
             : null,
           recordingUrl,
         };

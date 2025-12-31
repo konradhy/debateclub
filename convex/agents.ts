@@ -34,13 +34,25 @@ export const prepAgent = new Agent(components.agent, {
         const apiKey = process.env.FIRECRAWL_API_KEY;
         if (!apiKey) throw new Error("FIRECRAWL_API_KEY is not set");
 
-        const results = await searchAndScrape(args.query, apiKey, 5);
-        return results
-          .map(
-            (r) =>
-              `Title: ${r.title}\nSource: ${r.source}\nContent: ${r.content.substring(0, 1500)}...`,
-          )
-          .join("\n\n");
+        console.log(`🔍 [AGENT-DEBUG] Agent searching for: "${args.query}"`);
+
+        try {
+          // For agent tools, use the original Firecrawl function without cost tracking
+          // since we don't have proper user context in agents
+          const results = await searchAndScrape(args.query, apiKey, 5);
+
+          console.log(`✅ [AGENT-DEBUG] Agent found ${results.length} results`);
+
+          return results
+            .map(
+              (r) =>
+                `Title: ${r.title}\nSource: ${r.url}\nContent: ${r.content.substring(0, 1500)}...`,
+            )
+            .join("\n\n");
+        } catch (error) {
+          console.error(`❌ [AGENT-DEBUG] Agent search error:`, error);
+          throw error;
+        }
       },
     }),
   },

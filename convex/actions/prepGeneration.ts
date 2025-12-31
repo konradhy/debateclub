@@ -1,7 +1,7 @@
 "use node";
 import { internalAction } from "../_generated/server";
 import { v } from "convex/values";
-import { callOpenRouter } from "../lib/openrouter";
+import { callOpenRouterForPrep } from "../lib/openrouterWithCosts";
 import { AI_MODELS } from "../lib/aiConfig";
 import {
   OPENING_STATEMENT_PROMPT,
@@ -13,10 +13,15 @@ import {
   USER_RESEARCH_PROCESSING_PROMPT,
   RESEARCH_SYNTHESIS_PROMPT,
 } from "../lib/promptTemplates";
+import type { ActionCtx } from "../_generated/server";
+import type { Id } from "../_generated/dataModel";
 
 const SITE_URL = "https://orator.app"; // Placeholder
 
 async function generateWithPrompt(
+  ctx: ActionCtx,
+  userId: Id<"users">,
+  opponentId: Id<"opponents">,
   prompt: string,
   model = AI_MODELS.PREP_GENERATION,
 ) {
@@ -27,7 +32,10 @@ async function generateWithPrompt(
   }
 
   try {
-    const response = await callOpenRouter(
+    const response = await callOpenRouterForPrep(
+      ctx,
+      userId,
+      opponentId,
       apiKey,
       [{ role: "system", content: prompt }],
       SITE_URL,
@@ -38,7 +46,7 @@ async function generateWithPrompt(
     const content = response.choices[0]?.message?.content;
     if (!content) {
       console.error("[generateWithPrompt] No content in response");
-      throw new Error("No content generated");
+      throw new Error("No content generated - API call failed");
     }
 
     try {
@@ -48,7 +56,7 @@ async function generateWithPrompt(
         "[generateWithPrompt] Failed to parse JSON:",
         content.substring(0, 500),
       );
-      throw new Error("Failed to parse generated JSON");
+      throw new Error("Failed to parse generated JSON - malformed response");
     }
   } catch (error) {
     console.error("[generateWithPrompt] Error calling OpenRouter:", error);
@@ -58,6 +66,8 @@ async function generateWithPrompt(
 
 export const generateOpenings = internalAction({
   args: {
+    opponentId: v.id("opponents"),
+    userId: v.id("users"),
     topic: v.string(),
     position: v.string(),
     strategicBrief: v.optional(v.string()),
@@ -69,13 +79,51 @@ export const generateOpenings = internalAction({
       args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
     );
 
-    const data = await generateWithPrompt(prompt);
-    return data.openings || [];
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) {
+      console.error("[generateOpenings] OPENROUTER_API_KEY is not set");
+      throw new Error("OPENROUTER_API_KEY is not set");
+    }
+
+    try {
+      const response = await callOpenRouterForPrep(
+        ctx,
+        args.userId,
+        args.opponentId,
+        apiKey,
+        [{ role: "system", content: prompt }],
+        SITE_URL,
+        3,
+        AI_MODELS.PREP_GENERATION,
+      );
+
+      const content = response.choices[0]?.message?.content;
+      if (!content) {
+        console.error("[generateOpenings] No content in response");
+        throw new Error("No content generated");
+      }
+
+      try {
+        const data = JSON.parse(content);
+        return data.openings || [];
+      } catch (e) {
+        console.error(
+          "[generateOpenings] Failed to parse JSON:",
+          content.substring(0, 500),
+        );
+        throw new Error("Failed to parse generated JSON");
+      }
+    } catch (error) {
+      console.error("[generateOpenings] Error calling OpenRouter:", error);
+      throw error;
+    }
   },
 });
 
 export const generateFrames = internalAction({
   args: {
+    opponentId: v.id("opponents"),
+    userId: v.id("users"),
     topic: v.string(),
     position: v.string(),
     research: v.array(v.any()),
@@ -89,13 +137,15 @@ export const generateFrames = internalAction({
       args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
     ).replace("{research}", researchContext);
 
-    const data = await generateWithPrompt(prompt);
+    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt);
     return data.frames || [];
   },
 });
 
 export const generateReceipts = internalAction({
   args: {
+    opponentId: v.id("opponents"),
+    userId: v.id("users"),
     topic: v.string(),
     position: v.string(),
     research: v.array(v.any()),
@@ -109,13 +159,15 @@ export const generateReceipts = internalAction({
       args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
     ).replace("{research}", researchContext);
 
-    const data = await generateWithPrompt(prompt);
+    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt);
     return data.receipts || [];
   },
 });
 
 export const generateZingers = internalAction({
   args: {
+    opponentId: v.id("opponents"),
+    userId: v.id("users"),
     topic: v.string(),
     position: v.string(),
     research: v.array(v.any()),
@@ -129,13 +181,15 @@ export const generateZingers = internalAction({
       args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
     ).replace("{research}", researchContext);
 
-    const data = await generateWithPrompt(prompt);
+    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt);
     return data.zingers || [];
   },
 });
 
 export const generateClosings = internalAction({
   args: {
+    opponentId: v.id("opponents"),
+    userId: v.id("users"),
     topic: v.string(),
     position: v.string(),
     strategicBrief: v.optional(v.string()),
@@ -147,13 +201,15 @@ export const generateClosings = internalAction({
       args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
     );
 
-    const data = await generateWithPrompt(prompt);
+    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt);
     return data.closings || [];
   },
 });
 
 export const generateOpponentIntel = internalAction({
   args: {
+    opponentId: v.id("opponents"),
+    userId: v.id("users"),
     topic: v.string(),
     position: v.string(),
     research: v.array(v.any()),
@@ -174,7 +230,7 @@ export const generateOpponentIntel = internalAction({
       )
       .replace("{research}", researchContext);
 
-    const data = await generateWithPrompt(prompt);
+    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt);
     return data.opponentIntel || [];
   },
 });
@@ -185,6 +241,8 @@ export const generateOpponentIntel = internalAction({
  */
 export const processUserResearch = internalAction({
   args: {
+    opponentId: v.id("opponents"),
+    userId: v.id("users"),
     topic: v.string(),
     position: v.string(),
     researchText: v.string(),
@@ -238,7 +296,7 @@ export const processUserResearch = internalAction({
     const truncatedResearch =
       args.researchText.length > maxLength
         ? args.researchText.substring(0, maxLength) +
-          "\n\n[Content truncated due to length...]"
+        "\n\n[Content truncated due to length...]"
         : args.researchText;
 
     const prompt = USER_RESEARCH_PROCESSING_PROMPT.replace(
@@ -249,6 +307,9 @@ export const processUserResearch = internalAction({
       .replace("{research}", truncatedResearch);
 
     const data = await generateWithPrompt(
+      ctx,
+      args.userId,
+      args.opponentId,
       prompt,
       AI_MODELS.RESEARCH_PROCESSING,
     );
@@ -271,6 +332,8 @@ export const processUserResearch = internalAction({
  */
 export const generateResearchSynthesis = internalAction({
   args: {
+    opponentId: v.id("opponents"),
+    userId: v.id("users"),
     topic: v.string(),
     position: v.string(),
     research: v.array(v.any()),
@@ -326,7 +389,7 @@ export const generateResearchSynthesis = internalAction({
       args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
     ).replace("{research}", researchSummary);
 
-    const data = await generateWithPrompt(prompt, AI_MODELS.PREP_GENERATION);
+    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt, AI_MODELS.PREP_GENERATION);
 
     // Extract the synthesis object from the response
     const synthesis = data.synthesis || data;

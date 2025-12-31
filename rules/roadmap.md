@@ -417,9 +417,9 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Goal**: Implement revenue system with multi-tiered access control
 
-**Status**: ⬜
+**Status**: 🔄 (Payment integration complete, cost monitoring in progress)
 
-**Chapters**: —
+**Chapters**: Ch.16, Ch.17, Ch.18
 
 ---
 
@@ -427,18 +427,18 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Description**: Multi-tiered token system supporting marketing funnel workflow
 
-**Status**: ⬜
+**Status**: ✅
 
-**Chapters**: —
+**Chapters**: Ch.16, Ch.17
 
 #### Tasks
 
-- ⬜ **4.1.1** — Token tracking schema (scenario-specific tokens, global tokens, subscription status)
-- ⬜ **4.1.2** — Scenario-specific token grants for free trials
-- ⬜ **4.1.3** — Per-scenario token purchase flow
-- ⬜ **4.1.4** — Full subscription for unlimited access
-- ⬜ **4.1.5** — Feature gating based on user's plan/tokens
-- ⬜ **4.1.6** — Rate limiting by plan tier
+- ✅ **4.1.1** — Token tracking schema (scenario-specific tokens, global tokens, subscription status) [Ch.16]
+- ✅ **4.1.2** — Scenario-specific token grants for free trials [Ch.16]
+- ✅ **4.1.3** — Per-scenario token purchase flow [Ch.17, Ch.18]
+- ✅ **4.1.4** — Full subscription for unlimited access [Ch.17, Ch.18]
+- ✅ **4.1.5** — Feature gating based on user's plan/tokens [Ch.16]
+- ✅ **4.1.6** — Rate limiting by plan tier [Ch.16]
 
 ---
 
@@ -446,16 +446,16 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Description**: Stripe integration for purchases and subscriptions
 
-**Status**: ⬜
+**Status**: ✅
 
-**Chapters**: —
+**Chapters**: Ch.17, Ch.18
 
 #### Tasks
 
-- ⬜ **4.2.1** — Stripe checkout for token purchases
-- ⬜ **4.2.2** — Subscription management (create, cancel, upgrade)
-- ⬜ **4.2.3** — Webhook handling for payment events
-- ⬜ **4.2.4** — Receipt generation and email confirmations
+- ✅ **4.2.1** — Stripe checkout for token purchases [Ch.17, Ch.18]
+- ✅ **4.2.2** — Subscription management (create, cancel, upgrade) [Ch.17, Ch.18]
+- ✅ **4.2.3** — Webhook handling for payment events [Ch.17, Ch.18]
+- ⬜ **4.2.4** — Receipt generation and email confirmations (handled by Stripe automatically)
 
 ---
 
@@ -876,7 +876,13 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 ---
 
-### 8.5 Security
+### 8.5 The Social Share
+**description** You can ask for credits by sharing something to twitter. So essentially. Click button on purchase page for a scenario and you share on twitter "As a doctor, i'm leveling up my xyz by practicing abc on Debate Club. Check it out". Occurs when you run out of credits or want to purchase a scenario there's a ghost "fyi". 
+- ⬜ **8.5.1** —
+
+
+
+### 8.6 Security
 **description** go through every function starting with high abuse ones first. And ensure that the right auth and access is occuring. Prefer internal functions when you can, and be careful the wrong person can't access.
 - ⬜ **8.5.1** —
 

@@ -181,7 +181,14 @@ export const generateStrategy = action({
       console.log("[generateStrategy] Generating research synthesis");
       researchSynthesis = await ctx.runAction(
         internal.actions.prepGeneration.generateResearchSynthesis,
-        { topic: args.topic, position: args.position, research, strategicBrief },
+        {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
+          topic: args.topic,
+          position: args.position,
+          research,
+          strategicBrief
+        },
       );
       console.log("[generateStrategy] Research synthesis complete");
     } catch (error) {
@@ -206,42 +213,82 @@ export const generateStrategy = action({
       await updateProgress("generating_openings");
       openingOptions = await ctx.runAction(
         internal.actions.prepGeneration.generateOpenings,
-        { topic: args.topic, position: args.position, strategicBrief },
+        {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
+          topic: args.topic,
+          position: args.position,
+          strategicBrief
+        },
       );
 
       // Generate frames
       await updateProgress("generating_frames");
       argumentFrames = await ctx.runAction(
         internal.actions.prepGeneration.generateFrames,
-        { topic: args.topic, position: args.position, research, strategicBrief },
+        {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
+          topic: args.topic,
+          position: args.position,
+          research,
+          strategicBrief
+        },
       );
 
       // Generate receipts
       await updateProgress("generating_receipts");
       receipts = await ctx.runAction(
         internal.actions.prepGeneration.generateReceipts,
-        { topic: args.topic, position: args.position, research, strategicBrief },
+        {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
+          topic: args.topic,
+          position: args.position,
+          research,
+          strategicBrief
+        },
       );
 
       // Generate zingers
       await updateProgress("generating_zingers");
       zingers = await ctx.runAction(
         internal.actions.prepGeneration.generateZingers,
-        { topic: args.topic, position: args.position, research, strategicBrief },
+        {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
+          topic: args.topic,
+          position: args.position,
+          research,
+          strategicBrief
+        },
       );
 
       // Generate closings
       await updateProgress("generating_closings");
       closingOptions = await ctx.runAction(
         internal.actions.prepGeneration.generateClosings,
-        { topic: args.topic, position: args.position, strategicBrief },
+        {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
+          topic: args.topic,
+          position: args.position,
+          strategicBrief
+        },
       );
 
       // Generate opponent intel
       await updateProgress("generating_intel");
       opponentIntel = await ctx.runAction(
         internal.actions.prepGeneration.generateOpponentIntel,
-        { topic: args.topic, position: args.position, research, strategicBrief },
+        {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
+          topic: args.topic,
+          position: args.position,
+          research,
+          strategicBrief
+        },
       );
 
       console.log("[generateStrategy] Generation phase complete");
@@ -343,10 +390,21 @@ export const processResearchText = action({
     summary: v.string(),
   }),
   handler: async (ctx, args): Promise<ProcessedResearch> => {
+    // Get opponent data to access userId for cost tracking
+    const opponent = await ctx.runQuery(internal.opponents.getInternal, {
+      opponentId: args.opponentId,
+    });
+
+    if (!opponent) {
+      throw new Error("Opponent not found");
+    }
+
     // Call the internal action to process the research
     const result = await ctx.runAction(
       internal.actions.prepGeneration.processUserResearch,
       {
+        opponentId: args.opponentId,
+        userId: opponent.userId,
         topic: args.topic,
         position: args.position,
         researchText: args.researchText,

@@ -49,12 +49,14 @@ function BillingPage() {
   // Stripe checkout actions
   const createTokenCheckout = useAction(api.stripe.createTokenCheckout);
   const createSubscriptionCheckout = useAction(api.stripe.createSubscriptionCheckout);
+  const createCustomerPortal = useAction(api.stripe.createCustomerPortal);
 
   // Track loading state manually for actions
-  const [isPurchasing, setIsPurchasing] = useState(false);
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [purchasingPackIndex, setPurchasingPackIndex] = useState<number | null>(null);
+  const [subscribingPlan, setSubscribingPlan] = useState<"monthly" | "annual" | null>(null);
+  const [isOpeningPortal, setIsOpeningPortal] = useState(false);
 
-  const [selectedScenario, setSelectedScenario] = useState<string>("debate");
+  const [selectedScenario, setSelectedScenario] = useState<string>("sales-cold-prospect");
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
 
@@ -91,6 +93,8 @@ function BillingPage() {
   }, []);
 
   const scenarioList = Object.values(SCENARIOS);
+  // Filter out "debate" scenario from token purchase dropdown (debate is subscriber-only)
+  const purchasableScenarios = scenarioList.filter((s) => s.id !== "debate");
 
   return (
     <div className="min-h-screen flex-1" style={{ backgroundColor: colors.background }}>
@@ -195,13 +199,36 @@ function BillingPage() {
                   {subscriptionStatus &&
                     "currentPeriodEnd" in subscriptionStatus &&
                     subscriptionStatus.currentPeriodEnd && (
-                      <p className="text-sm" style={{ color: colors.textLight }}>
+                      <p className="text-sm mb-4" style={{ color: colors.textLight }}>
                         Next billing:{" "}
                         {new Date(
                           subscriptionStatus.currentPeriodEnd,
                         ).toLocaleDateString()}
                       </p>
                     )}
+
+                  <button
+                    onClick={async () => {
+                      try {
+                        setIsOpeningPortal(true);
+                        const result = await createCustomerPortal();
+                        if (result?.url) window.location.href = result.url;
+                      } catch (error) {
+                        console.error("Customer portal error:", error);
+                        setErrorMessage("Failed to open billing portal");
+                      } finally {
+                        setIsOpeningPortal(false);
+                      }
+                    }}
+                    disabled={isOpeningPortal}
+                    className="w-full rounded-lg border-2 px-4 py-2 text-sm font-medium transition-all hover:bg-gray-50"
+                    style={{
+                      borderColor: colors.border,
+                      color: colors.text,
+                    }}
+                  >
+                    {isOpeningPortal ? "Loading..." : "Manage Subscription"}
+                  </button>
                 </>
               ) : (
                 <>
@@ -272,21 +299,21 @@ function BillingPage() {
                       <button
                         onClick={async () => {
                           try {
-                            setIsCheckingOut(true);
+                            setSubscribingPlan("monthly");
                             const result = await createSubscriptionCheckout({ plan: "monthly" });
                             if (result?.url) window.location.href = result.url;
                           } catch (error) {
                             console.error("Subscription checkout error:", error);
                             setErrorMessage("Failed to create checkout session");
                           } finally {
-                            setIsCheckingOut(false);
+                            setSubscribingPlan(null);
                           }
                         }}
-                        disabled={isCheckingOut}
+                        disabled={subscribingPlan !== null}
                         className="w-full rounded-lg px-4 py-2 text-sm font-medium text-white transition-all hover:brightness-110"
                         style={{ backgroundColor: colors.primary }}
                       >
-                        {isCheckingOut ? "Loading..." : "Subscribe Monthly"}
+                        {subscribingPlan === "monthly" ? "Loading..." : "Subscribe Monthly"}
                       </button>
                     </div>
                     <div
@@ -314,21 +341,21 @@ function BillingPage() {
                       <button
                         onClick={async () => {
                           try {
-                            setIsCheckingOut(true);
+                            setSubscribingPlan("annual");
                             const result = await createSubscriptionCheckout({ plan: "annual" });
                             if (result?.url) window.location.href = result.url;
                           } catch (error) {
                             console.error("Subscription checkout error:", error);
                             setErrorMessage("Failed to create checkout session");
                           } finally {
-                            setIsCheckingOut(false);
+                            setSubscribingPlan(null);
                           }
                         }}
-                        disabled={isCheckingOut}
+                        disabled={subscribingPlan !== null}
                         className="w-full rounded-lg px-4 py-2 text-sm font-medium text-white transition-all hover:brightness-110"
                         style={{ backgroundColor: colors.primary }}
                       >
-                        {isCheckingOut ? "Loading..." : "Subscribe Annually"}
+                        {subscribingPlan === "annual" ? "Loading..." : "Subscribe Annually"}
                       </button>
                     </div>
                   </div>
@@ -448,7 +475,7 @@ function BillingPage() {
                       color: colors.text,
                     }}
                   >
-                    {scenarioList.map((scenario) => (
+                    {purchasableScenarios.map((scenario) => (
                       <option key={scenario.id} value={scenario.id}>
                         {scenario.name}
                       </option>
@@ -487,7 +514,7 @@ function BillingPage() {
                       }}
                       onClick={async () => {
                         try {
-                          setIsPurchasing(true);
+                          setPurchasingPackIndex(0);
                           const result = await createTokenCheckout({
                             scenarioId: selectedScenario,
                             packIndex: 0,
@@ -497,12 +524,12 @@ function BillingPage() {
                           console.error("Token checkout error:", error);
                           setErrorMessage("Failed to create checkout session");
                         } finally {
-                          setIsPurchasing(false);
+                          setPurchasingPackIndex(null);
                         }
                       }}
-                      disabled={isPurchasing}
+                      disabled={purchasingPackIndex !== null}
                     >
-                      {isPurchasing ? "Loading..." : "Purchase"}
+                      {purchasingPackIndex === 0 ? "Loading..." : "Purchase"}
                     </button>
                   </div>
 
@@ -551,7 +578,7 @@ function BillingPage() {
                       }}
                       onClick={async () => {
                         try {
-                          setIsPurchasing(true);
+                          setPurchasingPackIndex(1);
                           const result = await createTokenCheckout({
                             scenarioId: selectedScenario,
                             packIndex: 1,
@@ -561,12 +588,12 @@ function BillingPage() {
                           console.error("Token checkout error:", error);
                           setErrorMessage("Failed to create checkout session");
                         } finally {
-                          setIsPurchasing(false);
+                          setPurchasingPackIndex(null);
                         }
                       }}
-                      disabled={isPurchasing}
+                      disabled={purchasingPackIndex !== null}
                     >
-                      {isPurchasing ? "Loading..." : "Purchase"}
+                      {purchasingPackIndex === 1 ? "Loading..." : "Purchase"}
                     </button>
                   </div>
 
@@ -612,7 +639,7 @@ function BillingPage() {
                       }}
                       onClick={async () => {
                         try {
-                          setIsPurchasing(true);
+                          setPurchasingPackIndex(2);
                           const result = await createTokenCheckout({
                             scenarioId: selectedScenario,
                             packIndex: 2,
@@ -622,12 +649,12 @@ function BillingPage() {
                           console.error("Token checkout error:", error);
                           setErrorMessage("Failed to create checkout session");
                         } finally {
-                          setIsPurchasing(false);
+                          setPurchasingPackIndex(null);
                         }
                       }}
-                      disabled={isPurchasing}
+                      disabled={purchasingPackIndex !== null}
                     >
-                      {isPurchasing ? "Loading..." : "Purchase"}
+                      {purchasingPackIndex === 2 ? "Loading..." : "Purchase"}
                     </button>
                   </div>
                 </div>

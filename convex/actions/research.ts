@@ -3,8 +3,10 @@ import { action } from "../_generated/server";
 import { v } from "convex/values";
 import { internal } from "../_generated/api";
 import { searchAndScrape } from "../lib/firecrawl";
-import { callOpenRouter } from "../lib/openrouter";
+import { callOpenRouterForResearch } from "../lib/openrouterWithCosts";
 import { AI_MODELS, RESEARCH_SETTINGS } from "../lib/aiConfig";
+import type { ActionCtx } from "../_generated/server";
+import type { Id } from "../_generated/dataModel";
 
 const SITE_URL = "https://debateclub.app";
 
@@ -17,6 +19,9 @@ const SITE_URL = "https://debateclub.app";
  * - How to use this in debate
  */
 async function analyzeArticle(
+  ctx: ActionCtx,
+  userId: Id<"users">,
+  opponentId: Id<"opponents">,
   apiKey: string,
   title: string,
   content: string,
@@ -65,7 +70,10 @@ Return ONLY a JSON object:
 }`;
 
   try {
-    const response = await callOpenRouter(
+    const response = await callOpenRouterForResearch(
+      ctx,
+      userId,
+      opponentId,
       apiKey,
       [{ role: "user", content: prompt }],
       SITE_URL,
@@ -75,22 +83,24 @@ Return ONLY a JSON object:
 
     const responseContent = response.choices[0]?.message?.content;
     if (!responseContent) {
-      console.warn("[analyzeArticle] No content in response, using fallback");
-      return `## Summary\n${content.substring(0, 500)}...`;
+      throw new Error("[analyzeArticle] No content in response - API call failed");
     }
 
     // Parse JSON response
     const jsonMatch = responseContent.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      console.warn("[analyzeArticle] No JSON found, using response as-is");
-      return responseContent.substring(0, 2000);
+      throw new Error("[analyzeArticle] No JSON found in response - malformed API response");
     }
 
     const parsed = JSON.parse(jsonMatch[0]);
-    return parsed.analysis || `## Summary\n${content.substring(0, 500)}...`;
+    if (!parsed.analysis) {
+      throw new Error("[analyzeArticle] No analysis field in parsed JSON - malformed response structure");
+    }
+
+    return parsed.analysis;
   } catch (error) {
     console.error("[analyzeArticle] Error:", error);
-    return `## Summary\n${content.substring(0, 500)}...`;
+    throw error; // Re-throw instead of fallback - user wants to see errors
   }
 }
 
@@ -121,6 +131,15 @@ export const gatherEvidence = action({
       throw new Error("OPENROUTER_API_KEY is not set");
     }
 
+    // Get opponent data to access userId for cost tracking
+    const opponent = await ctx.runQuery(internal.opponents.getInternal, {
+      opponentId: args.opponentId,
+    });
+
+    if (!opponent) {
+      throw new Error("Opponent not found");
+    }
+
     // Use provided count or default from config
     const articleCount =
       args.articleCount ?? RESEARCH_SETTINGS.FIRECRAWL_ARTICLE_COUNT;
@@ -129,7 +148,7 @@ export const gatherEvidence = action({
       `[gatherEvidence] Fetching ${articleCount} articles for topic: ${args.topic}`,
     );
 
-    // 1. Search and scrape
+    // 1. Search and scrape with simple cost estimate recording
     const results = await searchAndScrape(
       args.topic,
       firecrawlKey,
@@ -138,6 +157,24 @@ export const gatherEvidence = action({
 
     console.log(`[gatherEvidence] Got ${results.length} results, analyzing...`);
 
+    // Record Firecrawl cost estimate (~$0.01 per page)
+    try {
+      const firecrawlCostCents = Math.round(results.length * 1.0); // $0.01 per page in cents
+      console.log(`[gatherEvidence] Recording Firecrawl cost: ${firecrawlCostCents} cents for ${results.length} pages (research phase)`);
+      await ctx.runMutation(internal.costs.INTERNAL_recordApiCost, {
+        service: "firecrawl",
+        cost: firecrawlCostCents,
+        opponentId: args.opponentId,
+        userId: opponent.userId,
+        phase: "research",
+        details: {
+          requests: results.length,
+        },
+      });
+    } catch (error) {
+      console.error(`[gatherEvidence] Error recording Firecrawl cost:`, error);
+    }
+
     // 2. Analyze each article using AI (with detailed analysis)
     const articles = await Promise.all(
       results.map(async (r, index) => {
@@ -145,6 +182,9 @@ export const gatherEvidence = action({
           `[gatherEvidence] Analyzing article ${index + 1}/${results.length}: ${r.title}`,
         );
         const analysis = await analyzeArticle(
+          ctx,
+          opponent.userId,
+          args.opponentId,
           openrouterKey,
           r.title,
           r.content,

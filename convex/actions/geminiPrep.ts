@@ -184,34 +184,46 @@ For each finding, include specific sources, dates, and verifiable claims. Cover 
         opponentIntel,
       ]: any[] = await Promise.all([
         ctx.runAction(internal.actions.prepGeneration.generateOpenings, {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
           topic: args.topic,
           position: args.position,
           strategicBrief,
         }),
         ctx.runAction(internal.actions.prepGeneration.generateFrames, {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
           topic: args.topic,
           position: args.position,
           research: articles,
           strategicBrief,
         }),
         ctx.runAction(internal.actions.prepGeneration.generateReceipts, {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
           topic: args.topic,
           position: args.position,
           research: articles,
           strategicBrief,
         }),
         ctx.runAction(internal.actions.prepGeneration.generateZingers, {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
           topic: args.topic,
           position: args.position,
           research: articles,
           strategicBrief,
         }),
         ctx.runAction(internal.actions.prepGeneration.generateClosings, {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
           topic: args.topic,
           position: args.position,
           strategicBrief,
         }),
         ctx.runAction(internal.actions.prepGeneration.generateOpponentIntel, {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
           topic: args.topic,
           position: args.position,
           research: articles,
@@ -254,6 +266,24 @@ For each finding, include specific sources, dates, and verifiable claims. Cover 
     ]);
 
     await updateProgress("complete", "Strategy generation complete!");
+
+    // Record Gemini cost estimate (~$0.05 per research session)
+    try {
+      const geminiCostCents = 500; // $0.05 in cents
+      console.log(`[generateStrategyGemini] Recording Gemini cost: ${geminiCostCents} cents for 1 session (prep phase)`);
+      await ctx.runMutation(internal.costs.INTERNAL_recordApiCost, {
+        service: "gemini",
+        cost: geminiCostCents,
+        opponentId: args.opponentId,
+        userId: opponent.userId,
+        phase: "prep",
+        details: {
+          sessions: 1,
+        },
+      });
+    } catch (error) {
+      console.error(`[generateStrategyGemini] Error recording Gemini cost:`, error);
+    }
 
     console.log("[Gemini Strategy] Complete");
     return strategy;

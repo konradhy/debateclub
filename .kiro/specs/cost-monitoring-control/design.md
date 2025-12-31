@@ -2,62 +2,141 @@
 
 ## Overview
 
-The Cost Monitoring system tracks every API call and its cost to understand unit economics. When you make calls to OpenRouter, Vapi, Firecrawl, or Gemini, the system records the cost so you can see if debates/prep/research are profitable vs. token revenue.
+The Cost Monitoring system tracks every API call and its cost by intercepting existing API calls, calculating costs using a pricing table, and storing cost records. This enables unit economics analysis - comparing actual API costs to token revenue.
 
 ## Architecture
 
-Simple approach: intercept API calls, calculate costs, store in database.
+Simple interception approach: wrap existing API functions to record costs after each call.
 
 ```mermaid
 graph TD
-    A[API Call] --> B[Cost Calculator]
-    B --> C[Cost Storage]
-    C --> D[Admin Dashboard]
+    A[Existing API Call] --> B[Cost Interceptor]
+    B --> C[Calculate Cost]
+    C --> D[Store Cost Record]
+    D --> E[Continue Original Flow]
+    
+    F[Pricing Table] --> C
 ```
 
 ## Components and Interfaces
 
-### Cost Calculator
-Calculates costs based on usage and known pricing:
-- **OpenRouter**: `response.usage.total_tokens * model_price_per_1k_tokens`
-- **Vapi**: `call_duration_seconds * price_per_minute / 60`
-- **Firecrawl**: `requests_made * price_per_request`
-- **Gemini**: `api_calls * estimated_price_per_call`
+### Cost Interceptor
+Wraps existing API functions to capture usage and calculate costs:
+- **OpenRouter**: Modify `callOpenRouter()` in `convex/lib/openrouter.ts`
+- **Vapi**: Modify webhook handler in `convex/http.ts` 
+- **Firecrawl**: Modify `searchAndScrape()` in `convex/lib/firecrawl.ts`
+- **Gemini**: Modify functions in `convex/lib/geminiDeepResearch.ts`
+
+### Pricing Table
+Hardcoded pricing data (updated manually as needed):
+```typescript
+// convex/lib/apiPricing.ts
+export const API_PRICING = {
+  openrouter: {
+    "anthropic/claude-sonnet-4.5": {
+      inputPrice: 3.00,  // USD per 1M tokens
+      outputPrice: 15.00, // USD per 1M tokens
+    },
+    "openai/gpt-4o": {
+      inputPrice: 2.50,
+      outputPrice: 10.00,
+    },
+    // ... more models
+  },
+  vapi: {
+    perMinute: 0.05, // USD per minute
+  },
+  firecrawl: {
+    perRequest: 0.003, // USD per request
+  },
+  gemini: {
+    perCall: 0.01, // USD per API call (estimated)
+  },
+} as const;
+```
 
 ### Cost Storage
-Simple table to store all API costs:
+Add new table to existing schema:
 ```typescript
-// Add to existing schema.ts
+// Add to convex/schema.ts
 apiCosts: defineTable({
-  service: v.union(v.literal("openrouter"), v.literal("vapi"), v.literal("firecrawl"), v.literal("gemini")),
+  service: v.union(
+    v.literal("openrouter"), 
+    v.literal("vapi"), 
+    v.literal("firecrawl"), 
+    v.literal("gemini")
+  ),
   cost: v.number(), // USD cents
   debateId: v.optional(v.id("debates")),
-  opponentId: v.optional(v.id("opponents")), // for prep/research costs
+  opponentId: v.optional(v.id("opponents")), // for prep/research
   userId: v.id("users"),
   details: v.object({
     // OpenRouter
     model: v.optional(v.string()),
     inputTokens: v.optional(v.number()),
     outputTokens: v.optional(v.number()),
-    // Vapi
-    duration: v.optional(v.number()),
+    // Vapi  
+    duration: v.optional(v.number()), // seconds
     // Firecrawl
     requests: v.optional(v.number()),
     // Gemini
     apiCalls: v.optional(v.number()),
   }),
   timestamp: v.number(),
-}).index("by_debate", ["debateId"])
-  .index("by_opponent", ["opponentId"])
-  .index("by_user", ["userId"])
+})
+.index("by_debate", ["debateId"])
+.index("by_opponent", ["opponentId"])
+.index("by_user", ["userId"])
+.index("by_service", ["service"])
 ```
 
-### Admin Dashboard
-Simple queries to show:
-- Total costs per service
-- Cost per debate (sum all API calls during that debate)
-- Most expensive users/debates
-- Daily/weekly totals
+### Cost Calculator
+Helper functions to calculate costs from usage:
+```typescript
+// convex/lib/costCalculator.ts
+export function calculateOpenRouterCost(
+  model: string, 
+  inputTokens: number, 
+  outputTokens: number
+): number {
+  const pricing = API_PRICING.openrouter[model];
+  if (!pricing) return 0;
+  
+  const inputCost = (inputTokens / 1_000_000) * pricing.inputPrice;
+  const outputCost = (outputTokens / 1_000_000) * pricing.outputPrice;
+  
+  return Math.round((inputCost + outputCost) * 100); // Convert to cents
+}
+
+export function calculateVapiCost(durationSeconds: number): number {
+  const minutes = durationSeconds / 60;
+  const cost = minutes * API_PRICING.vapi.perMinute;
+  return Math.round(cost * 100); // Convert to cents
+}
+
+// ... similar functions for Firecrawl, Gemini
+```
+
+### Admin Queries
+Simple queries for cost analysis:
+```typescript
+// convex/costs.ts
+export const getTotalCostsByService = query({
+  // Returns total costs grouped by service
+});
+
+export const getDebateCosts = query({
+  // Returns all costs for a specific debate
+});
+
+export const getMostExpensiveDebates = query({
+  // Returns debates sorted by total cost
+});
+
+export const getDailyCosts = query({
+  // Returns costs grouped by day
+});
+```
 
 ## Data Models
 
@@ -66,8 +145,8 @@ Simple queries to show:
 interface ApiCostEntry {
   service: "openrouter" | "vapi" | "firecrawl" | "gemini";
   cost: number; // USD cents
-  debateId?: string; // if during a debate
-  opponentId?: string; // if during prep/research
+  debateId?: string;
+  opponentId?: string; 
   userId: string;
   details: {
     model?: string;
@@ -83,11 +162,72 @@ interface ApiCostEntry {
 
 ## Implementation Approach
 
-1. **Wrap existing API calls** - modify `callOpenRouter`, Vapi webhook, etc. to record costs
-2. **Use known pricing** - hardcode current API prices (update as needed)
-3. **Simple cost calculation** - tokens × price, duration × price, etc.
-4. **Store everything** - every API call gets a cost record
-5. **Basic admin queries** - sum costs by debate, user, service, time period
+### Phase 1: Research API Pricing
+- Research current OpenRouter model pricing
+- Research current Vapi pricing structure  
+- Research current Firecrawl pricing
+- Research current Gemini API pricing
+- Create accurate pricing table
+
+### Phase 2: Add Cost Storage
+- Add `apiCosts` table to schema
+- Create cost calculation helper functions
+- Create basic admin queries
+
+### Phase 3: Intercept API Calls
+- Modify `callOpenRouter()` to record costs
+- Modify Vapi webhook to record call costs
+- Modify Firecrawl functions to record costs
+- Modify Gemini functions to record costs
+
+### Phase 4: Admin Dashboard
+- Create simple admin page to view costs
+- Show costs per debate, user, service
+- Show daily/weekly totals
+
+## Correctness Properties
+
+*A property is a characteristic or behavior that should hold true across all valid executions of a system-essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+
+### Property 1: Complete Cost Recording
+*For any* API call made to external services, the system should record a cost entry with correct service identification and cost calculation.
+**Validates: Requirements 1.1, 1.2, 1.3, 1.4**
+
+### Property 2: Debate Cost Aggregation  
+*For any* completed debate, the total debate cost should equal the sum of all API costs recorded during that debate session.
+**Validates: Requirements 2.1, 2.2, 2.3**
+
+### Property 3: Prep Cost Tracking
+*For any* prep generation, the total prep cost should equal the sum of all OpenRouter and Firecrawl costs during that generation.
+**Validates: Requirements 3.1, 3.2, 3.3**
+
+### Property 4: Cost Summary Accuracy
+*For any* time period, the daily/weekly cost totals should equal the sum of all individual cost entries within that period.
+**Validates: Requirements 4.1, 4.2, 4.3, 4.4**
+
+## Error Handling
+
+- **API Call Failures**: Cost recording failures should not break the original API call
+- **Missing Pricing**: Unknown models/services should log warnings but not crash
+- **Invalid Usage Data**: Negative or missing token counts should default to 0 cost
+- **Calculation Errors**: Cost calculation failures should log errors and record 0 cost
+
+## Testing Strategy
+
+### Unit Tests
+- Test cost calculation functions with known inputs
+- Test cost recording with mock API responses
+- Test cost aggregation queries
+- Test error handling for invalid data
+
+### Property-Based Tests
+- Generate random API usage scenarios and verify cost recording
+- Test cost aggregation across multiple debates/prep sessions
+- Verify service attribution across different API calls
+- Test time-based cost summaries with random date ranges
+
+Each property test should run minimum 100 iterations and be tagged with:
+**Feature: cost-monitoring-control, Property {number}: {property_text}**
 
 ## Correctness Properties
 

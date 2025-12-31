@@ -2,9 +2,10 @@
 import { action } from "../_generated/server";
 import { v } from "convex/values";
 import { internal } from "../_generated/api";
-import { callOpenRouter, type OpenRouterMessage } from "../lib/openrouter";
+import { callOpenRouterForPrep } from "../lib/openrouterWithCosts";
 import { AI_MODELS } from "../lib/aiConfig";
 import { buildStrategicBrief } from "../lib/strategicBrief";
+import type { OpenRouterMessage } from "../lib/openrouter";
 
 const SITE_URL = "https://orator.app";
 
@@ -157,7 +158,10 @@ Always be helpful and focus on strengthening the user's debate preparation. Use 
     }
 
     try {
-      const response = await callOpenRouter(
+      const response = await callOpenRouterForPrep(
+        ctx,
+        opponent.userId,
+        args.opponentId,
         apiKey,
         messages,
         SITE_URL,

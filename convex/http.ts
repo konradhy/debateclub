@@ -4,6 +4,7 @@ import { httpAction } from "@cvx/_generated/server";
 import { internal, components } from "@cvx/_generated/api";
 import { registerRoutes } from "@convex-dev/stripe";
 import { Id } from "./_generated/dataModel";
+import { calculateVapiCost } from "./lib/costCalculator";
 
 const http = httpRouter();
 
@@ -15,16 +16,12 @@ http.route({
       const body = await request.json();
       const { message } = body;
 
-      console.log("Vapi webhook:", message.type);
-
       switch (message.type) {
         case "transcript": {
-          // Only process final transcripts to avoid duplicates/spam
           if (message.transcriptType !== "final") {
             return new Response(null, { status: 200 });
           }
 
-          // Try to get debateId from metadata or query params
           let debateId = message.call?.metadata?.debateId;
           if (!debateId) {
             const url = new URL(request.url);
@@ -32,21 +29,12 @@ http.route({
           }
 
           if (!debateId) {
-            console.warn(
-              "[transcript] No debateId in metadata or query params. Metadata:",
-              JSON.stringify(message.call?.metadata),
-            );
             return new Response(null, { status: 200 });
           }
 
           const transcriptText = message.transcript || "";
           const speaker = message.role === "user" ? "user" : "assistant";
 
-          console.log(
-            `[transcript] Storing: ${speaker} - "${transcriptText.substring(0, 50)}..."`,
-          );
-
-          // Store transcript (no real-time analysis - full analysis happens at end of debate)
           try {
             await ctx.runMutation(internal.debates.addTranscript, {
               debateId: debateId as any,
@@ -54,9 +42,6 @@ http.route({
               text: transcriptText,
               timestamp: Date.now(),
             });
-            console.log(
-              `[transcript] Successfully stored exchange for debate ${debateId}`,
-            );
           } catch (error) {
             console.error(`[transcript] Error storing transcript:`, error);
           }
@@ -65,7 +50,6 @@ http.route({
         }
 
         case "end-of-call-report": {
-          // Try to get debateId from metadata or query params
           let debateId = message.call?.metadata?.debateId;
           if (!debateId) {
             const url = new URL(request.url);
@@ -73,34 +57,76 @@ http.route({
           }
 
           if (!debateId) {
-            console.warn(
-              "[end-of-call-report] No debateId in metadata or query params",
-            );
+            console.log("[webhook] No debateId found in end-of-call-report");
             return new Response(null, { status: 200 });
           }
 
-          // Mark debate as complete
-          await ctx.runMutation(internal.debates.complete, {
+          // Get the debate to check if duration was already set by client
+          const debate = await ctx.runQuery(internal.debates.getInternal, {
             debateId: debateId as any,
-            duration: message.call?.duration || 0,
           });
 
-          // Consume token for this debate (monetization system)
-          try {
-            const debate = await ctx.runQuery(internal.debates.getInternal, {
-              debateId: debateId as any,
-            });
+          let callDuration = 0;
 
+          if (debate?.duration) {
+            // Use client-provided duration (from timer) as source of truth
+            callDuration = debate.duration;
+            console.log(`[webhook] Using client timer duration: ${callDuration}s`);
+          } else {
+            // Fallback to Vapi API duration if client didn't provide it
+            callDuration = message.call?.duration || 0;
+
+            // Fallback: calculate from timestamps
+            if (callDuration === 0 && message.call?.startedAt && message.call?.endedAt) {
+              const startTime = new Date(message.call.startedAt).getTime();
+              const endTime = new Date(message.call.endedAt).getTime();
+              callDuration = Math.round((endTime - startTime) / 1000);
+              console.log(`[webhook] Calculated duration from timestamps: ${callDuration}s`);
+            }
+
+            // Final fallback: estimate 60 seconds (with warning)
+            if (callDuration === 0) {
+              callDuration = 60;
+              console.warn(`[webhook] Using 60s fallback estimate for debate ${debateId} - this violates accurate tracking`);
+            }
+
+            // Complete the debate if not already completed
+            await ctx.runMutation(internal.debates.complete, {
+              debateId: debateId as any,
+              duration: callDuration,
+            });
+          }
+
+          // Record Vapi cost using the determined duration
+          try {
+            if (debate) {
+              const costInCents = calculateVapiCost(callDuration);
+              console.log(`[webhook] Recording Vapi cost: ${costInCents} cents for ${callDuration}s (debate phase)`);
+              await ctx.runMutation(internal.costs.INTERNAL_recordApiCost, {
+                service: "vapi",
+                cost: costInCents,
+                debateId: debateId as any,
+                userId: debate.userId,
+                phase: "debate",
+                details: {
+                  duration: callDuration,
+                },
+              });
+            }
+          } catch (costError) {
+            console.error(`[webhook] Error recording Vapi cost for debate ${debateId}:`, costError);
+          }
+
+          // Consume token
+          try {
             if (debate && debate.opponentId) {
               const opponent = await ctx.runQuery(
                 internal.opponents.getInternal,
-                {
-                  opponentId: debate.opponentId,
-                },
+                { opponentId: debate.opponentId },
               );
 
               if (opponent?.scenarioType) {
-                const result = await ctx.runMutation(
+                await ctx.runMutation(
                   internal.tokens.INTERNAL_consumeToken,
                   {
                     userId: debate.userId,
@@ -108,22 +134,13 @@ http.route({
                     debateId: debateId as any,
                   },
                 );
-                console.log(
-                  `[end-of-call-report] Token consumed for scenario ${opponent.scenarioType}:`,
-                  result,
-                );
               }
             }
           } catch (tokenError) {
-            // Log but don't fail the webhook - debate is already marked complete
-            console.error(
-              "[end-of-call-report] Token consumption error:",
-              tokenError,
-            );
+            console.error(`[webhook] Error consuming token for debate ${debateId}:`, tokenError);
           }
 
-          // Extract recording URL from Vapi artifact
-          // Recording is at message.artifact.recording (mono.combinedUrl for mono recordings)
+          // Extract recording URL
           const artifact = message.artifact;
           const recordingUrl =
             artifact?.recording?.mono?.combinedUrl ||
@@ -136,20 +153,15 @@ http.route({
             });
           }
 
-          // Trigger full analysis generation (non-blocking)
+          // Trigger analysis
           await ctx.scheduler.runAfter(
             1000,
             internal.actions.analysisAction.generateFullAnalysis,
-            {
-              debateId: debateId as any,
-            },
+            { debateId: debateId as any },
           );
 
           break;
         }
-
-        default:
-          console.log(`Unhandled Vapi webhook type: ${message.type}`);
       }
 
       return new Response(null, { status: 200 });
@@ -173,17 +185,12 @@ registerRoutes(http, components.stripe, {
 
       const userId = metadata.userId as Id<"users">;
 
-      // Update user with Stripe customer ID if not already set
       await ctx.runMutation(
         internal.stripeWebhooks.INTERNAL_updateUserStripeCustomer,
-        {
-          userId,
-          stripeCustomerId: customerId,
-        },
+        { userId, stripeCustomerId: customerId },
       );
 
       if (metadata.type === "token_purchase") {
-        // Token purchase - grant tokens to scenario
         const scenarioId = metadata.scenarioId;
         const tokens = parseInt(metadata.packTokens);
 
@@ -192,22 +199,10 @@ registerRoutes(http, components.stripe, {
           scenarioId,
           amount: tokens,
           reason: "purchase",
-          metadata: {
-            stripePaymentId: paymentIntentId || "",
-          },
+          metadata: { stripePaymentId: paymentIntentId || "" },
         });
-
-        console.log(
-          `[Stripe] Granted ${tokens} tokens to user ${userId} for scenario ${scenarioId}`,
-        );
       } else if (metadata.type === "subscription") {
-        // Subscription - create or update subscription record
-        if (!subscriptionId) {
-          console.error(
-            "[Stripe] No subscription ID provided for subscription checkout",
-          );
-          return;
-        }
+        if (!subscriptionId) return;
 
         await ctx.scheduler.runAfter(
           0,
@@ -218,47 +213,27 @@ registerRoutes(http, components.stripe, {
             stripeSubscriptionId: subscriptionId,
           },
         );
-
-        console.log(
-          `[Stripe] Created ${metadata.plan} subscription for user ${userId}`,
-        );
       }
     },
     "customer.subscription.updated": async (ctx, event) => {
       const subscription = event.data.object;
-      const stripeSubscriptionId = subscription.id;
-      const status = subscription.status;
-      const currentPeriodStart = subscription.current_period_start * 1000; // Convert to ms
-      const currentPeriodEnd = subscription.current_period_end * 1000; // Convert to ms
-      const cancelAtPeriodEnd = subscription.cancel_at_period_end;
-
       await ctx.runMutation(
         internal.stripeWebhooks.INTERNAL_updateSubscription,
         {
-          stripeSubscriptionId,
-          status,
-          currentPeriodStart,
-          currentPeriodEnd,
-          cancelAtPeriodEnd,
+          stripeSubscriptionId: subscription.id,
+          status: subscription.status,
+          currentPeriodStart: subscription.current_period_start * 1000,
+          currentPeriodEnd: subscription.current_period_end * 1000,
+          cancelAtPeriodEnd: subscription.cancel_at_period_end,
         },
-      );
-
-      console.log(
-        `[Stripe] Updated subscription ${stripeSubscriptionId} to status: ${status}`,
       );
     },
     "customer.subscription.deleted": async (ctx, event) => {
       const subscription = event.data.object;
-      const stripeSubscriptionId = subscription.id;
-
       await ctx.runMutation(
         internal.stripeWebhooks.INTERNAL_cancelSubscription,
-        {
-          stripeSubscriptionId,
-        },
+        { stripeSubscriptionId: subscription.id },
       );
-
-      console.log(`[Stripe] Canceled subscription ${stripeSubscriptionId}`);
     },
   },
 });

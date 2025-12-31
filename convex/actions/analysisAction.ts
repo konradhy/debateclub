@@ -3,9 +3,10 @@
 import { internalAction } from "../_generated/server";
 import { v } from "convex/values";
 import { internal } from "../_generated/api";
-import { callOpenRouter, JsonSchema } from "../lib/openrouter";
+import { callOpenRouterForDebate } from "../lib/openrouterWithCosts";
 import { DEBATE_COACH_PROMPT } from "../lib/promptTemplates";
 import { AI_MODELS } from "../lib/aiConfig";
+import type { JsonSchema } from "../lib/openrouter";
 
 /**
  * JSON Schema for OpenRouter structured outputs - DEBATE scenarios.
@@ -354,7 +355,7 @@ export const generateFullAnalysis = internalAction({
 
       if (isDebateScenario) {
         // === DEBATE ANALYSIS ===
-    const debateContext = `
+        const debateContext = `
 DEBATE TOPIC: ${debate.topic}
 USER POSITION: ${debate.userPosition}
 OPPONENT POSITION: ${debate.aiPosition}
@@ -368,39 +369,42 @@ TRANSCRIPT:
 ${transcript}
 `;
 
-      const response = await callOpenRouter(
-        apiKey,
-        [
-          { role: "system", content: DEBATE_COACH_PROMPT },
-          { role: "user", content: debateContext },
-        ],
-        "https://orator.app",
-        3,
-        AI_MODELS.POST_DEBATE_ANALYSIS,
-        8000,
+        const response = await callOpenRouterForDebate(
+          ctx,
+          debate.userId,
+          args.debateId,
+          apiKey,
+          [
+            { role: "system", content: DEBATE_COACH_PROMPT },
+            { role: "user", content: debateContext },
+          ],
+          "https://orator.app",
+          3,
+          AI_MODELS.POST_DEBATE_ANALYSIS,
+          8000,
           debateAnalysisSchema,
-      );
+        );
 
-      const content = response.choices[0]?.message?.content;
-      if (!content) {
-        throw new Error("Empty response from AI");
-      }
+        const content = response.choices[0]?.message?.content;
+        if (!content) {
+          throw new Error("Empty response from AI");
+        }
 
         analysis = JSON.parse(content);
         analysisFramework = "debate";
 
       } else {
         // === GENERIC ANALYSIS (sales, entrepreneur, etc.) ===
-        
+
         // Determine framework from scenarioType (e.g., "sales-cold-prospect" -> "sales")
         const framework = scenarioType.split("-")[0];
         const categories = SCENARIO_CATEGORIES[framework] || SCENARIO_CATEGORIES.sales;
-        
+
         // Build the prompt with scenario-specific categories
         const categoryList = categories
           .map((cat) => `- ${cat.name}: ${cat.description}`)
           .join("\n");
-        
+
         const systemPrompt = GENERIC_ANALYSIS_PROMPT.replace("{{CATEGORIES}}", categoryList);
 
         const sessionContext = `
@@ -416,7 +420,10 @@ TRANSCRIPT:
 ${transcript}
 `;
 
-        const response = await callOpenRouter(
+        const response = await callOpenRouterForDebate(
+          ctx,
+          debate.userId,
+          args.debateId,
           apiKey,
           [
             { role: "system", content: systemPrompt },

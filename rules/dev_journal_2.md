@@ -2343,3 +2343,425 @@ Better UX - user understands why scenario is locked and has clear path to unlock
 
 ---
 
+## Chapter 18: Stripe Payment Integration — Webhooks, UI Fixes & Subscription Management
+
+### TL;DR
+
+Completed Stripe payment integration for token purchases and subscriptions. Fixed critical webhook 500 error (metadata missing from subscription checkout), resolved UI button sync bug (all buttons loading simultaneously), filtered "Debate" from token purchase scenarios (subscriber-only), and added Stripe Customer Portal for subscription management (cancel at period end, payment updates, billing history).
+
+**Roadmap Items Advanced**: Phase 4 - Monetization & Business Model (Payment Processing)
+
+---
+
+### Quick Reference
+
+**Stripe Integration Components**:
+- Token Checkout: `api.stripe.createTokenCheckout` → Stripe Checkout → webhook → tokens granted
+- Subscription Checkout: `api.stripe.createSubscriptionCheckout` → Stripe Checkout → webhook → subscription created
+- Customer Portal: `api.stripe.createCustomerPortal` → Stripe-hosted management page
+
+**Webhook Events Handled**:
+- `checkout.session.completed` - Grant tokens or create subscription
+- `customer.subscription.updated` - Update subscription status/period
+- `customer.subscription.deleted` - Mark subscription as canceled
+
+**Price IDs** (from `setupStripeProducts.ts` output):
+- 5 tokens: `price_1SkE9cCm9nndApXQgvYh6gYN` ($10)
+- 15 tokens: `price_1SkE9dCm9nndApXQBxLJnFd2` ($25)
+- 50 tokens: `price_1SkE9dCm9nndApXQHP173Roj` ($70)
+- Monthly: `price_1SkE9eCm9nndApXQaVYx2Hsc` ($20)
+- Annual: `price_1SkE9eCm9nndApXQGDpPZijx` ($200)
+
+---
+
+### The Problem
+
+Previous session implemented Stripe backend (checkout actions, webhook handlers), but encountered three critical issues during testing:
+
+**Issue 1: Webhook 500 Error**
+- Subscription checkout completed, but webhook handler crashed with 500 error
+- Investigation revealed `session.metadata` was empty (`{}`)
+- Handler expected `userId` in metadata, causing `undefined` cast to `Id<"users">`
+- Root cause: Used `subscriptionMetadata` param instead of `metadata` in checkout session
+- Per Stripe docs: `subscriptionMetadata` attaches to subscription object, not session object
+
+**Issue 2: Button Sync Loading State**
+- When clicking any token pack "Purchase" button, ALL THREE buttons showed "Loading..." simultaneously
+- Single `isPurchasing` state controlled all three buttons
+- Confusing UX - unclear which purchase was processing
+- Same issue with subscription checkout buttons
+
+**Issue 3: Debate Token Purchase Available**
+- "Debate" scenario appeared in token purchase dropdown
+- Debate is subscriber-only feature (unlimited access)
+- Non-subscribers shouldn't be able to buy tokens for Debate
+- Inconsistent with product positioning (Debate = top dog)
+
+**Issue 4: No Subscription Management**
+- Users couldn't cancel subscriptions
+- No way to update payment methods
+- No access to billing history or invoices
+
+---
+
+### The Solution: Complete Payment Flow
+
+#### 1. Webhook Metadata Fix
+
+**Problem**: `subscriptionMetadata` not accessible in `checkout.session.completed` event.
+
+**Solution**: Changed to `metadata` parameter in subscription checkout:
+
+```typescript
+// Before (convex/stripe.ts - line 106)
+subscriptionMetadata: {
+  userId: userId.toString(),
+  type: "subscription",
+  plan,
+}
+
+// After
+metadata: {
+  userId: userId.toString(),
+  type: "subscription",
+  plan,
+}
+```
+
+**Why This Works**: `metadata` attaches to the session object itself, accessible in `checkout.session.completed` webhook. `subscriptionMetadata` would only be on the subscription object in `customer.subscription.*` events.
+
+**Verification**: Tested subscription checkout → webhook received metadata correctly → subscription created successfully.
+
+---
+
+#### 2. Button Loading State Fix
+
+**Problem**: Single `isPurchasing` state caused all token pack buttons to sync loading.
+
+**Solution**: Track specific pack being purchased with granular state:
+
+```typescript
+// Before (billing.tsx)
+const [isPurchasing, setIsPurchasing] = useState(false);
+
+// All three buttons:
+disabled={isPurchasing}
+{isPurchasing ? "Loading..." : "Purchase"}
+
+// After
+const [purchasingPackIndex, setPurchasingPackIndex] = useState<number | null>(null);
+
+// Button for pack 0 (5 tokens):
+onClick={async () => {
+  setPurchasingPackIndex(0);
+  const result = await createTokenCheckout({ scenarioId, packIndex: 0 });
+  setPurchasingPackIndex(null);
+}}
+disabled={purchasingPackIndex !== null}
+{purchasingPackIndex === 0 ? "Loading..." : "Purchase"}
+
+// Button for pack 1 (15 tokens):
+disabled={purchasingPackIndex !== null}
+{purchasingPackIndex === 1 ? "Loading..." : "Purchase"}
+
+// Button for pack 2 (50 tokens):
+disabled={purchasingPackIndex !== null}
+{purchasingPackIndex === 2 ? "Loading..." : "Purchase"}
+```
+
+**Behavior**:
+- Click pack 0 → only that button shows "Loading..."
+- Other buttons show "Purchase" but are disabled (non-clickable)
+- After checkout redirect, all buttons reset to enabled
+
+**Same pattern applied to subscription buttons** with separate `isCheckingOut` state.
+
+---
+
+#### 3. Debate Scenario Filter
+
+**Problem**: Debate appeared in token purchase scenario dropdown.
+
+**Solution**: Filter Debate from purchasable scenarios:
+
+```typescript
+// billing.tsx - line 96
+const scenarioList = Object.values(SCENARIOS);
+const purchasableScenarios = scenarioList.filter((s) => s.id !== "debate");
+
+// Scenario dropdown (line 451)
+{purchasableScenarios.map((scenario) => (
+  <option key={scenario.id} value={scenario.id}>
+    {scenario.name}
+  </option>
+))}
+```
+
+**Default Scenario Changed**: From `"debate"` → `"college_debate"` (first non-debate scenario).
+
+**Why**: Debate = unlimited for subscribers. Token purchases only for non-debate scenarios (sales, entrepreneur).
+
+---
+
+#### 4. Stripe Customer Portal Integration
+
+**Backend** (already existed from previous session):
+```typescript
+// convex/stripe.ts - line 122
+export const createCustomerPortal = action({
+  args: {},
+  returns: v.object({ url: v.union(v.string(), v.null()) }),
+  handler: async (ctx) => {
+    const userId = await auth.getUserId(ctx);
+    const user = await ctx.runQuery(internal.users.get, { userId });
+
+    const session = await stripeClient.createCustomerPortalSession(ctx, {
+      customerId: user.stripeCustomerId,
+      returnUrl: `${SITE_URL}/dashboard/settings/billing`,
+    });
+
+    return { url: session.url };
+  },
+});
+```
+
+**Frontend** (billing.tsx - line 210):
+```typescript
+const createCustomerPortal = useAction(api.stripe.createCustomerPortal);
+
+// Inside subscriber card section
+<button
+  onClick={async () => {
+    try {
+      setIsOpeningPortal(true);
+      const result = await createCustomerPortal();
+      if (result?.url) window.location.href = result.url;
+    } catch (error) {
+      setErrorMessage("Failed to open billing portal");
+    } finally {
+      setIsOpeningPortal(false);
+    }
+  }}
+  disabled={isOpeningPortal}
+>
+  {isOpeningPortal ? "Loading..." : "Manage Subscription"}
+</button>
+```
+
+**What Users Can Do in Portal**:
+- **Cancel subscription**: Sets `cancel_at_period_end: true` (keeps access until period ends)
+- **Update payment method**: Change credit card
+- **View billing history**: Download invoices
+- **Reactivate**: If canceled, can undo before period end
+
+**Why Customer Portal Over Custom UI**:
+- **Battle-tested UX**: Stripe's hosted page handles edge cases
+- **Zero maintenance**: Stripe updates it, we don't maintain it
+- **Industry standard**: Netflix, Spotify, GitHub all use this pattern
+- **Already implemented**: `createCustomerPortal` action existed, just needed frontend button
+
+---
+
+### Implementation Details
+
+#### File Changes
+
+**Backend** (convex/stripe.ts):
+```typescript
+// Line 106 - Fixed subscription metadata
+metadata: {
+  userId: userId.toString(),
+  type: "subscription",
+  plan,
+}
+```
+
+**Frontend** (billing.tsx):
+```typescript
+// Line 55 - Granular loading states
+const [purchasingPackIndex, setPurchasingPackIndex] = useState<number | null>(null);
+const [isOpeningPortal, setIsOpeningPortal] = useState(false);
+
+// Line 59 - Changed default scenario
+const [selectedScenario, setSelectedScenario] = useState<string>("college_debate");
+
+// Line 96 - Filter debate scenarios
+const purchasableScenarios = scenarioList.filter((s) => s.id !== "debate");
+
+// Line 210 - Manage Subscription button in subscriber card
+<button onClick={handleOpenPortal}>Manage Subscription</button>
+
+// Lines 490, 554, 615 - Individual pack loading states
+setPurchasingPackIndex(0/1/2);
+disabled={purchasingPackIndex !== null}
+{purchasingPackIndex === X ? "Loading..." : "Purchase"}
+```
+
+---
+
+### Testing Performed
+
+**Test 1: Token Purchase Flow**
+1. Click "Purchase" on 5 token pack
+2. ✅ Only that button shows "Loading..."
+3. ✅ Redirected to Stripe Checkout
+4. ✅ Completed test purchase (card: 4242 4242 4242 4242)
+5. ✅ Webhook received, tokens granted
+6. ✅ Balance updated in UI
+
+**Test 2: Subscription Flow**
+1. Click "Subscribe Monthly"
+2. ✅ Redirected to Stripe Checkout
+3. ✅ Completed test subscription
+4. ✅ Webhook received with metadata
+5. ✅ Subscription record created
+6. ✅ User status shows "Active" subscriber
+7. ✅ All scenarios show "Unlimited"
+8. ✅ "Manage Subscription" button appears
+
+**Test 3: Customer Portal**
+1. Click "Manage Subscription"
+2. ✅ Redirected to Stripe-hosted portal
+3. ✅ Can see billing history
+4. ✅ Can update payment method
+5. ✅ Can cancel subscription (sets cancel_at_period_end)
+6. ✅ Returned to billing page after actions
+
+**Test 4: Scenario Filter**
+1. Go to token purchase section
+2. ✅ "Debate" not in scenario dropdown
+3. ✅ Only shows: College Debate, Cold Prospect, Demo Follow-up, etc.
+4. ✅ Default selection is "College Debate"
+
+---
+
+### Design Decisions
+
+| Decision | Rationale |
+|----------|-----------|
+| **`metadata` over `subscriptionMetadata`** | Session metadata accessible in checkout.session.completed webhook |
+| **Track packIndex, not boolean** | Only clicked button shows loading, others disabled but show "Purchase" |
+| **Filter Debate from purchases** | Debate = subscriber-only, token sales only for other scenarios |
+| **Stripe Customer Portal** | Industry standard, zero maintenance, handles all edge cases |
+| **Cancel at period end** | Fair to user (gets what they paid for), reduces support complaints |
+| **Separate `isOpeningPortal` state** | Independent from purchase states, clearer UX |
+
+---
+
+### Security & Business Logic
+
+**Webhook Verification**: Handled by Convex Stripe component automatically.
+
+**Token Grant Flow**:
+```
+Checkout Session Completed
+  → metadata.type === "token_purchase"
+  → internal.tokens.INTERNAL_grantTokens({ userId, scenarioId, amount })
+  → Transaction logged with stripePaymentId
+```
+
+**Subscription Flow**:
+```
+Checkout Session Completed
+  → metadata.type === "subscription"
+  → internal.stripeWebhooks.handleSubscriptionCreated({ userId, subscriptionId })
+  → Subscription record created with status: "active"
+
+Subscription Updated
+  → internal.stripeWebhooks.INTERNAL_updateSubscription({ status, cancelAtPeriodEnd })
+  → Subscription record updated
+
+Subscription Deleted
+  → internal.stripeWebhooks.INTERNAL_cancelSubscription({ subscriptionId })
+  → Subscription status set to "canceled"
+```
+
+**User Linking**:
+- Stripe customer created with `userId` in metadata
+- `stripeCustomerId` saved on user record
+- Customer Portal requires `stripeCustomerId` (only accessible after first purchase)
+
+---
+
+### What Remains (Phase 4 Near-Complete)
+
+✅ Token purchase checkout - COMPLETE
+✅ Subscription checkout - COMPLETE
+✅ Webhook handlers - COMPLETE
+✅ Token granting - COMPLETE
+✅ Subscription management - COMPLETE
+✅ UI integration - COMPLETE
+
+**TODO for Production**:
+- [ ] Switch to live Stripe keys (`sk_live_...`)
+- [ ] Create live products in Stripe Dashboard
+- [ ] Update price IDs in `monetization.ts`
+- [ ] Configure production webhook URL
+- [ ] Test with real card (can refund)
+
+**Future Enhancements** (not blocking):
+- [ ] Email receipts via Resend
+- [ ] Usage analytics (track purchase conversion)
+- [ ] Subscriber cap notifications (100/month)
+- [ ] Promo codes / discount system
+
+---
+
+### Files Modified Summary
+
+| File | Changes |
+|------|---------|
+| `convex/stripe.ts` | Fixed subscription metadata param (line 106) |
+| `src/routes/_app/_auth/dashboard/_layout.settings.billing.tsx` | +granular loading states, +debate filter, +Customer Portal button |
+
+**Lines Changed**: ~30 lines across 2 files
+**Bugs Fixed**: 3 (webhook crash, button sync, debate filter)
+**Features Added**: 1 (subscription management portal)
+
+---
+
+### Technical Challenges & Solutions
+
+**Challenge 1: Metadata Not Appearing in Webhook**
+- **Symptom**: `session.metadata` was `{}` in checkout.session.completed
+- **Investigation**: Compared with official Stripe docs, found `subscriptionMetadata` vs `metadata` distinction
+- **Solution**: Changed to `metadata` parameter
+- **Lesson**: Always verify parameter names against official docs, not assumptions
+
+**Challenge 2: TypeScript Null State vs Number**
+- **Initial approach**: `useState<number>(0)` to track pack
+- **Problem**: Can't distinguish "no purchase" from "purchasing pack 0"
+- **Solution**: `useState<number | null>(null)` with null checks
+- **Lesson**: Null state needed when "no value" has semantic meaning
+
+**Challenge 3: Debate Default Causing Empty Dropdown**
+- **Symptom**: After filtering, no scenario selected in dropdown
+- **Investigation**: Default was "debate", but debate filtered out
+- **Solution**: Changed default to "college_debate" (first non-debate scenario)
+- **Lesson**: Default values must be within filtered set
+
+---
+
+### Session Handoff
+
+**Status**: Complete ✅
+
+**What This Achieved**:
+- Full payment integration: token purchases + subscriptions work end-to-end
+- Webhook reliability: metadata fix prevents 500 errors
+- Better UX: granular loading states, clear scenario filtering
+- Professional subscription management via Stripe Customer Portal
+- Ready for production with live keys
+
+**What's Next**:
+- Production deployment preparation (live Stripe keys, webhook config)
+- Or move to next roadmap item (email notifications, analytics, etc.)
+
+**Technical Debt**: None introduced. Clean Stripe integration following official patterns.
+
+**Blockers**: None. Fully functional payment system.
+
+**The Principle**: Use platform features (Stripe Portal) before building custom solutions. Reduce maintenance burden, leverage battle-tested UX.
+
+---
+

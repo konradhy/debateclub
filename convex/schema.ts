@@ -581,6 +581,48 @@ const schema = defineSchema({
     currentPeriodEnd: v.optional(v.number()),
     cancelAtPeriodEnd: v.optional(v.boolean()),
   }).index("by_user", ["userId"]),
+
+  // ==========================================
+  // COST MONITORING SYSTEM
+  // ==========================================
+
+  // API cost tracking for unit economics analysis
+  apiCosts: defineTable({
+    service: v.union(
+      v.literal("openrouter"),
+      v.literal("vapi"),
+      v.literal("firecrawl"),
+      v.literal("gemini")
+    ),
+    cost: v.number(), // USD cents
+    debateId: v.optional(v.id("debates")),
+    opponentId: v.optional(v.id("opponents")), // for prep/research
+    userId: v.id("users"),
+    phase: v.optional(v.union(
+      v.literal("research"),
+      v.literal("prep"),
+      v.literal("debate"),
+      v.literal("analysis")
+    )), // Track which phase of the workflow this cost belongs to
+    details: v.object({
+      // OpenRouter
+      model: v.optional(v.string()),
+      inputTokens: v.optional(v.number()),
+      outputTokens: v.optional(v.number()),
+      // Vapi  
+      duration: v.optional(v.number()), // seconds
+      // Firecrawl
+      requests: v.optional(v.number()), // number of pages scraped
+      // Gemini
+      sessions: v.optional(v.number()), // number of research sessions
+    }),
+    timestamp: v.number(),
+  })
+    .index("by_debate", ["debateId"])
+    .index("by_opponent", ["opponentId"])
+    .index("by_user", ["userId"])
+    .index("by_service", ["service"])
+    .index("by_phase", ["phase"]),
 });
 
 export default schema;

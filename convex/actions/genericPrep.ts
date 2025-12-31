@@ -10,7 +10,7 @@
 import { action } from "../_generated/server";
 import { internal } from "../_generated/api";
 import { v } from "convex/values";
-import { callOpenRouter } from "../lib/openrouter";
+import { callOpenRouterForPrep } from "../lib/openrouterWithCosts";
 import { AI_MODELS } from "../lib/aiConfig";
 
 const SITE_URL = "https://orator.app";
@@ -95,6 +95,15 @@ export const generate = action({
       throw new Error("OPENROUTER_API_KEY is not set");
     }
 
+    // Get opponent data to access userId for cost tracking
+    const opponent = await ctx.runQuery(internal.opponents.getInternal, {
+      opponentId: args.opponentId,
+    });
+
+    if (!opponent) {
+      throw new Error("Opponent not found");
+    }
+
     // Build the prompt with context
     const prompt = GENERIC_PREP_PROMPT.replace(
       "{{SCENARIO_TYPE}}",
@@ -107,7 +116,10 @@ export const generate = action({
       );
 
     try {
-      const response = await callOpenRouter(
+      const response = await callOpenRouterForPrep(
+        ctx,
+        opponent.userId,
+        args.opponentId,
         apiKey,
         [{ role: "system", content: prompt }],
         SITE_URL,
@@ -117,7 +129,7 @@ export const generate = action({
 
       const content = response.choices[0]?.message?.content;
       if (!content) {
-        throw new Error("No content generated");
+        throw new Error("No content generated - API call failed");
       }
 
       // Parse the JSON response
@@ -129,7 +141,7 @@ export const generate = action({
           "[genericPrep] Failed to parse JSON:",
           content.substring(0, 500),
         );
-        throw new Error("Failed to parse generated prep materials");
+        throw new Error("Failed to parse generated prep materials - malformed JSON response");
       }
 
       // Generate unique id helper
