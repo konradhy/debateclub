@@ -476,8 +476,8 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 - ✅ **4.3.5** — External verification links (OpenRouter, Vapi, Firecrawl dashboards) [Ch.19]
 - ✅ **4.3.6** — Accurate Vapi duration tracking via client timer [Ch.19]
 - ✅ **4.3.7** — Proper error logging (no silent failures) [Ch.19]
-- ⬜ **4.3.8** — Budget alerts and cost projections
-- ⬜ **4.3.9** — Gemini cost verification dashboard link
+
+- ✅ **4.3.9** — Gemini cost verification dashboard link
 
 ---
 

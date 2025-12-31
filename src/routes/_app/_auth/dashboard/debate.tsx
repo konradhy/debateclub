@@ -3,27 +3,20 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { api } from "@cvx/_generated/api";
 import { useState, useEffect, useRef } from "react";
-import { Button } from "@/ui/button";
 import Vapi from "@vapi-ai/web";
-import { Mic, MicOff, BarChart3, FileText, ArrowLeft } from "lucide-react";
+import { BarChart3, FileText, ArrowLeft } from "lucide-react";
 import siteConfig from "~/site.config";
 import { Id } from "@cvx/_generated/dataModel";
 import { PrepPanel } from "@/ui/prep-panel";
 import { SCENARIOS } from "@/scenarios";
-
-// Color constants matching marketing pages
-const colors = {
-  background: "#F5F3EF",
-  cardBg: "#FAFAF8",
-  headerBg: "#FAFAF8",
-  border: "#E8E4DA",
-  primary: "#3C4A32",
-  primaryLight: "#5C6B4A",
-  text: "#2A2A20",
-  textMuted: "#5C5C54",
-  textLight: "#888880",
-  accent: "#A8B08C",
-};
+import { colors } from "@/lib/prep-colors";
+import {
+  getStyleInstructions,
+  getDifficultyInstructions,
+  type DebateStyle,
+  type DifficultyLevel,
+} from "@/lib/debate";
+import { Timer, SpeakingIndicators } from "@/ui/debate";
 
 export const Route = createFileRoute("/_app/_auth/dashboard/debate")({
   component: Debate,
@@ -173,184 +166,6 @@ function Debate() {
     };
   }, [isSessionActive, timerInterval]);
 
-  // Helper: Build dynamic style instructions (WHO YOU ARE - PERSONA)
-  const getStyleInstructions = (styleValue: string): string => {
-    switch (styleValue) {
-      case "friendly":
-        return `You are a supportive friend or family member having a discussion. You disagree with their position, but you're here to help them think through their arguments, not to win. You care about them and want them to improve.
-
-BEHAVIORAL GUIDELINES:
-- Be conversational, warm, and encouraging
-- Challenge their ideas but stay constructive
-- Offer praise when they make good points ("That's a fair point...")
-- Point out weaknesses gently ("Have you considered...")
-- Your goal: Help them become a better debater`;
-
-      case "aggressive":
-        return `You are a combative opponent in a formal debate. You're here to win. You view this as intellectual combat and won't give ground easily.
-
-BEHAVIORAL GUIDELINES:
-- Be confrontational and assertive
-- Interrupt when you sense weakness in their argument
-- Challenge them directly ("That's nonsense because...")
-- Use a forceful, commanding tone
-- Try to control the flow of conversation
-- Don't concede points without a fight`;
-
-      case "academic":
-        return `You are a university professor or expert scholar. You prioritize rigorous evidence, logical consistency, and intellectual honesty over rhetorical tricks.
-
-BEHAVIORAL GUIDELINES:
-- Maintain formal, measured tone
-- Cite specific studies, data, and authoritative sources
-- Use technical/specialized language when appropriate
-- Build methodical, multi-step logical arguments
-- Expect and demand rigor from your opponent
-- Call out logical fallacies and weak evidence`;
-
-      case "emotional":
-        return `You are a passionate advocate who believes deeply in this cause. You connect arguments to real people and real consequences.
-
-BEHAVIORAL GUIDELINES:
-- Appeal to feelings and human experiences
-- Use stories, personal anecdotes, and vivid imagery
-- Connect abstract arguments to concrete values and emotions
-- Make it personal and relatable
-- Use emotive language ("Think about the families affected...")
-- Paint pictures with your words`;
-
-      case "socratic":
-        return `You are a Socratic questioner who believes in revealing truth through inquiry. You rarely make direct claims - instead, you ask probing questions that expose contradictions.
-
-BEHAVIORAL GUIDELINES:
-- Lead with questions, not statements
-- Guide them to contradictions through inquiry
-- Force them to defend foundational assumptions
-- Use questions like: "What if...", "How would you explain...", "Doesn't that imply..."
-- When they answer, ask follow-up questions that dig deeper
-- Rarely assert - always inquire`;
-
-      case "gish gallop":
-        return `You are a propagandist or polemicist who uses the Gish Gallop technique deliberately. You prioritize overwhelming your opponent over finding truth.
-
-BEHAVIORAL GUIDELINES:
-- Adopt aggressive, dominating style
-- Make rapid-fire claims - throw out 3-4 arguments quickly
-- Mix strong points with weaker, dubious ones
-- Don't give them time to fully address each point
-- If they start responding to one claim, introduce two more
-- Volume over quality - overwhelm through sheer quantity
-- Don't worry about being caught on weak points`;
-
-      default:
-        return `You are a combative opponent in a formal debate. You're here to win.
-
-BEHAVIORAL GUIDELINES:
-- Be confrontational and assertive
-- Challenge them directly
-- Don't concede points easily`;
-    }
-  };
-
-  // Helper: Build dynamic difficulty instructions (HOW SKILLED YOU ARE)
-  const getDifficultyInstructions = (difficultyValue: string): string => {
-    switch (difficultyValue) {
-      case "easy":
-        return `SKILL LEVEL: BEGINNER
-
-ARGUMENT QUALITY:
-- Make basic, straightforward arguments
-- Use simple reasoning that's easy to follow
-- Cite general knowledge rather than specific studies
-- Make occasional logical errors that can be caught
-- Don't use advanced rhetorical tactics
-- Argue naturally and directly without strategic moves`;
-
-      case "medium":
-        return `SKILL LEVEL: COMPETENT
-
-ARGUMENT QUALITY:
-- Present solid, well-reasoned arguments
-- Cite specific evidence and examples
-- Build logical chains of reasoning
-- Challenge their points effectively
-
-TECHNIQUES TO DEPLOY:
-- CONCESSION & PIVOT: When they make a good point, acknowledge it briefly then redirect ("Fair point, but...")
-- PREEMPTION: Address their likely counterarguments before they make them
-- REFRAMING: When cornered, change the frame of the debate
-- RULE OF THREE: Structure arguments in threes for memorability
-- RECEIPTS: Deploy specific facts, dates, statistics to support claims
-
-WHEN TO USE EACH:
-- CONCESSION: When they score a point (builds credibility)
-- PREEMPTION: At the start of your arguments
-- REFRAMING: When the current framing doesn't favor you
-- RULE OF THREE: For memorable key points
-- RECEIPTS: When making factual claims`;
-
-      case "hard":
-        return `SKILL LEVEL: EXPERT
-
-ARGUMENT QUALITY:
-- Present sophisticated, well-researched arguments
-- Cite specific studies, expert quotes, historical precedents
-- Build multi-layered logical frameworks
-- Anticipate and counter their moves before they make them
-- Exploit every weakness in their reasoning
-
-FULL HASAN TECHNIQUE ARSENAL:
-
-FUNDAMENTALS (Deploy Throughout):
-- AUDIENCE AWARENESS: Tailor arguments to resonate with values mentioned in context
-- EMOTIONAL APPEAL: Lead with pathos, use stories and examples that connect emotionally
-- RECEIPTS: Always cite specific evidence - studies, dates, expert names, statistics
-- AD HOMINEM (Judicious): When they cite expertise/credentials, question if warranted
-- LISTENING: Notice when they concede points or make contradictions
-- HUMOR: Use wit and light mockery to undermine weak arguments (sparingly)
-
-TACTICAL TECHNIQUES (Deploy Strategically):
-- CONCESSION & PIVOT: Acknowledge valid points then pivot to your strength ("You're right about X, but here's the bigger issue...")
-- PREEMPTION: Start arguments with "I know you'll say X, but here's why that fails..."
-- REFRAMING: When the question/premise disadvantages you, challenge or reframe it
-- RULE OF THREE: Structure key arguments in threes for memorability and rhetorical power
-- ZINGERS: Deploy memorable one-liners (under 15 words) when they make errors
-- BOOBY TRAPS: If you know their past statements, quote them without attribution, get them to disagree, then reveal it was them
-
-GISH GALLOP COUNTER (If They Use It):
-- Pick their weakest claim and demolish it thoroughly
-- Don't let them move on - keep them stuck defending that one point
-- Call out the tactic explicitly to the audience
-
-WHEN TO USE EACH:
-- CONCESSION: Immediately when they make a legitimately good point (builds trust)
-- PREEMPTION: At the start of making a controversial claim
-- REFRAMING: When the current frame of debate disadvantages you
-- RULE OF THREE: For your most important arguments
-- ZINGERS: When they make an obvious error or contradiction (max 1-2 per debate)
-- BOOBY TRAPS: Only if you have specific past statements to reference
-- EMOTIONAL APPEAL: Lead with this, especially in openings
-- RECEIPTS: Every factual claim should have a source
-- HUMOR: Sparingly, when you're winning (not when defensive)
-
-EXECUTION PRIORITY:
-1. Start with strong emotional hook
-2. Use PREEMPTION to address obvious counters
-3. Build argument with RULE OF THREE structure
-4. Support with RECEIPTS (specific evidence)
-5. Use CONCESSION to build credibility when needed
-6. Deploy ZINGERS only when opportunity is perfect
-7. Close with emotional resonance`;
-
-      default:
-        return `SKILL LEVEL: COMPETENT
-
-ARGUMENT QUALITY:
-- Present solid, well-reasoned arguments
-- Cite specific evidence and examples`;
-    }
-  };
-
   const handleStart = async () => {
     if (!user?._id) {
       alert("Please log in to start a debate");
@@ -466,8 +281,8 @@ ARGUMENT QUALITY:
 
       // Helper: Replace placeholders in text - NO FALLBACKS
       // All required fields validated above
-      const style: string = opponent.style;
-      const difficulty: string = opponent.difficulty;
+      const style = opponent.style as string;
+      const difficulty = opponent.difficulty as string;
 
       const replacePlaceholders = (text: string): string => {
         // Build additional context - this is informational context, not strict rules
@@ -486,8 +301,8 @@ ${opponent.additionalContext}`
               ? "we should oppose this"
               : "we should support this",
           )
-          .replace(/\{\{DIFFICULTY\}\}/g, getDifficultyInstructions(difficulty))
-          .replace(/\{\{STYLE\}\}/g, getStyleInstructions(style))
+          .replace(/\{\{DIFFICULTY\}\}/g, getDifficultyInstructions(difficulty as DifficultyLevel))
+          .replace(/\{\{STYLE\}\}/g, getStyleInstructions(style as DebateStyle))
           .replace(
             /\{\{TALKING_POINTS\}\}/g,
             opponent.talkingPoints && Array.isArray(opponent.talkingPoints)
@@ -541,20 +356,20 @@ ${opponent.additionalContext}`
         ...(scenario.assistant.canInterrupt !== undefined && {
           clientMessages: scenario.assistant.canInterrupt
             ? [
-              "transcript",
-              "hang",
-              "function-call",
-              "speech-update",
-              "metadata",
-              "conversation-update",
-            ]
+                "transcript",
+                "hang",
+                "function-call",
+                "speech-update",
+                "metadata",
+                "conversation-update",
+              ]
             : [
-              "transcript",
-              "hang",
-              "function-call",
-              "metadata",
-              "conversation-update",
-            ],
+                "transcript",
+                "hang",
+                "function-call",
+                "metadata",
+                "conversation-update",
+              ],
         }),
         // Server URL for webhooks - REQUIRED for transient assistants
         // This tells Vapi where to send transcript and other events
@@ -623,12 +438,6 @@ ${opponent.additionalContext}`
     }
   };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  };
-
   return (
     <div
       className="min-h-screen"
@@ -693,58 +502,14 @@ ${opponent.additionalContext}`
           {/* Practice Area */}
           <div className="flex flex-col items-center p-8 lg:p-12">
             {/* Timer */}
-            <div
-              className="text-5xl font-bold mb-8"
-              style={{ color: colors.primary }}
-            >
-              {formatTime(timer)}
-            </div>
+            <Timer seconds={timer} colors={colors} />
 
             {/* Speaking Indicators */}
-            <div className="flex gap-4 mb-8">
-              <div
-                className="flex items-center gap-2 rounded-xl px-5 py-3 border-2 transition-all"
-                style={{
-                  backgroundColor: isListening
-                    ? `${colors.accent}40`
-                    : colors.cardBg,
-                  borderColor: isListening
-                    ? colors.primaryLight
-                    : colors.border,
-                  color: isListening ? colors.primary : colors.textMuted,
-                }}
-              >
-                {isListening ? (
-                  <Mic className="h-5 w-5" />
-                ) : (
-                  <MicOff className="h-5 w-5" />
-                )}
-                <span className="text-sm font-medium">You</span>
-              </div>
-              <div
-                className="flex items-center gap-2 rounded-xl px-5 py-3 border-2 transition-all"
-                style={{
-                  backgroundColor: isSpeaking
-                    ? `${colors.accent}40`
-                    : colors.cardBg,
-                  borderColor: isSpeaking ? colors.primaryLight : colors.border,
-                  color: isSpeaking ? colors.primary : colors.textMuted,
-                }}
-              >
-                {isSpeaking ? (
-                  <div
-                    className="h-5 w-5 animate-pulse rounded-full"
-                    style={{ backgroundColor: colors.primary }}
-                  />
-                ) : (
-                  <div
-                    className="h-5 w-5 rounded-full"
-                    style={{ backgroundColor: colors.border }}
-                  />
-                )}
-                <span className="text-sm font-medium">AI</span>
-              </div>
-            </div>
+            <SpeakingIndicators
+              isListening={isListening}
+              isSpeaking={isSpeaking}
+              colors={colors}
+            />
 
             {/* Control Buttons */}
             <div className="flex gap-4">
@@ -763,8 +528,9 @@ ${opponent.additionalContext}`
                         if (!opponent) return;
                         const style = opponent.style || "aggressive";
                         const difficulty = opponent.difficulty || "medium";
-                        const styleInstructions = getStyleInstructions(style);
-                        const difficultyInstructions = getDifficultyInstructions(difficulty);
+                        const styleInstructions = getStyleInstructions(style as DebateStyle);
+                        const difficultyInstructions =
+                          getDifficultyInstructions(difficulty as DifficultyLevel);
                         const fullPrompt = `# YOUR ROLE & PERSONA\n${styleInstructions}\n\n# YOUR SKILL LEVEL & TECHNIQUES\n${difficultyInstructions}\n\n# DEBATE CONTEXT\n- Topic: ${opponent.topic}\n- Your position: ${opponent.position === "pro" ? "CON" : "PRO"}\n- User position: ${opponent.position?.toUpperCase()}`;
 
                         // Log to console (unlimited length)
@@ -773,11 +539,18 @@ ${opponent.additionalContext}`
                         console.log("=== END PROMPT ===");
 
                         // Copy to clipboard
-                        navigator.clipboard.writeText(fullPrompt).then(() => {
-                          alert("✅ Full prompt copied to clipboard!\n\nAlso logged to browser console (F12 > Console tab)");
-                        }).catch(() => {
-                          alert("⚠️ Prompt logged to browser console.\n\nOpen DevTools (F12) > Console tab to see full prompt");
-                        });
+                        navigator.clipboard
+                          .writeText(fullPrompt)
+                          .then(() => {
+                            alert(
+                              "✅ Full prompt copied to clipboard!\n\nAlso logged to browser console (F12 > Console tab)",
+                            );
+                          })
+                          .catch(() => {
+                            alert(
+                              "⚠️ Prompt logged to browser console.\n\nOpen DevTools (F12) > Console tab to see full prompt",
+                            );
+                          });
                       }}
                       className="inline-flex h-12 items-center justify-center gap-2 rounded-xl px-6 text-sm font-medium border-2 transition-all hover:bg-gray-50"
                       style={{ borderColor: colors.border, color: colors.text }}

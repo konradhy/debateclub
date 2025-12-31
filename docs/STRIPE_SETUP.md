@@ -1,7 +1,7 @@
 # Stripe Payment Integration Setup
 
 ## Overview
-OratorPrep uses Stripe for payment processing via the Convex Stripe component. This guide covers both development and production setup.
+Debate Club uses Stripe for payment processing via the Convex Stripe component. This guide covers both development and production setup.
 
 ## Development Setup (Already Complete)
 
