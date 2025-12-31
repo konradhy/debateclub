@@ -2,7 +2,7 @@
 
 **Current architecture and codebase structure. Updated as features are added.**
 
-**Last Updated**: December 31, 2025 (Chapter R-5.2 - Phase 5.2 Complete)
+**Last Updated**: December 31, 2025 (Chapter R-5.3 - Phase 5.3 Complete)
 
 ---
 
@@ -663,6 +663,8 @@ npx convex deploy       # Deploy backend
 
 | Date | Change | Chapter |
 |------|--------|---------|
+| Dec 31, 2025 | Opponent Intelligence Editing - Full CRUD operations, placeholder bug fix | R-5.3 |
+| Dec 31, 2025 | Content Enhancement - Deployment examples for argument frames & receipts | R-5.2 |
 | Dec 31, 2025 | Research Integration - Send extracted items to Study Mode, fix research display bug | Ch.20 |
 | Dec 31, 2025 | **Gemini cost bug fix**: Corrected hardcoded value from $5.00 to $2.70 | Bug Fix |
 | Dec 31, 2025 | Cost Monitoring & Control - Phase tracking, topic grouping, accurate Vapi duration | Ch.19 |
@@ -764,4 +766,4 @@ From roadmap and dev journals:
 
 ---
 
-*This document reflects the codebase as of December 31, 2025 (Chapter 20 - Phase 5.1 Complete).*
+*This document reflects the codebase as of December 31, 2025 (Chapter R-5.3 - Phase 5.3 Complete).*

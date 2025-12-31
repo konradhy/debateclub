@@ -705,3 +705,384 @@ Added **DEPLOYMENT EXAMPLE REQUIREMENT** section with patterns:
 **Status**: [R-5.2] ✅ COMPLETE
 
 ---
+
+## [R-5.3] Prep Material Controls: Opponent Intelligence Editing
+**Date**: December 31, 2025
+**Roadmap Item**: 5.3 Prep Material Controls
+
+### Goal
+Enable full CRUD operations (Create, Read, Update, Delete) for opponent intelligence items in Study Mode, bringing them to feature parity with all other prep material fields.
+
+---
+
+### Context & Problem
+
+**Before**:
+- Opponent Intelligence section displayed AI-generated predicted arguments and counters
+- Cards were **read-only** with NO edit/delete functionality
+- Users couldn't add new opponent intelligence items manually
+- Only counter selection (checkboxes) was available for favoriting
+- **Inconsistent UX**: All other prep fields (argument frames, receipts, zingers, closings) had full InlineEdit capabilities
+
+**After**:
+- Full CRUD operations: Edit, Delete, Add
+- Inline editing following the same pattern as other prep fields
+- Form fields for all opponent intel properties (argument, likelihood, evidence, weakness, rhetoricalStyle)
+- Nested counters array preserved during editing
+- Consistent UX across all prep material types
+
+---
+
+### Investigation (Task 5.3.2)
+
+**Question**: Why wasn't opponent intelligence editing included originally?
+
+**Finding**: The backend infrastructure **already existed** - this was simply an **implementation oversight**, not a design decision.
+
+**Evidence**:
+1. ✅ [convex/opponents.ts:345](convex/opponents.ts#L345) — `opponentIntel` already in `updateOpponentFieldItem` mutation
+2. ✅ [convex/opponents.ts:382](convex/opponents.ts#L382) — `opponentIntel` already in `addOpponentFieldItem` mutation
+3. ✅ [convex/opponents.ts:423](convex/opponents.ts#L423) — `opponentIntel` already in `deleteOpponentFieldItem` mutation
+4. ✅ [convex/opponents.ts:468](convex/opponents.ts#L468) — Special cleanup logic already exists for `selectedCounterIds` when intel deleted
+5. ✅ [src/hooks/prep/usePrepHandlers.ts:14](src/hooks/prep/usePrepHandlers.ts#L14) — Already included in OpponentField type union
+
+**Conclusion**: All three backend mutations supported opponentIntel from the beginning. The UI components in [StudyModeDebate.tsx](src/components/prep/StudyModeDebate.tsx) were simply never wired up with InlineEdit wrappers. This was likely deprioritized during the Chapter 15 refactoring or earlier implementation phases.
+
+---
+
+### Implementation
+
+#### Schema Reference
+
+**OpponentIntel Structure** ([convex/schema.ts:252-272](convex/schema.ts#L252-L272)):
+```typescript
+opponentIntel: v.optional(
+  v.array(
+    v.object({
+      id: v.string(),                    // Required
+      argument: v.string(),              // Required - Predicted opponent argument
+      likelihood: v.string(),            // Required - High/Medium/Low
+      evidence: v.string(),              // Required - Their supporting evidence
+      rhetoricalStyle: v.optional(v.string()),  // Optional - e.g., "Appeal to emotion"
+      weakness: v.string(),              // Required - Weakness to exploit
+      counters: v.array(                 // Required - Nested counter-arguments
+        v.object({
+          id: v.string(),
+          judoMove: v.optional(v.string()),
+          label: v.string(),
+          text: v.string(),
+          deliveryNote: v.optional(v.string()),
+        }),
+      ),
+    }),
+  ),
+)
+```
+
+#### Part 1: Add InlineEdit Wrapper to Opponent Intelligence
+
+**File Modified**: [src/components/prep/StudyModeDebate.tsx:501-685](src/components/prep/StudyModeDebate.tsx#L501-L685)
+
+**Changed**: Wrapped existing `<Card>` elements in `<InlineEdit>` component
+
+**Pattern Used**: Identical to argument frames, zingers, and other prep fields
+
+```tsx
+{opponent.opponentIntel?.map((intel: any) => (
+  <InlineEdit
+    key={intel.id}
+    isEditing={editingId === intel.id}
+    onEdit={() => setEditingId(intel.id)}
+    onDelete={() => handleDelete("opponentIntel", intel.id)}
+    onSave={(data) =>
+      handleEdit("opponentIntel", intel.id, {
+        ...data,
+        counters: intel.counters, // Preserve nested counters
+      })
+    }
+    onCancel={() => setEditingId(null)}
+    initialData={intel}
+    formFields={[...]}
+  >
+    <Card className="border-red-500/20 bg-red-500/5">
+      {/* Existing card display */}
+    </Card>
+  </InlineEdit>
+))}
+```
+
+**Key Decision**: Preserve `counters` array unchanged during save
+- **Rationale**: Counters are nested objects with their own structure. Editing them inline within the intel edit form would be overly complex
+- **Pattern**: Same approach as `evidenceIds` in argument frames (line 261)
+- **Future Enhancement**: Could add separate UI for editing individual counters if needed
+
+#### Part 2: Create Form Fields
+
+**Form Fields Added** (lines 527-561):
+1. **argument** (textarea, 2 rows, required)
+   - Label: "Opponent's Predicted Argument"
+   - The core prediction of what opponent will argue
+
+2. **likelihood** (select, required)
+   - Options: "High", "Medium", "Low"
+   - Helps prioritize preparation
+
+3. **evidence** (textarea, 2 rows, required)
+   - Label: "Their Supporting Evidence"
+   - What evidence opponent will cite
+
+4. **weakness** (textarea, 2 rows, required)
+   - Label: "Weakness in Their Argument"
+   - The vulnerability to exploit in response
+
+5. **rhetoricalStyle** (text, optional)
+   - Label: "Rhetorical Style (optional)"
+   - e.g., "Appeal to emotion", "False dichotomy"
+
+**Why These Fields**: Match the schema exactly, excluding:
+- `id` — Auto-generated
+- `counters` — Preserved during save, not directly editable
+
+#### Part 3: Add New Intel Functionality
+
+**Implementation** (lines 623-677):
+
+```tsx
+{addingType === "opponentIntel" && (
+  <InlineEdit
+    isEditing={false}
+    isAdding={true}
+    onEdit={() => {}}
+    onSave={(data) =>
+      handleAdd("opponentIntel", {
+        ...data,
+        counters: [], // New intel starts with empty counters
+      })
+    }
+    onCancel={() => setAddingType(null)}
+    formFields={[...]} // Same fields with placeholders
+  >
+    <div />
+  </InlineEdit>
+)}
+{addingType !== "opponentIntel" && (
+  <AddButton
+    onClick={() => setAddingType("opponentIntel")}
+    label="Add Opponent Intelligence"
+  />
+)}
+```
+
+**Placeholders Added** for better UX:
+- "What argument will your opponent likely make?"
+- "What evidence will they use to support this?"
+- "What's the weak spot in this argument?"
+- "e.g., Appeal to emotion, False dichotomy"
+
+**Key Decision**: New intel items start with `counters: []`
+- **Rationale**: Counters are typically AI-generated during prep generation. Manual addition of intel is an edge case, and manually creating counters would be tedious
+- **User Workflow**: Users can add intel manually, then potentially regenerate prep to get AI-generated counters (future enhancement)
+
+#### Part 4: Type System Update
+
+**File Modified**: [src/components/prep/StudyModeDebate.tsx:21-27](src/components/prep/StudyModeDebate.tsx#L21-L27)
+
+**Changed**: Added `"opponentIntel"` to `OpponentField` union type
+
+```typescript
+type OpponentField =
+  | "receipts"
+  | "openingOptions"
+  | "argumentFrames"
+  | "zingers"
+  | "closingOptions"
+  | "opponentIntel";  // Added
+```
+
+**Impact**: Enables TypeScript type safety for all handler functions
+
+#### Part 5: Bug Fix - Placeholder Support
+
+**File Modified**: [src/ui/inline-edit.tsx](src/ui/inline-edit.tsx)
+
+**Problem Found**: Placeholders were already being used in StudyModeDebate.tsx (from R-5.2) but weren't typed in the InlineEdit interface, causing TypeScript errors
+
+**Fix Applied**:
+1. Added `placeholder?: string` to formFields interface (line 23)
+2. Wired placeholder to Input component (line 84)
+3. Wired placeholder to Textarea component (line 94)
+
+```typescript
+// Interface update
+formFields: {
+  name: string;
+  label: string;
+  type: "text" | "textarea" | "select";
+  options?: string[];
+  required?: boolean;
+  rows?: number;
+  placeholder?: string;  // Added
+}[];
+
+// Component update
+<Input
+  id={field.name}
+  value={formData[field.name] || ""}
+  onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
+  className="text-sm"
+  placeholder={field.placeholder}  // Added
+/>
+```
+
+**Impact**: Fixed 7 pre-existing TypeScript errors from R-5.2 deployment examples implementation
+
+---
+
+### Files Modified Summary
+
+1. **src/components/prep/StudyModeDebate.tsx** — Added InlineEdit wrapper, form fields, Add button, type update (~140 lines)
+2. **src/ui/inline-edit.tsx** — Added placeholder support to interface and components (~5 lines)
+
+**Total Changes**: 2 files, ~145 lines of code
+
+---
+
+### Key Decisions
+
+1. **Follow Existing Patterns**: Used identical pattern as other prep fields (argument frames, receipts, zingers)
+   - **Why**: Code consistency, reduces cognitive load, proven UX pattern
+   - **Result**: Implementation was straightforward with no new patterns to invent
+
+2. **Preserve Nested Counters During Edit**: Don't allow inline editing of counters array
+   - **Why**: Counters are complex nested objects; editing them would require nested forms
+   - **Alternative Considered**: Separate counter editing UI (deferred to future enhancement)
+   - **Result**: Simple, clean edit form focused on intel prediction fields
+
+3. **Empty Counters for New Intel**: New manually-added intel starts with `counters: []`
+   - **Why**: AI typically generates counters during prep; manual counter creation is edge case
+   - **User Impact**: Users can add intel predictions, but won't have counters until regeneration (acceptable trade-off)
+
+4. **Fix Placeholder Bug Properly**: Added placeholder to InlineEdit interface rather than removing placeholders
+   - **Why**: Placeholders improve UX with helpful hints
+   - **Alternative Considered**: Remove all placeholders to avoid type errors (rejected - worse UX)
+   - **Result**: Fixed 7 pre-existing TypeScript errors from R-5.2
+
+5. **No Backend Changes Needed**: Reused existing mutations
+   - **Why**: All infrastructure already existed (addOpponentFieldItem, updateOpponentFieldItem, deleteOpponentFieldItem)
+   - **Result**: Pure UI implementation, no schema changes, no migration needed
+
+---
+
+### TypeScript Results
+
+**Before Implementation**:
+- 14 pre-existing errors (marketing pages, routes, etc.)
+- 7 placeholder-related errors (from R-5.2)
+- **Total**: 21 errors
+
+**After Implementation**:
+- 14 pre-existing errors (unchanged, unrelated to our work)
+- 0 placeholder errors (fixed by adding placeholder to InlineEdit interface)
+- 0 new errors from our changes
+- **Total**: 14 errors
+
+**Summary**:
+- ✅ New Errors Introduced: 0
+- ✅ Pre-existing Errors Fixed: 7 (all placeholder-related)
+- ✅ Net Improvement: -7 errors
+
+---
+
+### Testing Checklist
+
+**Manual Testing Required** (User to verify):
+- [ ] Create opponent with AI-generated opponent intelligence
+- [ ] Click edit icon (pencil) on an intel card
+- [ ] Modify fields (argument, likelihood, evidence, weakness, rhetoricalStyle)
+- [ ] Click Save and verify changes persist
+- [ ] Verify counters are preserved after save (not lost)
+- [ ] Click delete icon (trash) on an intel card
+- [ ] Verify intel removed from list
+- [ ] Verify selectedCounterIds cleaned up after delete (backend logic)
+- [ ] Click "Add Opponent Intelligence" button
+- [ ] Fill form with new intel data
+- [ ] Verify new intel appears in list
+- [ ] Verify new intel has empty counters array
+- [ ] Test dark mode (edit form styling)
+- [ ] Verify placeholder hints appear in form fields
+- [ ] Test cancel button (changes discarded)
+- [ ] Test validation (required fields)
+
+**Edge Cases to Test**:
+- [ ] Edit intel with no counters (shouldn't crash)
+- [ ] Edit intel with many counters (should preserve all)
+- [ ] Add intel with minimal data (only required fields)
+- [ ] Delete last remaining intel item
+
+---
+
+### Patterns Established
+
+**Opponent Intelligence Editing Pattern**:
+1. User clicks edit icon on intel card
+2. Card replaced with inline edit form
+3. User modifies parent-level fields (argument, likelihood, evidence, weakness, rhetoricalStyle)
+4. Nested counters array preserved unchanged
+5. User saves → mutation called with updated data + original counters
+6. Convex reactivity updates UI automatically
+7. Edit mode exits, card returns to display mode
+
+**Add New Intel Pattern**:
+1. User clicks "Add Opponent Intelligence" button
+2. Add button replaced with inline edit form
+3. User fills required fields (argument, likelihood, evidence, weakness)
+4. User saves → mutation called with data + `counters: []`
+5. New intel added to array with unique ID
+6. Form resets, add button returns
+
+**Pattern Consistency**:
+- ✅ Same InlineEdit component used for all prep fields
+- ✅ Same edit/delete icon buttons
+- ✅ Same AddButton component
+- ✅ Same form validation (required fields)
+- ✅ Same state management (editingId, addingType)
+- ✅ Same handlers (handleEdit, handleDelete, handleAdd)
+
+---
+
+### Success Criteria Met
+
+✅ **Backend Verification**: All mutations already supported opponentIntel (no changes needed)
+✅ **UI Implementation**: InlineEdit wrappers added with full form fields
+✅ **Add Functionality**: "Add Opponent Intelligence" button and form implemented
+✅ **Type Safety**: OpponentField type updated, no new TypeScript errors
+✅ **Bug Fix Bonus**: Fixed 7 pre-existing placeholder-related errors from R-5.2
+✅ **Pattern Consistency**: Matches other prep fields exactly
+✅ **Ready for Testing**: All CRUD operations implemented and ready for user verification
+
+---
+
+### Future Enhancements (Not in Scope)
+
+**Counter Editing UI** (Deferred):
+- Nested InlineEdit for individual counters within intel items
+- Ability to add/edit/delete counters manually
+- Form fields: label, text, judoMove, deliveryNote
+- **Complexity**: Would require nested edit state management
+- **Priority**: Low (AI generates counters during prep)
+
+**Bulk Operations**:
+- Select multiple intel items for deletion
+- Duplicate intel item to create variations
+- **Priority**: Low (not frequently requested)
+
+**AI-Assisted Intel Creation**:
+- "Generate Counter" button to create AI counters for manually-added intel
+- Use existing prep generation prompts focused on single intel item
+- **Priority**: Medium (would complete the manual workflow)
+
+---
+
+**Status**: [R-5.3.1] ✅ COMPLETE, [R-5.3.2] ✅ COMPLETE
+
+---

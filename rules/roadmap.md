@@ -514,7 +514,7 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Status**: ✅
 
-**Chapters**: [R-5.2]
+**Chapters**: [chapt20]
 
 #### Tasks
 
@@ -529,17 +529,15 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Description**: Edit and customize prep materials
 
-**Status**: ⬜
+**Status**: ✅
 
-**Chapters**: —
+**Chapters**: [R-5.3]
 
 #### Tasks
 
-- ⬜ **5.3.1** — Edit opponent intelligence UI and mutation
-- ⬜ **5.3.2** — Investigate why edit wasn't originally included
-- ⬜ **5.3.3** — Adjustable opening/closing statement length
-- ⬜ **5.3.4** — Check book recommendations for optimal statement length
-- ⬜ **5.3.5** — Length configuration UI ( presets)
+- ✅ **5.3.1** — Edit opponent intelligence UI and mutation
+- ✅ **5.3.2** — Investigate why edit wasn't originally included
+
 
 ---
 
@@ -579,66 +577,9 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 ## Phase 6: Evidence Sourcing & Performance Optimization
 
-**Goal**: AI agent to find supporting evidence with source URLs and optimize perceived wait time
+**Goal**: Add evidence to the ui. for argument frames. Currently, i believe we collect some text description, but the ui is blank. investigate
 
-**Status**: ⬜
 
-**Chapters**: —
-
-**Note**: Performance optimization requires extensive pipeline rewiring - potentially the hardest subsection in this phase. Need to verify feasibility of each approach with current architecture.
-
----
-
-### 6.1 Evidence Agent Architecture
-
-**Description**: Build AI agent for evidence sourcing
-
-**Status**: ⬜
-
-**Chapters**: —
-
-#### Tasks
-
-- ⬜ **6.1.1** — Agent design and prompt engineering
-- ⬜ **6.1.2** — Source URL verification and validation
-- ⬜ **6.1.3** — Accountability logging (reasoning for each source inclusion)
-- ⬜ **6.1.4** — Error handling for failed searches
-
----
-
-### 6.2 Argument Frame Evidence
-
-**Description**: Populate evidenceIds arrays in argument frames
-
-**Status**: ⬜
-
-**Chapters**: —
-
-#### Tasks
-
-- ⬜ **6.2.1** — Use evidenceNeeded descriptions to find relevant receipts
-- ⬜ **6.2.2** — Search external sources when receipts insufficient
-- ⬜ **6.2.3** — Populate evidenceIds array linking to sources
-- ⬜ **6.2.4** — Decide: modify generation prompts vs post-processing
-
----
-
-### 6.3 Opponent Intelligence Evidence
-
-**Description**: Add actual source URLs to opponent intelligence
-
-**Status**: ⬜
-
-**Chapters**: —
-
-#### Tasks
-
-- ⬜ **6.3.1** — Replace text descriptions with actual source URLs in opponent arguments
-- ⬜ **6.3.2** — Add supporting evidence field to counter-arguments
-- ⬜ **6.3.3** — Schema modifications for new evidence fields
-- ⬜ **6.3.4** — Expandable UI elements to display evidence without clutter
-
----
 
 ### 6.4 Instant Feedback System
 
@@ -1070,4 +1011,4 @@ Build a feature allowing users to challenge others to debates, either friends vi
 | Phase 2 | Pre-docs | Pre-docs | Technique detection working |
 | Phase 3 | Pre-docs | Dec 2025 | Complete |
 | Phase 4 | Dec 2025 | Dec 2025 | Monetization complete |
-| Phase 5 | Dec 2025 | — | In progress (5.1 complete) |
+| Phase 5 | Dec 2025 | — | In progress (5.1-5.3 complete) |

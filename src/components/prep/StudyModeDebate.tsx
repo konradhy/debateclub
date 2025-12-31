@@ -23,7 +23,8 @@ type OpponentField =
   | "openingOptions"
   | "argumentFrames"
   | "zingers"
-  | "closingOptions";
+  | "closingOptions"
+  | "opponentIntel";
 
 interface StudyModeDebateProps {
   opponent: any;
@@ -511,68 +512,176 @@ export function StudyModeDebate({
         </div>
         <div className="grid gap-4">
           {opponent.opponentIntel?.map((intel: any) => (
-            <Card
+            <InlineEdit
               key={intel.id}
-              className="border-red-500/20 bg-red-500/5"
+              isEditing={editingId === intel.id}
+              onEdit={() => setEditingId(intel.id)}
+              onDelete={() => handleDelete("opponentIntel", intel.id)}
+              onSave={(data) =>
+                handleEdit("opponentIntel", intel.id, {
+                  ...data,
+                  counters: intel.counters, // Preserve nested counters
+                })
+              }
+              onCancel={() => setEditingId(null)}
+              initialData={intel}
+              formFields={[
+                {
+                  name: "argument",
+                  label: "Opponent's Predicted Argument",
+                  type: "textarea",
+                  required: true,
+                  rows: 2,
+                },
+                {
+                  name: "likelihood",
+                  label: "Likelihood",
+                  type: "select",
+                  options: ["High", "Medium", "Low"],
+                  required: true,
+                },
+                {
+                  name: "evidence",
+                  label: "Their Supporting Evidence",
+                  type: "textarea",
+                  required: true,
+                  rows: 2,
+                },
+                {
+                  name: "weakness",
+                  label: "Weakness in Their Argument",
+                  type: "textarea",
+                  required: true,
+                  rows: 2,
+                },
+                {
+                  name: "rhetoricalStyle",
+                  label: "Rhetorical Style (optional)",
+                  type: "text",
+                },
+              ]}
             >
-              <CardHeader className="pb-2 pt-4">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base font-medium text-red-700 dark:text-red-400">
-                    Prediction: "{intel.argument}"
-                  </CardTitle>
-                  <span className="text-xs font-bold uppercase px-2 py-1 bg-red-100 text-red-700 rounded dark:bg-red-900/30 dark:text-red-400">
-                    {intel.likelihood} Likelihood
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3 pb-4">
-                <div className="text-sm text-muted-foreground flex gap-2 items-start">
-                  <AlertTriangle className="h-4 w-4 text-orange-500 shrink-0 mt-0.5" />
-                  <div>
-                    <span className="font-semibold text-foreground">
-                      Their Evidence:
-                    </span>{" "}
-                    {intel.evidence}
-                    <div className="mt-1 text-green-600 dark:text-green-400">
-                      <span className="font-semibold">Weakness:</span>{" "}
-                      {intel.weakness}
-                    </div>
+              <Card className="border-red-500/20 bg-red-500/5">
+                <CardHeader className="pb-2 pt-4">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base font-medium text-red-700 dark:text-red-400">
+                      Prediction: "{intel.argument}"
+                    </CardTitle>
+                    <span className="text-xs font-bold uppercase px-2 py-1 bg-red-100 text-red-700 rounded dark:bg-red-900/30 dark:text-red-400">
+                      {intel.likelihood} Likelihood
+                    </span>
                   </div>
-                </div>
-
-                <div className="space-y-2 mt-2">
-                  <p className="text-xs font-semibold uppercase text-muted-foreground">
-                    Available Counters (Select to Equip):
-                  </p>
-                  {intel.counters.map((counter: any) => (
-                    <div
-                      key={counter.id}
-                      className="flex items-start space-x-2 p-2 rounded hover:bg-background/50 transition-colors"
-                    >
-                      <Checkbox
-                        id={counter.id}
-                        checked={opponent.selectedCounterIds?.includes(
-                          counter.id,
-                        )}
-                        onCheckedChange={() => toggleCounter(counter.id)}
-                      />
-                      <div className="grid gap-1.5 leading-none">
-                        <Label
-                          htmlFor={counter.id}
-                          className="text-sm font-medium cursor-pointer"
-                        >
-                          {counter.label}
-                        </Label>
-                        <p className="text-sm text-muted-foreground">
-                          {counter.text}
-                        </p>
+                </CardHeader>
+                <CardContent className="space-y-3 pb-4">
+                  <div className="text-sm text-muted-foreground flex gap-2 items-start">
+                    <AlertTriangle className="h-4 w-4 text-orange-500 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-semibold text-foreground">
+                        Their Evidence:
+                      </span>{" "}
+                      {intel.evidence}
+                      <div className="mt-1 text-green-600 dark:text-green-400">
+                        <span className="font-semibold">Weakness:</span>{" "}
+                        {intel.weakness}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                  </div>
+
+                  <div className="space-y-2 mt-2">
+                    <p className="text-xs font-semibold uppercase text-muted-foreground">
+                      Available Counters (Select to Equip):
+                    </p>
+                    {intel.counters.map((counter: any) => (
+                      <div
+                        key={counter.id}
+                        className="flex items-start space-x-2 p-2 rounded hover:bg-background/50 transition-colors"
+                      >
+                        <Checkbox
+                          id={counter.id}
+                          checked={opponent.selectedCounterIds?.includes(
+                            counter.id,
+                          )}
+                          onCheckedChange={() => toggleCounter(counter.id)}
+                        />
+                        <div className="grid gap-1.5 leading-none">
+                          <Label
+                            htmlFor={counter.id}
+                            className="text-sm font-medium cursor-pointer"
+                          >
+                            {counter.label}
+                          </Label>
+                          <p className="text-sm text-muted-foreground">
+                            {counter.text}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </InlineEdit>
           ))}
+          {addingType === "opponentIntel" && (
+            <InlineEdit
+              isEditing={false}
+              isAdding={true}
+              onEdit={() => {}}
+              onSave={(data) =>
+                handleAdd("opponentIntel", {
+                  ...data,
+                  counters: [], // New intel starts with empty counters
+                })
+              }
+              onCancel={() => setAddingType(null)}
+              formFields={[
+                {
+                  name: "argument",
+                  label: "Opponent's Predicted Argument",
+                  type: "textarea",
+                  required: true,
+                  rows: 2,
+                  placeholder: "What argument will your opponent likely make?",
+                },
+                {
+                  name: "likelihood",
+                  label: "Likelihood",
+                  type: "select",
+                  options: ["High", "Medium", "Low"],
+                  required: true,
+                },
+                {
+                  name: "evidence",
+                  label: "Their Supporting Evidence",
+                  type: "textarea",
+                  required: true,
+                  rows: 2,
+                  placeholder: "What evidence will they use to support this?",
+                },
+                {
+                  name: "weakness",
+                  label: "Weakness in Their Argument",
+                  type: "textarea",
+                  required: true,
+                  rows: 2,
+                  placeholder: "What's the weak spot in this argument?",
+                },
+                {
+                  name: "rhetoricalStyle",
+                  label: "Rhetorical Style (optional)",
+                  type: "text",
+                  placeholder: "e.g., Appeal to emotion, False dichotomy",
+                },
+              ]}
+            >
+              <div />
+            </InlineEdit>
+          )}
+          {addingType !== "opponentIntel" && (
+            <AddButton
+              onClick={() => setAddingType("opponentIntel")}
+              label="Add Opponent Intelligence"
+            />
+          )}
         </div>
       </section>
 

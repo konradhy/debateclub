@@ -20,6 +20,7 @@ interface InlineEditProps {
         options?: string[];
         required?: boolean;
         rows?: number;
+        placeholder?: string;
     }[];
     initialData?: any;
 }
@@ -80,6 +81,7 @@ export function InlineEdit({
                                 value={formData[field.name] || ""}
                                 onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
                                 className="text-sm"
+                                placeholder={field.placeholder}
                             />
                         )}
                         {field.type === "textarea" && (
@@ -89,6 +91,7 @@ export function InlineEdit({
                                 onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
                                 rows={field.rows || 3}
                                 className="text-sm"
+                                placeholder={field.placeholder}
                             />
                         )}
                         {field.type === "select" && field.options && (
