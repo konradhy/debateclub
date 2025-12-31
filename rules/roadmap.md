@@ -512,16 +512,16 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Description**: Add example quotes and deployment guidance
 
-**Status**: ⬜
+**Status**: ✅
 
-**Chapters**: —
+**Chapters**: [R-5.2]
 
 #### Tasks
 
-- ⬜ **5.2.1** — Argument frame example quotes showing framework in action
-- ⬜ **5.2.2** — Receipt deployment examples demonstrating usage in debates
-- ⬜ **5.2.3** — Update generation prompts to include examples
-- ⬜ **5.2.4** — UI components to display examples without clutter
+- ✅ **5.2.1** — Argument frame example quotes showing framework in action
+- ✅ **5.2.2** — Receipt deployment examples demonstrating usage in debates
+- ✅ **5.2.3** — Update generation prompts to include examples
+- ✅ **5.2.4** — UI components to display examples without clutter
 
 ---
 
@@ -539,13 +539,13 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 - ⬜ **5.3.2** — Investigate why edit wasn't originally included
 - ⬜ **5.3.3** — Adjustable opening/closing statement length
 - ⬜ **5.3.4** — Check book recommendations for optimal statement length
-- ⬜ **5.3.5** — Length configuration UI (slider or presets)
+- ⬜ **5.3.5** — Length configuration UI ( presets)
 
 ---
 
 ### 5.4 Debate Summary Booklet
 
-**Description**: Skimmable 7-minute read summarizing the debate argument
+**Description**: Skimmable 7-minute read summarizing the debate argument, created when using the firecrawl option and is used instead of deep earch
 
 **Status**: ⬜
 
@@ -553,7 +553,7 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 #### Tasks
 
-- ⬜ **5.4.1** — Design booklet format and structure
+- ⬜ **5.4.1** — Design booklet format and structure. 
 - ⬜ **5.4.2** — Generate summary using LLM (position, key arguments, strategy)
 - ⬜ **5.4.3** — Reading time estimation
 - ⬜ **5.4.4** — Print/export functionality

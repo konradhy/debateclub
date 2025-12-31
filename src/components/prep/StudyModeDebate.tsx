@@ -309,6 +309,13 @@ export function StudyModeDebate({
                   label: "Emotional Core (optional)",
                   type: "text",
                 },
+                {
+                  name: "exampleQuote",
+                  label: "Example Quote (optional)",
+                  type: "textarea",
+                  rows: 2,
+                  placeholder: "Example: 'You're right that X. But what you're missing is Y...'"
+                },
               ]}
             >
               <div
@@ -364,6 +371,17 @@ export function StudyModeDebate({
                         <span className="font-semibold">Deploy when:</span>{" "}
                         {frame.deploymentGuidance}
                       </div>
+                      {/* Example Quote Display */}
+                      {frame.exampleQuote && (
+                        <div className="text-sm italic bg-blue-50 dark:bg-blue-950/30 p-3 rounded-md border-l-4 border-blue-500">
+                          <div className="text-[10px] font-bold uppercase text-blue-600 dark:text-blue-400 mb-1 tracking-wide">
+                            Example Quote
+                          </div>
+                          <p className="text-muted-foreground leading-relaxed">
+                            "{frame.exampleQuote}"
+                          </p>
+                        </div>
+                      )}
                       <div className="space-y-1">
                         <p className="text-xs font-semibold text-muted-foreground">
                           Available Evidence:
@@ -458,6 +476,13 @@ export function StudyModeDebate({
                   name: "emotionalCore",
                   label: "Emotional Core (optional)",
                   type: "text",
+                },
+                {
+                  name: "exampleQuote",
+                  label: "Example Quote (optional)",
+                  type: "textarea",
+                  rows: 2,
+                  placeholder: "Example: 'You're right that X. But what you're missing is Y...'"
                 },
               ]}
             >
@@ -617,6 +642,13 @@ export function StudyModeDebate({
                         rows: 2,
                       },
                       {
+                        name: "deploymentExample",
+                        label: "Deployment Example (optional)",
+                        type: "textarea",
+                        rows: 3,
+                        placeholder: "Example: 'Now, you claim X. But according to [source], [fact]. So when you say Y...'"
+                      },
+                      {
                         name: "url",
                         label: "URL (optional)",
                         type: "text",
@@ -633,16 +665,31 @@ export function StudyModeDebate({
                         <div className="font-medium text-primary">
                           {receipt.source}
                         </div>
-                        {receipt.url && (
-                          <a
-                            href={receipt.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 hover:text-blue-600"
+                        <div className="flex items-center gap-2">
+                          {receipt.url && (
+                            <a
+                              href={receipt.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 hover:text-blue-600"
+                            >
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                          )}
+                          {/* NEW: Expand button for receipts */}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => toggleExpand(receipt.id)}
+                            className="h-5 w-5 p-0"
                           >
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                        )}
+                            {expandedItems[receipt.id] ? (
+                              <ChevronUp className="h-3 w-3" />
+                            ) : (
+                              <ChevronDown className="h-3 w-3" />
+                            )}
+                          </Button>
+                        </div>
                       </div>
                       <div className="text-muted-foreground">
                         {receipt.content}
@@ -650,6 +697,20 @@ export function StudyModeDebate({
                       <div className="text-xs text-primary/60 italic">
                         Use: {renderComplex(receipt.deployment)}
                       </div>
+
+                      {/* NEW: Expanded section with deployment example */}
+                      {expandedItems[receipt.id] && receipt.deploymentExample && (
+                        <div className="mt-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                          <div className="text-sm bg-orange-50 dark:bg-orange-950/30 p-3 rounded-md border-l-4 border-orange-500">
+                            <div className="text-[10px] font-bold uppercase text-orange-600 dark:text-orange-400 mb-1 tracking-wide">
+                              Deployment Example
+                            </div>
+                            <p className="text-muted-foreground leading-relaxed italic">
+                              "{receipt.deploymentExample}"
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </InlineEdit>
                 ))}
@@ -697,6 +758,13 @@ export function StudyModeDebate({
                 type: "textarea",
                 required: true,
                 rows: 2,
+              },
+              {
+                name: "deploymentExample",
+                label: "Deployment Example (optional)",
+                type: "textarea",
+                rows: 3,
+                placeholder: "Example: 'Now, you claim X. But according to [source], [fact]. So when you say Y...'"
               },
               {
                 name: "url",

@@ -189,6 +189,7 @@ const schema = defineSchema({
           evidenceIds: v.array(v.string()),
           evidenceNeeded: v.optional(v.array(v.string())),
           emotionalCore: v.optional(v.string()),
+          exampleQuote: v.optional(v.string()),
           deploymentGuidance: v.string(),
         }),
       ),
@@ -208,6 +209,7 @@ const schema = defineSchema({
           content: v.string(),
           context: v.optional(v.string()), // Added
           deployment: v.any(), // Changed to any to accept object
+          deploymentExample: v.optional(v.string()),
           vulnerabilities: v.optional(v.string()), // Added
         }),
       ),

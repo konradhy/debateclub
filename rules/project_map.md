@@ -2,7 +2,7 @@
 
 **Current architecture and codebase structure. Updated as features are added.**
 
-**Last Updated**: December 31, 2025 (Chapter 20 - Phase 5.1 Complete)
+**Last Updated**: December 31, 2025 (Chapter R-5.2 - Phase 5.2 Complete)
 
 ---
 
@@ -227,7 +227,9 @@ For non-debate scenarios, opponents store:
 Structured prep with selection tracking:
 - `openingOptions[]` + `selectedOpeningId`
 - `argumentFrames[]` + `selectedFrameIds[]`
+  - **New (R-5.2)**: `exampleQuote` — 1-2 sentence debate dialogue showing framework deployment using Hasan techniques (Concession, Reframe, Preemption, Evidence Integration)
 - `receipts[]` (evidence arsenal)
+  - **New (R-5.2)**: `deploymentExample` — 2-4 sentence debate dialogue demonstrating receipt usage (Delayed Reveal, Comparison Trap, Opponent's Own Words)
 - `zingers[]` + `selectedZingerIds[]`
 - `closingOptions[]` + `selectedClosingId`
 - `opponentIntel[]` + `selectedCounterIds[]`
@@ -402,6 +404,23 @@ app.use(stripe);  // @convex-dev/stripe
 | Voice debate | `anthropic/claude-sonnet-4-20250514` | `debate.tsx` (Vapi) |
 | Gemini Deep Research | `gemini-2.5-pro-preview-06-05` | `geminiDeepResearch.ts` |
 | Gemini Source Extraction | `gemini-2.0-flash` | `geminiSearch.ts` |
+
+### Prompt Engineering (R-5.2)
+
+**Enhanced Prompts** (`convex/lib/promptTemplates.ts`):
+
+- **ARGUMENT_FRAMES_PROMPT**: Teaches deployment techniques (Concession Pivot, Reframing, Preemption, Evidence Integration) with:
+  - WHY each technique works (Hasan quotes)
+  - Pattern templates for each technique
+  - Quality criteria emphasizing principles over copying
+  - Generates `exampleQuote` showing debate dialogue
+
+- **RECEIPTS_ARSENAL_PROMPT**: Teaches deployment patterns (Delayed Reveal, Comparison Trap, Opponent's Own Words) with:
+  - 3-step structure template (claim → evidence → challenge)
+  - Tone matching (statistics = matter-of-fact, contradiction = incredulous)
+  - Generates `deploymentExample` showing receipt usage in dialogue
+
+**Philosophy**: AI learns Mehdi Hasan's methodology (WHY techniques work), not just surface patterns
 
 ---
 

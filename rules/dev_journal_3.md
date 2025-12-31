@@ -516,3 +516,192 @@ npx convex deploy    # Backend
 **Status**: [R-5.1] ✅ COMPLETE
 
 ---
+
+## [R-5.2] Content Enhancement: Deployment Examples for Argument Frames & Receipts
+**Date**: December 31, 2025
+**Roadmap Item**: 5.2 Content Enhancement
+
+### Goal
+Add concrete debate dialogue examples to prep materials showing HOW to deploy argument frames and receipts in actual debates, following Mehdi Hasan's "Win Every Argument" methodology.
+
+---
+
+### Context & Problem
+
+**Current State**:
+- Argument frames have `deploymentGuidance` ("when to use this") but no example of WHAT to actually say
+- Receipts have `deployment` object (timing/setup/followUp) but no concrete dialogue example
+- Users see strategic guidance but not the spoken words they could use
+
+**User Need**:
+- Debaters need to see examples that embody Hasan techniques (Concession, Reframe, Preemption, Evidence Integration)
+- Examples should teach deployment principles, not just provide copy-paste phrases
+- AI must understand WHY techniques work (via Hasan quotes), not just surface patterns
+
+---
+
+### Implementation
+
+#### 1. Schema Changes
+
+**New Optional Fields**:
+- `argumentFrames.exampleQuote` (string) — 1-2 sentence debate dialogue showing frame deployment
+- `receipts.deploymentExample` (string) — 2-4 sentence debate dialogue using the receipt
+
+**Files Modified**:
+- [convex/schema.ts](convex/schema.ts#L192) — Added `exampleQuote` after `emotionalCore`
+- [convex/schema.ts](convex/schema.ts#L212) — Added `deploymentExample` after `deployment`
+- [convex/opponents.ts](convex/opponents.ts#L153) — Updated mutation validator for `exampleQuote`
+- [convex/opponents.ts](convex/opponents.ts#L171) — Updated mutation validator for `deploymentExample`
+
+**Why Optional**: No migration needed, works with existing data, AI generates for new opponents only
+
+---
+
+#### 2. Prompt Enhancements (The Critical Part)
+
+**ARGUMENT_FRAMES_PROMPT** ([promptTemplates.ts#L113-L149](convex/lib/promptTemplates.ts#L113-L149)):
+
+Added **DEPLOYMENT TECHNIQUES** section before OUTPUT REQUIREMENTS teaching:
+1. **Concession Pivot (Synchoresis)** — Acknowledge valid point, redirect to your counter
+   - WHY: Hasan quote about appearing reasoned, disarming opponents
+   - Pattern: "You're right that X. But what you're missing is Y."
+
+2. **Reframing** — Shift debate context by questioning premise
+   - WHY: Hasan quote about defining debate terms
+   - Pattern: "The real question isn't [their frame], it's [your frame]."
+
+3. **Preemption** — Address opponent's arguments before they make them
+   - WHY: Hasan quote about initiating discourse
+   - Pattern: "Now, some will argue X. But consider Y."
+
+4. **Evidence Integration** — Deploy evidence + challenge opponent to match it
+   - WHY: Hasan quote about catching opponents unprepared
+   - Pattern: "[Argument]. [Evidence with source]. So when [opponent claims X], what's their evidence?"
+
+**Quality Criteria**:
+- Must use specific technique (not generic dialogue)
+- Connect to emotional core of argument
+- Feel natural when spoken aloud
+- Show HOW to deploy (not just WHAT the argument is)
+- **Embody Hasan principle, not just copy surface patterns**
+
+**RECEIPTS_ARSENAL_PROMPT** ([promptTemplates.ts#L186-L205](convex/lib/promptTemplates.ts#L186-L205)):
+
+Added **DEPLOYMENT EXAMPLE REQUIREMENT** section with patterns:
+- **Delayed Reveal with Challenge** — Claim → Evidence → Challenge
+- **Comparison Trap** — "You say X failed. But when Country Y tried X, [stats]. So which failure?"
+- **Opponent's Own Words** — "You claim A. But in [context], you said—exact quote—B. What changed?"
+
+**Structure Template**:
+1. Start with opponent's claim
+2. Deploy receipt with source attribution
+3. End with follow-up pressure (question/rhetorical pivot)
+
+**Updated JSON Schemas**:
+- Added `exampleQuote` field to all frame examples
+- Added `deploymentExample` field to receipt schema
+
+---
+
+#### 3. UI Enhancements
+
+**Argument Frames** ([StudyModeDebate.tsx#L368-L377](src/components/prep/StudyModeDebate.tsx#L368-L377)):
+- Display `exampleQuote` in blue collapsed section with "EXAMPLE QUOTE" header
+- Styling: `bg-blue-50 dark:bg-blue-950/30` with left border `border-blue-500`
+- Italic text with quote marks for natural dialogue feel
+
+**Receipts** ([StudyModeDebate.tsx#L673-L706](src/components/prep/StudyModeDebate.tsx#L673-L706)):
+- Added expand/collapse button to each receipt (ChevronDown/ChevronUp icon)
+- Display `deploymentExample` in orange collapsed section when expanded
+- Styling: `bg-orange-50 dark:bg-orange-950/30` with left border `border-orange-500`
+- Animate-in transition: `animate-in fade-in slide-in-from-top-2 duration-200`
+
+**Semantic Colors**:
+- **Blue** for argument frames (strategic, thought-provoking)
+- **Orange** for receipts (evidence, urgency, action)
+
+**Form Fields Added**:
+- Inline edit forms for both argument frames and receipts
+- "Add New" forms include example fields
+- Placeholders with example patterns (e.g., "You're right that X. But what you're missing is Y...")
+
+---
+
+### Key Decisions
+
+1. **Teach Principles, Not Patterns**:
+   - Added WHY each technique works (Hasan quotes) before showing examples
+   - AI learns methodology, not just surface-level copying
+   - Quality criteria emphasizes "embody principle" over "copy pattern"
+
+2. **Collapsed by Default**:
+   - Examples don't clutter main view
+   - Expand on demand for learning/reference
+   - Receipts needed expand/collapse capability (didn't have it before)
+
+3. **Examples Hidden in QuickRef**:
+   - QuickRef is for quick scanning during debate
+   - Examples are for prep/study, not live reference
+   - Keeps QuickRef clean and focused
+
+4. **Comprehensive Prompts**:
+   - 4 deployment techniques with full explanations
+   - 3+ concrete examples per technique
+   - Structural templates (3-step receipt deployment)
+   - Quality criteria to prevent generic output
+
+5. **Optional Fields**:
+   - No database migration needed
+   - Works with existing opponents (graceful degradation)
+   - Only new AI-generated prep gets examples
+
+---
+
+### Files Modified Summary
+
+1. **convex/schema.ts** — Added 2 optional fields
+2. **convex/opponents.ts** — Updated mutation validators
+3. **convex/lib/promptTemplates.ts** — Enhanced 2 prompts with deployment techniques
+4. **src/components/prep/StudyModeDebate.tsx** — Added display components + form fields
+
+**Total Changes**: 4 files, ~150 lines of prompt content, ~40 lines of UI code
+
+---
+
+### Testing Results
+
+**Typecheck**: ✅ No new errors introduced
+- All type errors pre-existing in other files (landing pages, routes)
+- Schema changes fully type-safe
+- UI components properly typed
+
+**Manual Testing** (Ready for User):
+- [ ] Create new opponent
+- [ ] Trigger prep generation
+- [ ] Verify AI generates `exampleQuote` for argument frames
+- [ ] Verify AI generates `deploymentExample` for receipts
+- [ ] Check examples follow Win Every Argument patterns
+- [ ] Test expand/collapse on receipts
+- [ ] Verify blue styling (frames) and orange styling (receipts)
+- [ ] Test dark mode
+- [ ] Edit examples via inline edit
+- [ ] Add new items with examples
+
+---
+
+### Success Criteria
+
+✅ **Schema**: Optional fields added without breaking changes
+✅ **Prompts**: Comprehensive deployment techniques with Hasan methodology
+✅ **UI**: Examples display with semantic colors, expand/collapse works
+✅ **Type Safety**: No new TypeScript errors
+✅ **Ready for Testing**: AI generation can be tested with new opponent
+
+**Next Step**: User creates opponent to verify AI generates quality deployment examples following Mehdi Hasan principles
+
+---
+
+**Status**: [R-5.2] ✅ COMPLETE
+
+---

@@ -110,6 +110,44 @@ Generate MULTIPLE arguments within each category when appropriate:
   - International comparisons
   - Precedent and tradition
 
+## DEPLOYMENT TECHNIQUES (from Hasan Chapters 3 & 8)
+When deploying argument frames in debate dialogue, use these proven techniques:
+
+**1. CONCESSION PIVOT (Synchoresis)** - Hasan Ch 8: "Judo Moves"
+- **What**: Acknowledge a valid aspect of opponent's position, then redirect to your stronger point
+- **Why it works**: Hasan: "Acknowledging the areas where the opponent has valid points opens the door to highlight where they fall short. This makes you appear more reasoned and credible. It disarms and disorients opponents who expected resistance."
+- **Pattern**: "You're right that [valid point]. But what you're missing is [your counter]."
+- **Example**: "You're absolutely right that individual liberty matters. But what you're missing is that true liberty requires everyone to be protected from preventable harm."
+
+**2. REFRAMING** - Hasan Ch 8: "Judo Moves"
+- **What**: Shift the context of the debate to favor your perspective by questioning the premise
+- **Why it works**: Hasan: "If a motion is unfavorable, attempting to reframe or broaden its scope can shift the debate's direction to your benefit."
+- **Pattern**: "The real question isn't [their frame], it's [your frame]."
+- **Example**: "The real question isn't whether we can afford universal healthcare—it's whether we can afford to keep letting Americans go bankrupt from medical bills."
+
+**3. PREEMPTION** - Hasan Ch 8: "Judo Moves"
+- **What**: Address opponent's arguments before they make them
+- **Why it works**: Hasan: "Initiating the discourse allows you to define the debate's terms and unsettle your opponent before they have the chance to speak."
+- **Pattern**: "Now, some will argue [their point]. But consider [why it's wrong]."
+- **Example**: "Now, some will say this hurts the economy. But when Massachusetts implemented this policy, job growth exceeded the national average by 12%. So when opponents claim economic harm, what's their evidence?"
+
+**4. EVIDENCE INTEGRATION** - Hasan Ch 3: "Show Your Receipts"
+- **What**: Deploy specific evidence within your argument, then challenge opponent to match it
+- **Why it works**: Hasan: "The aim is to find the opportune moment to reveal this evidence, ideally catching the opponent unprepared."
+- **Pattern**: "[Argument]. [Evidence with source]. So when [opponent claims X], what's their evidence?"
+- **Example**: "Public safety depends on evidence-based policy. The CDC tracked 657,000 children over 15 years and found zero causal link between vaccines and autism. Zero. So when opponents tell parents not to vaccinate, what's their evidence?"
+
+## EXAMPLE QUOTE REQUIREMENT
+Each frame must include an "exampleQuote" showing this argument deployed in actual debate dialogue using one of the techniques above.
+
+**Quality Criteria**:
+- 1-2 sentences maximum (spoken debate pacing)
+- Must use a specific deployment technique (Concession, Reframe, Preemption, or Evidence Integration)
+- Should connect to the emotional core of the argument
+- Must feel natural when spoken aloud
+- Should show HOW to deploy the frame, not just WHAT the argument is
+- Must embody a Hasan principle, not just copy surface patterns
+
 ## OUTPUT REQUIREMENTS
 Return valid JSON:
 {
@@ -122,6 +160,7 @@ Return valid JSON:
       "detailedContent": "[4-6 sentences: the deep dive version with philosophical grounding, logical structure, and emotional appeal. This is the 'meat' of the argument.]",
       "evidenceNeeded": ["[Type of evidence that would strengthen this]", "[Another type]"],
       "emotionalCore": "[What emotion should the audience feel? Fear, hope, outrage, pride?]",
+      "exampleQuote": "[1-2 sentence example showing this framework deployed in debate dialogue]",
       "deploymentGuidance": "[When to use this frame: audience type, opponent moves, debate dynamics]"
     },
     {
@@ -132,6 +171,7 @@ Return valid JSON:
       "detailedContent": "[Deep dive with cause-effect reasoning]",
       "evidenceNeeded": ["[Statistics, case studies, etc.]"],
       "emotionalCore": "[What emotion?]",
+      "exampleQuote": "[1-2 sentence example showing this framework deployed in debate dialogue]",
       "deploymentGuidance": "[When to deploy]"
     },
     {
@@ -142,6 +182,7 @@ Return valid JSON:
       "detailedContent": "[Deep dive with cost-benefit analysis]",
       "evidenceNeeded": ["[Budget data, economic studies, etc.]"],
       "emotionalCore": "[What emotion?]",
+      "exampleQuote": "[1-2 sentence example showing this framework deployed in debate dialogue]",
       "deploymentGuidance": "[When to deploy]"
     }
   ]
@@ -183,6 +224,27 @@ Generate a comprehensive receipts arsenal for this debate.
 3. **Time the Receipts**: "The aim is to find the opportune moment to reveal this evidence, ideally catching the opponent unprepared." Each receipt needs deployment guidance.
 4. **The Best Receipts Are Physical**: "Receipts can be those that you can point to, or physically show, either in your hand or on-screen."
 
+## DEPLOYMENT EXAMPLE REQUIREMENT
+Each receipt must include a "deploymentExample" showing actual debate dialogue using this evidence.
+
+**Example Patterns** (from Chapter 3 "Show Your Receipts"):
+- **Delayed Reveal with Challenge**: "You claim vaccines cause autism. But according to the largest pediatric study ever conducted—657,000 children tracked over 15 years by the CDC—there is zero causal link. Zero. So when you tell parents not to vaccinate, what's your evidence?"
+
+- **Comparison Trap**: "You say decriminalization failed. But when Portugal decriminalized all drugs in 2001, overdose deaths dropped 85% and HIV infections among users fell 95%. So which failure are we discussing?"
+
+- **Opponent's Own Words** (Ch 10): "You're claiming fiscal responsibility. But in your 2019 testimony to Congress, you said—and I have the transcript here—'Deficits don't matter when we're investing in growth.' Those were your exact words. What changed?"
+
+**Structure**:
+1. Start with opponent's claim: "Now, you claim X..."
+2. Deploy receipt with source: "But according to [source], [stat/fact]..."
+3. End with follow-up pressure: "So when you say Y, what's your evidence?"
+
+**Quality Criteria**:
+- 2-4 sentences of realistic debate dialogue
+- Must include source attribution DURING deployment
+- Should end with question or rhetorical pivot
+- Tone should match receipt type (statistics = matter-of-fact, contradiction = incredulous)
+
 ## OUTPUT REQUIREMENTS
 Generate 6-10 receipts across different categories. Return valid JSON:
 {
@@ -202,6 +264,7 @@ Generate 6-10 receipts across different categories. Return valid JSON:
         "setup": "[How to introduce it for maximum impact]",
         "followUp": "[What to say immediately after to drive the point home]"
       },
+      "deploymentExample": "[2-4 sentence debate dialogue example showing this receipt in action]",
       "vulnerabilities": "[Possible counterarguments or weaknesses in this evidence]"
     }
   ]
