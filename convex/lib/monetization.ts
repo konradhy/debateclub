@@ -32,10 +32,14 @@ export const SUBSCRIPTION_ANNUAL_PRICE = 20000; // $200.00 (2 months free)
  * Stripe price IDs will be added when payment integration is implemented
  */
 export const TOKEN_PACKS = [
-  { tokens: 5, priceUsd: 1000, stripePriceId: "" }, // $10.00
-  { tokens: 15, priceUsd: 2500, stripePriceId: "" }, // $25.00
-  { tokens: 50, priceUsd: 7000, stripePriceId: "" }, // $70.00
+  { tokens: 5, priceUsd: 1000, stripePriceId: "price_1SkE9cCm9nndApXQgvYh6gYN" }, // $10.00
+  { tokens: 15, priceUsd: 2500, stripePriceId: "price_1SkE9dCm9nndApXQBxLJnFd2" }, // $25.00
+  { tokens: 50, priceUsd: 7000, stripePriceId: "price_1SkE9dCm9nndApXQHP173Roj" }, // $70.00
 ] as const;
+
+/** Subscription Stripe Price IDs */
+export const SUBSCRIPTION_MONTHLY_PRICE_ID = "price_1SkE9eCm9nndApXQaVYx2Hsc";
+export const SUBSCRIPTION_ANNUAL_PRICE_ID = "price_1SkE9eCm9nndApXQGDpPZijx";
 
 /**
  * Helper to get the start of the current billing month (midnight on the 1st)

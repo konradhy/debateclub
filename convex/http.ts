@@ -1,7 +1,9 @@
 import { httpRouter } from "convex/server";
 import { auth } from "./auth";
 import { httpAction } from "@cvx/_generated/server";
-import { internal } from "@cvx/_generated/api";
+import { internal, components } from "@cvx/_generated/api";
+import { registerRoutes } from "@convex-dev/stripe";
+import { Id } from "./_generated/dataModel";
 
 const http = httpRouter();
 
@@ -156,6 +158,109 @@ http.route({
       return new Response(null, { status: 200 });
     }
   }),
+});
+
+// Register Stripe webhook routes
+registerRoutes(http, components.stripe, {
+  webhookPath: "/stripe/webhook",
+  events: {
+    "checkout.session.completed": async (ctx, event) => {
+      const session = event.data.object;
+      const customerId = session.customer as string;
+      const metadata = session.metadata || {};
+      const subscriptionId = session.subscription as string | undefined;
+      const paymentIntentId = session.payment_intent as string | undefined;
+
+      const userId = metadata.userId as Id<"users">;
+
+      // Update user with Stripe customer ID if not already set
+      await ctx.runMutation(
+        internal.stripeWebhooks.INTERNAL_updateUserStripeCustomer,
+        {
+          userId,
+          stripeCustomerId: customerId,
+        },
+      );
+
+      if (metadata.type === "token_purchase") {
+        // Token purchase - grant tokens to scenario
+        const scenarioId = metadata.scenarioId;
+        const tokens = parseInt(metadata.packTokens);
+
+        await ctx.scheduler.runAfter(0, internal.tokens.INTERNAL_grantTokens, {
+          userId,
+          scenarioId,
+          amount: tokens,
+          reason: "purchase",
+          metadata: {
+            stripePaymentId: paymentIntentId || "",
+          },
+        });
+
+        console.log(
+          `[Stripe] Granted ${tokens} tokens to user ${userId} for scenario ${scenarioId}`,
+        );
+      } else if (metadata.type === "subscription") {
+        // Subscription - create or update subscription record
+        if (!subscriptionId) {
+          console.error(
+            "[Stripe] No subscription ID provided for subscription checkout",
+          );
+          return;
+        }
+
+        await ctx.scheduler.runAfter(
+          0,
+          internal.stripeWebhooks.handleSubscriptionCreated,
+          {
+            userId,
+            stripeCustomerId: customerId,
+            stripeSubscriptionId: subscriptionId,
+          },
+        );
+
+        console.log(
+          `[Stripe] Created ${metadata.plan} subscription for user ${userId}`,
+        );
+      }
+    },
+    "customer.subscription.updated": async (ctx, event) => {
+      const subscription = event.data.object;
+      const stripeSubscriptionId = subscription.id;
+      const status = subscription.status;
+      const currentPeriodStart = subscription.current_period_start * 1000; // Convert to ms
+      const currentPeriodEnd = subscription.current_period_end * 1000; // Convert to ms
+      const cancelAtPeriodEnd = subscription.cancel_at_period_end;
+
+      await ctx.runMutation(
+        internal.stripeWebhooks.INTERNAL_updateSubscription,
+        {
+          stripeSubscriptionId,
+          status,
+          currentPeriodStart,
+          currentPeriodEnd,
+          cancelAtPeriodEnd,
+        },
+      );
+
+      console.log(
+        `[Stripe] Updated subscription ${stripeSubscriptionId} to status: ${status}`,
+      );
+    },
+    "customer.subscription.deleted": async (ctx, event) => {
+      const subscription = event.data.object;
+      const stripeSubscriptionId = subscription.id;
+
+      await ctx.runMutation(
+        internal.stripeWebhooks.INTERNAL_cancelSubscription,
+        {
+          stripeSubscriptionId,
+        },
+      );
+
+      console.log(`[Stripe] Canceled subscription ${stripeSubscriptionId}`);
+    },
+  },
 });
 
 auth.addHttpRoutes(http);

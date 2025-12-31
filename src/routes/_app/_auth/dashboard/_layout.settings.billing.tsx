@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
+import { convexQuery } from "@convex-dev/react-query";
 import { api } from "~/convex/_generated/api";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useAction } from "convex/react";
 import { SCENARIOS } from "@/scenarios";
 import {
   Coins,
@@ -45,44 +46,49 @@ function BillingPage() {
     convexQuery(api.tokens.getTransactionHistory, { limit: 20 }),
   );
 
-  const { mutateAsync: testGrantTokens, isPending: isGranting } = useMutation({
-    mutationFn: useConvexMutation(api.tokens.testGrantTokens),
-  });
-  const { mutateAsync: testCreateSubscription, isPending: isSubscribing } =
-    useMutation({
-      mutationFn: useConvexMutation(api.tokens.testCreateSubscription),
-    });
-  const { mutateAsync: testCancelSubscription, isPending: isCanceling } =
-    useMutation({
-      mutationFn: useConvexMutation(api.tokens.testCancelSubscription),
-    });
+  // Stripe checkout actions
+  const createTokenCheckout = useAction(api.stripe.createTokenCheckout);
+  const createSubscriptionCheckout = useAction(api.stripe.createSubscriptionCheckout);
+
+  // Track loading state manually for actions
+  const [isPurchasing, setIsPurchasing] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const [selectedScenario, setSelectedScenario] = useState<string>("debate");
-  const [grantMessage, setGrantMessage] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const isSubscriber =
     subscriptionStatus && "isSubscriber" in subscriptionStatus
       ? subscriptionStatus.isSubscriber
       : false;
 
-  const handleTestGrant = async (amount: number) => {
-    const result = await testGrantTokens({
-      scenarioId: selectedScenario,
-      amount,
-    });
-    if (result.success) {
-      setGrantMessage(`Added ${amount} tokens to ${selectedScenario}`);
-      setTimeout(() => setGrantMessage(""), 3000);
+  // Handle success/error messages from Stripe redirect
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("purchase") === "success") {
+      const scenario = params.get("scenario") || "your selected scenario";
+      setSuccessMessage(`Tokens purchased successfully for ${scenario}!`);
+      setTimeout(() => setSuccessMessage(""), 5000);
+      // Clean up URL
+      window.history.replaceState({}, "", window.location.pathname);
+    } else if (params.get("purchase") === "canceled") {
+      setErrorMessage("Purchase canceled");
+      setTimeout(() => setErrorMessage(""), 5000);
+      window.history.replaceState({}, "", window.location.pathname);
     }
-  };
 
-  const handleTestSubscribe = async () => {
-    await testCreateSubscription({});
-  };
-
-  const handleTestCancel = async () => {
-    await testCancelSubscription({});
-  };
+    if (params.get("subscribe") === "success") {
+      setSuccessMessage("Welcome to Debate Club! You now have unlimited access.");
+      setTimeout(() => setSuccessMessage(""), 5000);
+      window.history.replaceState({}, "", window.location.pathname);
+    } else if (params.get("subscribe") === "canceled") {
+      setErrorMessage("Subscription canceled");
+      setTimeout(() => setErrorMessage(""), 5000);
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
 
   const scenarioList = Object.values(SCENARIOS);
 
@@ -100,6 +106,32 @@ function BillingPage() {
             Manage your subscription and token balance
           </p>
         </div>
+
+        {/* Success/Error Messages */}
+        {successMessage && (
+          <div
+            className="mb-6 rounded-lg px-4 py-3 text-sm font-medium border-2"
+            style={{
+              backgroundColor: `${colors.success}15`,
+              color: colors.success,
+              borderColor: colors.success,
+            }}
+          >
+            {successMessage}
+          </div>
+        )}
+        {errorMessage && (
+          <div
+            className="mb-6 rounded-lg px-4 py-3 text-sm font-medium border-2"
+            style={{
+              backgroundColor: `${colors.error}15`,
+              color: colors.error,
+              borderColor: colors.error,
+            }}
+          >
+            {errorMessage}
+          </div>
+        )}
 
         <div className="flex flex-col gap-6">
           {/* Subscription Status Card */}
@@ -225,7 +257,7 @@ function BillingPage() {
 
                   <div className="flex gap-4 mb-4">
                     <div
-                      className="flex-1 rounded-lg border-2 p-4 text-center"
+                      className="flex-1 rounded-lg border-2 p-4 text-center cursor-pointer transition-all hover:border-opacity-60"
                       style={{ borderColor: colors.primary }}
                     >
                       <p
@@ -234,12 +266,31 @@ function BillingPage() {
                       >
                         $20
                       </p>
-                      <p className="text-sm" style={{ color: colors.textMuted }}>
+                      <p className="text-sm mb-3" style={{ color: colors.textMuted }}>
                         /month
                       </p>
+                      <button
+                        onClick={async () => {
+                          try {
+                            setIsCheckingOut(true);
+                            const result = await createSubscriptionCheckout({ plan: "monthly" });
+                            if (result?.url) window.location.href = result.url;
+                          } catch (error) {
+                            console.error("Subscription checkout error:", error);
+                            setErrorMessage("Failed to create checkout session");
+                          } finally {
+                            setIsCheckingOut(false);
+                          }
+                        }}
+                        disabled={isCheckingOut}
+                        className="w-full rounded-lg px-4 py-2 text-sm font-medium text-white transition-all hover:brightness-110"
+                        style={{ backgroundColor: colors.primary }}
+                      >
+                        {isCheckingOut ? "Loading..." : "Subscribe Monthly"}
+                      </button>
                     </div>
                     <div
-                      className="flex-1 rounded-lg border-2 p-4 text-center relative"
+                      className="flex-1 rounded-lg border-2 p-4 text-center relative cursor-pointer transition-all hover:border-opacity-60"
                       style={{
                         borderColor: colors.primary,
                         backgroundColor: `${colors.primary}05`,
@@ -257,49 +308,34 @@ function BillingPage() {
                       >
                         $200
                       </p>
-                      <p className="text-sm" style={{ color: colors.textMuted }}>
+                      <p className="text-sm mb-3" style={{ color: colors.textMuted }}>
                         /year
                       </p>
+                      <button
+                        onClick={async () => {
+                          try {
+                            setIsCheckingOut(true);
+                            const result = await createSubscriptionCheckout({ plan: "annual" });
+                            if (result?.url) window.location.href = result.url;
+                          } catch (error) {
+                            console.error("Subscription checkout error:", error);
+                            setErrorMessage("Failed to create checkout session");
+                          } finally {
+                            setIsCheckingOut(false);
+                          }
+                        }}
+                        disabled={isCheckingOut}
+                        className="w-full rounded-lg px-4 py-2 text-sm font-medium text-white transition-all hover:brightness-110"
+                        style={{ backgroundColor: colors.primary }}
+                      >
+                        {isCheckingOut ? "Loading..." : "Subscribe Annually"}
+                      </button>
                     </div>
                   </div>
                 </>
               )}
             </div>
 
-            <div
-              className="flex min-h-14 w-full items-center justify-between rounded-b-xl border-t-2 px-6 py-3"
-              style={{
-                borderColor: colors.border,
-                backgroundColor: colors.background,
-              }}
-            >
-              <p className="text-sm" style={{ color: colors.textLight }}>
-                {isSubscriber
-                  ? "Manage or cancel your subscription"
-                  : "For Testing:"}
-              </p>
-              {isSubscriber ? (
-                <button
-                  type="button"
-                  className="rounded-lg px-4 py-2 text-sm font-medium transition-all hover:bg-red-50"
-                  style={{ color: colors.error }}
-                  onClick={handleTestCancel}
-                  disabled={isCanceling}
-                >
-                  {isCanceling ? "Canceling..." : "Simulate Cancel"}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="rounded-lg px-5 py-2 text-sm font-medium text-white transition-all hover:brightness-110"
-                  style={{ backgroundColor: colors.primary }}
-                  onClick={handleTestSubscribe}
-                  disabled={isSubscribing}
-                >
-                  {isSubscribing ? "Subscribing..." : "Simulate Subscribe"}
-                </button>
-              )}
-            </div>
           </div>
 
           {/* Token Balances Grid */}
@@ -449,9 +485,24 @@ function BillingPage() {
                         borderColor: colors.border,
                         color: colors.text,
                       }}
-                      disabled
+                      onClick={async () => {
+                        try {
+                          setIsPurchasing(true);
+                          const result = await createTokenCheckout({
+                            scenarioId: selectedScenario,
+                            packIndex: 0,
+                          });
+                          if (result?.url) window.location.href = result.url;
+                        } catch (error) {
+                          console.error("Token checkout error:", error);
+                          setErrorMessage("Failed to create checkout session");
+                        } finally {
+                          setIsPurchasing(false);
+                        }
+                      }}
+                      disabled={isPurchasing}
                     >
-                      Purchase
+                      {isPurchasing ? "Loading..." : "Purchase"}
                     </button>
                   </div>
 
@@ -498,9 +549,24 @@ function BillingPage() {
                         borderColor: colors.border,
                         color: colors.text,
                       }}
-                      disabled
+                      onClick={async () => {
+                        try {
+                          setIsPurchasing(true);
+                          const result = await createTokenCheckout({
+                            scenarioId: selectedScenario,
+                            packIndex: 1,
+                          });
+                          if (result?.url) window.location.href = result.url;
+                        } catch (error) {
+                          console.error("Token checkout error:", error);
+                          setErrorMessage("Failed to create checkout session");
+                        } finally {
+                          setIsPurchasing(false);
+                        }
+                      }}
+                      disabled={isPurchasing}
                     >
-                      Purchase
+                      {isPurchasing ? "Loading..." : "Purchase"}
                     </button>
                   </div>
 
@@ -544,75 +610,29 @@ function BillingPage() {
                         borderColor: colors.border,
                         color: colors.text,
                       }}
-                      disabled
+                      onClick={async () => {
+                        try {
+                          setIsPurchasing(true);
+                          const result = await createTokenCheckout({
+                            scenarioId: selectedScenario,
+                            packIndex: 2,
+                          });
+                          if (result?.url) window.location.href = result.url;
+                        } catch (error) {
+                          console.error("Token checkout error:", error);
+                          setErrorMessage("Failed to create checkout session");
+                        } finally {
+                          setIsPurchasing(false);
+                        }
+                      }}
+                      disabled={isPurchasing}
                     >
-                      Purchase
+                      {isPurchasing ? "Loading..." : "Purchase"}
                     </button>
                   </div>
                 </div>
-
-                {grantMessage && (
-                  <div
-                    className="mb-4 rounded-lg px-4 py-2 text-sm"
-                    style={{
-                      backgroundColor: `${colors.success}15`,
-                      color: colors.success,
-                    }}
-                  >
-                    {grantMessage}
-                  </div>
-                )}
               </div>
 
-              <div
-                className="flex min-h-14 w-full items-center justify-between rounded-b-xl border-t-2 px-6 py-3"
-                style={{
-                  borderColor: colors.border,
-                  backgroundColor: colors.background,
-                }}
-              >
-                <p className="text-sm" style={{ color: colors.textLight }}>
-                  For Testing:
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    className="rounded-lg border-2 px-3 py-1.5 text-sm font-medium transition-all hover:bg-gray-50"
-                    style={{
-                      borderColor: colors.border,
-                      color: colors.text,
-                    }}
-                    onClick={() => handleTestGrant(5)}
-                    disabled={isGranting}
-                  >
-                    Grant 5
-                  </button>
-                  <button
-                    type="button"
-                    className="rounded-lg border-2 px-3 py-1.5 text-sm font-medium transition-all hover:bg-gray-50"
-                    style={{
-                      borderColor: colors.border,
-                      color: colors.text,
-                    }}
-                    onClick={() => handleTestGrant(15)}
-                    disabled={isGranting}
-                  >
-                    Grant 15
-                  </button>
-                  <button
-                    type="button"
-                    className="rounded-lg border-2 px-3 py-1.5 text-sm font-medium transition-all hover:bg-gray-50"
-                    style={{
-                      borderColor: colors.border,
-                      color: colors.text,
-                    }}
-                    onClick={() => handleTestGrant(50)}
-                    disabled={isGranting}
-                  >
-                    Grant 50
-                  </button>
-                </div>
-              </div>
             </div>
           )}
 

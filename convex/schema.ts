@@ -15,6 +15,7 @@ const schema = defineSchema({
     phoneVerificationTime: v.optional(v.number()),
     isAnonymous: v.optional(v.boolean()),
     isAdmin: v.optional(v.boolean()),
+    stripeCustomerId: v.optional(v.string()),
   }).index("email", ["email"]),
   debates: defineTable({
     userId: v.id("users"),
