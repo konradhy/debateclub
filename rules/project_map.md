@@ -2,15 +2,15 @@
 
 **Current architecture and codebase structure. Updated as features are added.**
 
-**Last Updated**: December 30, 2025 (Chapter 17)
+**Last Updated**: December 31, 2025 (Chapter 19 - Phase 4 Complete)
 
 ---
 
 ## How This Connects
 
 - **PROJECT_MAP.md** (this file) = what currently exists
-- **DEV_JOURNAL.md** = how we got here (Chapters 0-11, rich implementation details)
-- **DEV_JOURNAL_2.md** = continuation (Chapters 12-17, current chapter)
+- **DEV_JOURNAL.md** = how we got here (Chapters 0-12, rich implementation details)
+- **dev_journal_2.md** = continuation (Chapters 13-19+, current chapters)
 - **ROADMAP.md** = where we're going
 
 ---
@@ -179,6 +179,22 @@ orator/
 | `subscriberUsage` | Hidden monthly cap tracking (100/month) | `userId`, `periodStart`, `debateCount`, `notifiedOwner` |
 | `pendingGrants` | Marketing funnel grant links | `grantToken`, `scenarioId`, `tokenAmount`, `claimed`, `claimedBy`, `utmSource` |
 | `subscriptions` | User subscription status | `userId`, `status`, `stripeSubscriptionId`, `currentPeriodEnd` |
+
+### Cost Tracking Table (Ch.19)
+
+| Table | Purpose | Key Fields |
+|-------|---------|------------|
+| `apiCosts` | API usage cost tracking | `service` (openrouter/vapi/firecrawl/gemini), `cost` (USD cents), `userId`, `debateId`, `opponentId`, `phase` (research/prep/debate/analysis), `details` (tokens, duration, etc), `timestamp` |
+
+**Phase Tracking**: All cost records include `phase` field enabling breakdown by workflow stage (Research → Prep → Debate → Analysis).
+
+**Cost Estimates** (as of Dec 2025):
+- **OpenRouter**: Accurate tracking via API response
+- **Vapi**: Accurate tracking via client timer (Ch.19 fix)
+- **Firecrawl**: ~$0.01 per search (estimate)
+- **Gemini**: $2.70 per session (verified from Dec 2025 billing, see `rules/GEMINI_COST_PROOF.md`)
+
+**Critical Bug Fixed (Dec 31, 2025)**: `geminiPrep.ts:272` had wrong hardcoded value (500 cents = $5.00 with incorrect "$0.05" comment). Corrected to 270 cents = $2.70 based on actual billing analysis.
 
 ### Opponent Context Fields (Ch.7)
 
@@ -607,6 +623,9 @@ npx convex deploy       # Deploy backend
 
 | Date | Change | Chapter |
 |------|--------|---------|
+| Dec 31, 2025 | **Gemini cost bug fix**: Corrected hardcoded value from $5.00 to $2.70 | Bug Fix |
+| Dec 31, 2025 | Cost Monitoring & Control - Phase tracking, topic grouping, accurate Vapi duration | Ch.19 |
+| Dec 30, 2025 | Stripe Payment Integration - Webhooks, checkout, customer portal | Ch.18 |
 | Dec 30, 2025 | Token Management UI - Admin panel, Billing page | Ch.17 |
 | Dec 30, 2025 | Token Economy - Core implementation | Ch.16 |
 | Dec 29, 2025 | prep.tsx refactoring - Component extraction (3,130→486 lines) | Ch.15 |
@@ -695,12 +714,13 @@ After Ch.15 refactoring, largest application files:
 ## What's Not Yet Implemented
 
 From roadmap and dev journals:
-- Stripe integration for actual purchases (test mutations exist)
 - Email notifications for subscriber cap alerts
+- Budget alerts and cost projections (R-4.3.8)
 - Mobile apps
 - Video recording of debates
 - User-created custom scenarios
+- Removal of test mutations (currently available for dev/QA)
 
 ---
 
-*This document reflects the codebase as of December 30, 2025 (Chapter 17).*
+*This document reflects the codebase as of December 31, 2025 (Chapter 19 - Phase 4 Complete).*

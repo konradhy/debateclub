@@ -3,8 +3,31 @@
 **Session-by-session record of development progress. Each chapter is immutable once completed.**
 
 > **📚 Note**: This journal became too long. **Continue new sessions in `dev_journal_2.md`**.
-> 
+>
 > **🔍 If you're in a jam** and need rich context on how a feature was built, why a decision was made, or how a tricky problem was solved — this journal has the full story. The chapters below contain detailed implementation notes, debugging lessons, and architectural decisions that may not be obvious from just reading the code.
+
+---
+
+# ⚠️ CRITICAL WARNING FOR AI ASSISTANTS ⚠️
+
+**THIS IS VOLUME 1 (Chapters 0-12). THERE IS A VOLUME 2!**
+
+📖 **`dev_journal_2.md`** contains Chapters 13-19+ including:
+- Chapter 16: **Token Economy & Monetization (Phase 4.1)**
+- Chapter 17: **Token Management UI (Phase 4.2)**
+- Chapter 18: **Stripe Integration (Phase 4.2)**
+- Chapter 19: **Cost Monitoring & Control (Phase 4.3)**
+
+**DO NOT** assume this file contains all documentation. **ALWAYS** check for `dev_journal_2.md` when looking for recent implementation details, especially for:
+- Phase 4 (Monetization)
+- UI redesigns (Dashboard, Settings)
+- Refactoring work (prep.tsx component extraction)
+- Debate style/difficulty architecture
+- Cost tracking improvements
+
+**File naming**: It's lowercase `dev_journal_2.md`, not `DEV_JOURNAL_2.md`. Use exact case when searching.
+
+If you tell the user "there's no documentation for Phase 4" or "the dev journal ends at Chapter 12" **YOU ARE WRONG**. Read `dev_journal_2.md` first!
 
 ---
 

@@ -298,6 +298,8 @@ export const DebateScenario: ScenarioConfig = {
 - Keep responses under 30 seconds of speech
 - Focus ONLY on debating - do not mention analysis, logging, or techniques
 - Use evidence and facts to support your position
+- NEVER include stage directions, emotional descriptions, or parentheticals (e.g., "sounds annoyed", "*sighs*", etc.)
+- Speak only as your character would speak - no narration or meta-commentary
 
 {{ADDITIONAL_CONTEXT}}`,
 

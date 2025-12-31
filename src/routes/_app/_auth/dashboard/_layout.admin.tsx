@@ -810,7 +810,8 @@ function AdminPanel() {
                 </h3>
                 <p className="text-sm" style={{ color: colors.text }}>
                   <strong>OpenRouter & Vapi:</strong> Accurate tracking.{" "}
-                  <strong>Firecrawl & Gemini:</strong> Estimates (~$0.01/search, ~$0.05/session).
+                  <strong>Firecrawl:</strong> Estimate (~$0.01/search).{" "}
+                  <strong>Gemini:</strong> Estimate (~$2.70/session avg from Dec 2025 billing).
                 </p>
               </div>
             </div>
@@ -833,7 +834,7 @@ function AdminPanel() {
                 <p className="text-xs mb-4" style={{ color: colors.textMuted }}>
                   Cross-reference our tracking with the official service dashboards
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                   {/* OpenRouter */}
                   <a
                     href="https://openrouter.ai/activity"
@@ -888,6 +889,25 @@ function AdminPanel() {
                     </span>
                     <span className="text-xs" style={{ color: colors.textMuted }}>
                       Weekly usage breakdown
+                    </span>
+                  </a>
+
+                  {/* Gemini (Google AI Studio) */}
+                  <a
+                    href="https://aistudio.google.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col gap-1 rounded-lg border-2 p-3 transition-all hover:border-opacity-70"
+                    style={{
+                      borderColor: colors.border,
+                      backgroundColor: colors.background,
+                    }}
+                  >
+                    <span className="text-sm font-medium" style={{ color: colors.text }}>
+                      Google AI Studio
+                    </span>
+                    <span className="text-xs" style={{ color: colors.textMuted }}>
+                      Gemini API usage & billing
                     </span>
                   </a>
                 </div>

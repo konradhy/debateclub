@@ -556,9 +556,6 @@ ${opponent.additionalContext}`
               "conversation-update",
             ],
         }),
-        ...(scenario.assistant.interruptionThreshold !== undefined && {
-          backgroundSound: "office" as const,
-        }),
         // Server URL for webhooks - REQUIRED for transient assistants
         // This tells Vapi where to send transcript and other events
         // We append debateId to ensuring it's available even if metadata propagation fails

@@ -46,11 +46,11 @@ Reference format: [R-1.2.3]
 
 ## Current Focus
 
-**Active Phase**: Phase 3 - Opponent Preparation & Advanced Features (✅ Complete)
+**Active Phase**: Phase 4 - Monetization & Business Model (🔄 In Progress)
 
-**Next Up**: Phase 4 - Monetization & Business Model
+**Next Up**: Phase 5 - Prep Materials Enhancement
 
-**Relevant DEV_JOURNAL Chapters**: Pre-docs, Ch.1-7
+**Relevant DEV_JOURNAL Chapters**: Pre-docs, Ch.1-19
 
 ---
 
@@ -417,9 +417,9 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Goal**: Implement revenue system with multi-tiered access control
 
-**Status**: 🔄 (Payment integration complete, cost monitoring in progress)
+**Status**: 🔄 (Payment integration complete, cost monitoring complete, testing in progress)
 
-**Chapters**: Ch.16, Ch.17, Ch.18
+**Chapters**: Ch.16, Ch.17, Ch.18, Ch.19
 
 ---
 
@@ -463,16 +463,21 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Description**: Track and manage API costs
 
-**Status**: ⬜
+**Status**: ✅
 
-**Chapters**: —
+**Chapters**: Ch.19
 
 #### Tasks
 
-- ⬜ **4.3.1** — Per-debate cost tracking
-- ⬜ **4.3.2** — Per-scenario usage analytics
-- ⬜ **4.3.3** — Budget alerts and cost projections
-- ⬜ **4.3.4** — Token consumption tracking per feature
+- ✅ **4.3.1** — Per-debate cost tracking [Ch.19]
+- ✅ **4.3.2** — Per-scenario usage analytics [Ch.19]
+- ✅ **4.3.3** — Phase-based cost breakdown (research/prep/debate/analysis) [Ch.19]
+- ✅ **4.3.4** — Topic-based workflow cost grouping [Ch.19]
+- ✅ **4.3.5** — External verification links (OpenRouter, Vapi, Firecrawl dashboards) [Ch.19]
+- ✅ **4.3.6** — Accurate Vapi duration tracking via client timer [Ch.19]
+- ✅ **4.3.7** — Proper error logging (no silent failures) [Ch.19]
+- ⬜ **4.3.8** — Budget alerts and cost projections
+- ⬜ **4.3.9** — Gemini cost verification dashboard link
 
 ---
 

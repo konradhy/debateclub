@@ -267,9 +267,9 @@ For each finding, include specific sources, dates, and verifiable claims. Cover 
 
     await updateProgress("complete", "Strategy generation complete!");
 
-    // Record Gemini cost estimate (~$0.05 per research session)
+    // Record Gemini cost estimate (~$2.70 per research session, verified from Dec 2025 billing)
     try {
-      const geminiCostCents = 500; // $0.05 in cents
+      const geminiCostCents = 270; // $2.70 in cents
       console.log(`[generateStrategyGemini] Recording Gemini cost: ${geminiCostCents} cents for 1 session (prep phase)`);
       await ctx.runMutation(internal.costs.INTERNAL_recordApiCost, {
         service: "gemini",
