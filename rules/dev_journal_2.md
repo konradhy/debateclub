@@ -1927,3 +1927,419 @@ Potential refactoring targets identified in audit:
 
 ---
 
+## Chapter 16: Token Economy Monetization — Core Implementation
+
+### TL;DR
+
+Implemented the token-based monetization system from `MONETIZATION_STRATEGY_BRIEF.md` and `MONETIZATION_IMPLEMENTATION.md`. Built per-scenario token wallets, transaction ledger, subscriber usage tracking, and marketing funnel grant system. Security-first approach using internal mutations for sensitive operations. Token consumption on debate END (not start) for better UX. Verified end-to-end: grant link → claim → debate → token consumed (10 → 9).
+
+**Roadmap Items Advanced**: Phase 4 - Monetization & Business Model (Core Token Logic)
+
+---
+
+### Quick Reference
+
+**New Tables** (convex/schema.ts):
+- `scenarioTokens` - Per-user, per-scenario token balances
+- `tokenTransactions` - Audit ledger for all token movements
+- `subscriberUsage` - Hidden monthly cap tracking for subscribers (100/month)
+- `pendingGrants` - Marketing funnel grant tokens (one-time use URLs)
+- `subscriptions` - User subscription status
+
+**New Files**:
+- `convex/lib/monetization.ts` - Configuration constants
+- `convex/tokens.ts` - All token-related queries/mutations
+- `src/routes/_app/claim.$token.tsx` - Grant claim page
+- `src/components/TokenBalance.tsx` - Balance display component
+
+**Security Model**:
+- Public queries require authentication via `ctx.auth.getUserIdentity()`
+- Sensitive operations use `internalMutation` (not callable from client)
+- Token grants/consumption only via internal functions
+- Users can only access their own token data (userId filter on all queries)
+
+---
+
+### Design Decisions
+
+**Why Per-Scenario Wallets?**
+Marketing funnel story: Doctor clicks ad → gets 10 tokens for medical scenarios only. The funnel promise matches delivered value. Cannot game by using medical tokens on legal scenarios.
+
+**Why Token Consumption on END?**
+If user starts debate and network fails, no token lost. Better UX than consuming on start and needing refund logic for incomplete debates.
+
+**Why Opponent Creation Limits?**
+Anti-abuse: User with 2 tokens can't create 50 opponents "just in case." Limited to tokens + 2 buffer (OPPONENT_CREATION_BUFFER constant).
+
+**Why Subscriber "Unlimited" with Hidden Cap?**
+UX feels unlimited but prevents runaway costs. 100 debates/month (SUBSCRIBER_MONTHLY_CAP) with owner notification on excess. Users never blocked, just tracked.
+
+---
+
+### Implementation Details
+
+#### Core Token Functions (convex/tokens.ts)
+
+**Public Queries (auth required)**:
+```typescript
+// Get balance for specific scenario
+getBalance({ scenarioId }) → number
+
+// Get all balances for current user
+getAllBalances() → Record<scenarioId, balance>
+
+// Check if user has access (subscriber OR has tokens)
+checkAccess({ scenarioId }) → { hasAccess, isSubscriber, balance, reason }
+
+// Anti-abuse check for opponent creation
+canCreateOpponent({ scenarioId }) → boolean
+```
+
+**Internal Mutations (not client-callable)**:
+```typescript
+// Grant tokens (called by webhooks, admin)
+INTERNAL_grantTokens({ userId, scenarioId, amount, reason, metadata })
+
+// Consume token (called on debate completion)
+INTERNAL_consumeToken({ debateId, userId, scenarioId })
+
+// Create grant link (admin-only)
+INTERNAL_createGrantLink({ scenarioId, amount, utmSource?, utmCampaign? })
+```
+
+**Grant Claim Flow**:
+```typescript
+// Public query - check grant validity (for pre-login UI)
+checkGrantToken({ token }) → { valid, scenarioId, amount, isExpired }
+
+// Public mutation - claim grant (auth required)
+claimGrant({ token }) → { success, scenarioId, reason }
+```
+
+---
+
+#### Token Consumption Integration (convex/http.ts)
+
+Token consumed in end-of-call-report webhook handler:
+```typescript
+case "end-of-call-report": {
+  // ... existing analysis logic ...
+
+  // After successful completion, consume token
+  await ctx.runMutation(internal.tokens.INTERNAL_consumeToken, {
+    debateId: debate._id,
+    userId: debate.userId,
+    scenarioId: debate.scenarioId,
+  });
+}
+```
+
+---
+
+#### Access Gating (convex/debates.ts, convex/opponents.ts)
+
+**Debate Start Gate**:
+```typescript
+// In debates.create mutation
+const access = await ctx.runQuery(api.tokens.checkAccess, {
+  scenarioId: opponent.scenarioId,
+});
+if (!access.hasAccess) {
+  throw new Error(`No tokens available for this scenario`);
+}
+```
+
+**Opponent Creation Gate**:
+```typescript
+// In opponents.create mutation
+const canCreate = await ctx.runQuery(api.tokens.canCreateOpponent, {
+  scenarioId,
+});
+if (!canCreate) {
+  throw new Error(`Cannot create more opponents. Start a debate or get more tokens.`);
+}
+```
+
+---
+
+#### Marketing Funnel Grant Page (src/routes/_app/claim.$token.tsx)
+
+Located under `_app` layout to access ConvexAuthProvider.
+
+**Flow**:
+1. User visits `/claim/{token}` from marketing email/ad
+2. `checkGrantToken` validates token (works pre-login)
+3. If not authenticated: store token in sessionStorage, show signup prompt
+4. After login: `claimGrant` mutation credits tokens
+5. Redirect to opponent-profile with claimed scenario pre-selected
+
+**One-Time Use Enforcement**:
+- `pendingGrants` table tracks: token, createdAt, claimedAt, claimedBy
+- `claimGrant` checks if already claimed (returns error)
+- Checks if user already has grant for scenario (prevents re-claim)
+- Transaction ledger records source for analytics
+
+---
+
+#### UI Integration (opponent-profile.tsx)
+
+**Scenario Selector Changes**:
+- Fetches `getAllBalances()` and user subscription status
+- Calculates `hasAccess` per scenario: `isSubscriber || (balance > 0)`
+- Accessible scenarios: normal appearance with balance badge
+- Inaccessible scenarios: grayed out, disabled click
+- No lock icons (visual weight sufficient)
+
+**Balance Display**:
+- Subscribers: "Unlimited" with infinity icon
+- Token users: "{balance} tokens" with coin icon
+- No tokens: grayed out (no explicit "No tokens" text)
+
+---
+
+### Files Modified
+
+| File | Changes |
+|------|---------|
+| `convex/schema.ts` | +5 tables (scenarioTokens, tokenTransactions, subscriberUsage, pendingGrants, subscriptions) |
+| `convex/lib/monetization.ts` | NEW - Constants (caps, amounts, prices) |
+| `convex/tokens.ts` | NEW - All token queries/mutations |
+| `convex/http.ts` | +token consumption in webhook |
+| `convex/debates.ts` | +access check before debate start |
+| `convex/opponents.ts` | +anti-abuse check before creation |
+| `src/routes/_app/claim.$token.tsx` | NEW - Grant claim page |
+| `src/routes/_app/_auth/onboarding/_layout.username.tsx` | +pending grant claim after signup |
+| `src/routes/_app/_auth/dashboard/opponent-profile.tsx` | +token balance display, scenario gating |
+
+---
+
+### Testing Performed
+
+1. **Grant Link Creation**: Via Convex dashboard `internal.tokens.INTERNAL_createGrantLink`
+2. **Grant Claim**: Visited `/claim/{token}`, authenticated, tokens credited
+3. **Balance Display**: Scenario popover shows balance correctly
+4. **Debate Completion**: Balance decremented 10 → 9 after successful debate
+5. **Access Gating**: Inaccessible scenarios visually grayed out
+
+---
+
+### What Remains (Phase 4 Continuation)
+
+- **Stripe Integration**: Checkout sessions for token purchases
+- **Webhook Handler**: Stripe webhook for payment confirmation → token grant
+- **Purchase UI**: Token pack selection in billing settings
+- **Admin Dashboard**: Grant link management (currently via Convex dashboard)
+- **Subscriber Flow**: Subscription purchase → subscription table update
+
+---
+
+### Technical Debt
+
+None introduced. Clean separation between:
+- Public queries (auth-gated, user-scoped)
+- Internal mutations (system-only, full access)
+- UI components (display-only, no business logic)
+
+---
+
+### Security Notes
+
+1. **No Cross-User Data Exposure**: All queries filter by authenticated userId
+2. **Internal Functions for Writes**: Grant/consume only via `internalMutation`
+3. **Grant Token Validation**: Server-side checks for expiration, prior claims
+4. **No Client Token Manipulation**: Balance display is read-only UI
+
+---
+
+## Chapter 17: Token Management UI — Admin Panel & Billing Page
+
+### TL;DR
+
+Built the complete Token Management UI: Admin Panel for creating/managing marketing grant links, Billing page for subscription management and token purchases, settings sidebar with Billing tab, Admin header link for admin users, and locked scenario modal. Includes test mutations for simulating purchases/subscriptions without Stripe integration.
+
+**Roadmap Items Advanced**: Phase 4 - Monetization & Business Model (UI Layer)
+
+---
+
+### Quick Reference
+
+**New Routes**:
+- `/dashboard/admin` - Admin panel for grant link management
+- `/dashboard/settings/billing` - User billing and token management
+
+**Pricing**:
+- Subscription: $20/month, $200/year (2 months free)
+- Token Packs: 5/$10, 15/$25 (17% off), 50/$70 (30% off)
+
+**Admin Features**:
+- Create marketing grant links with scenario, amount, expiration, UTM params
+- View all grant links with status (Active/Claimed/Expired)
+- Copy link, view stats modal with claimer details
+- Manual token grant by user email
+
+---
+
+### Implementation Details
+
+#### Schema Update
+
+Added `isAdmin` field to users table:
+```typescript
+users: defineTable({
+  // ...existing fields
+  isAdmin: v.optional(v.boolean()),
+})
+```
+
+#### New Convex Functions (convex/tokens.ts)
+
+**Admin Queries (admin-gated)**:
+- `getAllGrantLinks` - List all pending grants with claim counts
+- `getGrantLinkStats` - Detailed stats for specific grant link
+- `createGrantLink` - Create marketing grant link (public mutation, admin check)
+- `deactivateGrant` - Mark grant as expired
+- `adminGrantTokens` - Grant tokens to user by email
+
+**User Queries**:
+- `getTransactionHistory` - Paginated (20 items) transaction history
+
+**Test Mutations** (for development without Stripe):
+- `testGrantTokens` - Grant tokens to current user
+- `testCreateSubscription` - Create active subscription
+- `testCancelSubscription` - Cancel subscription
+
+#### Billing Page (src/routes/_app/_auth/dashboard/_layout.settings.billing.tsx)
+
+**Sections**:
+1. **Subscription Status Card**
+   - Active: Shows plan details, period dates, simulate cancel button
+   - Inactive: Upgrade CTA with monthly/annual pricing, simulate subscribe button
+
+2. **Token Balances Grid**
+   - Card per scenario from SCENARIOS registry
+   - Shows balance or "Unlimited" for subscribers
+   - Visual distinction for zero-balance scenarios
+
+3. **Purchase Tokens**
+   - Scenario selector dropdown
+   - 3 pack options with "Popular" and "Best Value" badges
+   - Test grant buttons (Grant 5/15/50)
+
+4. **Transaction History**
+   - Paginated list with relative timestamps
+   - Color-coded: green for credits, red for debits
+   - Shows scenario, amount, reason
+
+#### Admin Panel (src/routes/_app/_auth/dashboard/_layout.admin.tsx)
+
+**Access Control**: Checks `user.isAdmin`, redirects non-admins to dashboard.
+
+**Sections**:
+1. **Quick Stats** - Active links count, total claims count
+
+2. **Create Grant Link Form**
+   - Scenario dropdown
+   - Token amount input
+   - Expiration selector (30/60 days/Never)
+   - UTM Source & Campaign inputs
+   - Success modal with copy-to-clipboard
+
+3. **Grant Links Table**
+   - Columns: Token, Scenario, Amount, Created, Status, Actions
+   - Actions: Copy link, View stats
+   - Stats modal: full details, claimer info
+
+4. **Manual Token Grant**
+   - User email lookup
+   - Scenario, amount, reason (Admin Grant/Refund)
+   - Success/error feedback
+
+#### Settings Sidebar Update
+
+Added "Billing" tab to `_layout.settings.tsx`:
+```typescript
+<Link to="/dashboard/settings/billing">
+  Billing
+</Link>
+```
+
+#### Dashboard Header Update
+
+Added conditional Admin link in `dashboard-header.tsx`:
+```typescript
+{user.isAdmin && (
+  <Link to="/dashboard/admin">Admin</Link>
+)}
+```
+
+#### Locked Scenario Modal
+
+Added to `opponent-profile.tsx` - when clicking locked scenario in popover:
+- Shows scenario name with "Locked" title
+- "Buy Tokens" button → navigates to billing
+- "Upgrade to Pro" button → navigates to billing
+- Cancel button to dismiss
+
+---
+
+### Files Created/Modified
+
+| File | Action |
+|------|--------|
+| `convex/schema.ts` | +isAdmin field to users table |
+| `convex/lib/monetization.ts` | +subscription pricing constants |
+| `convex/tokens.ts` | +admin queries, test mutations, transaction history |
+| `src/routes/_app/_auth/dashboard/_layout.settings.tsx` | +Billing tab in sidebar |
+| `src/routes/_app/_auth/dashboard/_layout.settings.billing.tsx` | NEW - Full billing page |
+| `src/routes/_app/_auth/dashboard/_layout.admin.tsx` | NEW - Admin panel |
+| `src/ui/dashboard-header.tsx` | +Admin link for admin users |
+| `src/routes/_app/_auth/dashboard/opponent-profile.tsx` | +locked scenario modal |
+
+---
+
+### Testing Flow
+
+**As Regular User**:
+1. Go to Settings → Billing
+2. See "Upgrade to Pro" card with pricing
+3. View token balances per scenario
+4. Click "Grant 5" test button → tokens added
+5. See transaction in history
+6. Go to opponent-profile → scenario now accessible
+
+**As Admin** (set `isAdmin: true` in DB):
+1. See "Admin" link in header
+2. Create grant link with scenario, amount, UTM
+3. Copy generated link
+4. View in links table, check stats
+5. Manual grant tokens to user by email
+
+**Subscription Testing**:
+1. Click "Simulate Subscribe" → see Pro status
+2. All scenarios show "Unlimited"
+3. Click "Simulate Cancel" → reverts to token mode
+
+---
+
+### What Remains (Phase 4 Completion)
+
+- **Stripe Integration**: Connect real checkout sessions
+- **Webhook Handler**: Stripe → token grant on successful payment
+- **Production Purchase Buttons**: Enable actual purchases
+- **Email Notifications**: Subscriber cap alerts to owner
+
+---
+
+### Design Decisions
+
+**Why Test Mutations Visible to All Users?**
+Enables manual QA without Stripe integration. Will be removed or hidden behind dev flag before production.
+
+**Why Admin Check in Public Mutations?**
+Simpler than creating separate internal mutations + HTTP endpoints. Admin status checked server-side, unauthorized requests return error.
+
+**Why Locked Modal Instead of Just Disabled?**
+Better UX - user understands why scenario is locked and has clear path to unlock (buy tokens or subscribe).
+
+---
+

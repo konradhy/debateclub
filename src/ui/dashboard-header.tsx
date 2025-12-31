@@ -45,6 +45,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
     // Route matching helpers
     const isDashboardPath = matchRoute({ to: DashboardRoute.fullPath });
     const isSettingsPath = matchRoute({ to: SettingsRoute.fullPath });
+    const isAdminPath = matchRoute({ to: "/dashboard/admin" });
 
     if (!user) return null;
 
@@ -93,6 +94,20 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                         >
                             Settings
                         </Link>
+
+                        {user.isAdmin && (
+                            <Link
+                                to="/dashboard/admin"
+                                className={cn(
+                                    `${buttonVariants({ variant: "ghost", size: "sm" })} text-sm font-medium transition-colors`,
+                                    isAdminPath
+                                        ? "bg-black/5 text-primary"
+                                        : "text-primary/70 hover:text-primary hover:bg-black/5"
+                                )}
+                            >
+                                Admin
+                            </Link>
+                        )}
                     </nav>
                 </div>
 

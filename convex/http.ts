@@ -39,8 +39,10 @@ http.route({
 
           const transcriptText = message.transcript || "";
           const speaker = message.role === "user" ? "user" : "assistant";
-          
-          console.log(`[transcript] Storing: ${speaker} - "${transcriptText.substring(0, 50)}..."`);
+
+          console.log(
+            `[transcript] Storing: ${speaker} - "${transcriptText.substring(0, 50)}..."`,
+          );
 
           // Store transcript (no real-time analysis - full analysis happens at end of debate)
           try {
@@ -50,7 +52,9 @@ http.route({
               text: transcriptText,
               timestamp: Date.now(),
             });
-            console.log(`[transcript] Successfully stored exchange for debate ${debateId}`);
+            console.log(
+              `[transcript] Successfully stored exchange for debate ${debateId}`,
+            );
           } catch (error) {
             console.error(`[transcript] Error storing transcript:`, error);
           }
@@ -67,7 +71,9 @@ http.route({
           }
 
           if (!debateId) {
-            console.warn("[end-of-call-report] No debateId in metadata or query params");
+            console.warn(
+              "[end-of-call-report] No debateId in metadata or query params",
+            );
             return new Response(null, { status: 200 });
           }
 
@@ -77,13 +83,50 @@ http.route({
             duration: message.call?.duration || 0,
           });
 
+          // Consume token for this debate (monetization system)
+          try {
+            const debate = await ctx.runQuery(internal.debates.getInternal, {
+              debateId: debateId as any,
+            });
+
+            if (debate && debate.opponentId) {
+              const opponent = await ctx.runQuery(
+                internal.opponents.getInternal,
+                {
+                  opponentId: debate.opponentId,
+                },
+              );
+
+              if (opponent?.scenarioType) {
+                const result = await ctx.runMutation(
+                  internal.tokens.INTERNAL_consumeToken,
+                  {
+                    userId: debate.userId,
+                    scenarioId: opponent.scenarioType,
+                    debateId: debateId as any,
+                  },
+                );
+                console.log(
+                  `[end-of-call-report] Token consumed for scenario ${opponent.scenarioType}:`,
+                  result,
+                );
+              }
+            }
+          } catch (tokenError) {
+            // Log but don't fail the webhook - debate is already marked complete
+            console.error(
+              "[end-of-call-report] Token consumption error:",
+              tokenError,
+            );
+          }
+
           // Extract recording URL from Vapi artifact
           // Recording is at message.artifact.recording (mono.combinedUrl for mono recordings)
           const artifact = message.artifact;
-          const recordingUrl = 
+          const recordingUrl =
             artifact?.recording?.mono?.combinedUrl ||
             artifact?.recording?.stereoUrl;
-          
+
           if (recordingUrl) {
             await ctx.scheduler.runAfter(0, internal.r2.storeRecording, {
               debateId: debateId as any,
@@ -92,9 +135,13 @@ http.route({
           }
 
           // Trigger full analysis generation (non-blocking)
-          await ctx.scheduler.runAfter(1000, internal.actions.analysisAction.generateFullAnalysis, {
-            debateId: debateId as any,
-          });
+          await ctx.scheduler.runAfter(
+            1000,
+            internal.actions.analysisAction.generateFullAnalysis,
+            {
+              debateId: debateId as any,
+            },
+          );
 
           break;
         }

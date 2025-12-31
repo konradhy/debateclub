@@ -26,6 +26,7 @@ export default function OnboardingUsername() {
   const { mutateAsync: completeOnboarding } = useMutation({
     mutationFn: useConvexMutation(api.app.completeOnboarding),
   });
+  const claimGrantMutation = useConvexMutation(api.tokens.claimGrant);
   const navigate = useNavigate();
 
   const form = useForm({
@@ -38,6 +39,28 @@ export default function OnboardingUsername() {
       await completeOnboarding({
         username: value.username,
       });
+
+      // Check for pending grant token from marketing funnel
+      const pendingToken = sessionStorage.getItem("pendingGrantToken");
+      if (pendingToken) {
+        sessionStorage.removeItem("pendingGrantToken");
+        try {
+          const result = await claimGrantMutation({ grantToken: pendingToken });
+          if (result.success && result.scenarioId) {
+            // Redirect to the scenario's opponent profile
+            setIsSubmitting(false);
+            navigate({
+              to: "/dashboard/opponent-profile",
+              search: { scenario: result.scenarioId },
+            });
+            return;
+          }
+        } catch (e) {
+          // Claim failed - continue to default dashboard
+          console.error("Failed to claim grant token:", e);
+        }
+      }
+
       setIsSubmitting(false);
     },
   });

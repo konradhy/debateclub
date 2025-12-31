@@ -14,8 +14,8 @@ const schema = defineSchema({
     phone: v.optional(v.string()),
     phoneVerificationTime: v.optional(v.number()),
     isAnonymous: v.optional(v.boolean()),
-  })
-    .index("email", ["email"]),
+    isAdmin: v.optional(v.boolean()),
+  }).index("email", ["email"]),
   debates: defineTable({
     userId: v.id("users"),
     topic: v.string(),
@@ -503,6 +503,83 @@ const schema = defineSchema({
     completedAt: v.optional(v.number()),
     error: v.optional(v.string()),
   }).index("by_opponent", ["opponentId"]),
+
+  // ==========================================
+  // MONETIZATION SYSTEM
+  // ==========================================
+
+  // Per-scenario token wallet - each user has separate balances per scenario
+  scenarioTokens: defineTable({
+    userId: v.id("users"),
+    scenarioId: v.string(), // "debate", "sales-cold-prospect", etc.
+    balance: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_and_scenario", ["userId", "scenarioId"]),
+
+  // Audit log for all token changes - source of truth for debugging
+  tokenTransactions: defineTable({
+    userId: v.id("users"),
+    scenarioId: v.string(),
+    amount: v.number(), // +10 for grant, -1 for consume
+    reason: v.union(
+      v.literal("funnel_grant"),
+      v.literal("purchase"),
+      v.literal("debate_complete"),
+      v.literal("admin_grant"),
+      v.literal("refund"),
+    ),
+    metadata: v.optional(
+      v.object({
+        debateId: v.optional(v.id("debates")),
+        grantId: v.optional(v.id("pendingGrants")),
+        stripePaymentId: v.optional(v.string()),
+      }),
+    ),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_and_scenario", ["userId", "scenarioId"]),
+
+  // Subscriber monthly usage tracking - hidden cap (100/month)
+  subscriberUsage: defineTable({
+    userId: v.id("users"),
+    periodStart: v.number(),
+    periodEnd: v.number(),
+    debateCount: v.number(),
+    notifiedOwner: v.boolean(),
+  }).index("by_user_and_period", ["userId", "periodStart"]),
+
+  // Marketing funnel grant links - one-time use tokens for specific scenarios
+  pendingGrants: defineTable({
+    grantToken: v.string(), // Unique token in URL (e.g., "abc123xyz")
+    scenarioId: v.string(),
+    tokenAmount: v.number(), // Default 10
+    claimed: v.boolean(),
+    claimedBy: v.optional(v.id("users")),
+    createdAt: v.number(),
+    expiresAt: v.optional(v.number()),
+    utmSource: v.optional(v.string()),
+    utmCampaign: v.optional(v.string()),
+  })
+    .index("by_token", ["grantToken"])
+    .index("by_claimed_user", ["claimedBy"]),
+
+  // Subscription status tracking
+  subscriptions: defineTable({
+    userId: v.id("users"),
+    status: v.union(
+      v.literal("active"),
+      v.literal("canceled"),
+      v.literal("past_due"),
+      v.literal("trialing"),
+    ),
+    stripeCustomerId: v.optional(v.string()),
+    stripeSubscriptionId: v.optional(v.string()),
+    currentPeriodStart: v.optional(v.number()),
+    currentPeriodEnd: v.optional(v.number()),
+    cancelAtPeriodEnd: v.optional(v.boolean()),
+  }).index("by_user", ["userId"]),
 });
 
 export default schema;

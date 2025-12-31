@@ -12,9 +12,16 @@ export const Route = createFileRoute("/_app/_auth/dashboard/_layout/settings")({
   component: DashboardSettingsLayout,
 });
 
+// Color constants matching dashboard
+const colors = {
+  primary: "#3C4A32",
+};
+
 export default function DashboardSettingsLayout() {
   const matchRoute = useMatchRoute();
   const isSettingsPath = matchRoute({ to: SettingsRoute.fullPath });
+  const isBillingPath = matchRoute({ to: "/dashboard/settings/billing" });
+  
   return (
     <div className="flex h-full w-full px-6 py-8">
       <div className="mx-auto flex h-full w-full max-w-screen-xl gap-12">
@@ -32,6 +39,22 @@ export default function DashboardSettingsLayout() {
               )}
             >
               General
+            </span>
+          </Link>
+          <Link
+            to="/dashboard/settings/billing"
+            className={cn(
+              `${buttonVariants({ variant: "ghost" })} ${isBillingPath && "bg-primary/5"}`,
+              "justify-start rounded-md",
+            )}
+          >
+            <span
+              className={cn(
+                `text-sm ${isBillingPath ? "font-medium" : ""}`,
+              )}
+              style={{ color: isBillingPath ? colors.primary : `${colors.primary}cc` }}
+            >
+              Billing
             </span>
           </Link>
         </div>

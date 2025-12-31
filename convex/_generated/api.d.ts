@@ -31,6 +31,7 @@ import type * as lib_aiConfig from "../lib/aiConfig.js";
 import type * as lib_firecrawl from "../lib/firecrawl.js";
 import type * as lib_geminiDeepResearch from "../lib/geminiDeepResearch.js";
 import type * as lib_geminiSearch from "../lib/geminiSearch.js";
+import type * as lib_monetization from "../lib/monetization.js";
 import type * as lib_openrouter from "../lib/openrouter.js";
 import type * as lib_promptTemplates from "../lib/promptTemplates.js";
 import type * as lib_scoring from "../lib/scoring.js";
@@ -49,6 +50,7 @@ import type * as scenarios_healthcare from "../scenarios/healthcare.js";
 import type * as scenarios_index from "../scenarios/index.js";
 import type * as scenarios_sales from "../scenarios/sales.js";
 import type * as scenarios_types from "../scenarios/types.js";
+import type * as tokens from "../tokens.js";
 
 import type {
   ApiFromModules,
@@ -80,6 +82,7 @@ declare const fullApi: ApiFromModules<{
   "lib/firecrawl": typeof lib_firecrawl;
   "lib/geminiDeepResearch": typeof lib_geminiDeepResearch;
   "lib/geminiSearch": typeof lib_geminiSearch;
+  "lib/monetization": typeof lib_monetization;
   "lib/openrouter": typeof lib_openrouter;
   "lib/promptTemplates": typeof lib_promptTemplates;
   "lib/scoring": typeof lib_scoring;
@@ -98,6 +101,7 @@ declare const fullApi: ApiFromModules<{
   "scenarios/index": typeof scenarios_index;
   "scenarios/sales": typeof scenarios_sales;
   "scenarios/types": typeof scenarios_types;
+  tokens: typeof tokens;
 }>;
 
 /**

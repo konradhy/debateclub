@@ -787,7 +787,7 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 ---
 
-## Phase 8: Polish, UX & Bug Fixes
+## Phase 8: Polish, UX & Bug Fixes and security
 
 **Goal**: Final polish and bug fixes before launch
 
@@ -814,8 +814,9 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 - ⬜ **8.1.5** — Replace all Lucide icons with custom icons
 - ⬜ **8.1.6** — Responsive design for mobile
 - ⬜ **8.1.7** — Accessibility improvements
-- ⬜ **8.1.8** — Polished visual design pass
-
+- ⬜ **8.1.8** — Fix ux on minor pages, setting, onboarding, login, forget password etc. Fix the thing it does where it will sometimes sign you in but not redirect you to dashboard
+- ⬜ **8.1.10** — Check out convex and tanstack docs and optimize prefetch cashe with appropriate pagination, loading state to make it all snappy and instant and real time. requires u to personally understand so u can guide llm
+- ⬜ **8.1.10** — Polished visual design pass
 ---
 
 ### 8.2 Bug Fixes & Investigations
@@ -865,6 +866,7 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Chapters**: —
 
+
 #### Tasks
 
 - ⬜ **8.4.1** — Tutorial debate (guided)
@@ -873,6 +875,11 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 - ⬜ **8.4.4** — First-time user flow
 
 ---
+
+### 8.5 Security
+**description** go through every function starting with high abuse ones first. And ensure that the right auth and access is occuring. Prefer internal functions when you can, and be careful the wrong person can't access.
+- ⬜ **8.5.1** —
+
 
 ## Phase 9: SEO & Indexability
 

@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 // Force re-push
 import { internalQuery, mutation, query } from "./_generated/server";
+import { api } from "./_generated/api";
 import { auth } from "./auth";
 
 export const create = mutation({
@@ -53,6 +54,20 @@ export const create = mutation({
     const userId = await auth.getUserId(ctx);
     if (!userId) {
       throw new Error("Not authenticated");
+    }
+
+    // Anti-abuse check: prevent creating too many opponents without tokens
+    if (args.scenarioType) {
+      const canCreate = await ctx.runQuery(api.tokens.canCreateOpponent, {
+        scenarioId: args.scenarioType,
+      });
+
+      if (!canCreate.canCreate) {
+        throw new Error(
+          canCreate.reason ||
+            "Cannot create opponent: too many incomplete practice sessions for your token balance",
+        );
+      }
     }
 
     const opponentId = await ctx.db.insert("opponents", {

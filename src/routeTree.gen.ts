@@ -46,6 +46,7 @@ import { Route as BlogBackItUpRouteImport } from './routes/blog/back-it-up'
 import { Route as BlogAskTheKillerQuestionRouteImport } from './routes/blog/ask-the-killer-question'
 import { Route as AppAuthRouteImport } from './routes/_app/_auth'
 import { Route as AppLoginLayoutRouteImport } from './routes/_app/login/_layout'
+import { Route as AppClaimTokenRouteImport } from './routes/_app/claim.$token'
 import { Route as AppLoginLayoutIndexRouteImport } from './routes/_app/login/_layout.index'
 import { Route as AppAuthOnboardingLayoutRouteImport } from './routes/_app/_auth/onboarding/_layout'
 import { Route as AppAuthDashboardPrepRouteImport } from './routes/_app/_auth/dashboard/prep'
@@ -57,7 +58,9 @@ import { Route as AppAuthDashboardLayoutRouteImport } from './routes/_app/_auth/
 import { Route as AppAuthDashboardLayoutIndexRouteImport } from './routes/_app/_auth/dashboard/_layout.index'
 import { Route as AppAuthOnboardingLayoutUsernameRouteImport } from './routes/_app/_auth/onboarding/_layout.username'
 import { Route as AppAuthDashboardLayoutSettingsRouteImport } from './routes/_app/_auth/dashboard/_layout.settings'
+import { Route as AppAuthDashboardLayoutAdminRouteImport } from './routes/_app/_auth/dashboard/_layout.admin'
 import { Route as AppAuthDashboardLayoutSettingsIndexRouteImport } from './routes/_app/_auth/dashboard/_layout.settings.index'
+import { Route as AppAuthDashboardLayoutSettingsBillingRouteImport } from './routes/_app/_auth/dashboard/_layout.settings.billing'
 
 const WinEveryArgumentRoute = WinEveryArgumentRouteImport.update({
   id: '/win-every-argument',
@@ -254,6 +257,11 @@ const AppLoginLayoutRoute = AppLoginLayoutRouteImport.update({
   path: '/login',
   getParentRoute: () => AppRoute,
 } as any)
+const AppClaimTokenRoute = AppClaimTokenRouteImport.update({
+  id: '/claim/$token',
+  path: '/claim/$token',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppLoginLayoutIndexRoute = AppLoginLayoutIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -314,10 +322,22 @@ const AppAuthDashboardLayoutSettingsRoute =
     path: '/settings',
     getParentRoute: () => AppAuthDashboardLayoutRoute,
   } as any)
+const AppAuthDashboardLayoutAdminRoute =
+  AppAuthDashboardLayoutAdminRouteImport.update({
+    id: '/admin',
+    path: '/admin',
+    getParentRoute: () => AppAuthDashboardLayoutRoute,
+  } as any)
 const AppAuthDashboardLayoutSettingsIndexRoute =
   AppAuthDashboardLayoutSettingsIndexRouteImport.update({
     id: '/',
     path: '/',
+    getParentRoute: () => AppAuthDashboardLayoutSettingsRoute,
+  } as any)
+const AppAuthDashboardLayoutSettingsBillingRoute =
+  AppAuthDashboardLayoutSettingsBillingRouteImport.update({
+    id: '/billing',
+    path: '/billing',
     getParentRoute: () => AppAuthDashboardLayoutSettingsRoute,
   } as any)
 
@@ -356,6 +376,7 @@ export interface FileRoutesByFullPath {
   '/use-cases/presentations': typeof UseCasesPresentationsRoute
   '/use-cases/sales-objections': typeof UseCasesSalesObjectionsRoute
   '/blog': typeof BlogIndexRoute
+  '/claim/$token': typeof AppClaimTokenRoute
   '/login': typeof AppLoginLayoutRouteWithChildren
   '/dashboard': typeof AppAuthDashboardLayoutRouteWithChildren
   '/dashboard/analysis': typeof AppAuthDashboardAnalysisRoute
@@ -365,9 +386,11 @@ export interface FileRoutesByFullPath {
   '/dashboard/prep': typeof AppAuthDashboardPrepRoute
   '/onboarding': typeof AppAuthOnboardingLayoutRouteWithChildren
   '/login/': typeof AppLoginLayoutIndexRoute
+  '/dashboard/admin': typeof AppAuthDashboardLayoutAdminRoute
   '/dashboard/settings': typeof AppAuthDashboardLayoutSettingsRouteWithChildren
   '/onboarding/username': typeof AppAuthOnboardingLayoutUsernameRoute
   '/dashboard/': typeof AppAuthDashboardLayoutIndexRoute
+  '/dashboard/settings/billing': typeof AppAuthDashboardLayoutSettingsBillingRoute
   '/dashboard/settings/': typeof AppAuthDashboardLayoutSettingsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -405,6 +428,7 @@ export interface FileRoutesByTo {
   '/use-cases/presentations': typeof UseCasesPresentationsRoute
   '/use-cases/sales-objections': typeof UseCasesSalesObjectionsRoute
   '/blog': typeof BlogIndexRoute
+  '/claim/$token': typeof AppClaimTokenRoute
   '/dashboard/analysis': typeof AppAuthDashboardAnalysisRoute
   '/dashboard/debate': typeof AppAuthDashboardDebateRoute
   '/dashboard/history': typeof AppAuthDashboardHistoryRoute
@@ -412,8 +436,10 @@ export interface FileRoutesByTo {
   '/dashboard/prep': typeof AppAuthDashboardPrepRoute
   '/onboarding': typeof AppAuthOnboardingLayoutRouteWithChildren
   '/login': typeof AppLoginLayoutIndexRoute
+  '/dashboard/admin': typeof AppAuthDashboardLayoutAdminRoute
   '/onboarding/username': typeof AppAuthOnboardingLayoutUsernameRoute
   '/dashboard': typeof AppAuthDashboardLayoutIndexRoute
+  '/dashboard/settings/billing': typeof AppAuthDashboardLayoutSettingsBillingRoute
   '/dashboard/settings': typeof AppAuthDashboardLayoutSettingsIndexRoute
 }
 export interface FileRoutesById {
@@ -454,6 +480,7 @@ export interface FileRoutesById {
   '/use-cases/presentations': typeof UseCasesPresentationsRoute
   '/use-cases/sales-objections': typeof UseCasesSalesObjectionsRoute
   '/blog/': typeof BlogIndexRoute
+  '/_app/claim/$token': typeof AppClaimTokenRoute
   '/_app/login/_layout': typeof AppLoginLayoutRouteWithChildren
   '/_app/_auth/dashboard/_layout': typeof AppAuthDashboardLayoutRouteWithChildren
   '/_app/_auth/dashboard/analysis': typeof AppAuthDashboardAnalysisRoute
@@ -463,9 +490,11 @@ export interface FileRoutesById {
   '/_app/_auth/dashboard/prep': typeof AppAuthDashboardPrepRoute
   '/_app/_auth/onboarding/_layout': typeof AppAuthOnboardingLayoutRouteWithChildren
   '/_app/login/_layout/': typeof AppLoginLayoutIndexRoute
+  '/_app/_auth/dashboard/_layout/admin': typeof AppAuthDashboardLayoutAdminRoute
   '/_app/_auth/dashboard/_layout/settings': typeof AppAuthDashboardLayoutSettingsRouteWithChildren
   '/_app/_auth/onboarding/_layout/username': typeof AppAuthOnboardingLayoutUsernameRoute
   '/_app/_auth/dashboard/_layout/': typeof AppAuthDashboardLayoutIndexRoute
+  '/_app/_auth/dashboard/_layout/settings/billing': typeof AppAuthDashboardLayoutSettingsBillingRoute
   '/_app/_auth/dashboard/_layout/settings/': typeof AppAuthDashboardLayoutSettingsIndexRoute
 }
 export interface FileRouteTypes {
@@ -505,6 +534,7 @@ export interface FileRouteTypes {
     | '/use-cases/presentations'
     | '/use-cases/sales-objections'
     | '/blog'
+    | '/claim/$token'
     | '/login'
     | '/dashboard'
     | '/dashboard/analysis'
@@ -514,9 +544,11 @@ export interface FileRouteTypes {
     | '/dashboard/prep'
     | '/onboarding'
     | '/login/'
+    | '/dashboard/admin'
     | '/dashboard/settings'
     | '/onboarding/username'
     | '/dashboard/'
+    | '/dashboard/settings/billing'
     | '/dashboard/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -554,6 +586,7 @@ export interface FileRouteTypes {
     | '/use-cases/presentations'
     | '/use-cases/sales-objections'
     | '/blog'
+    | '/claim/$token'
     | '/dashboard/analysis'
     | '/dashboard/debate'
     | '/dashboard/history'
@@ -561,8 +594,10 @@ export interface FileRouteTypes {
     | '/dashboard/prep'
     | '/onboarding'
     | '/login'
+    | '/dashboard/admin'
     | '/onboarding/username'
     | '/dashboard'
+    | '/dashboard/settings/billing'
     | '/dashboard/settings'
   id:
     | '__root__'
@@ -602,6 +637,7 @@ export interface FileRouteTypes {
     | '/use-cases/presentations'
     | '/use-cases/sales-objections'
     | '/blog/'
+    | '/_app/claim/$token'
     | '/_app/login/_layout'
     | '/_app/_auth/dashboard/_layout'
     | '/_app/_auth/dashboard/analysis'
@@ -611,9 +647,11 @@ export interface FileRouteTypes {
     | '/_app/_auth/dashboard/prep'
     | '/_app/_auth/onboarding/_layout'
     | '/_app/login/_layout/'
+    | '/_app/_auth/dashboard/_layout/admin'
     | '/_app/_auth/dashboard/_layout/settings'
     | '/_app/_auth/onboarding/_layout/username'
     | '/_app/_auth/dashboard/_layout/'
+    | '/_app/_auth/dashboard/_layout/settings/billing'
     | '/_app/_auth/dashboard/_layout/settings/'
   fileRoutesById: FileRoutesById
 }
@@ -916,6 +954,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLoginLayoutRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/claim/$token': {
+      id: '/_app/claim/$token'
+      path: '/claim/$token'
+      fullPath: '/claim/$token'
+      preLoaderRoute: typeof AppClaimTokenRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/login/_layout/': {
       id: '/_app/login/_layout/'
       path: '/'
@@ -993,6 +1038,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAuthDashboardLayoutSettingsRouteImport
       parentRoute: typeof AppAuthDashboardLayoutRoute
     }
+    '/_app/_auth/dashboard/_layout/admin': {
+      id: '/_app/_auth/dashboard/_layout/admin'
+      path: '/admin'
+      fullPath: '/dashboard/admin'
+      preLoaderRoute: typeof AppAuthDashboardLayoutAdminRouteImport
+      parentRoute: typeof AppAuthDashboardLayoutRoute
+    }
     '/_app/_auth/dashboard/_layout/settings/': {
       id: '/_app/_auth/dashboard/_layout/settings/'
       path: '/'
@@ -1000,15 +1052,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAuthDashboardLayoutSettingsIndexRouteImport
       parentRoute: typeof AppAuthDashboardLayoutSettingsRoute
     }
+    '/_app/_auth/dashboard/_layout/settings/billing': {
+      id: '/_app/_auth/dashboard/_layout/settings/billing'
+      path: '/billing'
+      fullPath: '/dashboard/settings/billing'
+      preLoaderRoute: typeof AppAuthDashboardLayoutSettingsBillingRouteImport
+      parentRoute: typeof AppAuthDashboardLayoutSettingsRoute
+    }
   }
 }
 
 interface AppAuthDashboardLayoutSettingsRouteChildren {
+  AppAuthDashboardLayoutSettingsBillingRoute: typeof AppAuthDashboardLayoutSettingsBillingRoute
   AppAuthDashboardLayoutSettingsIndexRoute: typeof AppAuthDashboardLayoutSettingsIndexRoute
 }
 
 const AppAuthDashboardLayoutSettingsRouteChildren: AppAuthDashboardLayoutSettingsRouteChildren =
   {
+    AppAuthDashboardLayoutSettingsBillingRoute:
+      AppAuthDashboardLayoutSettingsBillingRoute,
     AppAuthDashboardLayoutSettingsIndexRoute:
       AppAuthDashboardLayoutSettingsIndexRoute,
   }
@@ -1019,12 +1081,14 @@ const AppAuthDashboardLayoutSettingsRouteWithChildren =
   )
 
 interface AppAuthDashboardLayoutRouteChildren {
+  AppAuthDashboardLayoutAdminRoute: typeof AppAuthDashboardLayoutAdminRoute
   AppAuthDashboardLayoutSettingsRoute: typeof AppAuthDashboardLayoutSettingsRouteWithChildren
   AppAuthDashboardLayoutIndexRoute: typeof AppAuthDashboardLayoutIndexRoute
 }
 
 const AppAuthDashboardLayoutRouteChildren: AppAuthDashboardLayoutRouteChildren =
   {
+    AppAuthDashboardLayoutAdminRoute: AppAuthDashboardLayoutAdminRoute,
     AppAuthDashboardLayoutSettingsRoute:
       AppAuthDashboardLayoutSettingsRouteWithChildren,
     AppAuthDashboardLayoutIndexRoute: AppAuthDashboardLayoutIndexRoute,
@@ -1086,11 +1150,13 @@ const AppLoginLayoutRouteWithChildren = AppLoginLayoutRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAuthRoute: typeof AppAuthRouteWithChildren
+  AppClaimTokenRoute: typeof AppClaimTokenRoute
   AppLoginLayoutRoute: typeof AppLoginLayoutRouteWithChildren
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAuthRoute: AppAuthRouteWithChildren,
+  AppClaimTokenRoute: AppClaimTokenRoute,
   AppLoginLayoutRoute: AppLoginLayoutRouteWithChildren,
 }
 

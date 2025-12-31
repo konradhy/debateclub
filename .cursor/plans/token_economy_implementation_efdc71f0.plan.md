@@ -4,49 +4,49 @@ overview: Implement the per-scenario token economy system for OratorPrep, includ
 todos:
   - id: schema-tables
     content: Add 5 new tables to convex/schema.ts (scenarioTokens, tokenTransactions, subscriberUsage, pendingGrants, subscriptions)
-    status: pending
+    status: completed
   - id: constants-file
     content: Create convex/lib/monetization.ts with constants (caps, amounts, pricing)
-    status: pending
+    status: completed
   - id: tokens-file
     content: Create convex/tokens.ts with all queries and mutations for token operations
-    status: pending
+    status: completed
     dependencies:
       - schema-tables
       - constants-file
   - id: debate-hook
     content: Add token consumption hook to convex/http.ts end-of-call-report handler
-    status: pending
+    status: completed
     dependencies:
       - tokens-file
   - id: opponents-gate
     content: Add anti-abuse check to convex/opponents.ts create mutation
-    status: pending
+    status: completed
     dependencies:
       - tokens-file
   - id: debates-gate
     content: Add access check to convex/debates.ts create mutation
-    status: pending
+    status: completed
     dependencies:
       - tokens-file
   - id: claim-route
     content: Create src/routes/claim.$token.tsx for marketing funnel
-    status: pending
+    status: completed
     dependencies:
       - tokens-file
   - id: onboarding-claim
     content: Add post-signup grant claim to onboarding flow
-    status: pending
+    status: completed
     dependencies:
       - tokens-file
   - id: balance-component
     content: Create src/components/TokenBalance.tsx display component
-    status: pending
+    status: completed
     dependencies:
       - tokens-file
   - id: scenario-gating
     content: Add scenario gating UI to opponent-profile.tsx
-    status: pending
+    status: completed
     dependencies:
       - balance-component
 ---
@@ -259,7 +259,3 @@ After implementation, manually verify:
 8. Scenario selector shows correct access state for each scenario
 
 ---
-
-## Deferred to Stripe Phase
-
-- `createTokenCheckout` action (Stripe checkout sessions)

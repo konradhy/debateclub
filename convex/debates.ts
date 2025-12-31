@@ -4,6 +4,7 @@ import {
   mutation,
   query,
 } from "./_generated/server";
+import { api } from "./_generated/api";
 import { v } from "convex/values";
 import { auth } from "./auth";
 import { r2 } from "./r2";
@@ -18,6 +19,32 @@ export const create = mutation({
     opponentId: v.optional(v.id("opponents")),
   },
   handler: async (ctx, args) => {
+    // Verify authentication
+    const authenticatedUserId = await auth.getUserId(ctx);
+    if (!authenticatedUserId) {
+      throw new Error("Not authenticated");
+    }
+
+    // Ensure the debate is being created for the authenticated user
+    if (authenticatedUserId !== args.userId) {
+      throw new Error("Cannot create debate for another user");
+    }
+
+    // Access check: verify user has tokens or subscription for this scenario
+    if (args.scenarioType) {
+      const access = await ctx.runQuery(api.tokens.checkAccess, {
+        scenarioId: args.scenarioType,
+      });
+
+      if (!access.hasAccess) {
+        throw new Error(
+          access.reason === "not_authenticated"
+            ? "Not authenticated"
+            : "No access to this scenario. Purchase tokens or subscribe to continue."
+        );
+      }
+    }
+
     const debateId = await ctx.db.insert("debates", {
       userId: args.userId,
       topic: args.topic,

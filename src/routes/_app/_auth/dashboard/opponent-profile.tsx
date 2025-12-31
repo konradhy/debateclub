@@ -21,6 +21,8 @@ import {
   ArrowLeft,
   ChevronRight,
   ChevronDown,
+  Coins,
+  Infinity as InfinityIcon,
 } from "lucide-react";
 import {
   SCENARIOS,
@@ -32,6 +34,7 @@ import {
 } from "@/scenarios";
 import { cn } from "@/utils/misc";
 import { motion } from "framer-motion";
+import { useAllTokenBalances } from "@/components/TokenBalance";
 
 export const Route = createFileRoute("/_app/_auth/dashboard/opponent-profile")({
   component: OpponentProfile,
@@ -322,91 +325,196 @@ function AccordionSection({
 }
 
 /**
+ * Modal displayed when user clicks on a locked scenario.
+ */
+function LockedScenarioModal({
+  scenarioName,
+  onClose,
+}: {
+  scenarioName: string;
+  onClose: () => void;
+}) {
+  const navigate = useNavigate();
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div
+        className="mx-4 w-full max-w-sm rounded-xl p-6"
+        style={{ backgroundColor: colors.cardBg }}
+      >
+        <h3
+          className="text-lg font-semibold mb-2"
+          style={{ color: colors.text }}
+        >
+          {scenarioName} Locked
+        </h3>
+        <p
+          className="text-sm mb-6"
+          style={{ color: colors.textMuted }}
+        >
+          You need tokens to practice this scenario.
+        </p>
+
+        <div className="flex flex-col gap-2">
+          <button
+            type="button"
+            className="w-full rounded-lg px-4 py-2.5 text-sm font-medium text-white transition-all hover:brightness-110"
+            style={{ backgroundColor: colors.primary }}
+            onClick={() => navigate({ to: "/dashboard/settings/billing" })}
+          >
+            Buy Tokens
+          </button>
+          <button
+            type="button"
+            className="w-full rounded-lg px-4 py-2.5 text-sm font-medium transition-all hover:bg-gray-50"
+            style={{
+              backgroundColor: `${colors.primary}10`,
+              color: colors.primary,
+            }}
+            onClick={() => navigate({ to: "/dashboard/settings/billing" })}
+          >
+            Upgrade to Pro
+          </button>
+          <button
+            type="button"
+            className="w-full rounded-lg px-4 py-2 text-sm transition-colors hover:bg-gray-50"
+            style={{ color: colors.textMuted }}
+            onClick={onClose}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
  * Scenario selector popover - closes on selection.
+ * Shows token access info for each scenario.
  */
 function ScenarioPopover({
   currentScenario,
   onScenarioChange,
+  tokenBalances,
+  isSubscriber,
 }: {
   currentScenario: string;
   onScenarioChange: (id: string) => void;
+  tokenBalances: Record<string, number>;
+  isSubscriber: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const [lockedScenario, setLockedScenario] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const scenariosByCategory = getScenariosByCategory();
 
-  const handleSelect = (id: string) => {
+  const handleSelect = (id: string, name: string) => {
+    // Check access before allowing selection
+    const hasAccess = isSubscriber || (tokenBalances[id] ?? 0) > 0;
+    if (!hasAccess) {
+      // Show locked modal
+      setLockedScenario({ id, name });
+      setOpen(false);
+      return;
+    }
     onScenarioChange(id);
     setOpen(false);
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button
-          className="flex items-center gap-1.5 text-sm transition-opacity hover:opacity-70"
-          style={{ color: colors.textMuted }}
+    <>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <button
+            className="flex items-center gap-1.5 text-sm transition-opacity hover:opacity-70"
+            style={{ color: colors.textMuted }}
+          >
+            Change practice type
+            <ChevronDown className="h-3 w-3" />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent
+          className="w-72 p-0 overflow-hidden"
+          align="start"
+          style={{
+            backgroundColor: colors.cardBg,
+            border: `1px solid ${colors.border}`,
+          }}
         >
-          Change practice type
-          <ChevronDown className="h-3 w-3" />
-        </button>
-      </PopoverTrigger>
-      <PopoverContent
-        className="w-64 p-0 overflow-hidden"
-        align="start"
-        style={{
-          backgroundColor: colors.cardBg,
-          border: `1px solid ${colors.border}`,
-        }}
-      >
-        <div className="flex flex-col">
-          {Object.entries(scenariosByCategory).map(
-            ([category, scenarios], idx) => (
-              <div
-                key={category}
-                className={idx > 0 ? "border-t" : ""}
-                style={{ borderColor: colors.border }}
-              >
+          <div className="flex flex-col">
+            {Object.entries(scenariosByCategory).map(
+              ([category, scenarios], idx) => (
                 <div
-                  className="px-3 py-1.5 text-xs font-medium uppercase tracking-wide"
-                  style={{
-                    backgroundColor: colors.background,
-                    color: colors.textLight,
-                  }}
+                  key={category}
+                  className={idx > 0 ? "border-t" : ""}
+                  style={{ borderColor: colors.border }}
                 >
-                  {category}
+                  <div
+                    className="px-3 py-1.5 text-xs font-medium uppercase tracking-wide"
+                    style={{
+                      backgroundColor: colors.background,
+                      color: colors.textLight,
+                    }}
+                  >
+                    {category}
+                  </div>
+                  <div className="p-1">
+                    {scenarios.map((s) => {
+                      const balance = tokenBalances[s.id] ?? 0;
+                      const hasAccess = isSubscriber || balance > 0;
+                      const isSelected = currentScenario === s.id;
+
+                      return (
+                        <button
+                          key={s.id}
+                          onClick={() => handleSelect(s.id, s.name)}
+                          className={cn(
+                            "w-full text-left px-3 py-2 rounded text-sm transition-colors flex items-center justify-between",
+                            isSelected && "font-medium",
+                            hasAccess && !isSelected && "hover:bg-black/5",
+                            !hasAccess && "opacity-50",
+                          )}
+                          style={{
+                            backgroundColor: isSelected
+                              ? colors.accent
+                              : "transparent",
+                            color: isSelected ? colors.accentDark : colors.text,
+                          }}
+                        >
+                          <span>{s.name}</span>
+                          {/* Show token info only if subscriber or has tokens */}
+                          {isSubscriber ? (
+                            <span className="flex items-center gap-1 text-xs text-emerald-600">
+                              <InfinityIcon className="h-3 w-3" />
+                            </span>
+                          ) : balance > 0 ? (
+                            <span className="flex items-center gap-1 text-xs text-amber-600">
+                              <Coins className="h-3 w-3" />
+                              {balance}
+                            </span>
+                          ) : null}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="p-1">
-                  {scenarios.map((s) => (
-                    <button
-                      key={s.id}
-                      onClick={() => handleSelect(s.id)}
-                      className={cn(
-                        "w-full text-left px-3 py-2 rounded text-sm transition-colors",
-                        currentScenario === s.id
-                          ? "font-medium"
-                          : "hover:bg-black/5",
-                      )}
-                      style={{
-                        backgroundColor:
-                          currentScenario === s.id
-                            ? colors.accent
-                            : "transparent",
-                        color:
-                          currentScenario === s.id
-                            ? colors.accentDark
-                            : colors.text,
-                      }}
-                    >
-                      {s.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ),
-          )}
-        </div>
-      </PopoverContent>
-    </Popover>
+              ),
+            )}
+          </div>
+        </PopoverContent>
+      </Popover>
+
+      {/* Locked Scenario Modal */}
+      {lockedScenario && (
+        <LockedScenarioModal
+          scenarioName={lockedScenario.name}
+          onClose={() => setLockedScenario(null)}
+        />
+      )}
+    </>
   );
 }
 
@@ -420,6 +528,9 @@ function OpponentProfile() {
   // Fetch current user
   const { data: user } = useQuery(convexQuery(api.app.getCurrentUser, {}));
 
+  // Token balances for scenario gating
+  const { balances: tokenBalances, isSubscriber } = useAllTokenBalances();
+
   // Create opponent mutation
   const createOpponent = useConvexMutation(api.opponents.create);
 
@@ -427,6 +538,10 @@ function OpponentProfile() {
   const [scenarioType, setScenarioType] = useState(DEFAULT_SCENARIO_ID);
   const scenario = SCENARIOS[scenarioType];
   const isDebate = scenario?.pipeline?.prepType === "debate";
+
+  // Check access for current scenario
+  const currentScenarioBalance = tokenBalances[scenarioType] ?? 0;
+  const hasCurrentScenarioAccess = isSubscriber || currentScenarioBalance > 0;
 
   // Form data
   const [formData, setFormData] = useState<Record<string, string>>({
@@ -444,8 +559,12 @@ function OpponentProfile() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Handle scenario change
+  // Handle scenario change - only allow if user has access
   const handleScenarioChange = (newScenarioId: string) => {
+    const hasAccess = isSubscriber || (tokenBalances[newScenarioId] ?? 0) > 0;
+    if (!hasAccess) {
+      return; // Shouldn't reach here due to popover disabling, but safety check
+    }
     setScenarioType(newScenarioId);
     // Reset form to defaults for new scenario
     setFormData({
@@ -777,6 +896,8 @@ function OpponentProfile() {
                 <ScenarioPopover
                   currentScenario={scenarioType}
                   onScenarioChange={handleScenarioChange}
+                  tokenBalances={tokenBalances}
+                  isSubscriber={isSubscriber}
                 />
 
                 <div className="flex gap-3">
