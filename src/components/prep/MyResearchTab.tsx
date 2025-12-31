@@ -8,6 +8,8 @@ import {
   Zap,
   Eye,
   AlertTriangle,
+  Send,
+  Check,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Textarea } from "@/ui/textarea";
@@ -20,6 +22,8 @@ interface MyResearchTabProps {
   isProcessingResearch: boolean;
   handleProcessResearch: () => void;
   processedResearch: any;
+  handleSendExtractedItem: (itemType: string, item: any) => Promise<void>;
+  sentItems: Map<string, boolean>;
 }
 
 export function MyResearchTab({
@@ -28,6 +32,8 @@ export function MyResearchTab({
   isProcessingResearch,
   handleProcessResearch,
   processedResearch,
+  handleSendExtractedItem,
+  sentItems,
 }: MyResearchTabProps) {
   return (
     <div className="space-y-6">
@@ -109,18 +115,38 @@ Example content:
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-medium">{arg.claim}</span>
-                        <span
-                          className={cn(
-                            "text-xs px-2 py-0.5 rounded",
-                            arg.strength === "Strong"
-                              ? "bg-green-100 text-green-700"
-                              : arg.strength === "Medium"
-                                ? "bg-yellow-100 text-yellow-700"
-                                : "bg-gray-100 text-gray-700",
-                          )}
-                        >
-                          {arg.strength}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={cn(
+                              "text-xs px-2 py-0.5 rounded",
+                              arg.strength === "Strong"
+                                ? "bg-green-100 text-green-700"
+                                : arg.strength === "Medium"
+                                  ? "bg-yellow-100 text-yellow-700"
+                                  : "bg-gray-100 text-gray-700",
+                            )}
+                          >
+                            {arg.strength}
+                          </span>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleSendExtractedItem('argument', arg)}
+                            disabled={sentItems.has(arg.id)}
+                          >
+                            {sentItems.has(arg.id) ? (
+                              <>
+                                <Check className="h-3 w-3 mr-1" />
+                                Sent
+                              </>
+                            ) : (
+                              <>
+                                <Send className="h-3 w-3 mr-1" />
+                                Send
+                              </>
+                            )}
+                          </Button>
+                        </div>
                       </div>
                       {arg.supportingPoints?.length > 0 && (
                         <ul className="text-sm text-muted-foreground list-disc list-inside">
@@ -158,15 +184,35 @@ Example content:
                       key={receipt.id}
                       className="space-y-1 border-l-2 border-orange-500/30 pl-3"
                     >
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs uppercase font-bold text-orange-600">
-                          {receipt.type}
-                        </span>
-                        {receipt.source && (
-                          <span className="text-xs text-muted-foreground">
-                            — {receipt.source}
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs uppercase font-bold text-orange-600">
+                            {receipt.type}
                           </span>
-                        )}
+                          {receipt.source && (
+                            <span className="text-xs text-muted-foreground">
+                              — {receipt.source}
+                            </span>
+                          )}
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleSendExtractedItem('receipt', receipt)}
+                          disabled={sentItems.has(receipt.id)}
+                        >
+                          {sentItems.has(receipt.id) ? (
+                            <>
+                              <Check className="h-3 w-3 mr-1" />
+                              Sent
+                            </>
+                          ) : (
+                            <>
+                              <Send className="h-3 w-3 mr-1" />
+                              Send
+                            </>
+                          )}
+                        </Button>
                       </div>
                       <p className="text-sm font-medium">{receipt.content}</p>
                       <p className="text-xs text-muted-foreground italic">
@@ -192,11 +238,31 @@ Example content:
                   {processedResearch.potentialOpeners.map((opener: any) => (
                     <div
                       key={opener.id}
-                      className="space-y-1 border-l-2 border-blue-500/30 pl-3"
+                      className="space-y-2 border-l-2 border-blue-500/30 pl-3"
                     >
-                      <span className="text-xs uppercase font-bold text-blue-600">
-                        {opener.type}
-                      </span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs uppercase font-bold text-blue-600">
+                          {opener.type}
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleSendExtractedItem('opener', opener)}
+                          disabled={sentItems.has(opener.id)}
+                        >
+                          {sentItems.has(opener.id) ? (
+                            <>
+                              <Check className="h-3 w-3 mr-1" />
+                              Sent
+                            </>
+                          ) : (
+                            <>
+                              <Send className="h-3 w-3 mr-1" />
+                              Send
+                            </>
+                          )}
+                        </Button>
+                      </div>
                       <p className="text-sm italic">"{opener.hook}"</p>
                       <p className="text-xs text-muted-foreground">
                         {opener.content}
@@ -221,10 +287,30 @@ Example content:
                   {processedResearch.potentialZingers.map((zinger: any) => (
                     <div
                       key={zinger.id}
-                      className="p-2 bg-yellow-500/5 rounded border border-yellow-500/20"
+                      className="p-2 bg-yellow-500/5 rounded border border-yellow-500/20 space-y-2"
                     >
-                      <p className="text-sm font-medium">"{zinger.text}"</p>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-medium">"{zinger.text}"</p>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleSendExtractedItem('zinger', zinger)}
+                          disabled={sentItems.has(zinger.id)}
+                        >
+                          {sentItems.has(zinger.id) ? (
+                            <>
+                              <Check className="h-3 w-3 mr-1" />
+                              Sent
+                            </>
+                          ) : (
+                            <>
+                              <Send className="h-3 w-3 mr-1" />
+                              Send
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
                         {zinger.context}
                       </p>
                     </div>
@@ -250,11 +336,31 @@ Example content:
                         key={counter.id}
                         className="space-y-2 border-l-2 border-red-500/30 pl-3"
                       >
-                        <div className="flex items-center gap-2">
-                          <AlertTriangle className="h-4 w-4 text-red-500" />
-                          <span className="font-medium text-red-700 dark:text-red-400">
-                            {counter.argument}
-                          </span>
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <AlertTriangle className="h-4 w-4 text-red-500" />
+                            <span className="font-medium text-red-700 dark:text-red-400">
+                              {counter.argument}
+                            </span>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleSendExtractedItem('counter', counter)}
+                            disabled={sentItems.has(counter.id)}
+                          >
+                            {sentItems.has(counter.id) ? (
+                              <>
+                                <Check className="h-3 w-3 mr-1" />
+                                Sent
+                              </>
+                            ) : (
+                              <>
+                                <Send className="h-3 w-3 mr-1" />
+                                Send
+                              </>
+                            )}
+                          </Button>
                         </div>
                         <p className="text-sm text-muted-foreground">
                           <span className="font-semibold text-green-600">

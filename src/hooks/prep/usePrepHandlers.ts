@@ -258,6 +258,131 @@ export function usePrepHandlers({
   }, [opponent, userResearchText, processResearchText]);
 
   // ============================================
+  // SEND EXTRACTED ITEMS TO STUDY MODE
+  // ============================================
+  // Track which items have been sent
+  const [sentItems, setSentItems] = useState<Map<string, boolean>>(new Map());
+
+  // Transformation helper - converts extracted format to Study Mode schema
+  const transformExtractedItem = useCallback((itemType: string, item: any): any => {
+    switch (itemType) {
+      case 'argument':
+        // From: { id, claim, supportingPoints[], source, strength }
+        // To: argumentFrame schema
+        return {
+          id: item.id,
+          label: item.claim,
+          summary: item.supportingPoints?.join('; ') || '',
+          content: item.claim,
+          detailedContent: item.supportingPoints?.map((p: string, i: number) =>
+            `${i + 1}. ${p}`).join('\n') || '',
+          evidenceIds: [],
+          deploymentGuidance: `Strength: ${item.strength}. ${item.source ? `Source: ${item.source}` : ''}`
+        };
+
+      case 'receipt':
+        // From: { id, type, content, source, useCase }
+        // To: receipt schema
+        const categoryMap: Record<string, string> = {
+          'Statistic': 'Statistics',
+          'Quote': 'Quotes',
+          'Study': 'Scientific Studies',
+          'Case Study': 'Case Studies',
+          'Historical': 'Historical Precedent'
+        };
+        return {
+          id: item.id,
+          category: categoryMap[item.type] || 'Statistics',
+          source: item.source || 'User Research',
+          content: item.content,
+          deployment: item.useCase || '',
+          url: '',
+          year: new Date().getFullYear().toString()
+        };
+
+      case 'opener':
+        // From: { id, type, content, hook }
+        // To: openingOption schema
+        return {
+          id: item.id,
+          type: item.type,
+          hook: item.hook,
+          content: item.content,
+          wordCount: item.content.trim().split(/\s+/).length,
+          deliveryGuidance: 'Review and adapt to your speaking style'
+        };
+
+      case 'zinger':
+        // From: { id, text, context }
+        // To: zinger schema
+        return {
+          id: item.id,
+          text: item.text,
+          context: item.context,
+          type: 'User Generated',
+          tone: 'Adjust tone as needed'
+        };
+
+      case 'counter':
+        // From: { id, argument, suggestedResponse }
+        // To: opponentIntel item schema
+        return {
+          id: item.id,
+          argument: item.argument,
+          likelihood: 'Medium',
+          evidence: 'User research',
+          weakness: 'User-identified counter-argument',
+          counters: [
+            {
+              id: `counter_${item.id}`,
+              label: 'Primary Response',
+              text: item.suggestedResponse,
+              deliveryNote: 'Adapt to debate context'
+            }
+          ]
+        };
+
+      default:
+        return item;
+    }
+  }, []);
+
+  // Handler to send extracted item to Study Mode
+  const handleSendExtractedItem = useCallback(async (
+    itemType: 'argument' | 'receipt' | 'opener' | 'zinger' | 'counter',
+    item: any
+  ) => {
+    if (!opponentId) return;
+
+    try {
+      // Transform extracted item to Study Mode format
+      const transformedItem = transformExtractedItem(itemType, item);
+
+      // Map item type to opponent field
+      const fieldMap: Record<string, OpponentField> = {
+        'argument': 'argumentFrames',
+        'receipt': 'receipts',
+        'opener': 'openingOptions',
+        'zinger': 'zingers',
+        'counter': 'opponentIntel'
+      };
+
+      // Call existing addFieldItem mutation (appends to array)
+      await addFieldItem({
+        opponentId: opponentId as Id<"opponents">,
+        field: fieldMap[itemType],
+        item: transformedItem
+      });
+
+      // Mark as sent for UI feedback
+      setSentItems(prev => new Map(prev).set(item.id, true));
+    } catch (error) {
+      console.error('Failed to send item:', error);
+      // Don't mark as sent if mutation failed (allows retry)
+    }
+  }, [opponentId, addFieldItem, transformExtractedItem]);
+
+  // ============================================
   // CRUD HANDLERS
   // ============================================
   const handleEdit = useCallback(
@@ -362,6 +487,7 @@ export function usePrepHandlers({
     handleGenerateGenericPrep,
     handleSendChat,
     handleProcessResearch,
+    handleSendExtractedItem,
     handleSelectionUpdate,
     handleEdit,
     handleAdd,
@@ -374,5 +500,6 @@ export function usePrepHandlers({
     groupedReceipts,
     renderComplex,
     getStepStatus,
+    sentItems,
   };
 }

@@ -42,7 +42,7 @@ function PrepScreen() {
   // Data hooks
   const {
     opponent,
-    research,
+    researchDocs,
     progress,
     geminiProgress,
     chatMessages,
@@ -86,6 +86,7 @@ function PrepScreen() {
     handleGenerateGenericPrep,
     handleSendChat,
     handleProcessResearch,
+    handleSendExtractedItem,
     handleSelectionUpdate,
     handleEdit,
     handleAdd,
@@ -96,6 +97,7 @@ function PrepScreen() {
     groupedReceipts,
     renderComplex,
     getStepStatus,
+    sentItems,
   } = usePrepHandlers({
     opponentId,
     opponent,
@@ -423,7 +425,7 @@ function PrepScreen() {
                   {/* RESEARCH TAB (debate only) */}
                   {isDebatePrep && (
                     <TabsContent value="research" className="space-y-4">
-                      <ResearchTab research={research} />
+                      <ResearchTab researchDocs={researchDocs} />
                     </TabsContent>
                   )}
 
@@ -436,6 +438,8 @@ function PrepScreen() {
                         isProcessingResearch={isProcessingResearch}
                         handleProcessResearch={handleProcessResearch}
                         processedResearch={processedResearch}
+                        handleSendExtractedItem={handleSendExtractedItem}
+                        sentItems={sentItems}
                       />
                     </TabsContent>
                   )}

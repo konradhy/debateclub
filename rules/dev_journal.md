@@ -2,7 +2,7 @@
 
 **Session-by-session record of development progress. Each chapter is immutable once completed.**
 
-> **📚 Note**: This journal became too long. **Continue new sessions in `dev_journal_2.md`**.
+> **📚 Note**: This journal became too long. **Newer sessions are in `dev_journal_2.md` and `dev_journal_3.md`**.
 >
 > **🔍 If you're in a jam** and need rich context on how a feature was built, why a decision was made, or how a tricky problem was solved — this journal has the full story. The chapters below contain detailed implementation notes, debugging lessons, and architectural decisions that may not be obvious from just reading the code.
 
@@ -10,24 +10,29 @@
 
 # ⚠️ CRITICAL WARNING FOR AI ASSISTANTS ⚠️
 
-**THIS IS VOLUME 1 (Chapters 0-12). THERE IS A VOLUME 2!**
+**THIS IS VOLUME 1 (Chapters 0-12). THERE ARE VOLUMES 2 AND 3!**
 
-📖 **`dev_journal_2.md`** contains Chapters 13-19+ including:
+📖 **`dev_journal_2.md`** contains Chapters 13-19 including:
 - Chapter 16: **Token Economy & Monetization (Phase 4.1)**
 - Chapter 17: **Token Management UI (Phase 4.2)**
 - Chapter 18: **Stripe Integration (Phase 4.2)**
 - Chapter 19: **Cost Monitoring & Control (Phase 4.3)**
 
-**DO NOT** assume this file contains all documentation. **ALWAYS** check for `dev_journal_2.md` when looking for recent implementation details, especially for:
-- Phase 4 (Monetization)
-- UI redesigns (Dashboard, Settings)
-- Refactoring work (prep.tsx component extraction)
-- Debate style/difficulty architecture
-- Cost tracking improvements
+📖 **`dev_journal_3.md`** contains Chapters 20+ including:
+- **Archive summaries** of Chapters 0-19 (compressed for quick reference)
+- **All new work** starting from Chapter 20
 
-**File naming**: It's lowercase `dev_journal_2.md`, not `DEV_JOURNAL_2.md`. Use exact case when searching.
+**DO NOT** assume this file contains all documentation. **ALWAYS** check for `dev_journal_2.md` and `dev_journal_3.md` when looking for recent implementation details, especially for:
+- Phase 4 (Monetization) — see Journal 2
+- UI redesigns (Dashboard, Settings) — see Journal 2
+- Refactoring work (prep.tsx component extraction) — see Journal 2
+- Debate style/difficulty architecture — see Journal 2
+- Cost tracking improvements — see Journal 2
+- Any work after December 31, 2025 — see Journal 3
 
-If you tell the user "there's no documentation for Phase 4" or "the dev journal ends at Chapter 12" **YOU ARE WRONG**. Read `dev_journal_2.md` first!
+**File naming**: Use exact case when searching: `dev_journal_2.md`, `dev_journal_3.md`
+
+If you tell the user "there's no documentation for Phase 4" or "the dev journal ends at Chapter 12" **YOU ARE WRONG**. Read Journal 2 and Journal 3!
 
 ---
 

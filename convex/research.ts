@@ -20,6 +20,25 @@ export const get = query({
   },
 });
 
+export const getAll = query({
+  args: { opponentId: v.id("opponents") },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) {
+      return null;
+    }
+
+    // Fetch ALL research documents for this opponent
+    const allResearch = await ctx.db
+      .query("research")
+      .withIndex("by_opponent", (q) => q.eq("opponentId", args.opponentId))
+      .order("desc")
+      .collect(); // Changed from .first() to .collect()
+
+    return allResearch;
+  },
+});
+
 export const getInternal = internalQuery({
   args: { opponentId: v.id("opponents") },
   returns: v.union(

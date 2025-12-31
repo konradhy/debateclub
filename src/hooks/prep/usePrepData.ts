@@ -13,10 +13,10 @@ export function usePrepData(opponentId: string | undefined) {
     ),
   );
 
-  // Research data
-  const { data: research } = useQuery(
+  // Research data (fetch ALL research documents)
+  const { data: researchDocs } = useQuery(
     convexQuery(
-      api.research.get,
+      api.research.getAll,
       opponentId ? { opponentId: opponentId as Id<"opponents"> } : "skip",
     ),
   );
@@ -82,7 +82,7 @@ export function usePrepData(opponentId: string | undefined) {
   return {
     // Data
     opponent,
-    research,
+    researchDocs,
     progress,
     geminiProgress,
     chatMessages,

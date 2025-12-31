@@ -2,16 +2,28 @@
 
 **Continuation of the session-by-session development record. Journal 1 became too long.**
 
+> **📚 Note**: This journal is now complete (Chapters 13-19). **Continue new sessions in `dev_journal_3.md`**.
+
+---
+
+# ⚠️ CRITICAL WARNING FOR AI ASSISTANTS ⚠️
+
+**THIS IS VOLUME 2 (Chapters 13-19). THERE IS A VOLUME 3!**
+
+📖 **`dev_journal_3.md`** contains Chapters 20+ including:
+- **Archive summaries** of Chapters 0-19 (compressed for quick reference)
+- **All new work** starting from Chapter 20
+
+**DO NOT** add new chapters to this file. **New work goes in `dev_journal_3.md`**.
+
 ---
 
 ## How to Use This Document
 
-1. **Start each session** by reading the Chapter Summaries below
-2. **If you need deep context** on a specific feature, read the full chapter in `dev_journal.md` (Journal 1)
-3. **Increment chapter number** for your session (continue from Chapter 14)
-4. **Document as you work** — decisions, problems, solutions
-5. **Complete chapter** before ending session
-6. **Never modify** past chapters — only add new ones
+1. **Start each session** by reading the Archive Summary in `dev_journal_3.md`
+2. **If you need deep context** on a specific feature from Chapters 13-19, read the full chapter below
+3. **For Chapters 0-12**, see `dev_journal.md` (Journal 1)
+4. **For new work**, write to `dev_journal_3.md` (Journal 3)
 
 ---
 
