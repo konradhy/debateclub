@@ -313,3 +313,206 @@ npx convex deploy    # Backend
 *New chapters begin below this line.*
 
 ---
+
+## Chapter 20: Research Integration — Send Extracted Items to Study Mode
+
+**Date**: December 31, 2025
+
+**Goal**: Enable users to click extracted research items from "My Research" tab and send them to Study Mode. Fix bug where user research replaces web research in Research Data tab.
+
+**Roadmap Reference**: [R-5.1] Research Integration (debate scenarios only)
+
+---
+
+### Problem Statement
+
+**Before**:
+1. Users could paste research text into "My Research" tab → AI extracts arguments, receipts, openers, zingers, counters
+2. Extracted items displayed in read-only cards with no way to save them to prep materials
+3. Bug: When user extracted research, it created a NEW research document. Since `research.get()` used `.order("desc").first()`, only the latest document was returned, hiding all previous web research
+
+**After**:
+1. Each extracted item has a "Send" button
+2. Clicking sends item to appropriate Study Mode section (appending, not replacing)
+3. Button changes to "Sent ✓" and disables to prevent duplicates
+4. Research Data tab shows ALL research sources (web + user) with clear labels ("🌐 Web Research" vs "📝 My Research")
+
+---
+
+### Implementation
+
+#### Part 1: Send Extracted Items to Study Mode
+
+**Pattern Used**: Followed existing InlineEdit pattern used throughout Study Mode. Used existing `addOpponentFieldItem` mutation with transformation layer to convert extraction format → Study Mode schema.
+
+**Backend** (No changes needed):
+- Reused `convex/opponents.ts:addOpponentFieldItem` mutation for appending items
+
+**Frontend Hook** ([src/hooks/prep/usePrepHandlers.ts](src/hooks/prep/usePrepHandlers.ts)):
+- Added `sentItems` state (Map<string, boolean>) for tracking sent items
+- Added `transformExtractedItem()` helper function with 5 transformations:
+  - `argument` → argumentFrame schema (claim → label, supportingPoints → detailedContent, strength → deploymentGuidance)
+  - `receipt` → receipt schema (type mapping: "Statistic" → "Statistics", etc.)
+  - `opener` → openingOption schema (type, hook, content)
+  - `zinger` → zinger schema (text, context, type: "User Generated")
+  - `counter` → opponentIntel item schema (argument, suggestedResponse → counters array)
+- Added `handleSendExtractedItem()` async function that:
+  1. Transforms item using helper
+  2. Maps item type to opponent field (argument → argumentFrames, receipt → receipts, etc.)
+  3. Calls `addFieldItem` mutation (appends to array)
+  4. Updates `sentItems` Map for UI feedback
+
+**Component** ([src/components/prep/MyResearchTab.tsx](src/components/prep/MyResearchTab.tsx)):
+- Added props: `handleSendExtractedItem`, `sentItems`
+- Added imports: `Send`, `Check` icons
+- Added Send button to all 5 extracted item types with conditional rendering:
+  ```tsx
+  {sentItems.has(item.id) ? (
+    <><Check /> Sent</>
+  ) : (
+    <><Send /> Send</>
+  )}
+  ```
+- Button disabled when `sentItems.has(item.id) === true`
+
+**Parent Component** ([src/routes/_app/_auth/dashboard/prep.tsx](src/routes/_app/_auth/dashboard/prep.tsx)):
+- Added `handleSendExtractedItem` and `sentItems` to usePrepHandlers destructuring (lines 89, 100)
+- Wired props to MyResearchTab component (lines 439-440)
+
+#### Part 2: Fix Research Data Display Bug
+
+**Root Cause**: `research.get` query used `.order("desc").first()` which only returns latest document. When user research was inserted with newer timestamp, it became "first" and hid all web research.
+
+**Solution**: Fetch ALL research documents, display with source grouping.
+
+**Backend** ([convex/research.ts](convex/research.ts)):
+- Added new `getAll` query (lines 23-40):
+  ```typescript
+  export const getAll = query({
+    args: { opponentId: v.id("opponents") },
+    handler: async (ctx, args) => {
+      const userId = await auth.getUserId(ctx);
+      if (!userId) return null;
+
+      const allResearch = await ctx.db
+        .query("research")
+        .withIndex("by_opponent", (q) => q.eq("opponentId", args.opponentId))
+        .order("desc")
+        .collect(); // Changed from .first() to .collect()
+
+      return allResearch;
+    },
+  });
+  ```
+- Kept existing `get` query for backward compatibility
+
+**Frontend Hook** ([src/hooks/prep/usePrepData.ts](src/hooks/prep/usePrepData.ts)):
+- Changed from `api.research.get` to `api.research.getAll` (lines 17-22)
+- Returns `researchDocs` array instead of single `research` object (line 85)
+
+**Component** ([src/components/prep/ResearchTab.tsx](src/components/prep/ResearchTab.tsx)):
+- Complete rewrite to handle array of research documents
+- Props changed from single object to array: `researchDocs: Array<{_id, query, articles, timestamp}>`
+- Added `getResearchSourceLabel()` helper:
+  - "User-provided" in query → "📝 My Research"
+  - "Debate topic" in query → "🌐 Web Research"
+- Maps over `researchDocs` array, displays each with:
+  - Source header (friendly label + timestamp)
+  - Article count badge (styled span, not Badge component which didn't exist)
+  - Article cards (existing layout preserved)
+- Empty state message when no research exists
+
+**Parent Component** ([src/routes/_app/_auth/dashboard/prep.tsx](src/routes/_app/_auth/dashboard/prep.tsx)):
+- Updated ResearchTab prop from `research={research}` to `researchDocs={researchDocs}` (line 426)
+
+---
+
+### Errors Fixed During Implementation
+
+**Error 1: Badge Component Missing**
+- Attempted to import `Badge` from `@/ui/badge` which didn't exist
+- **Fix**: Removed import, replaced with styled `<span>` element
+
+**Error 2: handleSendExtractedItem Not Defined**
+- Added props to MyResearchTab but forgot to destructure from usePrepHandlers
+- **Fix**: Added `handleSendExtractedItem` and `sentItems` to destructuring block (lines 89, 100)
+
+---
+
+### Files Modified
+
+1. **convex/research.ts** — Added `getAll` query
+2. **src/hooks/prep/usePrepData.ts** — Changed to use `getAll`, return `researchDocs`
+3. **src/hooks/prep/usePrepHandlers.ts** — Added sentItems state, transformation logic, send handler
+4. **src/components/prep/ResearchTab.tsx** — Complete rewrite for multi-source display
+5. **src/components/prep/MyResearchTab.tsx** — Added Send buttons to all 5 item types
+6. **src/routes/_app/_auth/dashboard/prep.tsx** — Wired up new props, updated destructuring
+
+---
+
+### Key Decisions
+
+1. **Reuse existing mutations**: Used `addOpponentFieldItem` instead of creating new mutations → less code, consistent patterns
+2. **Transformation layer**: Kept extraction schema separate from Study Mode schema, transformations handle conversion → flexibility to change either schema independently
+3. **Local state for sent tracking**: `sentItems` Map provides instant UI feedback without database round-trip → better UX
+4. **Append, don't replace**: Items added to existing arrays, never overwrite → users don't lose manually-added content
+5. **Multi-source display**: Show ALL research documents instead of just latest → transparent, no data loss
+6. **Friendly labels**: Emoji-prefixed labels ("📝 My Research") for quick visual scanning
+
+---
+
+### Testing Checklist (Confirmed Working by User)
+
+✅ Part 1: Send to Study Mode
+- Paste research text in My Research tab
+- Extract insights
+- Click "Send" button on argument
+- Button changes to "Sent ✓"
+- Switch to Study Mode → argument appears in Argument Frames
+- Item appended (doesn't replace existing)
+- Tested all 5 item types (arguments, receipts, openers, zingers, counters)
+- Each appears in correct Study Mode section
+
+✅ Part 2: Research Display
+- Generate prep materials (creates web research)
+- Research Data tab shows "🌐 Web Research" section
+- Paste text in My Research and extract
+- Research Data tab now shows TWO sections: web + user
+- Both sections display correctly with timestamps
+- Articles render properly within each section
+
+---
+
+### Patterns Established
+
+**Research Data Architecture**:
+- Multiple research documents per opponent (not just one)
+- Each document has: query (source description), articles array, timestamp
+- Frontend displays chronologically (newest first) with source grouping
+
+**Extraction → Study Mode Flow**:
+1. User pastes research text
+2. AI extracts structured items
+3. User clicks "Send" on item
+4. Transformation layer converts format
+5. Mutation appends to appropriate field
+6. Local state updates for instant UI feedback
+7. Study Mode auto-updates via Convex reactivity
+
+---
+
+### Success Criteria Met
+
+✅ Users can send extracted research items to Study Mode
+✅ Sent items appear in correct Study Mode sections
+✅ Items append (don't replace) existing content
+✅ Visual feedback shows sent state
+✅ Research Data tab shows both web research AND user research
+✅ No data loss or overwrites
+✅ Clear source labeling ("Web Research" vs "My Research")
+
+---
+
+**Status**: [R-5.1] ✅ COMPLETE
+
+---

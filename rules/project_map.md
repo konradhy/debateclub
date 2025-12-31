@@ -2,7 +2,7 @@
 
 **Current architecture and codebase structure. Updated as features are added.**
 
-**Last Updated**: December 31, 2025 (Chapter 19 - Phase 4 Complete)
+**Last Updated**: December 31, 2025 (Chapter 20 - Phase 5.1 Complete)
 
 ---
 
@@ -165,7 +165,7 @@ orator/
 | `techniques` | Detected techniques | `debateId`, `technique`, `effectiveness`, `speaker` |
 | `analyses` | Post-practice coaching | `debateId`, `analysisFramework`, `executiveSummary`, `hasanScores` (debate-only) |
 | `opponents` | Opponent/practice profiles | `userId`, `name`, `topic`, `scenarioType`, `prepType`, + 50+ context/prep fields |
-| `research` | Web research articles | `opponentId`, `articles[]`, `query` |
+| `research` | Web research articles | `opponentId`, `articles[]`, `query`, `timestamp` |
 | `prepProgress` | Generation progress tracking | `opponentId`, `status`, `completedSteps` |
 | `prepChat` | RAG chatbot messages | `opponentId`, `role`, `content` |
 | `geminiResearchProgress` | Gemini Deep Research status | `opponentId`, `status`, `message` |
@@ -527,6 +527,27 @@ For large files, extract to feature-specific components:
 - `src/hooks/prep/` for prep page hooks
 - Explicit prop drilling (not Context) for traceability
 
+### 14. Research Integration Pattern (Ch.20)
+
+**Multi-source research display**:
+- Each opponent can have MULTIPLE research documents (not just one)
+- `research.getAll()` returns all documents, not just latest
+- Frontend displays chronologically with source grouping ("🌐 Web Research" vs "📝 My Research")
+
+**Extraction → Study Mode flow**:
+1. User pastes research text in "My Research" tab
+2. AI extracts structured items (arguments, receipts, openers, zingers, counters)
+3. User clicks "Send" on item
+4. Transformation layer converts extraction format → Study Mode schema
+5. Mutation appends to appropriate field array
+6. Local state (`sentItems` Map) updates for instant UI feedback
+7. Study Mode auto-updates via Convex reactivity
+
+**Transformation layer**:
+- `transformExtractedItem()` converts 5 item types to Study Mode schemas
+- Extraction schema ≠ Study Mode schema (flexibility to change independently)
+- Existing `addOpponentFieldItem` mutation reused (append, don't replace)
+
 ---
 
 ## Cron Jobs
@@ -623,6 +644,7 @@ npx convex deploy       # Deploy backend
 
 | Date | Change | Chapter |
 |------|--------|---------|
+| Dec 31, 2025 | Research Integration - Send extracted items to Study Mode, fix research display bug | Ch.20 |
 | Dec 31, 2025 | **Gemini cost bug fix**: Corrected hardcoded value from $5.00 to $2.70 | Bug Fix |
 | Dec 31, 2025 | Cost Monitoring & Control - Phase tracking, topic grouping, accurate Vapi duration | Ch.19 |
 | Dec 30, 2025 | Stripe Payment Integration - Webhooks, checkout, customer portal | Ch.18 |
@@ -723,4 +745,4 @@ From roadmap and dev journals:
 
 ---
 
-*This document reflects the codebase as of December 31, 2025 (Chapter 19 - Phase 4 Complete).*
+*This document reflects the codebase as of December 31, 2025 (Chapter 20 - Phase 5.1 Complete).*

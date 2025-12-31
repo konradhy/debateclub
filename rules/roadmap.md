@@ -46,11 +46,11 @@ Reference format: [R-1.2.3]
 
 ## Current Focus
 
-**Active Phase**: Phase 4 - Monetization & Business Model (🔄 In Progress)
+**Active Phase**: Phase 5 - Prep Materials Enhancement (🔄 In Progress)
 
-**Next Up**: Phase 5 - Prep Materials Enhancement
+**Next Up**: Phase 5.2 - Content Enhancement
 
-**Relevant DEV_JOURNAL Chapters**: Pre-docs, Ch.1-19
+**Relevant DEV_JOURNAL Chapters**: Pre-docs, Ch.1-20
 
 ---
 
@@ -417,7 +417,7 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Goal**: Implement revenue system with multi-tiered access control
 
-**Status**: 🔄 (Payment integration complete, cost monitoring complete, testing in progress)
+**Status**: ✅ (Complete)
 
 **Chapters**: Ch.16, Ch.17, Ch.18, Ch.19
 
@@ -485,9 +485,9 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Goal**: Improve quality and usability of generated prep materials
 
-**Status**: ⬜
+**Status**: 🔄 (In Progress)
 
-**Chapters**: —
+**Chapters**: Ch.20
 
 ---
 
@@ -495,16 +495,16 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Description**: Click-to-send extracted research to study mode
 
-**Status**: ⬜
+**Status**: ✅
 
-**Chapters**: —
+**Chapters**: Ch.20
 
 #### Tasks
 
-- ⬜ **5.1.1** — Click handlers for extracted arguments, receipts, openers, zingers, counter-arguments
-- ⬜ **5.1.2** — Auto-populate into quick reference section in study mode
-- ⬜ **5.1.3** — Fix research data appending logic (preserve existing + accumulate new items)
-- ⬜ **5.1.4** — Visual feedback for sent items
+- ✅ **5.1.1** — Click handlers for extracted arguments, receipts, openers, zingers, counter-arguments
+- ✅ **5.1.2** — Auto-populate into quick reference section in study mode
+- ✅ **5.1.3** — Fix research data appending logic (preserve existing + accumulate new items)
+- ✅ **5.1.4** — Visual feedback for sent items
 
 ---
 
@@ -1069,3 +1069,5 @@ Build a feature allowing users to challenge others to debates, either friends vi
 | Phase 1 | Pre-docs | Pre-docs | MVP complete |
 | Phase 2 | Pre-docs | Pre-docs | Technique detection working |
 | Phase 3 | Pre-docs | Dec 2025 | Complete |
+| Phase 4 | Dec 2025 | Dec 2025 | Monetization complete |
+| Phase 5 | Dec 2025 | — | In progress (5.1 complete) |
