@@ -12,6 +12,7 @@ const statusValidator = v.union(
   v.literal("generating_zingers"),
   v.literal("generating_closings"),
   v.literal("generating_intel"),
+  v.literal("generating_strategic_brief"),
   v.literal("storing"),
   v.literal("complete"),
   v.literal("error"),
@@ -28,6 +29,7 @@ type ProgressStatus =
   | "generating_zingers"
   | "generating_closings"
   | "generating_intel"
+  | "generating_strategic_brief"
   | "storing"
   | "complete"
   | "error";
@@ -43,6 +45,7 @@ const STATUS_MESSAGES: Record<ProgressStatus, string> = {
   generating_zingers: "Crafting zingers...",
   generating_closings: "Writing closing statements...",
   generating_intel: "Analyzing opponent strategies...",
+  generating_strategic_brief: "Generating strategic brief...",
   storing: "Saving your strategy...",
   complete: "Strategy complete!",
   error: "An error occurred",

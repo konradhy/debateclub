@@ -1,19 +1,25 @@
 import ReactMarkdown from "react-markdown";
-import { FileSearch } from "lucide-react";
+import { FileSearch, Clock, RefreshCw } from "lucide-react";
 
 interface GeminiReportTabProps {
   geminiResearchReport: string | undefined;
   geminiResearchMetadata:
-    | {
-        generatedAt: number;
-        reportLength: number;
-      }
-    | undefined;
+  | {
+    generatedAt: number;
+    reportLength: number;
+  }
+  | undefined;
+  deepResearchTokens: number;
+  onRunDeepResearch: () => void;
+  isGenerating: boolean;
 }
 
 export function GeminiReportTab({
   geminiResearchReport,
   geminiResearchMetadata,
+  deepResearchTokens,
+  onRunDeepResearch,
+  isGenerating,
 }: GeminiReportTabProps) {
   return (
     <>
@@ -158,28 +164,70 @@ export function GeminiReportTab({
             </ReactMarkdown>
           </div>
           {geminiResearchMetadata && (
-            <div className="mt-6 pt-4 border-t text-xs text-muted-foreground">
-              Generated on{" "}
-              {new Date(geminiResearchMetadata.generatedAt).toLocaleString()}
-              {" • "}
-              {Math.round(geminiResearchMetadata.reportLength / 1000)}k
-              characters
+            <div className="mt-6 pt-4 border-t text-xs text-muted-foreground flex items-center justify-between">
+              <span>
+                Generated on{" "}
+                {new Date(geminiResearchMetadata.generatedAt).toLocaleString()}
+                {" • "}
+                {Math.round(geminiResearchMetadata.reportLength / 1000)}k
+                characters
+              </span>
+              <button
+                onClick={onRunDeepResearch}
+                disabled={isGenerating || deepResearchTokens < 1}
+                className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-primary border-2 border-primary/20 rounded-lg hover:bg-primary/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <RefreshCw className="w-3 h-3" />
+                Regenerate
+              </button>
             </div>
           )}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center h-64 text-center">
-          <FileSearch className="h-12 w-12 mx-auto mb-3 opacity-30 text-muted-foreground" />
-          <h3 className="text-lg font-medium mb-2">
-            Research Report Not Yet Ready
-          </h3>
-          <p className="text-sm text-muted-foreground max-w-md">
-            Click "Generate Strategy (Gemini)" to create a comprehensive
-            research report using Gemini Deep Research.
-          </p>
-          <p className="text-xs text-muted-foreground mt-2">
-            This process can take 3-20 minutes for thorough analysis.
-          </p>
+        <div className="flex flex-col items-center justify-center min-h-[400px] px-6">
+          <div className="max-w-md text-center space-y-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-primary/5">
+              <FileSearch className="w-8 h-8 text-primary" />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold text-primary">
+                Unlock Deep Research
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Gemini's 20-minute autonomous research generates comprehensive
+                analysis with verified sources and strategic insights.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+              <Clock className="w-4 h-4" />
+              <span>~20 minutes</span>
+              <span>•</span>
+              <span>1 token (~$2.70)</span>
+            </div>
+
+            <div className="flex flex-col gap-3 w-full pt-2">
+              <button
+                onClick={onRunDeepResearch}
+                disabled={isGenerating || deepResearchTokens < 1}
+                className="w-full h-11 rounded-lg font-medium text-white bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isGenerating ? "Generating..." : "Run Deep Research"}
+              </button>
+
+              <p className="text-xs text-muted-foreground">
+                Balance: {deepResearchTokens}{" "}
+                {deepResearchTokens === 1 ? "token" : "tokens"}
+              </p>
+
+              {deepResearchTokens < 1 && (
+                <p className="text-xs text-destructive">
+                  Purchase Deep Research tokens to continue
+                </p>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </>

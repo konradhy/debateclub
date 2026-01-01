@@ -41,6 +41,17 @@ export const TOKEN_PACKS = [
 export const SUBSCRIPTION_MONTHLY_PRICE_ID = "price_1SkE9eCm9nndApXQaVYx2Hsc";
 export const SUBSCRIPTION_ANNUAL_PRICE_ID = "price_1SkE9eCm9nndApXQGDpPZijx";
 
+/** Deep Research Token System */
+export const DEEP_RESEARCH_SCENARIO_ID = "deep-research";
+export const DEEP_RESEARCH_COST_CENTS = 270; // $2.70 per run
+
+/** Deep Research Token Packs */
+export const DEEP_RESEARCH_TOKEN_PACKS = [
+  { tokens: 1, priceUsd: 400, stripePriceId: "price_1SkadrCm9nndApXQ945Of2ZP" }, // $4.00
+  { tokens: 3, priceUsd: 1000, stripePriceId: "price_1SkadrCm9nndApXQF82dlVMJ" }, // $10.00
+  { tokens: 10, priceUsd: 3000, stripePriceId: "price_1SkadrCm9nndApXQit4dzcBz" }, // $30.00
+] as const;
+
 /**
  * Helper to get the start of the current billing month (midnight on the 1st)
  */

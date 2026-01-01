@@ -324,6 +324,18 @@ const schema = defineSchema({
         reportLength: v.number(),
       }),
     ),
+
+    // ==========================================
+    // STRATEGIC BRIEF (7-minute orientation document)
+    // ==========================================
+    strategicBrief: v.optional(v.string()),
+    strategicBriefMetadata: v.optional(
+      v.object({
+        generatedAt: v.number(),
+        wordCount: v.number(),
+        readingTimeMinutes: v.number(),
+      }),
+    ),
   }).index("by_user", ["userId"]),
   prepProgress: defineTable({
     opponentId: v.id("opponents"),
@@ -338,6 +350,7 @@ const schema = defineSchema({
       v.literal("generating_zingers"),
       v.literal("generating_closings"),
       v.literal("generating_intel"),
+      v.literal("generating_strategic_brief"),
       v.literal("storing"),
       v.literal("complete"),
       v.literal("error"),

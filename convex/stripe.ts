@@ -4,6 +4,7 @@ import { internal, components } from "./_generated/api";
 import { auth } from "./auth";
 import {
   TOKEN_PACKS,
+  DEEP_RESEARCH_TOKEN_PACKS,
   SUBSCRIPTION_MONTHLY_PRICE_ID,
   SUBSCRIPTION_ANNUAL_PRICE_ID,
 } from "./lib/monetization";
@@ -32,7 +33,12 @@ export const createTokenCheckout = action({
     const user = await ctx.runQuery(internal.users.get, { userId });
     if (!user?.email) throw new Error("User email required");
 
-    const pack = TOKEN_PACKS[packIndex];
+    // Select token packs based on scenario
+    const tokenPacks = scenarioId === "deep-research"
+      ? DEEP_RESEARCH_TOKEN_PACKS
+      : TOKEN_PACKS;
+
+    const pack = tokenPacks[packIndex];
     if (!pack) throw new Error("Invalid pack index");
 
     if (!pack.stripePriceId) {

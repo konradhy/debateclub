@@ -485,9 +485,9 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Goal**: Improve quality and usability of generated prep materials
 
-**Status**: 🔄 (In Progress)
+**Status**: ✅ (Complete)
 
-**Chapters**: Ch.20
+**Chapters**: Ch.20, Ch.21
 
 ---
 
@@ -541,24 +541,24 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 ---
 
-### 5.4 Debate Summary Booklet
+### 5.4 Strategic Brief Document
 
-**Description**: Skimmable 7-minute read summarizing the debate argument, created when using the firecrawl option and is used instead of deep earch
+**Description**: 7-minute strategic orientation document that synthesizes all prep materials into a coherent game plan, showing how everything connects
 
-**Status**: ⬜
+**Status**: ✅
 
-**Chapters**: —
+**Chapters**: Ch.21
 
 #### Tasks
 
-- ⬜ **5.4.1** — Design booklet format and structure. 
-- ⬜ **5.4.2** — Generate summary using LLM (position, key arguments, strategy)
-- ⬜ **5.4.3** — Reading time estimation
-- ⬜ **5.4.4** — Print/export functionality
+- ✅ **5.4.1** — Design booklet format and structure (4-section narrative format)
+- ✅ **5.4.2** — Generate summary using LLM (battlefield, architecture, Hasan principles, deployment flow)
+- ✅ **5.4.3** — Reading time estimation (word count / 200 WPM)
+- ✅ **5.4.4** — UI tab integration with metadata display
 
 ---
 
-### 5.5 Analysis Page Enhancements
+### 5.5 Analysis Page Enhancements(WARNING MOVE TO LONG TERM!!!! SKIP)
 
 **Description**: Link to resources and further reading
 
@@ -573,6 +573,8 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 - ⬜ **5.5.3** — Recommend relevant studies
 - ⬜ **5.5.4** — Create mapping of topics to resources (SEO value)
 
+
+
 ---
 
 ## Phase 6: Evidence Sourcing & Performance Optimization
@@ -583,7 +585,7 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 ### 6.4 Instant Feedback System
 
-**Description**: Show preliminary content immediately
+**Description**: Show preliminary content immediately. START BY asking where do users wait. what 80/20 can i do to make experience better.
 
 **Status**: ⬜
 
@@ -632,40 +634,6 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 ---
 
-### 6.7 Engaging Status Messages
-
-**Description**: Contextual status messages during processing
-
-**Status**: ⬜
-
-**Chapters**: —
-
-#### Tasks
-
-- ⬜ **6.7.1** — Use cheap LLM to generate contextual phrases
-- ⬜ **6.7.2** — Context-aware messages ("Analyzing their strongest arguments...")
-- ⬜ **6.7.3** — Rotate messages to maintain engagement
-- ⬜ **6.7.4** — Timing logic to prevent message spam
-
----
-
-### 6.8 Timing & Metrics
-
-**Description**: Measure and optimize generation performance
-
-**Status**: ⬜
-
-**Chapters**: —
-
-#### Tasks
-
-- ⬜ **6.8.1** — Instrument timing for deep research method
-- ⬜ **6.8.2** — Instrument timing for firecrawl method
-- ⬜ **6.8.3** — Display actual vs expected timing to users
-- ⬜ **6.8.4** — Performance analytics dashboard
-- ⬜ **6.8.5** — Create reusable component/hook for wait time patterns
-
----
 
 ## Phase 7: Quality Pass & Calibration
 
@@ -822,7 +790,7 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 ---
 
-### 8.5 The Social Share
+### 8.5 The Social Share (EDIT MOVE TO MID TERM )
 **description** You can ask for credits by sharing something to twitter. So essentially. Click button on purchase page for a scenario and you share on twitter "As a doctor, i'm leveling up my xyz by practicing abc on Debate Club. Check it out". Occurs when you run out of credits or want to purchase a scenario there's a ghost "fyi". 
 - ⬜ **8.5.1** —
 
@@ -1011,4 +979,4 @@ Build a feature allowing users to challenge others to debates, either friends vi
 | Phase 2 | Pre-docs | Pre-docs | Technique detection working |
 | Phase 3 | Pre-docs | Dec 2025 | Complete |
 | Phase 4 | Dec 2025 | Dec 2025 | Monetization complete |
-| Phase 5 | Dec 2025 | — | In progress (5.1-5.3 complete) |
+| Phase 5 | Dec 2025 | Dec 2025 | Complete (5.1-5.4 all done) |

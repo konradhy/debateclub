@@ -54,6 +54,7 @@ import type * as scenarios_healthcare from "../scenarios/healthcare.js";
 import type * as scenarios_index from "../scenarios/index.js";
 import type * as scenarios_sales from "../scenarios/sales.js";
 import type * as scenarios_types from "../scenarios/types.js";
+import type * as setupDeepResearchProducts from "../setupDeepResearchProducts.js";
 import type * as setupStripeProducts from "../setupStripeProducts.js";
 import type * as stripe from "../stripe.js";
 import type * as stripeWebhooks from "../stripeWebhooks.js";
@@ -113,6 +114,7 @@ declare const fullApi: ApiFromModules<{
   "scenarios/index": typeof scenarios_index;
   "scenarios/sales": typeof scenarios_sales;
   "scenarios/types": typeof scenarios_types;
+  setupDeepResearchProducts: typeof setupDeepResearchProducts;
   setupStripeProducts: typeof setupStripeProducts;
   stripe: typeof stripe;
   stripeWebhooks: typeof stripeWebhooks;

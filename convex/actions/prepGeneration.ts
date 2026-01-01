@@ -12,6 +12,7 @@ import {
   OPPONENT_INTEL_PROMPT,
   USER_RESEARCH_PROCESSING_PROMPT,
   RESEARCH_SYNTHESIS_PROMPT,
+  STRATEGIC_BRIEF_PROMPT,
 } from "../lib/promptTemplates";
 import type { ActionCtx } from "../_generated/server";
 import type { Id } from "../_generated/dataModel";
@@ -404,5 +405,97 @@ export const generateResearchSynthesis = internalAction({
       researchGaps: synthesis.researchGaps || "",
       strategicInsights: synthesis.strategicInsights || "",
     };
+  },
+});
+
+/**
+ * Generates a Strategic Brief - a 7-minute strategic orientation document
+ * that synthesizes all prep materials into a coherent game plan.
+ */
+export const generateStrategicBrief = internalAction({
+  args: {
+    opponentId: v.id("opponents"),
+    userId: v.id("users"),
+    topic: v.string(),
+    position: v.string(),
+    strategicBrief: v.string(), // Original strategic brief (opponent context)
+    prepMaterials: v.object({
+      openingOptions: v.array(v.any()),
+      argumentFrames: v.array(v.any()),
+      receipts: v.array(v.any()),
+      zingers: v.array(v.any()),
+      closingOptions: v.array(v.any()),
+      opponentIntel: v.array(v.any()),
+    }),
+    researchContext: v.optional(v.string()), // Research synthesis insights
+    opponentStyle: v.string(),
+  },
+  returns: v.string(), // Markdown string
+  handler: async (ctx, args) => {
+    // Serialize prep materials into a summary format for the prompt
+    const prepMaterialsSummary = `
+OPENING OPTIONS (${args.prepMaterials.openingOptions.length} options):
+${args.prepMaterials.openingOptions.map((o, i) => `${i + 1}. ${o.type}: "${o.hook}"\n   ${o.content.substring(0, 150)}...`).join('\n')}
+
+ARGUMENT FRAMES (${args.prepMaterials.argumentFrames.length} frames):
+${args.prepMaterials.argumentFrames.map((f, i) => `${i + 1}. ${f.label}: ${f.summary}\n   Details: ${f.detailedContent.substring(0, 150)}...\n   Example: ${f.exampleQuote ? f.exampleQuote.substring(0, 100) + '...' : 'N/A'}`).join('\n')}
+
+RECEIPTS (${args.prepMaterials.receipts.length} total across categories):
+${Object.entries(
+  args.prepMaterials.receipts.reduce((acc: Record<string, any[]>, r: any) => {
+    acc[r.category] = (acc[r.category] || []).concat(r);
+    return acc;
+  }, {} as Record<string, any[]>)
+).map(([cat, receipts]) => `- ${cat} (${(receipts as any[]).length}): ${(receipts as any[]).slice(0, 2).map((r: any) => r.content.substring(0, 80) + '...').join(' | ')}`).join('\n')}
+
+ZINGERS (${args.prepMaterials.zingers.length} zingers):
+${args.prepMaterials.zingers.slice(0, 5).map((z, i) => `${i + 1}. ${z.text} (${z.type || 'N/A'})`).join('\n')}
+
+CLOSING OPTIONS (${args.prepMaterials.closingOptions.length} options):
+${args.prepMaterials.closingOptions.map((c, i) => `${i + 1}. ${c.type}: ${c.preview}`).join('\n')}
+
+OPPONENT INTEL (${args.prepMaterials.opponentIntel.length} likely arguments):
+${args.prepMaterials.opponentIntel.map((intel, i) => `${i + 1}. "${intel.argument}" (${intel.likelihood})\n   Weakness: ${intel.weakness}\n   Counters prepared: ${intel.counters.length}`).join('\n')}
+`;
+
+    // Build the prompt by replacing placeholders
+    const prompt = STRATEGIC_BRIEF_PROMPT
+      .replace('{strategicBrief}', args.strategicBrief)
+      .replace('{prepMaterials}', prepMaterialsSummary)
+      .replace('{researchContext}', args.researchContext || 'No additional research context available.')
+      .replace('{topic}', args.topic)
+      .replace('{position}', args.position.toUpperCase())
+      .replace('{style}', args.opponentStyle);
+
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) {
+      throw new Error("OPENROUTER_API_KEY is not set");
+    }
+
+    try {
+      // Use Gemini 3 Flash Preview via OpenRouter for fast, cheap synthesis
+      const response = await callOpenRouterForPrep(
+        ctx,
+        args.userId,
+        args.opponentId,
+        apiKey,
+        [{ role: "user", content: prompt }],
+        SITE_URL,
+        3, // max retries
+        "google/gemini-3-flash-preview", // Fast, cheap, good at synthesis
+        undefined, // maxTokens
+        false, // jsonMode - we want raw markdown, not JSON
+      );
+
+      const content = response.choices[0]?.message?.content;
+      if (!content) {
+        throw new Error("No content generated for Strategic Brief");
+      }
+
+      return content;
+    } catch (error) {
+      console.error("[generateStrategicBrief] Error:", error);
+      throw error;
+    }
   },
 });

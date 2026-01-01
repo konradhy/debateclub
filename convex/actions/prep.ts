@@ -91,6 +91,7 @@ export const generateStrategy = action({
         | "generating_zingers"
         | "generating_closings"
         | "generating_intel"
+        | "generating_strategic_brief"
         | "storing"
         | "complete"
         | "error",
@@ -307,13 +308,54 @@ export const generateStrategy = action({
       opponentIntel,
     };
 
+    // Generate Strategic Brief as final synthesis (non-blocking)
+    let strategicBriefMarkdown: string | undefined;
+    let strategicBriefMetadata: { generatedAt: number; wordCount: number; readingTimeMinutes: number } | undefined;
+
+    try {
+      await updateProgress("generating_strategic_brief");
+      strategicBriefMarkdown = await ctx.runAction(
+        internal.actions.prepGeneration.generateStrategicBrief,
+        {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
+          topic: args.topic,
+          position: args.position,
+          strategicBrief,
+          prepMaterials: {
+            openingOptions,
+            argumentFrames,
+            receipts,
+            zingers,
+            closingOptions,
+            opponentIntel,
+          },
+          researchContext: researchSynthesis?.strategicInsights,
+          opponentStyle: opponent.style,
+        },
+      );
+
+      const wordCount = strategicBriefMarkdown.split(/\s+/).length;
+      const readingTimeMinutes = Math.round(wordCount / 200);
+
+      strategicBriefMetadata = {
+        generatedAt: Date.now(),
+        wordCount,
+        readingTimeMinutes,
+      };
+      console.log("[generateStrategy] Strategic Brief generated successfully");
+    } catch (error) {
+      console.error("[generateStrategy] Strategic Brief generation failed (non-fatal):", error);
+      // Continue without Strategic Brief - don't fail whole prep
+    }
+
     // Post-process argumentFrames to ensure evidenceIds exists
     strategy.argumentFrames = strategy.argumentFrames.map((frame: any) => ({
       ...frame,
       evidenceIds: frame.evidenceIds || [],
     }));
 
-    // 5. Store the generated strategy, research, and synthesis
+    // 5. Store the generated strategy, research, synthesis, and strategic brief
     await updateProgress("storing");
     await Promise.all([
       ctx.runMutation(internal.opponents.updateStrategy, {
@@ -322,6 +364,8 @@ export const generateStrategy = action({
         researchSynthesis: researchSynthesis
           ? { ...researchSynthesis, generatedAt: Date.now() }
           : undefined,
+        strategicBrief: strategicBriefMarkdown,
+        strategicBriefMetadata: strategicBriefMetadata,
       }),
       ctx.runMutation(internal.research.store, {
         opponentId: args.opponentId,

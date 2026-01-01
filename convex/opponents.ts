@@ -263,6 +263,14 @@ export const updateStrategy = internalMutation({
         generatedAt: v.number(),
       }),
     ),
+    strategicBrief: v.optional(v.string()),
+    strategicBriefMetadata: v.optional(
+      v.object({
+        generatedAt: v.number(),
+        wordCount: v.number(),
+        readingTimeMinutes: v.number(),
+      }),
+    ),
   },
   handler: async (ctx, args) => {
     const patch: Record<string, unknown> = {
@@ -277,6 +285,16 @@ export const updateStrategy = internalMutation({
     // Only include synthesis if provided
     if (args.researchSynthesis) {
       patch.researchSynthesis = args.researchSynthesis;
+    }
+
+    // Only include strategic brief if provided
+    if (args.strategicBrief) {
+      patch.strategicBrief = args.strategicBrief;
+    }
+
+    // Only include strategic brief metadata if provided
+    if (args.strategicBriefMetadata) {
+      patch.strategicBriefMetadata = args.strategicBriefMetadata;
     }
 
     await ctx.db.patch(args.opponentId, patch);

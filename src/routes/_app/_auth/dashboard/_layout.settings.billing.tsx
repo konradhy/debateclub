@@ -13,6 +13,7 @@ import {
   CreditCard,
   Check,
   Sparkles,
+  Target,
 } from "lucide-react";
 
 // Color constants matching dashboard
@@ -365,6 +366,202 @@ function BillingPage() {
 
           </div>
 
+          {/* Deep Research Purchase Card */}
+          <div
+            className="rounded-xl border-2 relative overflow-hidden"
+            style={{
+              borderImage: "linear-gradient(135deg, #3C4A32, #5C6B4A) 1",
+              backgroundColor: colors.cardBg,
+            }}
+          >
+            <div className="p-8">
+              {/* Header with Icon */}
+              <div className="flex items-start gap-5 mb-8">
+                <div
+                  className="flex h-14 w-14 items-center justify-center rounded-full flex-shrink-0"
+                  style={{ backgroundColor: `${colors.primary}15` }}
+                >
+                  <Target className="h-7 w-7" style={{ color: colors.primary }} />
+                </div>
+                <div className="flex-1">
+                  <h2
+                    className="text-2xl font-semibold mb-3"
+                    style={{ color: colors.text, fontFamily: "Georgia, serif" }}
+                  >
+                    Deep Research
+                  </h2>
+                  <p
+                    className="text-lg font-medium mb-3 leading-relaxed"
+                    style={{ color: colors.text }}
+                  >
+                    Stop guessing what arguments will land
+                  </p>
+                  <p className="text-base leading-relaxed" style={{ color: colors.textMuted }}>
+                    20-minute autonomous research finds verified sources and strategic angles.
+                    Know more than your opponent before you start.
+                  </p>
+                </div>
+              </div>
+
+              {/* Current Balance */}
+              <div
+                className="mb-8 rounded-lg border px-5 py-4 flex items-center justify-between"
+                style={{ borderColor: colors.border, backgroundColor: colors.background }}
+              >
+                <span className="text-base" style={{ color: colors.textMuted }}>
+                  Your Deep Research tokens
+                </span>
+                <span
+                  className="flex items-center gap-2 text-base font-semibold"
+                  style={{
+                    color: (allBalances?.["deep-research"] ?? 0) > 0 ? colors.success : colors.textLight,
+                  }}
+                >
+                  <Coins className="h-5 w-5" />
+                  {allBalances?.["deep-research"] ?? 0} tokens
+                </span>
+              </div>
+
+              {/* Pack Options */}
+              <div className="grid grid-cols-3 gap-5">
+                {/* Pack 1: Try Once */}
+                <div
+                  className="rounded-lg border-2 p-6 text-center"
+                  style={{ borderColor: colors.border }}
+                >
+                  <p className="text-4xl font-bold mb-2" style={{ color: colors.text }}>
+                    1
+                  </p>
+                  <p className="text-sm mb-4" style={{ color: colors.textMuted }}>
+                    token
+                  </p>
+                  <p className="text-2xl font-semibold mb-6" style={{ color: colors.primary }}>
+                    $4
+                  </p>
+                  <button
+                    className="w-full rounded-lg border-2 px-4 py-2.5 text-sm font-medium transition-all hover:bg-gray-50"
+                    style={{ borderColor: colors.border, color: colors.text }}
+                    onClick={async () => {
+                      try {
+                        setPurchasingPackIndex(0);
+                        const result = await createTokenCheckout({
+                          scenarioId: "deep-research",
+                          packIndex: 0,
+                        });
+                        if (result?.url) window.location.href = result.url;
+                      } catch (error) {
+                        console.error("Deep Research checkout error:", error);
+                        setErrorMessage("Failed to create checkout session");
+                      } finally {
+                        setPurchasingPackIndex(null);
+                      }
+                    }}
+                    disabled={purchasingPackIndex !== null}
+                  >
+                    {purchasingPackIndex === 0 ? "Loading..." : "Try once"}
+                  </button>
+                </div>
+
+                {/* Pack 2: Popular */}
+                <div
+                  className="rounded-lg border-2 p-6 text-center relative"
+                  style={{
+                    borderColor: colors.primary,
+                    backgroundColor: `${colors.primary}05`,
+                  }}
+                >
+                  <span
+                    className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-xs font-medium text-white"
+                    style={{ backgroundColor: colors.primary }}
+                  >
+                    Popular
+                  </span>
+                  <p className="text-4xl font-bold mb-2" style={{ color: colors.text }}>
+                    3
+                  </p>
+                  <p className="text-sm mb-4" style={{ color: colors.textMuted }}>
+                    tokens
+                  </p>
+                  <p className="text-2xl font-semibold mb-1" style={{ color: colors.primary }}>
+                    $10
+                  </p>
+                  <p className="text-xs mb-5" style={{ color: colors.success }}>
+                    Save 17%
+                  </p>
+                  <button
+                    className="w-full rounded-lg border-2 px-4 py-2.5 text-sm font-medium transition-all hover:bg-gray-50"
+                    style={{ borderColor: colors.border, color: colors.text }}
+                    onClick={async () => {
+                      try {
+                        setPurchasingPackIndex(1);
+                        const result = await createTokenCheckout({
+                          scenarioId: "deep-research",
+                          packIndex: 1,
+                        });
+                        if (result?.url) window.location.href = result.url;
+                      } catch (error) {
+                        console.error("Deep Research checkout error:", error);
+                        setErrorMessage("Failed to create checkout session");
+                      } finally {
+                        setPurchasingPackIndex(null);
+                      }
+                    }}
+                    disabled={purchasingPackIndex !== null}
+                  >
+                    {purchasingPackIndex === 1 ? "Loading..." : "Purchase"}
+                  </button>
+                </div>
+
+                {/* Pack 3: Best Value */}
+                <div
+                  className="rounded-lg border-2 p-6 text-center relative"
+                  style={{ borderColor: colors.border }}
+                >
+                  <span
+                    className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-xs font-medium"
+                    style={{ backgroundColor: colors.success, color: "white" }}
+                  >
+                    Best Value
+                  </span>
+                  <p className="text-4xl font-bold mb-2" style={{ color: colors.text }}>
+                    10
+                  </p>
+                  <p className="text-sm mb-4" style={{ color: colors.textMuted }}>
+                    tokens
+                  </p>
+                  <p className="text-2xl font-semibold mb-1" style={{ color: colors.primary }}>
+                    $30
+                  </p>
+                  <p className="text-xs mb-5" style={{ color: colors.success }}>
+                    Save 25%
+                  </p>
+                  <button
+                    className="w-full rounded-lg border-2 px-4 py-2.5 text-sm font-medium transition-all hover:bg-gray-50"
+                    style={{ borderColor: colors.border, color: colors.text }}
+                    onClick={async () => {
+                      try {
+                        setPurchasingPackIndex(2);
+                        const result = await createTokenCheckout({
+                          scenarioId: "deep-research",
+                          packIndex: 2,
+                        });
+                        if (result?.url) window.location.href = result.url;
+                      } catch (error) {
+                        console.error("Deep Research checkout error:", error);
+                        setErrorMessage("Failed to create checkout session");
+                      } finally {
+                        setPurchasingPackIndex(null);
+                      }
+                    }}
+                    disabled={purchasingPackIndex !== null}
+                  >
+                    {purchasingPackIndex === 2 ? "Loading..." : "Purchase"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Token Balances Grid */}
           <div
             className="rounded-xl border-2"
@@ -398,6 +595,39 @@ function BillingPage() {
               </div>
 
               <div className="space-y-2">
+                {/* Deep Research Token Balance */}
+                <div
+                  className="flex items-center justify-between rounded-lg border px-4 py-3"
+                  style={{
+                    borderColor: colors.border,
+                    backgroundColor: colors.cardBg,
+                  }}
+                >
+                  <span style={{ color: colors.text }}>Deep Research</span>
+                  <div className="flex items-center gap-3">
+                    {isSubscriber ? (
+                      <span
+                        className="flex items-center gap-1 text-sm font-medium"
+                        style={{ color: colors.primary }}
+                      >
+                        <InfinityIcon className="h-4 w-4" />
+                        Unlimited
+                      </span>
+                    ) : (
+                      <span
+                        className="flex items-center gap-1 text-sm font-medium"
+                        style={{
+                          color: (allBalances?.["deep-research"] ?? 0) > 0 ? colors.success : colors.textLight,
+                        }}
+                      >
+                        <Coins className="h-4 w-4" />
+                        {allBalances?.["deep-research"] ?? 0} tokens
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Scenario Token Balances */}
                 {scenarioList.map((scenario) => {
                   const balance = allBalances?.[scenario.id] ?? 0;
                   const hasTokens = balance > 0 || isSubscriber;
@@ -680,12 +910,14 @@ function BillingPage() {
               </h2>
 
               {transactionHistory?.transactions &&
-              transactionHistory.transactions.length > 0 ? (
+                transactionHistory.transactions.length > 0 ? (
                 <div className="space-y-2">
                   {transactionHistory.transactions.map((tx) => {
                     const isPositive = tx.amount > 0;
                     const scenarioName =
-                      SCENARIOS[tx.scenarioId]?.name ?? tx.scenarioId;
+                      tx.scenarioId === "deep-research"
+                        ? "Deep Research"
+                        : SCENARIOS[tx.scenarioId]?.name ?? tx.scenarioId;
                     const reasonLabel = {
                       funnel_grant: "Marketing funnel",
                       purchase: "Purchase",

@@ -11,10 +11,19 @@ export const generateStrategyGemini = action({
     opponentId: v.id("opponents"),
     topic: v.string(),
     position: v.string(),
+    mode: v.optional(
+      v.union(v.literal("report-only"), v.literal("full-replace")),
+    ), // Default to full-replace for backward compatibility
   },
   returns: v.any(),
   handler: async (ctx, args) => {
-    console.log("[Gemini Strategy] Starting for topic:", args.topic);
+    const mode = args.mode || "full-replace"; // Default to full behavior
+    console.log(
+      "[Gemini Strategy] Starting for topic:",
+      args.topic,
+      "mode:",
+      mode,
+    );
 
     // Fetch opponent with all context
     const opponent = await ctx.runQuery(internal.opponents.getInternal, {
@@ -27,6 +36,18 @@ export const generateStrategyGemini = action({
 
     // Build strategic brief
     const strategicBrief = buildStrategicBrief(opponent);
+
+    // Check token access for Deep Research
+    const access = await ctx.runQuery(internal.tokens.INTERNAL_checkAccess, {
+      userId: opponent.userId,
+      scenarioId: "deep-research",
+    });
+
+    if (!access.hasAccess) {
+      throw new Error(
+        "Insufficient Deep Research tokens. Purchase tokens to continue.",
+      );
+    }
 
     const updateProgress = async (
       status:
@@ -170,107 +191,140 @@ For each finding, include specific sources, dates, and verifiable claims. Cover 
       throw error;
     }
 
-    // STAGE 3: Generate prep materials using existing functions
+    // STAGE 3: Generate prep materials (conditional based on mode)
     await updateProgress("generating", "Generating prep materials...");
 
     let strategy: any;
-    try {
-      const [
-        openingOptions,
-        argumentFrames,
-        receipts,
-        zingers,
-        closingOptions,
-        opponentIntel,
-      ]: any[] = await Promise.all([
-        ctx.runAction(internal.actions.prepGeneration.generateOpenings, {
-          opponentId: args.opponentId,
-          userId: opponent.userId,
-          topic: args.topic,
-          position: args.position,
-          strategicBrief,
-        }),
-        ctx.runAction(internal.actions.prepGeneration.generateFrames, {
-          opponentId: args.opponentId,
-          userId: opponent.userId,
-          topic: args.topic,
-          position: args.position,
-          research: articles,
-          strategicBrief,
-        }),
-        ctx.runAction(internal.actions.prepGeneration.generateReceipts, {
-          opponentId: args.opponentId,
-          userId: opponent.userId,
-          topic: args.topic,
-          position: args.position,
-          research: articles,
-          strategicBrief,
-        }),
-        ctx.runAction(internal.actions.prepGeneration.generateZingers, {
-          opponentId: args.opponentId,
-          userId: opponent.userId,
-          topic: args.topic,
-          position: args.position,
-          research: articles,
-          strategicBrief,
-        }),
-        ctx.runAction(internal.actions.prepGeneration.generateClosings, {
-          opponentId: args.opponentId,
-          userId: opponent.userId,
-          topic: args.topic,
-          position: args.position,
-          strategicBrief,
-        }),
-        ctx.runAction(internal.actions.prepGeneration.generateOpponentIntel, {
-          opponentId: args.opponentId,
-          userId: opponent.userId,
-          topic: args.topic,
-          position: args.position,
-          research: articles,
-          strategicBrief,
-        }),
-      ]);
 
-      strategy = {
-        openingOptions,
-        argumentFrames: argumentFrames.map((frame: any) => ({
-          ...frame,
-          evidenceIds: frame.evidenceIds || [],
-        })),
-        receipts,
-        zingers,
-        closingOptions,
-        opponentIntel,
-      };
+    if (mode === "full-replace") {
+      try {
+        const [
+          openingOptions,
+          argumentFrames,
+          receipts,
+          zingers,
+          closingOptions,
+          opponentIntel,
+        ]: any[] = await Promise.all([
+          ctx.runAction(internal.actions.prepGeneration.generateOpenings, {
+            opponentId: args.opponentId,
+            userId: opponent.userId,
+            topic: args.topic,
+            position: args.position,
+            strategicBrief,
+          }),
+          ctx.runAction(internal.actions.prepGeneration.generateFrames, {
+            opponentId: args.opponentId,
+            userId: opponent.userId,
+            topic: args.topic,
+            position: args.position,
+            research: articles,
+            strategicBrief,
+          }),
+          ctx.runAction(internal.actions.prepGeneration.generateReceipts, {
+            opponentId: args.opponentId,
+            userId: opponent.userId,
+            topic: args.topic,
+            position: args.position,
+            research: articles,
+            strategicBrief,
+          }),
+          ctx.runAction(internal.actions.prepGeneration.generateZingers, {
+            opponentId: args.opponentId,
+            userId: opponent.userId,
+            topic: args.topic,
+            position: args.position,
+            research: articles,
+            strategicBrief,
+          }),
+          ctx.runAction(internal.actions.prepGeneration.generateClosings, {
+            opponentId: args.opponentId,
+            userId: opponent.userId,
+            topic: args.topic,
+            position: args.position,
+            strategicBrief,
+          }),
+          ctx.runAction(internal.actions.prepGeneration.generateOpponentIntel, {
+            opponentId: args.opponentId,
+            userId: opponent.userId,
+            topic: args.topic,
+            position: args.position,
+            research: articles,
+            strategicBrief,
+          }),
+        ]);
 
-      console.log("[Gemini Strategy] Prep materials generated");
-    } catch (error) {
-      console.error("[Gemini Strategy] Prep generation failed:", error);
-      await updateProgress("error", "Prep generation failed", String(error));
-      throw error;
+        strategy = {
+          openingOptions,
+          argumentFrames: argumentFrames.map((frame: any) => ({
+            ...frame,
+            evidenceIds: frame.evidenceIds || [],
+          })),
+          receipts,
+          zingers,
+          closingOptions,
+          opponentIntel,
+        };
+
+        console.log("[Gemini Strategy] Prep materials generated");
+      } catch (error) {
+        console.error("[Gemini Strategy] Prep generation failed:", error);
+        await updateProgress("error", "Prep generation failed", String(error));
+        throw error;
+      }
+    } else {
+      console.log(
+        "[Gemini Strategy] Skipping prep generation (report-only mode)",
+      );
     }
 
     // STAGE 4: Store everything
     await updateProgress("storing", "Storing strategy...");
 
-    await Promise.all([
-      ctx.runMutation(internal.opponents.updateStrategy, {
-        opponentId: args.opponentId,
-        strategy,
-      }),
+    const storePromises = [
       ctx.runMutation(internal.research.store, {
         opponentId: args.opponentId,
         query: `Gemini Deep Research: ${args.topic}`,
         articles,
       }),
-    ]);
+    ];
+
+    // Only update strategy if in full-replace mode
+    if (mode === "full-replace" && strategy) {
+      storePromises.push(
+        ctx.runMutation(internal.opponents.updateStrategy, {
+          opponentId: args.opponentId,
+          strategy,
+        }),
+      );
+    }
+
+    await Promise.all(storePromises);
 
     await updateProgress("complete", "Strategy generation complete!");
+
+    // Consume Deep Research token
+    try {
+      await ctx.runMutation(internal.tokens.INTERNAL_consumeToken, {
+        userId: opponent.userId,
+        scenarioId: "deep-research",
+        debateId: args.opponentId as any, // Using opponentId as reference since no debate exists yet
+      });
+      console.log("[Gemini Strategy] Deep Research token consumed");
+    } catch (error) {
+      console.error(
+        "[Gemini Strategy] Error consuming Deep Research token:",
+        error,
+      );
+      // Non-fatal - don't fail the whole operation
+    }
 
     // Record Gemini cost estimate (~$2.70 per research session, verified from Dec 2025 billing)
     try {
       const geminiCostCents = 270; // $2.70 in cents
-      console.log(`[generateStrategyGemini] Recording Gemini cost: ${geminiCostCents} cents for 1 session (prep phase)`);
+      console.log(
+        `[generateStrategyGemini] Recording Gemini cost: ${geminiCostCents} cents for 1 session (prep phase, mode: ${mode})`,
+      );
       await ctx.runMutation(internal.costs.INTERNAL_recordApiCost, {
         service: "gemini",
         cost: geminiCostCents,
@@ -279,10 +333,14 @@ For each finding, include specific sources, dates, and verifiable claims. Cover 
         phase: "prep",
         details: {
           sessions: 1,
+          // Note: mode tracked in logs but not in cost details schema
         },
       });
     } catch (error) {
-      console.error(`[generateStrategyGemini] Error recording Gemini cost:`, error);
+      console.error(
+        `[generateStrategyGemini] Error recording Gemini cost:`,
+        error,
+      );
     }
 
     console.log("[Gemini Strategy] Complete");

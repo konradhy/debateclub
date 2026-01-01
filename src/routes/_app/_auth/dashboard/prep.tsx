@@ -12,14 +12,19 @@ import { GeminiProgress } from "@/components/prep/GeminiProgress";
 import { ChatTab } from "@/components/prep/ChatTab";
 import { ResearchTab } from "@/components/prep/ResearchTab";
 import { GeminiReportTab } from "@/components/prep/GeminiReportTab";
+import { StrategicBriefTab } from "@/components/prep/StrategicBriefTab";
 import { MyResearchTab } from "@/components/prep/MyResearchTab";
 import { QuickRefDebate } from "@/components/prep/QuickRefDebate";
 import { QuickRefGeneric } from "@/components/prep/QuickRefGeneric";
 import { StudyModeGeneric } from "@/components/prep/StudyModeGeneric";
 import { StudyModeDebate } from "@/components/prep/StudyModeDebate";
+import { DeepResearchModal } from "@/components/prep/DeepResearchModal";
 import { EmptyState } from "@/components/prep/EmptyState";
-import { Loader2, MessageSquare, FileSearch } from "lucide-react";
+import { Loader2, MessageSquare, FileSearch, Target } from "lucide-react";
 import { cn } from "@/utils/misc";
+import { useState } from "react";
+import { useQuery } from "convex/react";
+import { api } from "@cvx/_generated/api";
 
 export const Route = createFileRoute("/_app/_auth/dashboard/prep")({
   component: PrepScreen,
@@ -38,6 +43,15 @@ export const Route = createFileRoute("/_app/_auth/dashboard/prep")({
 function PrepScreen() {
   const navigate = useNavigate();
   const { opponentId } = Route.useSearch();
+
+  // Deep Research modal state
+  const [showDeepResearchModal, setShowDeepResearchModal] = useState(false);
+
+  // Get Deep Research token balance
+  const deepResearchTokens =
+    useQuery(api.tokens.getBalance, {
+      scenarioId: "deep-research",
+    }) ?? 0;
 
   // Data hooks
   const {
@@ -122,6 +136,21 @@ function PrepScreen() {
       search: { opponentId },
     });
   };
+
+  const handleRunDeepResearch = (mode: "report-only" | "full-replace") => {
+    if (opponentId && opponent) {
+      generateGemini({
+        opponentId: opponentId as Id<"opponents">,
+        topic: opponent.topic,
+        position: opponent.position,
+        mode,
+      });
+    }
+  };
+
+  const isGeminiGenerating =
+    geminiProgress?.status &&
+    !["complete", "error", "idle"].includes(geminiProgress.status);
 
   if (!opponent) {
     return (
@@ -247,63 +276,32 @@ function PrepScreen() {
               </div>
               <div className="flex flex-wrap gap-3">
                 {!hasStrategy && !isGenerating && !progress?.status && (
-                  <>
-                    {isDebatePrep ? (
-                      <>
-                        <button
-                          onClick={handleGenerateStrategy}
-                          className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium text-white transition-all hover:brightness-110"
-                          style={{ backgroundColor: colors.primaryLight }}
-                        >
-                          Fast Research
-                        </button>
-                        <button
-                          onClick={() => {
-                            if (opponentId) {
-                              generateGemini({
-                                opponentId: opponentId as Id<"opponents">,
-                                topic: opponent.topic,
-                                position: opponent.position,
-                              });
-                            }
-                          }}
-                          disabled={
-                            geminiProgress?.status &&
-                            !["complete", "error"].includes(
-                              geminiProgress.status,
-                            )
-                          }
-                          className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium text-white transition-all hover:brightness-110 disabled:opacity-50"
-                          style={{ backgroundColor: colors.primaryLight }}
-                        >
-                          Deep Research
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        onClick={handleGenerateGenericPrep}
-                        className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium text-white transition-all hover:brightness-110"
-                        style={{ backgroundColor: colors.primaryLight }}
-                      >
-                        Generate Prep Materials
-                      </button>
-                    )}
-                  </>
+                  <button
+                    onClick={
+                      isDebatePrep
+                        ? handleGenerateStrategy
+                        : handleGenerateGenericPrep
+                    }
+                    className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium text-white transition-all hover:brightness-110"
+                    style={{ backgroundColor: colors.primaryLight }}
+                  >
+                    Generate Prep Materials
+                  </button>
                 )}
                 {(isGenerating ||
                   (progress &&
                     progress.status !== "complete" &&
                     progress.status !== "error" &&
                     progress.status !== "idle")) && (
-                  <button
-                    disabled
-                    className="inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium text-white opacity-70"
-                    style={{ backgroundColor: colors.primaryLight }}
-                  >
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Generating...
-                  </button>
-                )}
+                    <button
+                      disabled
+                      className="inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium text-white opacity-70"
+                      style={{ backgroundColor: colors.primaryLight }}
+                    >
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Generating...
+                    </button>
+                  )}
                 <button
                   onClick={handleStartDebate}
                   className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-semibold transition-all hover:opacity-80"
@@ -334,10 +332,19 @@ function PrepScreen() {
                 <TabsList
                   className={cn(
                     "grid w-full mb-4",
-                    isDebatePrep ? "grid-cols-6" : "grid-cols-2",
+                    isDebatePrep ? "grid-cols-7" : "grid-cols-2",
                   )}
                 >
                   <TabsTrigger value="study">Study Mode</TabsTrigger>
+                  {isDebatePrep && (
+                    <TabsTrigger
+                      value="brief"
+                      className="flex items-center gap-1.5"
+                    >
+                      <Target className="h-4 w-4" />
+                      Strategic Brief
+                    </TabsTrigger>
+                  )}
                   <TabsTrigger value="quickref">Quick Reference</TabsTrigger>
                   {isDebatePrep && (
                     <>
@@ -403,6 +410,16 @@ function PrepScreen() {
                     )}
                   </TabsContent>
 
+                  {/* STRATEGIC BRIEF TAB (debate only) */}
+                  {isDebatePrep && (
+                    <TabsContent value="brief" className="space-y-4 pb-10">
+                      <StrategicBriefTab
+                        strategicBrief={opponent.strategicBrief}
+                        strategicBriefMetadata={opponent.strategicBriefMetadata}
+                      />
+                    </TabsContent>
+                  )}
+
                   {/* QUICK REFERENCE TAB */}
                   <TabsContent value="quickref" className="h-full">
                     {/* DEBATE QUICK REFERENCE */}
@@ -467,6 +484,9 @@ function PrepScreen() {
                       <GeminiReportTab
                         geminiResearchReport={opponent.geminiResearchReport}
                         geminiResearchMetadata={opponent.geminiResearchMetadata}
+                        deepResearchTokens={deepResearchTokens}
+                        onRunDeepResearch={() => setShowDeepResearchModal(true)}
+                        isGenerating={!!isGeminiGenerating}
                       />
                     </TabsContent>
                   )}
@@ -485,6 +505,14 @@ function PrepScreen() {
           </div>
         </div>
       </div>
+
+      {/* Deep Research Modal */}
+      <DeepResearchModal
+        open={showDeepResearchModal}
+        onOpenChange={setShowDeepResearchModal}
+        deepResearchTokens={deepResearchTokens}
+        onRunDeepResearch={handleRunDeepResearch}
+      />
     </div>
   );
 }

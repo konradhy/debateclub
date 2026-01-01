@@ -3,27 +3,28 @@ import { ProgressStep } from "./ProgressStep";
 
 interface GenerationProgressProps {
   progress:
-    | {
-        status:
-          | "idle"
-          | "complete"
-          | "error"
-          | "researching"
-          | "extracting"
-          | "synthesizing"
-          | "generating_openings"
-          | "generating_frames"
-          | "generating_receipts"
-          | "generating_zingers"
-          | "generating_closings"
-          | "generating_intel"
-          | "storing";
-        message?: string;
-        error?: string;
-        completedSteps: string[];
-      }
-    | null
-    | undefined;
+  | {
+    status:
+    | "idle"
+    | "complete"
+    | "error"
+    | "researching"
+    | "extracting"
+    | "synthesizing"
+    | "generating_openings"
+    | "generating_frames"
+    | "generating_receipts"
+    | "generating_zingers"
+    | "generating_closings"
+    | "generating_intel"
+    | "generating_strategic_brief"
+    | "storing";
+    message?: string;
+    error?: string;
+    completedSteps: string[];
+  }
+  | null
+  | undefined;
 }
 
 export function GenerationProgress({ progress }: GenerationProgressProps) {
