@@ -81,6 +81,15 @@ export const AI_MODELS = {
   POST_DEBATE_ANALYSIS: "anthropic/claude-sonnet-4.5",
 
   /**
+   * Used for: Quick preliminary analysis (10 second preview)
+   * Location: convex/actions/quickAnalysisAction.ts
+   * User Journey: Step 4 (Analysis) - immediate feedback while full analysis generates
+   * Quality Priority: MEDIUM - Quick wins and key improvements only
+   * Cost: ~$0.001 per quick analysis
+   */
+  QUICK_ANALYSIS: "google/gemini-3-flash-preview",
+
+  /**
    * Used for: Summarizing scraped web articles from Firecrawl
    * Location: convex/actions/research.ts
    * User Journey: Step 5 (Opponent Setup) - when gathering evidence

@@ -14,6 +14,7 @@ import type * as actions_genericPrep from "../actions/genericPrep.js";
 import type * as actions_prep from "../actions/prep.js";
 import type * as actions_prepChatAction from "../actions/prepChatAction.js";
 import type * as actions_prepGeneration from "../actions/prepGeneration.js";
+import type * as actions_quickAnalysisAction from "../actions/quickAnalysisAction.js";
 import type * as actions_research from "../actions/research.js";
 import type * as agents from "../agents.js";
 import type * as analysis from "../analysis.js";
@@ -75,6 +76,7 @@ declare const fullApi: ApiFromModules<{
   "actions/prep": typeof actions_prep;
   "actions/prepChatAction": typeof actions_prepChatAction;
   "actions/prepGeneration": typeof actions_prepGeneration;
+  "actions/quickAnalysisAction": typeof actions_quickAnalysisAction;
   "actions/research": typeof actions_research;
   agents: typeof agents;
   analysis: typeof analysis;

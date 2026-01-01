@@ -402,12 +402,14 @@ const schema = defineSchema({
     ),
 
     // Executive Summary
-    executiveSummary: v.object({
-      assessment: v.string(), // 1-2 paragraphs overall performance
-      topStrengths: v.array(v.string()), // exactly 3
-      topImprovements: v.array(v.string()), // exactly 3
-      verdict: v.string(), // one sentence
-    }),
+    executiveSummary: v.optional(
+      v.object({
+        assessment: v.string(), // 1-2 paragraphs overall performance
+        topStrengths: v.array(v.string()), // exactly 3
+        topImprovements: v.array(v.string()), // exactly 3
+        verdict: v.string(), // one sentence
+      })
+    ),
 
     // Technique Scorecard (category-based, not per-technique) - DEBATE ONLY
     techniqueScorecard: v.optional(
@@ -502,6 +504,9 @@ const schema = defineSchema({
         total: v.number(), // Sum of all /40
       }),
     ),
+
+    // Quick Analysis (Gemini Flash 3 - immediate feedback while full analysis generates)
+    geminiQuickSummary: v.optional(v.string()), // Markdown summary from Gemini Flash 3
 
     generatedAt: v.number(),
   }).index("by_debate", ["debateId"]),

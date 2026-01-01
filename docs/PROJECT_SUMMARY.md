@@ -49,6 +49,7 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 ✅ **Technique Detection** - Real-time recognition of 3 core techniques  
 ✅ **Live Feedback** - Visual badges when techniques used  
 ✅ **Basic Analysis** - Post-debate summary with scores  
+✅ **Dual Analysis System** - Quick 10s preview + comprehensive 120s analysis  
 
 ### Phase 3 (Week 3)
 ✅ **Opponent Preparation** - Configure AI with real talking points  
@@ -119,6 +120,8 @@ User speaks → Vapi → Deepgram (STT) → OpenRouter (LLM) → ElevenLabs (TTS
   - Transcription (Deepgram): $0.10
   - LLM (GPT-4): $1.00
   - Voice (ElevenLabs): $0.40
+  - Quick Analysis (Gemini Flash): $0.001
+  - Full Analysis (Claude Sonnet): included in LLM cost
 
 ### Monthly Estimates
 - 100 active users @ 30 min/week = **$2,400-$3,600/month**

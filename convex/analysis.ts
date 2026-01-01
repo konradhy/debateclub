@@ -60,6 +60,10 @@ export const storeAnalysis = internalMutation({
       // --- GENERIC-SPECIFIC FIELDS ---
       skillsAssessment: args.analysis.skillsAssessment,
       keyMoments: args.analysis.keyMoments,
+
+      // --- PRESERVE QUICK SUMMARY IF EXISTS ---
+      // Don't overwrite quick summary when full analysis completes
+      geminiQuickSummary: existing?.geminiQuickSummary,
     };
 
     if (existing) {
@@ -70,5 +74,40 @@ export const storeAnalysis = internalMutation({
 
     // Create new analysis
     return await ctx.db.insert("analyses", analysisData);
+  },
+});
+
+/**
+ * Store quick analysis summary from Gemini Flash.
+ *
+ * Called immediately after debate ends to provide quick feedback (~10 seconds)
+ * while full analysis generates in background (~120 seconds).
+ */
+export const storeQuickAnalysis = internalMutation({
+  args: {
+    debateId: v.id("debates"),
+    quickSummary: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Check if analysis already exists
+    const existing = await ctx.db
+      .query("analyses")
+      .withIndex("by_debate", (q) => q.eq("debateId", args.debateId))
+      .first();
+
+    if (existing) {
+      // Update existing record with quick summary
+      await ctx.db.patch(existing._id, {
+        geminiQuickSummary: args.quickSummary,
+      });
+      return existing._id;
+    } else {
+      // Create new record with just quick summary
+      return await ctx.db.insert("analyses", {
+        debateId: args.debateId,
+        geminiQuickSummary: args.quickSummary,
+        generatedAt: Date.now(),
+      });
+    }
   },
 });

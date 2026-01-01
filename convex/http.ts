@@ -153,9 +153,17 @@ http.route({
             });
           }
 
-          // Trigger analysis
+          // Trigger dual analysis (quick + full in parallel)
+          // Quick analysis (Gemini Flash) - starts immediately
           await ctx.scheduler.runAfter(
-            1000,
+            500,
+            internal.actions.quickAnalysisAction.generateQuickAnalysis,
+            { debateId: debateId as any },
+          );
+
+          // Full analysis (Claude Sonnet) - also starts immediately
+          await ctx.scheduler.runAfter(
+            500,
             internal.actions.analysisAction.generateFullAnalysis,
             { debateId: debateId as any },
           );
