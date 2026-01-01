@@ -2504,3 +2504,280 @@ const scenarioName =
 **Next Chapter**: TBD (awaiting user testing and feedback)
 
 ---
+
+## Chapter 23.1: Deep Research Card UI Polish — Breathing Room & Visual Hierarchy
+
+**Date**: December 31, 2025
+
+**Goal**: Fix cramped spacing and improve visual hierarchy in the Deep Research purchase card based on user feedback.
+
+**Context**: Chapter 23 implemented the Deep Research billing card, but the initial spacing was too tight. User feedback: "the ui is trash. See how tight it looks."
+
+---
+
+### Problem
+
+The Deep Research card felt cramped and lacked proper visual hierarchy:
+- Text elements too close together
+- Icon too small for premium positioning
+- Pack cards squeezed with minimal padding
+- Typography sizes inconsistent
+- Overall feeling: cluttered, not premium
+
+---
+
+### Solution: Generous Spacing & Better Hierarchy
+
+**Design Principle**: Premium features need breathing room. Every element should have space to be appreciated.
+
+#### Spacing Improvements
+
+**Header Section**:
+- Icon gap: `gap-4` → `gap-5` (20% more breathing room)
+- Icon size: `h-12 w-12` → `h-14 w-14` (17% larger presence)
+- Icon graphic: `h-6 w-6` → `h-7 w-7` (better proportion)
+- Bottom margin: `mb-6` → `mb-8` (33% more space before balance)
+
+**Typography Spacing**:
+- Title margin: `mb-2` → `mb-3` (50% more separation)
+- Headline margin: `mb-2` → `mb-3` (better rhythm)
+- Headline line height: added `leading-relaxed` (easier to read)
+- Description size: `text-sm` → `text-base` (more readable)
+
+**Balance Card**:
+- Padding: `px-4 py-3` → `px-5 py-4` (25% roomier)
+- Bottom margin: `mb-6` → `mb-8` (33% more space)
+- Text size: default → `text-base` (consistent sizing)
+- Icon gap: `gap-1` → `gap-2` (better proportion)
+- Icon size: `h-4 w-4` → `h-5 w-5` (matches text better)
+
+**Pack Grid**:
+- Gap between cards: `gap-4` → `gap-5` (25% more separation)
+- Card padding: `p-5` → `p-6` (20% more internal space)
+
+**Pack Card Elements**:
+- Number size: `text-3xl` → `text-4xl` (33% bolder)
+- Number margin: `mb-1` → `mb-2` (better separation)
+- Label margin: `mb-3` → `mb-4` (more space)
+- Price size: `text-xl` → `text-2xl` (33% more emphasis)
+- Price margin: `mb-4` → `mb-6` (better rhythm)
+- Save text margin: `mb-3` → `mb-5` (proper spacing before button)
+- Badge position: `-top-2` → `-top-2.5` (better alignment)
+- Badge padding: `py-0.5` → `py-1` (more substantial)
+- Button padding: `py-2` → `py-2.5` (more clickable feel)
+
+---
+
+### Before vs After
+
+**Before** (cramped):
+```
+Icon: 48px, gap: 16px
+Title → Headline: 8px gap
+Description: 14px font
+Balance card: 16px/12px padding, 24px margin
+Pack cards: 20px padding, 16px gap
+Numbers: 30px font
+Price: 20px font
+```
+
+**After** (breathing room):
+```
+Icon: 56px, gap: 20px
+Title → Headline: 12px gap
+Description: 16px font
+Balance card: 20px/16px padding, 32px margin
+Pack cards: 24px padding, 20px gap
+Numbers: 36px font
+Price: 24px font
+```
+
+**Net Result**: ~25-33% more spacing throughout, creating a premium feel
+
+---
+
+### Design Rationale
+
+1. **Premium Positioning Requires Premium Spacing**:
+   - Deep Research is the most expensive feature ($4 per use)
+   - Cramped spacing signals "cheap" not "premium"
+   - Generous spacing signals quality and value
+
+2. **Visual Hierarchy Through Scale**:
+   - Larger numbers (4xl) draw eye to token count
+   - Larger price (2xl) emphasizes value proposition
+   - Larger icon (14x14) creates focal point
+
+3. **Readability First**:
+   - Base font size (16px) is easier to read than small (14px)
+   - Leading-relaxed on multi-line text improves comprehension
+   - More margin between elements reduces cognitive load
+
+4. **Clickability**:
+   - Larger buttons (py-2.5 vs py-2) feel more substantial
+   - More padding in cards makes entire area feel interactive
+   - Better spacing reduces accidental clicks
+
+5. **Consistency**:
+   - All text elements now use base or larger sizes
+   - All margins follow 4px grid (mb-2, mb-3, mb-4, mb-5, mb-6, mb-8)
+   - All gaps use consistent increments (gap-2, gap-5)
+
+---
+
+### Files Modified
+
+1. **src/routes/_app/_auth/dashboard/_layout.settings.billing.tsx** — Updated Deep Research card spacing (~30 changes)
+
+**Total Changes**: 1 file, ~30 spacing/sizing adjustments
+
+---
+
+### Key Lessons
+
+1. **User Feedback is Gold**:
+   - "UI is trash" = immediate signal to fix
+   - Don't defend cramped design, just fix it
+   - Users feel spacing issues even if they can't articulate why
+
+2. **Premium Features Need Premium Design**:
+   - $4 per use deserves generous spacing
+   - Cramped = cheap, spacious = premium
+   - Visual design communicates value
+
+3. **Spacing is Not Wasted Space**:
+   - Breathing room improves comprehension
+   - White space creates hierarchy
+   - Generous margins signal confidence
+
+4. **Incremental Improvements Add Up**:
+   - 25-33% more spacing throughout
+   - Each small change compounds
+   - Result: dramatically better feel
+
+5. **Design Principles Over Pixel Pushing**:
+   - "Breathing room" is the principle
+   - Specific values (mb-8 vs mb-6) implement the principle
+   - Principle guides all decisions
+
+---
+
+### Success Criteria
+
+✅ **Visual Hierarchy**: Clear separation between sections
+✅ **Readability**: All text easily scannable
+✅ **Premium Feel**: Generous spacing signals quality
+✅ **Clickability**: Buttons feel substantial and interactive
+✅ **Consistency**: All spacing follows 4px grid system
+
+---
+
+**Status**: ✅ COMPLETE
+
+**User Feedback**: Awaiting confirmation that spacing improvements resolve "trash UI" concern
+
+---
+---
+
+## R-6.1: Research-Backed Evidence Display
+
+**Date**: 2026-01-01
+**Chapter**: R-6.1
+**Phase**: 6.1
+**Status**: ✅ COMPLETE
+
+---
+
+### Problem Statement
+
+The `evidenceNeeded` field in argument frames was displaying generic guidance like "Statistics on water access disparities..." instead of citing specific research findings. Users couldn't see which actual research articles supported each frame, making the evidence feel disconnected from the prep materials.
+
+Additionally, the "Available Evidence" section (evidenceIds) was always blank - dead code that served no purpose.
+
+---
+
+### Solution
+
+Updated the ARGUMENT_FRAMES_PROMPT to extract specific findings from research articles and connect them directly to argument frames.
+
+**Changes Made**:
+
+1. **Prompt Engineering** (`convex/lib/promptTemplates.ts`):
+   - Added "EVIDENCE SUPPORT FROM RESEARCH" section (lines 151-159)
+   - New format: `"[Source Name]: [Specific finding] - [How it supports this frame]"`
+   - Example: "WHO 2024 Water Report: 2.2 billion people lack safe water access - Demonstrates the scale of the crisis for moral imperative argument"
+   - Updated output schema examples (lines 171, 182, 193) to match new format
+
+2. **UI Cleanup** (`src/components/prep/StudyModeDebate.tsx`):
+   - Removed "Available Evidence" section (evidenceIds display - dead code)
+   - Changed label from "Types of Evidence That Strengthen This:" to "Supporting Research:"
+   - Kept display format as bullet list for easy scanning
+
+---
+
+### Technical Details
+
+**Data Flow**:
+```
+Research Extraction (prep.ts:140-176)
+  ↓
+JSON.stringify(research) (prepGeneration.ts:135)
+  ↓
+Inject into ARGUMENT_FRAMES_PROMPT at {research} placeholder
+  ↓
+AI extracts specific findings per frame
+  ↓
+evidenceNeeded: ["Source: Finding - Support", ...]
+  ↓
+UI displays as "Supporting Research:" bullets
+```
+
+**Prompt Instruction**:
+```
+For "evidenceNeeded", extract 2-3 specific findings from the research articles that support THIS frame:
+- Cite the source name
+- State the specific finding (stat, fact, conclusion, expert opinion)
+- Explain how it supports this specific argument frame
+```
+
+---
+
+### Files Modified
+
+1. **convex/lib/promptTemplates.ts** — Updated ARGUMENT_FRAMES_PROMPT with evidence extraction guidance
+2. **src/components/prep/StudyModeDebate.tsx** — Removed dead code, updated label
+
+**Total Changes**: 2 files, ~40 lines modified
+
+---
+
+### Key Lessons
+
+1. **Concrete > Generic**: AI needs explicit format examples to generate useful output. Showing `"[Source]: [Finding] - [Support]"` produces better results than abstract instructions.
+
+2. **Dead Code Should Die**: The evidenceIds linking system was never implemented. Keeping dead UI elements creates confusion. Remove them.
+
+3. **Research Has Full Context**: The AI receives complete article content, so it can extract specific stats/facts, not just article titles. Use this.
+
+4. **Format Matters**: Changing from generic types ("Public health data") to specific citations ("WHO 2024 Report: 2.2B lack safe water") makes evidence actionable.
+
+5. **Prompt Schema Alignment**: Output schema examples must match the instruction format exactly. If instructions say `"[Source]: [Finding]"`, schema should show that too.
+
+---
+
+### Success Criteria
+
+✅ **Specific Citations**: evidenceNeeded shows actual source names from research
+✅ **Concrete Findings**: Shows stats/facts, not generic categories
+✅ **Clear Connection**: Explains how each finding supports the specific frame
+✅ **No Dead Code**: Removed evidenceIds display that was always empty
+✅ **Better Label**: "Supporting Research:" is clearer than "Types of Evidence That Strengthen This:"
+
+---
+
+**Status**: ✅ COMPLETE
+
+**User Feedback**: "good job. we finished. IT works."
+
+---
+

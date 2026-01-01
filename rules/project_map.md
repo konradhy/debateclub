@@ -420,6 +420,12 @@ app.use(stripe);  // @convex-dev/stripe
   - Tone matching (statistics = matter-of-fact, contradiction = incredulous)
   - Generates `deploymentExample` showing receipt usage in dialogue
 
+- **EVIDENCE EXTRACTION** (R-6.1): For connecting frames to research:
+  - Format: `"[Source Name]: [Specific finding] - [How it supports this frame]"`
+  - Extracts 2-3 specific findings from research articles per frame
+  - Cites actual sources with concrete stats/facts, not generic categories
+  - Example: "WHO 2024 Report: 2.2B lack safe water - Demonstrates scale of crisis"
+
 **Philosophy**: AI learns Mehdi Hasan's methodology (WHY techniques work), not just surface patterns
 
 ---
@@ -498,20 +504,19 @@ const strategicBrief = buildStrategicBrief(opponent);
 const openings = await generateOpenings({ strategicBrief, ... });
 ```
 
-### 8. Selective SSR with Convex (Ch.9)
+### 8. Selective SSR with Convex and Tanstack (Ch.9)
 
 - **Public pages (SSR)**: `/`, `/blog/*` - rendered server-side for SEO
 - **Auth pages (CSR)**: `/_app/*` - client-rendered with Convex providers
 - Root layout has `ssr: false` on `_app.tsx` to isolate Convex to client routes
 
-### 9. Scenario Plugin Architecture (Ch.10-11)
+### 9. Scenario Plugin Architecture (Ch.10-11, 12)
 
 Config over code duplication. Each scenario defines:
 - Form fields and layout
 - Vapi system prompt with placeholders
 - Analysis framework and scoring categories
 
-### 10. Config-Driven Forms (Ch.12)
 
 Form layout defined in scenario config. UI renders recursively:
 ```typescript
@@ -520,7 +525,7 @@ Form layout defined in scenario config. UI renders recursively:
 ))}
 ```
 
-### 11. Style/Difficulty Two-Node Architecture (Ch.14)
+### 10. Style/Difficulty Two-Node Architecture (Ch.14)
 
 Style = WHO (persona), Difficulty = HOW SKILLED (competence):
 - 6 styles: friendly, aggressive, academic, emotional, socratic, gish gallop
@@ -546,26 +551,6 @@ For large files, extract to feature-specific components:
 - `src/hooks/prep/` for prep page hooks
 - Explicit prop drilling (not Context) for traceability
 
-### 14. Research Integration Pattern (Ch.20)
-
-**Multi-source research display**:
-- Each opponent can have MULTIPLE research documents (not just one)
-- `research.getAll()` returns all documents, not just latest
-- Frontend displays chronologically with source grouping ("🌐 Web Research" vs "📝 My Research")
-
-**Extraction → Study Mode flow**:
-1. User pastes research text in "My Research" tab
-2. AI extracts structured items (arguments, receipts, openers, zingers, counters)
-3. User clicks "Send" on item
-4. Transformation layer converts extraction format → Study Mode schema
-5. Mutation appends to appropriate field array
-6. Local state (`sentItems` Map) updates for instant UI feedback
-7. Study Mode auto-updates via Convex reactivity
-
-**Transformation layer**:
-- `transformExtractedItem()` converts 5 item types to Study Mode schemas
-- Extraction schema ≠ Study Mode schema (flexibility to change independently)
-- Existing `addOpponentFieldItem` mutation reused (append, don't replace)
 
 ---
 
@@ -757,11 +742,10 @@ After Ch.15 refactoring, largest application files:
 ## What's Not Yet Implemented
 
 From roadmap and dev journals:
-- Email notifications for subscriber cap alerts
-- Budget alerts and cost projections (R-4.3.8)
+
 - Mobile apps
 - Video recording of debates
-- User-created custom scenarios
+
 - Removal of test mutations (currently available for dev/QA)
 
 ---

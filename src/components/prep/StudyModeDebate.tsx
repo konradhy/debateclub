@@ -300,12 +300,6 @@ export function StudyModeDebate({
                   rows: 2,
                 },
                 {
-                  name: "evidenceNeeded",
-                  label: "Evidence Needed (optional)",
-                  type: "textarea",
-                  rows: 2,
-                },
-                {
                   name: "emotionalCore",
                   label: "Emotional Core (optional)",
                   type: "text",
@@ -383,37 +377,20 @@ export function StudyModeDebate({
                           </p>
                         </div>
                       )}
-                      <div className="space-y-1">
-                        <p className="text-xs font-semibold text-muted-foreground">
-                          Available Evidence:
-                        </p>
-                        {frame.evidenceIds.map((eid: string) => {
-                          const receipt = opponent.receipts?.find(
-                            (r: any) => r.id === eid,
-                          );
-                          return receipt ? (
-                            <div
-                              key={eid}
-                              className="text-xs border-l-2 border-primary/30 pl-2 py-1 flex items-center gap-2"
-                            >
-                              <span className="font-medium">
-                                {receipt.source}:
-                              </span>
-                              <span>{receipt.content}</span>
-                              {receipt.url && (
-                                <a
-                                  href={receipt.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-blue-500 hover:underline flex items-center"
-                                >
-                                  <ExternalLink className="h-3 w-3 ml-1" />
-                                </a>
-                              )}
+                      {/* Supporting Research Display */}
+                      {frame.evidenceNeeded && frame.evidenceNeeded.length > 0 && (
+                        <div className="space-y-1">
+                          <p className="text-xs font-semibold text-muted-foreground">
+                            Supporting Research:
+                          </p>
+                          {frame.evidenceNeeded.map((evidence: string, idx: number) => (
+                            <div key={idx} className="text-xs text-muted-foreground flex gap-2">
+                              <span>•</span>
+                              <span>{evidence}</span>
                             </div>
-                          ) : null;
-                        })}
-                      </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -465,12 +442,6 @@ export function StudyModeDebate({
                   label: "Deployment Guidance",
                   type: "textarea",
                   required: true,
-                  rows: 2,
-                },
-                {
-                  name: "evidenceNeeded",
-                  label: "Evidence Needed (optional)",
-                  type: "textarea",
                   rows: 2,
                 },
                 {

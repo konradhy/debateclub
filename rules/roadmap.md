@@ -1,4 +1,4 @@
-e# Roadmap
+# Roadmap
 
 **Project scope and execution plan. Phases are added over time. This is the full project lifespan.**
 
@@ -46,11 +46,11 @@ Reference format: [R-1.2.3]
 
 ## Current Focus
 
-**Active Phase**: Phase 5 - Prep Materials Enhancement (🔄 In Progress)
+**Active Phase**: Phase 6 - Evidence Sourcing & Performance Optimization (⬜ Not Started)
 
-**Next Up**: Phase 5.2 - Content Enhancement
+**Recently Completed**: Phase 5 - Prep Materials Enhancement (✅ Complete)
 
-**Relevant DEV_JOURNAL Chapters**: Pre-docs, Ch.1-20
+**Relevant DEV_JOURNAL Chapters**: Pre-docs, Ch.1-23
 
 ---
 
@@ -481,6 +481,26 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 ---
 
+### 4.4 Deep Research Billing Integration
+
+**Description**: Premium token-based monetization for Deep Research feature
+
+**Status**: ✅
+
+**Chapters**: Ch.22, Ch.23, Ch.23.1
+
+#### Tasks
+
+- ✅ **4.4.1** — Deep Research UX refactor (remove fork, add modal, optional upgrade) [Ch.22]
+- ✅ **4.4.2** — Token consumption on Deep Research completion [Ch.22]
+- ✅ **4.4.3** — Deep Research token packs (1/$4, 3/$10, 10/$30) [Ch.23]
+- ✅ **4.4.4** — Stripe product setup for Deep Research tokens [Ch.23]
+- ✅ **4.4.5** — Premium purchase card on billing page [Ch.23]
+- ✅ **4.4.6** — Transaction history display for Deep Research [Ch.23]
+- ✅ **4.4.7** — UI polish (spacing, hierarchy, breathing room) [Ch.23.1]
+
+---
+
 ## Phase 5: Prep Materials Enhancement
 
 **Goal**: Improve quality and usability of generated prep materials
@@ -514,14 +534,14 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Status**: ✅
 
-**Chapters**: [chapt20]
+**Chapters**: Ch.20 
 
 #### Tasks
 
-- ✅ **5.2.1** — Argument frame example quotes showing framework in action
-- ✅ **5.2.2** — Receipt deployment examples demonstrating usage in debates
-- ✅ **5.2.3** — Update generation prompts to include examples
-- ✅ **5.2.4** — UI components to display examples without clutter
+- ✅ **5.2.1** — Argument frame example quotes showing framework in action [Ch.20]
+- ✅ **5.2.2** — Receipt deployment examples demonstrating usage in debates [Ch.20]
+- ✅ **5.2.3** — Update generation prompts to include examples [Ch.20]
+- ✅ **5.2.4** — UI components to display examples without clutter [Ch.20]
 
 ---
 
@@ -531,12 +551,12 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Status**: ✅
 
-**Chapters**: [R-5.3]
+**Chapters**: Ch.20 
 
 #### Tasks
 
-- ✅ **5.3.1** — Edit opponent intelligence UI and mutation
-- ✅ **5.3.2** — Investigate why edit wasn't originally included
+- ✅ **5.3.1** — Edit opponent intelligence UI and mutation [Ch.20]
+- ✅ **5.3.2** — Investigate why edit wasn't originally included [Ch.20]
 
 
 ---
@@ -558,30 +578,28 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 ---
 
-### 5.5 Analysis Page Enhancements(WARNING MOVE TO LONG TERM!!!! SKIP)
-
-**Description**: Link to resources and further reading
-
-**Status**: ⬜
-
-**Chapters**: —
-
-#### Tasks
-
-- ⬜ **5.5.1** — Link analysis page to appropriate scenario blog posts
-- ⬜ **5.5.2** — Recommend books for further reading
-- ⬜ **5.5.3** — Recommend relevant studies
-- ⬜ **5.5.4** — Create mapping of topics to resources (SEO value)
-
-
-
----
-
 ## Phase 6: Evidence Sourcing & Performance Optimization
 
 **Goal**: Add evidence to the ui. for argument frames. Currently, i believe we collect some text description, but the ui is blank. investigate
 
+---
 
+### 6.1 Research-Backed Evidence Display
+
+**Description**: Connect argument frames to specific research findings from prep materials
+
+**Status**: ✅
+
+**Chapters**: R-6.1
+
+#### Tasks
+
+- ✅ **6.1.1** — Update ARGUMENT_FRAMES_PROMPT to extract specific findings from research
+- ✅ **6.1.2** — Change evidenceNeeded format to "[Source Name]: [Finding] - [Support]"
+- ✅ **6.1.3** — Remove "Available Evidence" dead code (evidenceIds linking)
+- ✅ **6.1.4** — Update UI label to "Supporting Research:"
+
+---
 
 ### 6.4 Instant Feedback System
 
@@ -902,6 +920,23 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 ## Long-Term Features
 
+### Analysis Page Enhancements
+
+Link post-debate analysis to resources and further reading for continued learning.
+
+**Description**: Connect analysis pages to scenario blog posts, books, and research papers relevant to the debate topic
+
+**Status**: ⬜
+
+#### Tasks
+
+- ⬜ Link analysis page to appropriate scenario blog posts
+- ⬜ Recommend books for further reading
+- ⬜ Recommend relevant studies
+- ⬜ Create mapping of topics to resources (SEO value)
+
+---
+
 ### Skill-Specific Practice Drills
 
 Add the ability for users to set what specific skill they want to improve and practice it through targeted drills or get specific analysis. This enables conscious practice on individual debate elements. Start by creating a single drill from the book, monitor usage, then expand based on user engagement.
@@ -978,5 +1013,5 @@ Build a feature allowing users to challenge others to debates, either friends vi
 | Phase 1 | Pre-docs | Pre-docs | MVP complete |
 | Phase 2 | Pre-docs | Pre-docs | Technique detection working |
 | Phase 3 | Pre-docs | Dec 2025 | Complete |
-| Phase 4 | Dec 2025 | Dec 2025 | Monetization complete |
-| Phase 5 | Dec 2025 | Dec 2025 | Complete (5.1-5.4 all done) |
+| Phase 4 | Dec 2025 | Dec 31, 2025 | Monetization complete (Ch.16-19, Ch.22-23.1) |
+| Phase 5 | Dec 2025 | Dec 31, 2025 | Prep enhancement complete (Ch.20-21) |

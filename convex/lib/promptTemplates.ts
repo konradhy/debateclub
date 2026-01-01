@@ -148,6 +148,16 @@ Each frame must include an "exampleQuote" showing this argument deployed in actu
 - Should show HOW to deploy the frame, not just WHAT the argument is
 - Must embody a Hasan principle, not just copy surface patterns
 
+## EVIDENCE SUPPORT FROM RESEARCH
+For "evidenceNeeded", extract 2-3 specific findings from the research articles that support THIS frame:
+- Cite the source name
+- State the specific finding (stat, fact, conclusion, expert opinion)
+- Explain how it supports this specific argument frame
+
+Format: "[Source Name]: [Specific finding] - [How it supports this frame]"
+
+Example: "WHO 2024 Water Report: 2.2 billion people lack safe water access - Demonstrates the scale of the crisis for moral imperative argument"
+
 ## OUTPUT REQUIREMENTS
 Return valid JSON:
 {
@@ -158,7 +168,7 @@ Return valid JSON:
       "summary": "[One sentence: the core claim of this frame]",
       "content": "[2-3 sentences: the elevator pitch version — what you'd say if you had 30 seconds]",
       "detailedContent": "[4-6 sentences: the deep dive version with philosophical grounding, logical structure, and emotional appeal. This is the 'meat' of the argument.]",
-      "evidenceNeeded": ["[Type of evidence that would strengthen this]", "[Another type]"],
+      "evidenceNeeded": ["[Source Name]: [Specific finding] - [How it supports this frame]", "[Source Name]: [Finding] - [Support]", "[Source Name]: [Finding] - [Support]"],
       "emotionalCore": "[What emotion should the audience feel? Fear, hope, outrage, pride?]",
       "exampleQuote": "[1-2 sentence example showing this framework deployed in debate dialogue]",
       "deploymentGuidance": "[When to use this frame: audience type, opponent moves, debate dynamics]"
@@ -169,7 +179,7 @@ Return valid JSON:
       "summary": "[One sentence]",
       "content": "[Elevator pitch]",
       "detailedContent": "[Deep dive with cause-effect reasoning]",
-      "evidenceNeeded": ["[Statistics, case studies, etc.]"],
+      "evidenceNeeded": ["[Source Name]: [Specific finding] - [How it supports this frame]", "[Source Name]: [Finding] - [Support]"],
       "emotionalCore": "[What emotion?]",
       "exampleQuote": "[1-2 sentence example showing this framework deployed in debate dialogue]",
       "deploymentGuidance": "[When to deploy]"
@@ -180,7 +190,7 @@ Return valid JSON:
       "summary": "[One sentence]",
       "content": "[Elevator pitch]",
       "detailedContent": "[Deep dive with cost-benefit analysis]",
-      "evidenceNeeded": ["[Budget data, economic studies, etc.]"],
+      "evidenceNeeded": ["[Source Name]: [Specific finding] - [How it supports this frame]", "[Source Name]: [Finding] - [Support]"],
       "emotionalCore": "[What emotion?]",
       "exampleQuote": "[1-2 sentence example showing this framework deployed in debate dialogue]",
       "deploymentGuidance": "[When to deploy]"
