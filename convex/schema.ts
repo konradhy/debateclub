@@ -344,12 +344,7 @@ const schema = defineSchema({
       v.literal("researching"),
       v.literal("extracting"),
       v.literal("synthesizing"),
-      v.literal("generating_openings"),
-      v.literal("generating_frames"),
-      v.literal("generating_receipts"),
-      v.literal("generating_zingers"),
-      v.literal("generating_closings"),
-      v.literal("generating_intel"),
+      v.literal("generating"), // Combined status for all parallel generations
       v.literal("generating_strategic_brief"),
       v.literal("storing"),
       v.literal("complete"),

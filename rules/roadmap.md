@@ -910,6 +910,22 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 - ⬜ **9.5.2** — Topic landing pages aggregating debates
 - ⬜ **9.5.3** — Technique showcase pages with real examples
 
+
+
+## Technical Debt
+
+| Item | Introduced In | Priority |
+|------|---------------|----------|
+| Some public mutations missing return validators | Pre-docs | Low |
+| v.any() used in opponent field types | Pre-docs | Med |
+| Running tally UI not implemented | Pre-docs | Low |
+| Scenario context fields not used in prompts | Dec 2025 | High |
+| Win Every Argument score too generous (11/10 possible) | Dec 2025 | Med |
+| Opponent intelligence pro/con positions may be flipped | Dec 2025 | Med |
+
+---
+
+
 ---
 
 # Backlog
@@ -992,20 +1008,6 @@ Build a feature allowing users to challenge others to debates, either friends vi
 - Video recording of debates
 
 ---
-
-## Technical Debt
-
-| Item | Introduced In | Priority |
-|------|---------------|----------|
-| Some public mutations missing return validators | Pre-docs | Low |
-| v.any() used in opponent field types | Pre-docs | Med |
-| Running tally UI not implemented | Pre-docs | Low |
-| Scenario context fields not used in prompts | Dec 2025 | High |
-| Win Every Argument score too generous (11/10 possible) | Dec 2025 | Med |
-| Opponent intelligence pro/con positions may be flipped | Dec 2025 | Med |
-
----
-
 # Phase History
 
 | Phase | Started | Completed | Notes |

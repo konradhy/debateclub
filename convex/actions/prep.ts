@@ -85,12 +85,7 @@ export const generateStrategy = action({
         | "researching"
         | "extracting"
         | "synthesizing"
-        | "generating_openings"
-        | "generating_frames"
-        | "generating_receipts"
-        | "generating_zingers"
-        | "generating_closings"
-        | "generating_intel"
+        | "generating" // Combined status for all parallel generations
         | "generating_strategic_brief"
         | "storing"
         | "complete"
@@ -198,9 +193,11 @@ export const generateStrategy = action({
       researchSynthesis = null;
     }
 
-    // 4. Sequential Generation Phase for better progress tracking
+    // 4. Parallel Generation Phase - all 6 generations run concurrently
     // All generation functions receive the strategicBrief for context-aware generation
-    console.log("[generateStrategy] Starting generation phase");
+    console.log("[generateStrategy] Starting parallel generation phase");
+
+    await updateProgress("generating");
 
     let openingOptions,
       argumentFrames,
@@ -210,89 +207,64 @@ export const generateStrategy = action({
       opponentIntel;
 
     try {
-      // Generate openings
-      await updateProgress("generating_openings");
-      openingOptions = await ctx.runAction(
-        internal.actions.prepGeneration.generateOpenings,
-        {
+      // Run all 6 generation functions in parallel
+      [
+        openingOptions,
+        argumentFrames,
+        receipts,
+        zingers,
+        closingOptions,
+        opponentIntel,
+      ] = await Promise.all([
+        ctx.runAction(internal.actions.prepGeneration.generateOpenings, {
           opponentId: args.opponentId,
           userId: opponent.userId,
           topic: args.topic,
           position: args.position,
-          strategicBrief
-        },
-      );
-
-      // Generate frames
-      await updateProgress("generating_frames");
-      argumentFrames = await ctx.runAction(
-        internal.actions.prepGeneration.generateFrames,
-        {
-          opponentId: args.opponentId,
-          userId: opponent.userId,
-          topic: args.topic,
-          position: args.position,
-          research,
-          strategicBrief
-        },
-      );
-
-      // Generate receipts
-      await updateProgress("generating_receipts");
-      receipts = await ctx.runAction(
-        internal.actions.prepGeneration.generateReceipts,
-        {
+          strategicBrief,
+        }),
+        ctx.runAction(internal.actions.prepGeneration.generateFrames, {
           opponentId: args.opponentId,
           userId: opponent.userId,
           topic: args.topic,
           position: args.position,
           research,
-          strategicBrief
-        },
-      );
-
-      // Generate zingers
-      await updateProgress("generating_zingers");
-      zingers = await ctx.runAction(
-        internal.actions.prepGeneration.generateZingers,
-        {
+          strategicBrief,
+        }),
+        ctx.runAction(internal.actions.prepGeneration.generateReceipts, {
           opponentId: args.opponentId,
           userId: opponent.userId,
           topic: args.topic,
           position: args.position,
           research,
-          strategicBrief
-        },
-      );
-
-      // Generate closings
-      await updateProgress("generating_closings");
-      closingOptions = await ctx.runAction(
-        internal.actions.prepGeneration.generateClosings,
-        {
-          opponentId: args.opponentId,
-          userId: opponent.userId,
-          topic: args.topic,
-          position: args.position,
-          strategicBrief
-        },
-      );
-
-      // Generate opponent intel
-      await updateProgress("generating_intel");
-      opponentIntel = await ctx.runAction(
-        internal.actions.prepGeneration.generateOpponentIntel,
-        {
+          strategicBrief,
+        }),
+        ctx.runAction(internal.actions.prepGeneration.generateZingers, {
           opponentId: args.opponentId,
           userId: opponent.userId,
           topic: args.topic,
           position: args.position,
           research,
-          strategicBrief
-        },
-      );
+          strategicBrief,
+        }),
+        ctx.runAction(internal.actions.prepGeneration.generateClosings, {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
+          topic: args.topic,
+          position: args.position,
+          strategicBrief,
+        }),
+        ctx.runAction(internal.actions.prepGeneration.generateOpponentIntel, {
+          opponentId: args.opponentId,
+          userId: opponent.userId,
+          topic: args.topic,
+          position: args.position,
+          research,
+          strategicBrief,
+        }),
+      ]);
 
-      console.log("[generateStrategy] Generation phase complete");
+      console.log("[generateStrategy] Parallel generation phase complete");
     } catch (error) {
       console.error("[generateStrategy] Generation phase failed:", error);
       await updateProgress("error", `Generation failed: ${error}`);

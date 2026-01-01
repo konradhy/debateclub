@@ -6,12 +6,7 @@ const statusValidator = v.union(
   v.literal("researching"),
   v.literal("extracting"),
   v.literal("synthesizing"),
-  v.literal("generating_openings"),
-  v.literal("generating_frames"),
-  v.literal("generating_receipts"),
-  v.literal("generating_zingers"),
-  v.literal("generating_closings"),
-  v.literal("generating_intel"),
+  v.literal("generating"), // Combined status for all parallel generations
   v.literal("generating_strategic_brief"),
   v.literal("storing"),
   v.literal("complete"),
@@ -23,12 +18,7 @@ type ProgressStatus =
   | "researching"
   | "extracting"
   | "synthesizing"
-  | "generating_openings"
-  | "generating_frames"
-  | "generating_receipts"
-  | "generating_zingers"
-  | "generating_closings"
-  | "generating_intel"
+  | "generating" // Combined status for all parallel generations
   | "generating_strategic_brief"
   | "storing"
   | "complete"
@@ -39,12 +29,7 @@ const STATUS_MESSAGES: Record<ProgressStatus, string> = {
   researching: "Researching topic with web search...",
   extracting: "Extracting key findings from research...",
   synthesizing: "Synthesizing research insights...",
-  generating_openings: "Generating opening statements...",
-  generating_frames: "Building argument frames...",
-  generating_receipts: "Gathering receipts (evidence)...",
-  generating_zingers: "Crafting zingers...",
-  generating_closings: "Writing closing statements...",
-  generating_intel: "Analyzing opponent strategies...",
+  generating: "Generating prep materials (openings, frames, receipts, zingers, closings, intel)...",
   generating_strategic_brief: "Generating strategic brief...",
   storing: "Saving your strategy...",
   complete: "Strategy complete!",
