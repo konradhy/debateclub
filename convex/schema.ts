@@ -16,6 +16,14 @@ const schema = defineSchema({
     isAnonymous: v.optional(v.boolean()),
     isAdmin: v.optional(v.boolean()),
     stripeCustomerId: v.optional(v.string()),
+
+    // Research settings
+    researchIntensity: v.optional(v.union(
+      v.literal("basic"),
+      v.literal("aggressive"),
+      v.literal("deep"),
+    )),
+    articlesPerSearch: v.optional(v.number()),
   }).index("email", ["email"]),
   debates: defineTable({
     userId: v.id("users"),

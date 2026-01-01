@@ -1,10 +1,11 @@
 "use node";
 import { action } from "../_generated/server";
 import { v } from "convex/values";
-import { internal } from "../_generated/api";
-import { prepAgent } from "../agents";
+import { internal, api } from "../_generated/api";
+import { createPrepAgent } from "../agents";
 import { z } from "zod";
 import { buildStrategicBrief } from "../lib/strategicBrief";
+import { getResearchInstructions } from "../lib/researchIntensity";
 
 interface Strategy {
   openingOptions: any;
@@ -75,6 +76,16 @@ export const generateStrategy = action({
       strategicBrief.substring(0, 200) + "...",
     );
 
+    // Get user's research settings (guaranteed to return valid values or throw)
+    const { researchIntensity, articlesPerSearch } = await ctx.runQuery(
+      api.app.getResearchSettings,
+      {}
+    );
+
+    console.log(
+      `[generateStrategy] Using research settings: intensity=${researchIntensity}, articlesPerSearch=${articlesPerSearch}`
+    );
+
     // Start progress tracking
     await ctx.runMutation(internal.prepProgress.startProgress, {
       opponentId: args.opponentId,
@@ -99,9 +110,11 @@ export const generateStrategy = action({
       });
     };
 
+    // Create agent with user's articlesPerSearch setting
     let thread;
     try {
-      const result = await prepAgent.createThread(ctx);
+      const agent = createPrepAgent(articlesPerSearch);
+      const result = await agent.createThread(ctx);
       thread = result.thread;
       console.log("[generateStrategy] Thread created");
     } catch (error) {
@@ -110,15 +123,29 @@ export const generateStrategy = action({
       throw new Error(`Failed to create prep agent thread: ${error}`);
     }
 
-    // Build a more context-aware research prompt using the strategic brief
+    // Build research prompt with intensity-specific instructions.
+    // This prompt is sent to the agent thread and augments the base instructions
+    // with specific guidance on research depth based on user's intensity setting.
+    const intensityInstructions = getResearchInstructions(researchIntensity);
+    console.log(
+      `[generateStrategy] Intensity instructions for ${researchIntensity}:`,
+      intensityInstructions
+    );
+
     const researchPrompt = `
       ${strategicBrief}
 
-      Research this topic thoroughly using your search tool. 
-      Focus on finding "Receipts" (hard stats), "Opponent Intel" (common arguments), and "Stories". We are in the year 2025.
+      ${intensityInstructions}
+
+      We are in the year 2025.
       ${opponent.opponentPastStatements ? `Also look for information about statements made by or about this opponent: ${opponent.opponentPastStatements}` : ""}
       ${opponent.userResearch ? `The debater has provided this research context to consider: ${opponent.userResearch.substring(0, 1000)}...` : ""}
     `;
+
+    console.log(
+      `[generateStrategy] Full research prompt being sent to agent:`,
+      researchPrompt.substring(0, 500) + "..."
+    );
 
     try {
       console.log("[generateStrategy] Starting research phase");

@@ -1,17 +1,30 @@
 # Development Journal 3
 
-**Chapters 20+** | Previous volumes: [Journal 1](./dev_journal.md) (Ch 0-12) | [Journal 2](./dev_journal_2.md) (Ch 13-19)
+**Chapters 20-24** | Previous volumes: [Journal 1](./dev_journal.md) (Ch 0-12) | [Journal 2](./dev_journal_2.md) (Ch 13-19)
+
+> **📚 Note**: This journal is now complete (Chapters 20-24). **Continue new sessions in `dev_journal_4.md`**.
+
+---
+
+# ⚠️ CRITICAL WARNING FOR AI ASSISTANTS ⚠️
+
+**THIS IS VOLUME 3 (Chapters 20-24). THERE IS A VOLUME 4!**
+
+📖 **`dev_journal_4.md`** contains Chapters 25+ including:
+- **Archive summaries** of Chapters 0-24 (compressed for quick reference)
+- **All new work** starting from Chapter 25
+
+**DO NOT** add new chapters to this file. **New work goes in `dev_journal_4.md`**.
 
 ---
 
 ## How to Use This Document
 
-1. **Start each session** by reading the Archive Summary below (compressed view of Chapters 0-19)
-2. **If you need deep context** on a specific feature, read the full chapter in Journal 1 or Journal 2
-3. **Increment chapter number** for your session (continue from Chapter 20)
-4. **Document as you work** — decisions, problems, solutions
-5. **Complete chapter** before ending session
-6. **Never modify** past chapters — only add new ones
+1. **Start each session** by reading the Archive Summary in `dev_journal_4.md`
+2. **If you need deep context** on a specific feature from Chapters 20-24, read the full chapter below
+3. **For Chapters 0-12**, see `dev_journal.md` (Journal 1)
+4. **For Chapters 13-19**, see `dev_journal_2.md` (Journal 2)
+5. **For new work**, write to `dev_journal_4.md` (Journal 4)
 
 ---
 
@@ -270,6 +283,17 @@ Generated 7-minute strategic orientation document synthesizing all prep material
 **Key Files**: [prepGeneration.ts](convex/actions/prepGeneration.ts), [promptTemplates.ts](convex/lib/promptTemplates.ts), [StrategicBriefTab.tsx](src/components/prep/StrategicBriefTab.tsx)
 **Pattern**: Synthesis over summary. Narrative showing connections, not just listing materials. 4-section structure: Battlefield → Architecture → Principles → Deployment.
 **Roadmap Items**: [R-5.4] ✅
+
+---
+
+### Chapter 24: Research Intensity Settings & Progress Bar Refactoring
+**Date**: January 1, 2026
+
+Implemented user-controlled research intensity settings (Basic/Aggressive/Deep) to give users control over how thoroughly AI researches debate topics. Refactored progress UI from 10 individual boxes to consolidated "Study Guide" box representing parallel generation. Extracted reusable `PrepProgressSteps` component to eliminate code duplication.
+
+**Key Files**: [researchIntensity.ts](convex/lib/researchIntensity.ts) (NEW), [app.ts](convex/app.ts), [agents.ts](convex/agents.ts), [_layout.settings.research.tsx](src/routes/_app/_auth/dashboard/_layout.settings.research.tsx) (NEW), [PrepProgressSteps.tsx](src/components/prep/PrepProgressSteps.tsx) (NEW)
+**Pattern**: Two-tier control system (intensity primary/prominent, articles secondary/ghost). Factory function for per-request agent customization. Prompt injection for research guidance.
+**Key Insight**: Parallel generation requires honest progress display (one box, not 6). Code duplication invites future bugs.
 
 ---
 
@@ -2778,6 +2802,349 @@ For "evidenceNeeded", extract 2-3 specific findings from the research articles t
 **Status**: ✅ COMPLETE
 
 **User Feedback**: "good job. we finished. IT works."
+
+---
+
+## Chapter 24: Research Intensity Settings & Progress Bar Refactoring
+
+**Date**: January 1, 2026
+
+**Goal**: Implement user-controlled research intensity settings and fix broken progress UI caused by parallel generation refactoring.
+
+**Roadmap Reference**: Phase 6 - Evidence Sourcing & Performance Optimization (Research intensity is a sub-feature)
+
+---
+
+### Problem Statement
+
+**Before**:
+1. **Research Hardcoded**: Agent always scraped exactly 5 articles per search, no user control
+2. **Parallel Generation Broke Progress**: After parallelizing 6 prep material generation tasks (openings, frames, receipts, zingers, closings, intel), the progress UI showed 10 individual boxes that froze together at "generating" stage, giving false impression UI was broken
+3. **Code Duplication**: Progress step rendering code duplicated in both `GenerationProgress.tsx` and `EmptyState.tsx`
+
+**User Requirements**:
+- Global user settings (not per-opponent) for research control
+- Two-tier control: Research Intensity (primary, prominent) and Articles Per Search (secondary, de-emphasized)
+- Default: Aggressive intensity, 5 articles per search
+- Single consolidated progress box for parallel generation ("Study Guide" instead of 6 separate boxes)
+
+---
+
+### Implementation
+
+#### Part 1: Schema Changes
+
+**File**: `convex/schema.ts`
+
+Added two fields to `users` table:
+```typescript
+users: defineTable({
+  // ... existing fields ...
+  researchIntensity: v.optional(v.union(
+    v.literal("basic"),
+    v.literal("aggressive"),
+    v.literal("deep"),
+  )),
+  articlesPerSearch: v.optional(v.number()),
+}).index("email", ["email"]),
+```
+
+**Defaults Applied**: Defaults handled at query/mutation level, not in schema (schema stores only what user explicitly sets)
+
+---
+
+#### Part 2: Research Intensity Helper
+
+**File**: `convex/lib/researchIntensity.ts` (NEW)
+
+```typescript
+type ResearchIntensity = "basic" | "aggressive" | "deep";
+
+export function getResearchInstructions(intensity: ResearchIntensity): string {
+  const instructions = {
+    basic: `RESEARCH SCOPE: Perform 2-3 focused searches...`,
+    aggressive: `RESEARCH SCOPE: Perform 5-7 comprehensive searches...`,
+    deep: `RESEARCH SCOPE: Perform 10+ exhaustive searches with iterative refinement...`,
+  };
+  return instructions[intensity];
+}
+```
+
+**Design**: Each intensity level includes specific search count guidance injected directly into research prompt, guiding agent behavior without hardcoding.
+
+---
+
+#### Part 3: User Settings API
+
+**File**: `convex/app.ts` (added 2 new functions)
+
+```typescript
+export const getResearchSettings = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error("User not found");
+
+    return {
+      researchIntensity: user.researchIntensity || "aggressive",
+      articlesPerSearch: user.articlesPerSearch || 5,
+    };
+  },
+});
+
+export const updateResearchSettings = mutation({
+  args: {
+    researchIntensity: v.optional(v.union(...)),
+    articlesPerSearch: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error("User not found");
+
+    await ctx.db.patch(userId, {
+      researchIntensity: args.researchIntensity,
+      articlesPerSearch: args.articlesPerSearch,
+    });
+  },
+});
+```
+
+**Error Handling**: Throws errors on auth failures (no fallbacks). Returns defaults for users who haven't explicitly configured settings.
+
+---
+
+#### Part 4: Agent Refactoring
+
+**File**: `convex/agents.ts`
+
+Changed from module-level constant to factory function:
+
+```typescript
+export function createPrepAgent(articlesPerSearch: number = 5) {
+  return new Agent(components.agent, {
+    name: "Debate Prep Strategist",
+    // TODO: Consider changing language model
+    languageModel: openrouter.chat("openai/gpt-4o"),
+    instructions: `
+    You are an expert debate coach and strategist, inspired by Mehdi Hasan's approach...
+    Base instructions generic. Specific research intensity instructions (Basic/Aggressive/Deep)
+    are injected via the research prompt sent to the thread in prep.ts
+    `,
+    tools: {
+      searchWeb: createTool({
+        handler: async (ctx, args) => {
+          // Use user-configured articlesPerSearch instead of hardcoded 5
+          const results = await searchAndScrape(args.query, apiKey, articlesPerSearch);
+          return results.map(...).join("\\n\\n");
+        },
+      }),
+    },
+  });
+}
+```
+
+**Key Change**: Enabled per-request customization of `articlesPerSearch` by passing it as parameter.
+
+---
+
+#### Part 5: Prep Orchestration Integration
+
+**File**: `convex/actions/prep.ts` (lines 79-148)
+
+```typescript
+// Get user's research settings (guaranteed to return valid values or throw)
+const { researchIntensity, articlesPerSearch } = await ctx.runQuery(
+  api.app.getResearchSettings,
+  {}
+);
+
+// ... later in research phase ...
+
+const agent = createPrepAgent(articlesPerSearch);
+const result = await agent.createThread(ctx);
+
+// Inject intensity instructions into research prompt
+const intensityInstructions = getResearchInstructions(researchIntensity);
+const researchPrompt = `
+  ${strategicBrief}
+  ${intensityInstructions}
+  We are in the year 2025.
+  ${opponent.opponentPastStatements ? ... : ""}
+`;
+```
+
+**Data Flow**: Settings fetch → Agent creation with custom articlesPerSearch → Intensity instructions injected → Prompt sent to agent
+
+---
+
+#### Part 6: Frontend - Settings Page
+
+**File**: `src/routes/_app/_auth/dashboard/_layout.settings.research.tsx` (NEW)
+
+New tab in Settings with:
+- **Research Intensity**: Radio button group (Basic/Aggressive/Deep) - visually prominent
+- **Advanced Settings**: Collapsible section with Articles Per Search dropdown (5/8/10) - de-emphasized
+- Loads current settings via `getResearchSettings` query
+- Saves via `updateResearchSettings` mutation
+
+**Design Pattern**: Primary control (intensity) gets full visual treatment. Secondary control (articles) hidden in collapsed "Advanced" section with reduced opacity.
+
+---
+
+#### Part 7: Progress Bar Fix
+
+**Files Modified**: `convex/prepProgress.ts`, `src/components/prep/GenerationProgress.tsx`, `src/components/prep/EmptyState.tsx`, `src/components/prep/GeminiProgress.tsx`
+
+**Problem**: Parallel generation of 6 prep materials caused 10 individual progress boxes to appear and freeze together, appearing broken.
+
+**Solution**:
+1. Consolidated into single "Study Guide" box representing all parallel generation
+2. Created reusable `PrepProgressSteps.tsx` component to eliminate duplication
+3. Centered all progress displays (GenerationProgress, EmptyState, GeminiProgress)
+
+**New Progress Flow**:
+```
+Research → Extract → Synthesis → Study Guide (parallel: openings+frames+receipts+zingers+closings+intel)
+  → Strategic Brief → Save
+```
+
+**Status Types Updated** (`convex/prepProgress.ts`):
+```typescript
+type ProgressStatus =
+  | "idle"
+  | "researching"
+  | "extracting"
+  | "synthesizing"
+  | "generating"          // Combined: all 6 parallel tasks
+  | "generating_strategic_brief"
+  | "storing"
+  | "complete"
+  | "error";
+```
+
+**Status Messages Updated**:
+```typescript
+generating: "Creating your study guide...",  // Changed from individual material names
+```
+
+---
+
+#### Part 8: Code Deduplication
+
+**File**: `src/components/prep/PrepProgressSteps.tsx` (NEW)
+
+```typescript
+export function PrepProgressSteps({
+  progress,
+  getStepStatus,
+  className = "",
+}: PrepProgressStepsProps) {
+  return (
+    <div className={`flex items-center justify-center gap-2 flex-wrap ${className}`}>
+      <ProgressStep label="Research" status={getStepStatus("researching", progress)} />
+      <ProgressStep label="Extract" status={getStepStatus("extracting", progress)} />
+      <ProgressStep label="Synthesis" status={getStepStatus("synthesizing", progress)} />
+      <ProgressStep label="Study Guide" status={getStepStatus("generating", progress)} />
+      <ProgressStep label="Strategic Brief" status={getStepStatus("generating_strategic_brief", progress)} />
+      <ProgressStep label="Save" status={getStepStatus("storing", progress)} />
+    </div>
+  );
+}
+```
+
+**Impact**: Both `GenerationProgress.tsx` and `EmptyState.tsx` now use single component. Changes propagate everywhere automatically.
+
+---
+
+### Testing & Verification
+
+**Verification Method**: Log parsing from actual test runs
+
+**Test Cases**:
+1. **Basic Mode** (2-3 searches, 5 articles each)
+   - Log: `[generateStrategy] Using research settings: intensity=basic, articlesPerSearch=5`
+   - Expected: 2-3 `🔍 [AGENT-DEBUG] Agent searching for:` entries
+
+2. **Aggressive Mode** (5-7 searches, 5 articles each)
+   - Log: `intensity=aggressive`
+   - Expected: 5-7 search attempts
+
+3. **Deep Mode** (10+ searches, variable articles)
+   - Log: `intensity=deep`
+   - Expected: 10+ search attempts (may hit Firecrawl rate limit: 6/min)
+
+**Result**: All tests passed. Settings correctly wired through entire pipeline.
+
+---
+
+### Technical Decisions
+
+1. **Factory Function Pattern for Agent**: Enables per-request customization while maintaining clean separation
+2. **Intensity Instructions Injected via Prompt**: Keeps agent instructions generic (teachable), specifics in prompt (controllable)
+3. **Defaults at Query Level, Not Schema**: More flexible. Users with no settings get defaults. Users with settings override defaults.
+4. **Two-Tier Control UI**: Intensity prominent (what most users care about). Articles per search hidden in advanced settings (power users only).
+5. **Single Progress Box**: Honest representation of system behavior (6 tasks run parallel, not sequential)
+6. **Component Extraction**: Prevents future duplication bugs. Single source of truth.
+
+---
+
+### Files Modified
+
+1. **convex/schema.ts** — Added researchIntensity, articlesPerSearch to users table
+2. **convex/lib/researchIntensity.ts** (NEW) — Intensity instruction helper function
+3. **convex/app.ts** — Added getResearchSettings, updateResearchSettings
+4. **convex/agents.ts** — Changed to createPrepAgent factory function
+5. **convex/actions/prep.ts** — Integrated user settings and intensity instructions
+6. **convex/prepProgress.ts** — Updated status messages for consolidated "Study Guide"
+7. **src/routes/_app/_auth/dashboard/_layout.settings.research.tsx** (NEW) — Research settings page
+8. **src/routes/_app/_auth/dashboard/_layout.settings.tsx** — Added Research tab link
+9. **src/components/prep/PrepProgressSteps.tsx** (NEW) — Reusable progress component
+10. **src/components/prep/GenerationProgress.tsx** — Uses PrepProgressSteps, centered layout
+11. **src/components/prep/EmptyState.tsx** — Uses PrepProgressSteps
+12. **src/components/prep/GeminiProgress.tsx** — Centered layout
+
+**Total**: 12 files (3 new, 9 modified)
+
+---
+
+### Key Lessons
+
+1. **Hardcoded Values Hide Design Choices**: The hardcoded `5` in `searchAndScrape()` was the single control point for research depth. Making it configurable revealed that this was an important user preference.
+
+2. **Parallel Processing = Honest Progress**: When 6 tasks run together, showing 6 separate boxes gives false impression of sequential progress. One box is more truthful.
+
+3. **Deduplication Prevents Future Bugs**: Code duplication invites inconsistency. If progress rendering had been duplicated when the next fix came along, we'd have 2 places to fix.
+
+4. **Factory Functions Enable Flexibility**: Keeping agent as constant prevented per-request customization. Factory function pattern is minimal change with big impact.
+
+5. **Prompt Injection > Hardcoding**: Research intensity guidance in prompts is easier to test, modify, and explain than builtin agent behavior.
+
+---
+
+### Success Criteria
+
+✅ User can set research intensity in Settings → Research tab
+✅ Settings persist across sessions and apply to all future prep generations
+✅ Basic mode performs 2-3 searches
+✅ Aggressive mode performs 5-7 searches (default)
+✅ Deep mode performs 10+ searches
+✅ Articles per search setting is respected
+✅ Existing users get sensible defaults (aggressive, 5)
+✅ Progress bar shows single "Study Guide" box, not 10 individual boxes
+✅ Progress display centered and clean across all components
+✅ No code duplication in progress rendering
+
+---
+
+**Status**: ✅ COMPLETE
+
+**User Feedback**: Confirmed working via log parsing. "settings are wired correctly, agent is following intensity instructions"
 
 ---
 

@@ -34,27 +34,24 @@ export function GeminiProgress({ geminiProgress }: GeminiProgressProps) {
               borderBottom: `1px solid ${colors.border}`,
             }}
           >
-            <div className="flex items-center gap-3">
-              <Loader2
-                className="h-5 w-5 animate-spin"
-                style={{ color: colors.primary }}
-              />
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-medium" style={{ color: colors.text }}>
-                    AI Deep Research
-                  </span>
-                </div>
-                <p className="text-sm" style={{ color: colors.textMuted }}>
-                  {geminiProgress.message}
-                </p>
-                {geminiProgress.status.startsWith("deep_research") && (
-                  <p className="text-xs mt-1" style={{ color: colors.textLight }}>
-                    Deep Research can take 3-20 minutes for comprehensive
-                    analysis
-                  </p>
-                )}
+            <div className="flex flex-col items-center justify-center gap-3 text-center">
+              <div className="flex items-center gap-2">
+                <Loader2
+                  className="h-5 w-5 animate-spin"
+                  style={{ color: colors.primary }}
+                />
+                <span className="font-medium" style={{ color: colors.text }}>
+                  AI Deep Research
+                </span>
               </div>
+              <p className="text-sm" style={{ color: colors.textMuted }}>
+                {geminiProgress.message}
+              </p>
+              {geminiProgress.status.startsWith("deep_research") && (
+                <p className="text-xs" style={{ color: colors.textLight }}>
+                  Deep Research can take 3-20 minutes for comprehensive analysis
+                </p>
+              )}
             </div>
           </div>
         )}
@@ -62,7 +59,7 @@ export function GeminiProgress({ geminiProgress }: GeminiProgressProps) {
       {/* Gemini Error Display */}
       {geminiProgress?.status === "error" && geminiProgress.error && (
         <div className="px-6 py-4 bg-red-500/10 border-b border-red-500/30">
-          <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+          <div className="flex items-center justify-center gap-2 text-red-600 dark:text-red-400">
             <AlertTriangle className="h-5 w-5" />
             <span className="font-medium">
               Gemini Error: {geminiProgress.error}

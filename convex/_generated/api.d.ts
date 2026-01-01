@@ -38,6 +38,7 @@ import type * as lib_monetization from "../lib/monetization.js";
 import type * as lib_openrouter from "../lib/openrouter.js";
 import type * as lib_openrouterWithCosts from "../lib/openrouterWithCosts.js";
 import type * as lib_promptTemplates from "../lib/promptTemplates.js";
+import type * as lib_researchIntensity from "../lib/researchIntensity.js";
 import type * as lib_scoring from "../lib/scoring.js";
 import type * as lib_strategicBrief from "../lib/strategicBrief.js";
 import type * as opponents from "../opponents.js";
@@ -98,6 +99,7 @@ declare const fullApi: ApiFromModules<{
   "lib/openrouter": typeof lib_openrouter;
   "lib/openrouterWithCosts": typeof lib_openrouterWithCosts;
   "lib/promptTemplates": typeof lib_promptTemplates;
+  "lib/researchIntensity": typeof lib_researchIntensity;
   "lib/scoring": typeof lib_scoring;
   "lib/strategicBrief": typeof lib_strategicBrief;
   opponents: typeof opponents;

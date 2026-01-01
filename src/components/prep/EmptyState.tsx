@@ -1,6 +1,6 @@
 import { Brain, Loader2 } from "lucide-react";
 import { Button } from "@/ui/button";
-import { ProgressStep } from "./ProgressStep";
+import { PrepProgressSteps } from "./PrepProgressSteps";
 
 interface EmptyStateProps {
   isDebatePrep: boolean;
@@ -33,48 +33,11 @@ export function EmptyState({
           <p className="text-sm text-muted-foreground max-w-md mb-6">
             {progress.message}
           </p>
-          <div className="flex items-center gap-2 flex-wrap justify-center max-w-lg">
-            <ProgressStep
-              label="Research"
-              status={getStepStatus("researching", progress)}
-            />
-            <ProgressStep
-              label="Extract"
-              status={getStepStatus("extracting", progress)}
-            />
-            <ProgressStep
-              label="Synthesis"
-              status={getStepStatus("synthesizing", progress)}
-            />
-            <ProgressStep
-              label="Openings"
-              status={getStepStatus("generating_openings", progress)}
-            />
-            <ProgressStep
-              label="Arguments"
-              status={getStepStatus("generating_frames", progress)}
-            />
-            <ProgressStep
-              label="Receipts"
-              status={getStepStatus("generating_receipts", progress)}
-            />
-            <ProgressStep
-              label="Zingers"
-              status={getStepStatus("generating_zingers", progress)}
-            />
-            <ProgressStep
-              label="Closings"
-              status={getStepStatus("generating_closings", progress)}
-            />
-            <ProgressStep
-              label="Intel"
-              status={getStepStatus("generating_intel", progress)}
-            />
-            <ProgressStep
-              label="Save"
-              status={getStepStatus("storing", progress)}
-            />
-          </div>
+          <PrepProgressSteps
+            progress={progress}
+            getStepStatus={getStepStatus}
+            className="max-w-lg"
+          />
         </>
       ) : (
         <>

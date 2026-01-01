@@ -46,11 +46,11 @@ Reference format: [R-1.2.3]
 
 ## Current Focus
 
-**Active Phase**: Phase 6 - Evidence Sourcing & Performance Optimization (⬜ Not Started)
+**Active Phase**: Phase 7 - Quality Pass & Calibration (⬜ Not Started)
 
-**Recently Completed**: Phase 5 - Prep Materials Enhancement (✅ Complete)
+**Recently Completed**: Phase 6 - Evidence Sourcing & Performance Optimization (✅ Complete)
 
-**Relevant DEV_JOURNAL Chapters**: Pre-docs, Ch.1-23
+**Relevant DEV_JOURNAL Chapters**: Pre-docs, Ch.1-24
 
 ---
 
@@ -580,7 +580,11 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 ## Phase 6: Evidence Sourcing & Performance Optimization
 
-**Goal**: Add evidence to the ui. for argument frames. Currently, i believe we collect some text description, but the ui is blank. investigate
+**Goal**: Improve research quality control and prep generation UX through user-configurable research settings and progress visibility
+
+**Status**: ✅ (Complete)
+
+**Chapters**: Ch.22, Ch.24
 
 ---
 
@@ -590,7 +594,7 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Status**: ✅
 
-**Chapters**: R-6.1
+**Chapters**: Ch.22
 
 #### Tasks
 
@@ -598,6 +602,46 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 - ✅ **6.1.2** — Change evidenceNeeded format to "[Source Name]: [Finding] - [Support]"
 - ✅ **6.1.3** — Remove "Available Evidence" dead code (evidenceIds linking)
 - ✅ **6.1.4** — Update UI label to "Supporting Research:"
+
+---
+
+### 6.2 Research Intensity Settings
+
+**Description**: User-controlled research depth settings (Basic/Aggressive/Deep) to give users control over how thoroughly AI researches topics
+
+**Status**: ✅
+
+**Chapters**: Ch.24
+
+#### Tasks
+
+- ✅ **6.2.1** — Add researchIntensity and articlesPerSearch to users schema
+- ✅ **6.2.2** — Create researchIntensity helper with intensity-specific instructions (Basic/Aggressive/Deep)
+- ✅ **6.2.3** — Add getResearchSettings and updateResearchSettings mutations
+- ✅ **6.2.4** — Refactor agent from module-level constant to createPrepAgent factory function
+- ✅ **6.2.5** — Integrate user settings into prep.ts (fetch, create agent, inject instructions)
+- ✅ **6.2.6** — Create Research Settings tab in Settings page
+- ✅ **6.2.7** — Two-tier control: Research Intensity (primary, prominent) + Articles Per Search (secondary, ghost)
+- ✅ **6.2.8** — Default: Aggressive intensity, 5 articles per search
+
+---
+
+### 6.3 Progress Bar Refactoring
+
+**Description**: Fix progress UI broken by parallel generation and eliminate code duplication
+
+**Status**: ✅
+
+**Chapters**: Ch.24
+
+#### Tasks
+
+- ✅ **6.3.1** — Consolidate 10 individual progress boxes to single "Study Guide" box representing parallel generation
+- ✅ **6.3.2** — Create PrepProgressSteps reusable component (eliminates duplication)
+- ✅ **6.3.3** — Update GenerationProgress.tsx to use PrepProgressSteps
+- ✅ **6.3.4** — Update EmptyState.tsx to use PrepProgressSteps
+- ✅ **6.3.5** — Center all progress displays (GenerationProgress, EmptyState, GeminiProgress)
+- ✅ **6.3.6** — Update progress status messages (generating = "Creating your study guide...")
 
 ---
 
@@ -1017,3 +1061,4 @@ Build a feature allowing users to challenge others to debates, either friends vi
 | Phase 3 | Pre-docs | Dec 2025 | Complete |
 | Phase 4 | Dec 2025 | Dec 31, 2025 | Monetization complete (Ch.16-19, Ch.22-23.1) |
 | Phase 5 | Dec 2025 | Dec 31, 2025 | Prep enhancement complete (Ch.20-21) |
+| Phase 6 | Dec 31, 2025 | Jan 1, 2026 | Evidence & research control complete (Ch.22, Ch.24) |

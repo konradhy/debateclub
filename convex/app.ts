@@ -114,3 +114,47 @@ export const deleteCurrentUserAccount = mutation({
     }
   },
 });
+
+export const getResearchSettings = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    const user = await ctx.db.get(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Return defaults if not set (for existing users who haven't configured settings yet)
+    return {
+      researchIntensity: user.researchIntensity || "aggressive",
+      articlesPerSearch: user.articlesPerSearch || 5,
+    };
+  },
+});
+
+export const updateResearchSettings = mutation({
+  args: {
+    researchIntensity: v.optional(v.union(
+      v.literal("basic"),
+      v.literal("aggressive"),
+      v.literal("deep"),
+    )),
+    articlesPerSearch: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error("User not found");
+
+    await ctx.db.patch(userId, {
+      researchIntensity: args.researchIntensity,
+      articlesPerSearch: args.articlesPerSearch,
+    });
+  },
+});

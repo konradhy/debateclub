@@ -2,7 +2,7 @@
 
 **Session-by-session record of development progress. Each chapter is immutable once completed.**
 
-> **📚 Note**: This journal became too long. **Newer sessions are in `dev_journal_2.md` and `dev_journal_3.md`**.
+> **📚 Note**: This journal became too long. **Newer sessions are in `dev_journal_2.md`, `dev_journal_3.md`, and `dev_journal_4.md`**.
 >
 > **🔍 If you're in a jam** and need rich context on how a feature was built, why a decision was made, or how a tricky problem was solved — this journal has the full story. The chapters below contain detailed implementation notes, debugging lessons, and architectural decisions that may not be obvious from just reading the code.
 
@@ -10,7 +10,7 @@
 
 # ⚠️ CRITICAL WARNING FOR AI ASSISTANTS ⚠️
 
-**THIS IS VOLUME 1 (Chapters 0-12). THERE ARE VOLUMES 2 AND 3!**
+**THIS IS VOLUME 1 (Chapters 0-12). THERE ARE VOLUMES 2, 3, AND 4!**
 
 📖 **`dev_journal_2.md`** contains Chapters 13-19 including:
 - Chapter 16: **Token Economy & Monetization (Phase 4.1)**
@@ -18,31 +18,39 @@
 - Chapter 18: **Stripe Integration (Phase 4.2)**
 - Chapter 19: **Cost Monitoring & Control (Phase 4.3)**
 
-📖 **`dev_journal_3.md`** contains Chapters 20+ including:
-- **Archive summaries** of Chapters 0-19 (compressed for quick reference)
-- **All new work** starting from Chapter 20
+📖 **`dev_journal_3.md`** contains Chapters 20-24 including:
+- Chapter 20: **Research Integration**
+- Chapter 21: **Strategic Brief Document**
+- Chapters 22-23: **Content Enhancement & Prep Material Controls**
+- Chapter 24: **Research Intensity Settings**
 
-**DO NOT** assume this file contains all documentation. **ALWAYS** check for `dev_journal_2.md` and `dev_journal_3.md` when looking for recent implementation details, especially for:
+📖 **`dev_journal_4.md`** contains Chapters 25+ including:
+- **Archive summaries** of Chapters 0-24 (compressed for quick reference)
+- **All new work** starting from Chapter 25
+
+**DO NOT** assume this file contains all documentation. **ALWAYS** check for `dev_journal_2.md`, `dev_journal_3.md`, and `dev_journal_4.md` when looking for recent implementation details, especially for:
 - Phase 4 (Monetization) — see Journal 2
 - UI redesigns (Dashboard, Settings) — see Journal 2
 - Refactoring work (prep.tsx component extraction) — see Journal 2
 - Debate style/difficulty architecture — see Journal 2
 - Cost tracking improvements — see Journal 2
-- Any work after December 31, 2025 — see Journal 3
+- Research integration & Strategic Brief — see Journal 3
+- Research intensity settings — see Journal 3
+- Any work after January 1, 2026 — see Journal 4
 
-**File naming**: Use exact case when searching: `dev_journal_2.md`, `dev_journal_3.md`
+**File naming**: Use exact case when searching: `dev_journal_2.md`, `dev_journal_3.md`, `dev_journal_4.md`
 
-If you tell the user "there's no documentation for Phase 4" or "the dev journal ends at Chapter 12" **YOU ARE WRONG**. Read Journal 2 and Journal 3!
+If you tell the user "there's no documentation for Phase 4" or "the dev journal ends at Chapter 12" **YOU ARE WRONG**. Read Journals 2, 3, and 4!
 
 ---
 
 ## How to Use This Document
 
-1. **Start each session** by reading ALL existing chapters
-2. **Increment chapter number** for your session
-3. **Document as you work** — decisions, problems, solutions
-4. **Complete chapter** before ending session
-5. **Never modify** past chapters — only add new ones
+1. **Start each session** by reading the Archive Summary in `dev_journal_4.md`
+2. **If you need deep context** on a specific feature from Chapters 0-12, read the full chapter below
+3. **For Chapters 13-19**, see `dev_journal_2.md` (Journal 2)
+4. **For Chapters 20-24**, see `dev_journal_3.md` (Journal 3)
+5. **For new work**, write to `dev_journal_4.md` (Journal 4)
 
 ---
 

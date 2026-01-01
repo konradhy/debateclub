@@ -2,7 +2,7 @@
 
 **Current architecture and codebase structure. Updated as features are added.**
 
-**Last Updated**: December 31, 2025 (Chapter R-5.3 - Phase 5.3 Complete)
+**Last Updated**: January 1, 2026 (Chapter 24 - Phase 6.2 & 6.3 Complete)
 
 ---
 
@@ -43,6 +43,7 @@ orator/
 │   │   ├── monetization.ts      # Token pricing/limits constants
 │   │   ├── openrouter.ts        # OpenRouter API client
 │   │   ├── promptTemplates.ts   # AI prompt templates
+│   │   ├── researchIntensity.ts # Research intensity instruction helper (Ch.24, NEW)
 │   │   ├── scoring.ts           # Hasan score calculation
 │   │   └── strategicBrief.ts    # Strategic Brief builder (Ch.7)
 │   ├── scenarios/               # Backend scenario configurations
@@ -85,6 +86,7 @@ orator/
 │   │   │   ├── GenerationProgress.tsx
 │   │   │   ├── MyResearchTab.tsx
 │   │   │   ├── PrepHeader.tsx
+│   │   │   ├── PrepProgressSteps.tsx  # NEW (Ch.24): Reusable progress indicator
 │   │   │   ├── ProgressStep.tsx
 │   │   │   ├── QuickRefDebate.tsx
 │   │   │   ├── QuickRefGeneric.tsx
@@ -159,7 +161,7 @@ orator/
 
 | Table | Purpose | Key Fields |
 |-------|---------|------------|
-| `users` | User accounts | `email`, `isAdmin`, `stripeCustomerId` |
+| `users` | User accounts | `email`, `isAdmin`, `stripeCustomerId`, `researchIntensity`, `articlesPerSearch` |
 | `debates` | Debate/practice sessions | `userId`, `topic`, `status`, `scenarioType`, `opponentId`, `vapiCallId`, `recordingKey` |
 | `exchanges` | Turn-by-turn transcript | `debateId`, `speaker`, `text`, `timestamp` |
 | `techniques` | Detected techniques | `debateId`, `technique`, `effectiveness`, `speaker` |
@@ -551,6 +553,13 @@ For large files, extract to feature-specific components:
 - `src/hooks/prep/` for prep page hooks
 - Explicit prop drilling (not Context) for traceability
 
+### 14. Research Intensity Settings Pattern (Ch.24)
+
+Two-tier user control system for research depth:
+- **Primary Control** (Research Intensity): Basic/Aggressive/Deep - prominent UI treatment (radio buttons)
+- **Secondary Control** (Articles Per Search): 5/8/10 - de-emphasized (ghost, collapsed advanced section)
+- **Implementation**: Factory function for agent creation, intensity instructions injected via prompt, defaults at query level
+- **Philosophy**: Prompt injection > hardcoding. Intensity guidance in prompts is easier to test, modify, and explain than hardcoded behavior.
 
 ---
 
@@ -648,6 +657,8 @@ npx convex deploy       # Deploy backend
 
 | Date | Change | Chapter |
 |------|--------|---------|
+| Jan 1, 2026 | Research Intensity Settings - User control of research depth (Basic/Aggressive/Deep) | Ch.24 |
+| Jan 1, 2026 | Progress Bar Refactoring - Consolidated to "Study Guide" box, eliminated code duplication | Ch.24 |
 | Dec 31, 2025 | Opponent Intelligence Editing - Full CRUD operations, placeholder bug fix | R-5.3 |
 | Dec 31, 2025 | Content Enhancement - Deployment examples for argument frames & receipts | R-5.2 |
 | Dec 31, 2025 | Research Integration - Send extracted items to Study Mode, fix research display bug | Ch.20 |
@@ -750,4 +761,4 @@ From roadmap and dev journals:
 
 ---
 
-*This document reflects the codebase as of December 31, 2025 (Chapter R-5.3 - Phase 5.3 Complete).*
+*This document reflects the codebase as of January 1, 2026 (Chapter 24 - Phase 6.2 & 6.3 Complete).*

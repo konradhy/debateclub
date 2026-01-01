@@ -8,22 +8,27 @@
 
 # ⚠️ CRITICAL WARNING FOR AI ASSISTANTS ⚠️
 
-**THIS IS VOLUME 2 (Chapters 13-19). THERE IS A VOLUME 3!**
+**THIS IS VOLUME 2 (Chapters 13-19). THERE ARE VOLUMES 3 AND 4!**
 
-📖 **`dev_journal_3.md`** contains Chapters 20+ including:
-- **Archive summaries** of Chapters 0-19 (compressed for quick reference)
-- **All new work** starting from Chapter 20
+📖 **`dev_journal_3.md`** contains Chapters 20-24 including:
+- Archive summaries of Chapters 0-19
+- Chapters 20-24 full implementation details
 
-**DO NOT** add new chapters to this file. **New work goes in `dev_journal_3.md`**.
+📖 **`dev_journal_4.md`** contains Chapters 25+ including:
+- **Archive summaries** of Chapters 0-24 (compressed for quick reference)
+- **All new work** starting from Chapter 25
+
+**DO NOT** add new chapters to this file. **New work goes in `dev_journal_4.md`**.
 
 ---
 
 ## How to Use This Document
 
-1. **Start each session** by reading the Archive Summary in `dev_journal_3.md`
+1. **Start each session** by reading the Archive Summary in `dev_journal_4.md`
 2. **If you need deep context** on a specific feature from Chapters 13-19, read the full chapter below
 3. **For Chapters 0-12**, see `dev_journal.md` (Journal 1)
-4. **For new work**, write to `dev_journal_3.md` (Journal 3)
+4. **For Chapters 20-24**, see `dev_journal_3.md` (Journal 3)
+5. **For new work**, write to `dev_journal_4.md` (Journal 4)
 
 ---
 

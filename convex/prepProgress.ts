@@ -29,7 +29,7 @@ const STATUS_MESSAGES: Record<ProgressStatus, string> = {
   researching: "Researching topic with web search...",
   extracting: "Extracting key findings from research...",
   synthesizing: "Synthesizing research insights...",
-  generating: "Generating prep materials (openings, frames, receipts, zingers, closings, intel)...",
+  generating: "Creating your study guide...",
   generating_strategic_brief: "Generating strategic brief...",
   storing: "Saving your strategy...",
   complete: "Strategy complete!",

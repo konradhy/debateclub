@@ -21,7 +21,8 @@ export default function DashboardSettingsLayout() {
   const matchRoute = useMatchRoute();
   const isSettingsPath = matchRoute({ to: SettingsRoute.fullPath });
   const isBillingPath = matchRoute({ to: "/dashboard/settings/billing" });
-  
+  const isResearchPath = matchRoute({ to: "/dashboard/settings/research" });
+
   return (
     <div className="flex h-full w-full px-6 py-8">
       <div className="mx-auto flex h-full w-full max-w-screen-xl gap-12">
@@ -39,6 +40,22 @@ export default function DashboardSettingsLayout() {
               )}
             >
               General
+            </span>
+          </Link>
+          <Link
+            to="/dashboard/settings/research"
+            className={cn(
+              `${buttonVariants({ variant: "ghost" })} ${isResearchPath && "bg-primary/5"}`,
+              "justify-start rounded-md",
+            )}
+          >
+            <span
+              className={cn(
+                `text-sm ${isResearchPath ? "font-medium" : ""}`,
+              )}
+              style={{ color: isResearchPath ? colors.primary : `${colors.primary}cc` }}
+            >
+              Research
             </span>
           </Link>
           <Link
