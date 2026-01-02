@@ -1,4 +1,4 @@
-import { Brain, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/ui/button";
 import { PrepProgressSteps } from "./PrepProgressSteps";
 
@@ -8,7 +8,10 @@ interface EmptyStateProps {
   isGenerating: boolean;
   handleGenerateStrategy: () => void;
   handleGenerateGenericPrep: () => void;
-  getStepStatus: (step: string, progress: any) => "pending" | "active" | "complete";
+  getStepStatus: (
+    step: string,
+    progress: any,
+  ) => "pending" | "active" | "complete";
 }
 
 export function EmptyState({
@@ -26,7 +29,11 @@ export function EmptyState({
       progress.status !== "complete" &&
       progress.status !== "error" ? (
         <>
-          <Brain className="h-12 w-12 text-primary mb-4 animate-pulse" />
+          <img
+            src="/images/custom/athenaowl.svg"
+            alt=""
+            className="h-20 w-20 mb-4 animate-pulse"
+          />
           <h3 className="text-lg font-medium mb-2">
             Generating Your Strategy...
           </h3>
@@ -41,7 +48,11 @@ export function EmptyState({
         </>
       ) : (
         <>
-          <Brain className="h-12 w-12 text-muted-foreground mb-4" />
+          <img
+            src="/images/custom/athenaowl.svg"
+            alt=""
+            className="h-20 w-20 mb-4 opacity-60"
+          />
           <h3 className="text-lg font-medium mb-2">
             {isDebatePrep
               ? "No Strategy Generated Yet"
@@ -54,9 +65,7 @@ export function EmptyState({
           </p>
           <Button
             onClick={
-              isDebatePrep
-                ? handleGenerateStrategy
-                : handleGenerateGenericPrep
+              isDebatePrep ? handleGenerateStrategy : handleGenerateGenericPrep
             }
             disabled={isGenerating}
           >

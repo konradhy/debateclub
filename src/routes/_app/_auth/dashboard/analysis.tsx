@@ -11,13 +11,12 @@ import {
   ArrowRight,
   ArrowLeft,
   TrendingUp,
-  Brain,
   MessageSquare,
   Swords,
   Lightbulb,
   Zap,
   Shield,
-  Eye
+  Eye,
 } from "lucide-react";
 import { QuickAnalysisView } from "@/components/analysis/QuickAnalysisView";
 import ReactMarkdown from "react-markdown";
@@ -52,7 +51,7 @@ function Analysis() {
   const { data: analysis, isLoading } = useQuery({
     ...convexQuery(
       api.analysis.getAnalysis,
-      debateId ? { debateId: debateId as Id<"debates"> } : "skip"
+      debateId ? { debateId: debateId as Id<"debates"> } : "skip",
     ),
     refetchInterval: 2000, // Poll every 2 seconds for updates
   });
@@ -61,7 +60,8 @@ function Analysis() {
   const [showQuickTake, setShowQuickTake] = useState(false);
 
   // Determine if this is a debate analysis or generic (sales, entrepreneur, etc.)
-  const isDebateAnalysis = analysis?.analysisFramework === "debate" || !analysis?.analysisFramework;
+  const isDebateAnalysis =
+    analysis?.analysisFramework === "debate" || !analysis?.analysisFramework;
 
   // Check what analysis data we have
   const hasQuick = analysis?.geminiQuickSummary;
@@ -70,14 +70,22 @@ function Analysis() {
   // State 1 & 2 combined: Loading or no data yet (show generating state)
   if (isLoading || !analysis) {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
+      <div
+        className="min-h-screen"
+        style={{ backgroundColor: colors.background }}
+      >
         <div className="flex h-screen items-center justify-center p-8">
           <div className="flex flex-col items-center gap-4">
             <div
               className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"
-              style={{ borderColor: colors.primary, borderTopColor: "transparent" }}
+              style={{
+                borderColor: colors.primary,
+                borderTopColor: "transparent",
+              }}
             />
-            <p style={{ color: colors.textMuted }}>Analyzing your performance...</p>
+            <p style={{ color: colors.textMuted }}>
+              Analyzing your performance...
+            </p>
           </div>
         </div>
       </div>
@@ -87,11 +95,17 @@ function Analysis() {
   // State 3: Quick analysis only (full still generating)
   if (hasQuick && !hasFull) {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
+      <div
+        className="min-h-screen"
+        style={{ backgroundColor: colors.background }}
+      >
         {/* Site Header */}
         <header
           className="sticky top-0 z-50 border-b py-4"
-          style={{ backgroundColor: colors.headerBg, borderColor: colors.border }}
+          style={{
+            backgroundColor: colors.headerBg,
+            borderColor: colors.border,
+          }}
         >
           <div className="mx-auto flex max-w-6xl items-center justify-between px-6">
             <Link
@@ -113,14 +127,20 @@ function Analysis() {
         </header>
 
         {/* Quick Analysis View */}
-        <QuickAnalysisView summary={analysis.geminiQuickSummary!} showProgressBar={true} />
+        <QuickAnalysisView
+          summary={analysis.geminiQuickSummary!}
+          showProgressBar={true}
+        />
       </div>
     );
   }
 
   // State 4: Full analysis ready (optionally with quick toggle)
   return (
-    <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
+    <div
+      className="min-h-screen"
+      style={{ backgroundColor: colors.background }}
+    >
       {/* Site Header */}
       <header
         className="sticky top-0 z-50 border-b py-4"
@@ -163,7 +183,11 @@ function Analysis() {
           <Link to="/dashboard/history">
             <button
               className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border-2 px-5 text-sm font-medium transition-all hover:shadow-md"
-              style={{ borderColor: colors.border, color: colors.text, backgroundColor: colors.cardBg }}
+              style={{
+                borderColor: colors.border,
+                color: colors.text,
+                backgroundColor: colors.cardBg,
+              }}
             >
               View History
             </button>
@@ -175,19 +199,21 @@ function Analysis() {
           <div className="mb-6 flex gap-2">
             <button
               onClick={() => setShowQuickTake(false)}
-              className={`px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${!showQuickTake
-                ? "border-primary/50 bg-primary text-white shadow-sm"
-                : "border-border bg-white text-foreground hover:bg-gray-50"
-                }`}
+              className={`px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
+                !showQuickTake
+                  ? "border-primary/50 bg-primary text-white shadow-sm"
+                  : "border-border bg-white text-foreground hover:bg-gray-50"
+              }`}
             >
               Full Analysis
             </button>
             <button
               onClick={() => setShowQuickTake(true)}
-              className={`px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${showQuickTake
-                ? "border-primary/50 bg-primary text-white shadow-sm"
-                : "border-border bg-white text-foreground hover:bg-gray-50"
-                }`}
+              className={`px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
+                showQuickTake
+                  ? "border-primary/50 bg-primary text-white shadow-sm"
+                  : "border-border bg-white text-foreground hover:bg-gray-50"
+              }`}
             >
               Quick Take
             </button>
@@ -202,7 +228,7 @@ function Analysis() {
               className="border-2"
               style={{
                 borderColor: colors.accent,
-                backgroundColor: colors.cardBg
+                backgroundColor: colors.cardBg,
               }}
             >
               <CardHeader>
@@ -213,7 +239,9 @@ function Analysis() {
                   >
                     <Zap className="h-6 w-6 text-white" />
                   </div>
-                  <span style={{ color: colors.text, fontFamily: "Georgia, serif" }}>
+                  <span
+                    style={{ color: colors.text, fontFamily: "Georgia, serif" }}
+                  >
                     Quick Take
                   </span>
                 </CardTitle>
@@ -228,7 +256,10 @@ function Analysis() {
                       h2: ({ children }) => (
                         <h2
                           className="text-xl font-bold mt-6 mb-3"
-                          style={{ color: colors.primary, fontFamily: "Georgia, serif" }}
+                          style={{
+                            color: colors.primary,
+                            fontFamily: "Georgia, serif",
+                          }}
                         >
                           {children}
                         </h2>
@@ -280,7 +311,6 @@ function Analysis() {
         ) : (
           /* Show Full Analysis */
           <div className="flex flex-col gap-8">
-
             {/* Executive Summary - Hero Section */}
             <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
               <CardHeader>
@@ -325,12 +355,17 @@ function Analysis() {
                       Areas for Improvement
                     </h4>
                     <ul className="space-y-2">
-                      {analysis.executiveSummary?.topImprovements.map((s, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm">
-                          <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-orange-500" />
-                          <span className="text-foreground/90">{s}</span>
-                        </li>
-                      ))}
+                      {analysis.executiveSummary?.topImprovements.map(
+                        (s, i) => (
+                          <li
+                            key={i}
+                            className="flex items-start gap-2 text-sm"
+                          >
+                            <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-orange-500" />
+                            <span className="text-foreground/90">{s}</span>
+                          </li>
+                        ),
+                      )}
                     </ul>
                   </div>
                 </div>
@@ -353,9 +388,13 @@ function Analysis() {
                     <div className="flex flex-col items-center justify-center rounded-lg bg-primary/10 py-8">
                       <div className="text-6xl font-bold text-primary">
                         {analysis.hasanScores.total}
-                        <span className="text-2xl text-muted-foreground">/40</span>
+                        <span className="text-2xl text-muted-foreground">
+                          /40
+                        </span>
                       </div>
-                      <p className="mt-2 text-sm font-medium text-muted-foreground">Overall Effectiveness</p>
+                      <p className="mt-2 text-sm font-medium text-muted-foreground">
+                        Overall Effectiveness
+                      </p>
                     </div>
 
                     {/* Category Breakdown */}
@@ -404,23 +443,39 @@ function Analysis() {
                           <div className="text-6xl font-bold text-primary">
                             {Math.round(
                               analysis.skillsAssessment.reduce(
-                                (sum: number, skill: { score: number }) => sum + skill.score,
-                                0
-                              ) / analysis.skillsAssessment.length
+                                (sum: number, skill: { score: number }) =>
+                                  sum + skill.score,
+                                0,
+                              ) / analysis.skillsAssessment.length,
                             )}
-                            <span className="text-2xl text-muted-foreground">/10</span>
+                            <span className="text-2xl text-muted-foreground">
+                              /10
+                            </span>
                           </div>
-                          <p className="mt-2 text-sm font-medium text-muted-foreground">Average Score</p>
+                          <p className="mt-2 text-sm font-medium text-muted-foreground">
+                            Average Score
+                          </p>
                         </div>
 
                         {/* Individual Skills */}
                         <div className="space-y-4">
                           {analysis.skillsAssessment.map(
-                            (skill: { name: string; score: number; feedback: string }, i: number) => (
+                            (
+                              skill: {
+                                name: string;
+                                score: number;
+                                feedback: string;
+                              },
+                              i: number,
+                            ) => (
                               <div key={i} className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                  <span className="text-sm font-medium text-foreground">{skill.name}</span>
-                                  <span className="text-sm font-bold text-primary">{skill.score}/10</span>
+                                  <span className="text-sm font-medium text-foreground">
+                                    {skill.name}
+                                  </span>
+                                  <span className="text-sm font-bold text-primary">
+                                    {skill.score}/10
+                                  </span>
                                 </div>
                                 <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
                                   <div
@@ -428,9 +483,11 @@ function Analysis() {
                                     style={{ width: `${skill.score * 10}%` }}
                                   />
                                 </div>
-                                <p className="text-xs text-muted-foreground">{skill.feedback}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {skill.feedback}
+                                </p>
                               </div>
-                            )
+                            ),
                           )}
                         </div>
                       </>
@@ -444,7 +501,11 @@ function Analysis() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Brain className="h-5 w-5 text-primary" />
+                      <img
+                        src="/images/custom/athenaowlsml.svg"
+                        alt=""
+                        className="h-10 w-10"
+                      />
                       Opponent Intel
                     </CardTitle>
                   </CardHeader>
@@ -452,16 +513,27 @@ function Analysis() {
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <Shield className="h-4 w-4 text-blue-500" />
-                        <h4 className="text-sm font-semibold">Techniques Used</h4>
+                        <h4 className="text-sm font-semibold">
+                          Techniques Used
+                        </h4>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {analysis.opponentAnalysis.techniquesUsed.map((item: string, i: number) => (
-                          <Badge key={i} variant="secondary" className="bg-blue-500/10 text-blue-700 dark:text-blue-300">
-                            {item}
-                          </Badge>
-                        ))}
-                        {analysis.opponentAnalysis.techniquesUsed.length === 0 && (
-                          <span className="text-sm text-muted-foreground">None detected</span>
+                        {analysis.opponentAnalysis.techniquesUsed.map(
+                          (item: string, i: number) => (
+                            <Badge
+                              key={i}
+                              variant="secondary"
+                              className="bg-blue-500/10 text-blue-700 dark:text-blue-300"
+                            >
+                              {item}
+                            </Badge>
+                          ),
+                        )}
+                        {analysis.opponentAnalysis.techniquesUsed.length ===
+                          0 && (
+                          <span className="text-sm text-muted-foreground">
+                            None detected
+                          </span>
                         )}
                       </div>
                     </div>
@@ -472,13 +544,21 @@ function Analysis() {
                         <h4 className="text-sm font-semibold">Traps Set</h4>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {analysis.opponentAnalysis.trapsSet.map((item: string, i: number) => (
-                          <Badge key={i} variant="outline" className="border-purple-200 bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300">
-                            {item}
-                          </Badge>
-                        ))}
+                        {analysis.opponentAnalysis.trapsSet.map(
+                          (item: string, i: number) => (
+                            <Badge
+                              key={i}
+                              variant="outline"
+                              className="border-purple-200 bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300"
+                            >
+                              {item}
+                            </Badge>
+                          ),
+                        )}
                         {analysis.opponentAnalysis.trapsSet.length === 0 && (
-                          <span className="text-sm text-muted-foreground">No traps detected</span>
+                          <span className="text-sm text-muted-foreground">
+                            No traps detected
+                          </span>
                         )}
                       </div>
                     </div>
@@ -486,16 +566,27 @@ function Analysis() {
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <Eye className="h-4 w-4 text-red-500" />
-                        <h4 className="text-sm font-semibold">Weaknesses Exposed</h4>
+                        <h4 className="text-sm font-semibold">
+                          Weaknesses Exposed
+                        </h4>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {analysis.opponentAnalysis.weaknessesExposed.map((item: string, i: number) => (
-                          <Badge key={i} variant="outline" className="border-red-200 bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300">
-                            {item}
-                          </Badge>
-                        ))}
-                        {analysis.opponentAnalysis.weaknessesExposed.length === 0 && (
-                          <span className="text-sm text-muted-foreground">None exposed</span>
+                        {analysis.opponentAnalysis.weaknessesExposed.map(
+                          (item: string, i: number) => (
+                            <Badge
+                              key={i}
+                              variant="outline"
+                              className="border-red-200 bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300"
+                            >
+                              {item}
+                            </Badge>
+                          ),
+                        )}
+                        {analysis.opponentAnalysis.weaknessesExposed.length ===
+                          0 && (
+                          <span className="text-sm text-muted-foreground">
+                            None exposed
+                          </span>
                         )}
                       </div>
                     </div>
@@ -503,16 +594,27 @@ function Analysis() {
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <Target className="h-4 w-4 text-amber-500" />
-                        <h4 className="text-sm font-semibold">Unexploited Weaknesses</h4>
+                        <h4 className="text-sm font-semibold">
+                          Unexploited Weaknesses
+                        </h4>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {analysis.opponentAnalysis.unexploitedWeaknesses.map((item: string, i: number) => (
-                          <Badge key={i} variant="outline" className="border-amber-200 bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
-                            {item}
-                          </Badge>
-                        ))}
-                        {analysis.opponentAnalysis.unexploitedWeaknesses.length === 0 && (
-                          <span className="text-sm text-muted-foreground">All exploited!</span>
+                        {analysis.opponentAnalysis.unexploitedWeaknesses.map(
+                          (item: string, i: number) => (
+                            <Badge
+                              key={i}
+                              variant="outline"
+                              className="border-amber-200 bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300"
+                            >
+                              {item}
+                            </Badge>
+                          ),
+                        )}
+                        {analysis.opponentAnalysis.unexploitedWeaknesses
+                          .length === 0 && (
+                          <span className="text-sm text-muted-foreground">
+                            All exploited!
+                          </span>
                         )}
                       </div>
                     </div>
@@ -523,7 +625,11 @@ function Analysis() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Brain className="h-5 w-5 text-primary" />
+                      <img
+                        src="/images/custom/athenaowlsml.svg"
+                        alt=""
+                        className="h-10 w-10"
+                      />
                       Key Moments
                     </CardTitle>
                   </CardHeader>
@@ -531,33 +637,51 @@ function Analysis() {
                     {analysis.keyMoments && analysis.keyMoments.length > 0 ? (
                       analysis.keyMoments.map(
                         (
-                          moment: { moment: string; impact: string; wasHandledWell: boolean },
-                          i: number
+                          moment: {
+                            moment: string;
+                            impact: string;
+                            wasHandledWell: boolean;
+                          },
+                          i: number,
                         ) => (
                           <div
                             key={i}
-                            className={`rounded-lg border p-4 ${moment.wasHandledWell
-                              ? "border-green-200 bg-green-50 dark:border-green-900/30 dark:bg-green-900/10"
-                              : "border-orange-200 bg-orange-50 dark:border-orange-900/30 dark:bg-orange-900/10"
-                              }`}
+                            className={`rounded-lg border p-4 ${
+                              moment.wasHandledWell
+                                ? "border-green-200 bg-green-50 dark:border-green-900/30 dark:bg-green-900/10"
+                                : "border-orange-200 bg-orange-50 dark:border-orange-900/30 dark:bg-orange-900/10"
+                            }`}
                           >
                             <div className="flex items-start gap-3">
                               <div
-                                className={`mt-1 h-2 w-2 flex-shrink-0 rounded-full ${moment.wasHandledWell ? "bg-green-500" : "bg-orange-500"
-                                  }`}
+                                className={`mt-1 h-2 w-2 flex-shrink-0 rounded-full ${
+                                  moment.wasHandledWell
+                                    ? "bg-green-500"
+                                    : "bg-orange-500"
+                                }`}
                               />
                               <div className="space-y-1">
-                                <p className="font-medium text-foreground">{moment.moment}</p>
-                                <p className="text-sm text-muted-foreground">{moment.impact}</p>
+                                <p className="font-medium text-foreground">
+                                  {moment.moment}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  {moment.impact}
+                                </p>
                               </div>
                             </div>
                           </div>
-                        )
+                        ),
                       )
                     ) : (
                       <div className="flex flex-col items-center justify-center py-8 text-center">
-                        <Brain className="mb-3 h-12 w-12 text-muted-foreground/50" />
-                        <p className="text-muted-foreground">No key moments identified</p>
+                        <img
+                          src="/images/custom/athenaowlsml.svg"
+                          alt=""
+                          className="mb-3 h-10 w-10 opacity-50"
+                        />
+                        <p className="text-muted-foreground">
+                          No key moments identified
+                        </p>
                       </div>
                     )}
                   </CardContent>
@@ -584,40 +708,49 @@ function Analysis() {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {analysis.missedOpportunities.map((opp: { whichTechnique: string; moment: string; whatShouldHaveDone: string }, i: number) => (
-                        <div
-                          key={i}
-                          className="group relative overflow-hidden rounded-lg border border-amber-200/50 bg-gradient-to-r from-amber-50/50 to-transparent p-5 transition-all hover:border-amber-300 hover:shadow-md dark:border-amber-900/30 dark:from-amber-900/10"
-                        >
-                          {/* Technique Badge */}
-                          <div className="mb-3 flex items-start justify-between gap-4">
-                            <Badge className="bg-amber-500 text-white">
-                              {opp.whichTechnique}
-                            </Badge>
-                          </div>
-
-                          {/* Content */}
-                          <div className="space-y-3">
-                            <div>
-                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                                The Moment
-                              </p>
-                              <p className="italic text-foreground/80">
-                                "{opp.moment}"
-                              </p>
+                      {analysis.missedOpportunities.map(
+                        (
+                          opp: {
+                            whichTechnique: string;
+                            moment: string;
+                            whatShouldHaveDone: string;
+                          },
+                          i: number,
+                        ) => (
+                          <div
+                            key={i}
+                            className="group relative overflow-hidden rounded-lg border border-amber-200/50 bg-gradient-to-r from-amber-50/50 to-transparent p-5 transition-all hover:border-amber-300 hover:shadow-md dark:border-amber-900/30 dark:from-amber-900/10"
+                          >
+                            {/* Technique Badge */}
+                            <div className="mb-3 flex items-start justify-between gap-4">
+                              <Badge className="bg-amber-500 text-white">
+                                {opp.whichTechnique}
+                              </Badge>
                             </div>
 
-                            <div>
-                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                                Better Approach
-                              </p>
-                              <p className="text-foreground">
-                                {opp.whatShouldHaveDone}
-                              </p>
+                            {/* Content */}
+                            <div className="space-y-3">
+                              <div>
+                                <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                                  The Moment
+                                </p>
+                                <p className="italic text-foreground/80">
+                                  "{opp.moment}"
+                                </p>
+                              </div>
+
+                              <div>
+                                <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                                  Better Approach
+                                </p>
+                                <p className="text-foreground">
+                                  {opp.whatShouldHaveDone}
+                                </p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ),
+                      )}
                     </div>
                   )}
                 </CardContent>
@@ -635,47 +768,65 @@ function Analysis() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
-                    {analysis.techniqueScorecard.map((category: { category: string; executionScore: number; notes: string; techniquesIdentified: string[] }, i: number) => (
-                      <div key={i} className="space-y-3 rounded-lg border border-border/50 bg-card/50 p-4">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-semibold text-foreground">{category.category}</h4>
-                          <div className="flex items-center gap-3">
-                            {/* The beloved dots! */}
-                            <div className="flex gap-1">
-                              {[1, 2, 3, 4, 5].map((dot) => (
-                                <div
-                                  key={dot}
-                                  className={`h-2.5 w-2.5 rounded-full transition-all ${dot <= category.executionScore
-                                    ? "bg-primary shadow-sm shadow-primary/50"
-                                    : "bg-muted"
+                    {analysis.techniqueScorecard.map(
+                      (
+                        category: {
+                          category: string;
+                          executionScore: number;
+                          notes: string;
+                          techniquesIdentified: string[];
+                        },
+                        i: number,
+                      ) => (
+                        <div
+                          key={i}
+                          className="space-y-3 rounded-lg border border-border/50 bg-card/50 p-4"
+                        >
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-semibold text-foreground">
+                              {category.category}
+                            </h4>
+                            <div className="flex items-center gap-3">
+                              {/* The beloved dots! */}
+                              <div className="flex gap-1">
+                                {[1, 2, 3, 4, 5].map((dot) => (
+                                  <div
+                                    key={dot}
+                                    className={`h-2.5 w-2.5 rounded-full transition-all ${
+                                      dot <= category.executionScore
+                                        ? "bg-primary shadow-sm shadow-primary/50"
+                                        : "bg-muted"
                                     }`}
-                                />
-                              ))}
-                            </div>
-                            <span className="min-w-[2rem] text-right text-sm font-bold text-primary">
-                              {category.executionScore}/5
-                            </span>
-                          </div>
-                        </div>
-
-                        <p className="text-sm leading-relaxed text-muted-foreground">
-                          {category.notes}
-                        </p>
-
-                        {category.techniquesIdentified.length > 0 && (
-                          <div className="flex flex-wrap gap-2 pt-1">
-                            {category.techniquesIdentified.map((tech: string, j: number) => (
-                              <span
-                                key={j}
-                                className="rounded-md bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground/80"
-                              >
-                                {tech}
+                                  />
+                                ))}
+                              </div>
+                              <span className="min-w-[2rem] text-right text-sm font-bold text-primary">
+                                {category.executionScore}/5
                               </span>
-                            ))}
+                            </div>
                           </div>
-                        )}
-                      </div>
-                    ))}
+
+                          <p className="text-sm leading-relaxed text-muted-foreground">
+                            {category.notes}
+                          </p>
+
+                          {category.techniquesIdentified.length > 0 && (
+                            <div className="flex flex-wrap gap-2 pt-1">
+                              {category.techniquesIdentified.map(
+                                (tech: string, j: number) => (
+                                  <span
+                                    key={j}
+                                    className="rounded-md bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground/80"
+                                  >
+                                    {tech}
+                                  </span>
+                                ),
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      ),
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -691,7 +842,9 @@ function Analysis() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className={`grid gap-6 ${isDebateAnalysis && analysis.practiceRecommendations.longTermDevelopment ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
+                  <div
+                    className={`grid gap-6 ${isDebateAnalysis && analysis.practiceRecommendations.longTermDevelopment ? "md:grid-cols-3" : "md:grid-cols-2"}`}
+                  >
                     {/* Immediate Focus */}
                     <div className="space-y-4 rounded-xl border-2 border-red-200 bg-red-50 p-5 dark:border-red-900/50 dark:bg-red-950/20">
                       <div className="flex items-center gap-2">
@@ -699,8 +852,12 @@ function Analysis() {
                           <AlertTriangle className="h-5 w-5 text-white" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-red-900 dark:text-red-300">Immediate Focus</h4>
-                          <p className="text-xs text-red-700 dark:text-red-400">Start today</p>
+                          <h4 className="font-bold text-red-900 dark:text-red-300">
+                            Immediate Focus
+                          </h4>
+                          <p className="text-xs text-red-700 dark:text-red-400">
+                            Start today
+                          </p>
                         </div>
                       </div>
                       <div className="space-y-2">
@@ -708,11 +865,19 @@ function Analysis() {
                           {analysis.practiceRecommendations.immediateFocus.area}
                         </p>
                         <p className="text-sm text-red-800 dark:text-red-300">
-                          {analysis.practiceRecommendations.immediateFocus.drill}
+                          {
+                            analysis.practiceRecommendations.immediateFocus
+                              .drill
+                          }
                         </p>
-                        {analysis.practiceRecommendations.immediateFocus.exampleToStudy && (
+                        {analysis.practiceRecommendations.immediateFocus
+                          .exampleToStudy && (
                           <p className="text-xs text-red-700 dark:text-red-400">
-                            📚 {analysis.practiceRecommendations.immediateFocus.exampleToStudy}
+                            📚{" "}
+                            {
+                              analysis.practiceRecommendations.immediateFocus
+                                .exampleToStudy
+                            }
                           </p>
                         )}
                       </div>
@@ -725,8 +890,12 @@ function Analysis() {
                           <TrendingUp className="h-5 w-5 text-white" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-orange-900 dark:text-orange-300">Secondary Focus</h4>
-                          <p className="text-xs text-orange-700 dark:text-orange-400">This week</p>
+                          <h4 className="font-bold text-orange-900 dark:text-orange-300">
+                            Secondary Focus
+                          </h4>
+                          <p className="text-xs text-orange-700 dark:text-orange-400">
+                            This week
+                          </p>
                         </div>
                       </div>
                       <div className="space-y-2">
@@ -734,11 +903,19 @@ function Analysis() {
                           {analysis.practiceRecommendations.secondaryFocus.area}
                         </p>
                         <p className="text-sm text-orange-800 dark:text-orange-300">
-                          {analysis.practiceRecommendations.secondaryFocus.drill}
+                          {
+                            analysis.practiceRecommendations.secondaryFocus
+                              .drill
+                          }
                         </p>
-                        {analysis.practiceRecommendations.secondaryFocus.exampleToStudy && (
+                        {analysis.practiceRecommendations.secondaryFocus
+                          .exampleToStudy && (
                           <p className="text-xs text-orange-700 dark:text-orange-400">
-                            📚 {analysis.practiceRecommendations.secondaryFocus.exampleToStudy}
+                            📚{" "}
+                            {
+                              analysis.practiceRecommendations.secondaryFocus
+                                .exampleToStudy
+                            }
                           </p>
                         )}
                       </div>
@@ -752,19 +929,33 @@ function Analysis() {
                             <Trophy className="h-5 w-5 text-white" />
                           </div>
                           <div>
-                            <h4 className="font-bold text-blue-900 dark:text-blue-300">Long Term</h4>
-                            <p className="text-xs text-blue-700 dark:text-blue-400">This month</p>
+                            <h4 className="font-bold text-blue-900 dark:text-blue-300">
+                              Long Term
+                            </h4>
+                            <p className="text-xs text-blue-700 dark:text-blue-400">
+                              This month
+                            </p>
                           </div>
                         </div>
                         <div className="space-y-2">
                           <p className="font-semibold text-blue-900 dark:text-blue-200">
-                            {analysis.practiceRecommendations.longTermDevelopment.skill}
+                            {
+                              analysis.practiceRecommendations
+                                .longTermDevelopment.skill
+                            }
                           </p>
                           <p className="text-sm text-blue-800 dark:text-blue-300">
-                            {analysis.practiceRecommendations.longTermDevelopment.practiceApproach}
+                            {
+                              analysis.practiceRecommendations
+                                .longTermDevelopment.practiceApproach
+                            }
                           </p>
                           <p className="text-xs text-blue-700 dark:text-blue-400">
-                            📚 {analysis.practiceRecommendations.longTermDevelopment.resources}
+                            📚{" "}
+                            {
+                              analysis.practiceRecommendations
+                                .longTermDevelopment.resources
+                            }
                           </p>
                         </div>
                       </div>
@@ -781,14 +972,26 @@ function Analysis() {
   );
 }
 
-function ScoreRow({ label, score, max, desc }: { label: string, score: number, max: number, desc: string }) {
+function ScoreRow({
+  label,
+  score,
+  max,
+  desc,
+}: {
+  label: string;
+  score: number;
+  max: number;
+  desc: string;
+}) {
   const percentage = Math.round((score / max) * 100);
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium text-foreground">{label}</span>
-        <span className="text-sm font-bold text-primary">{score}/{max}</span>
+        <span className="text-sm font-bold text-primary">
+          {score}/{max}
+        </span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
         <div
@@ -804,20 +1007,22 @@ function ScoreRow({ label, score, max, desc }: { label: string, score: number, m
 function Badge({
   children,
   variant = "default",
-  className = ""
+  className = "",
 }: {
-  children: React.ReactNode,
-  variant?: "default" | "secondary" | "outline",
-  className?: string
+  children: React.ReactNode;
+  variant?: "default" | "secondary" | "outline";
+  className?: string;
 }) {
   const variants = {
     default: "bg-primary text-primary-foreground hover:bg-primary/80",
     secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-    outline: "border border-border text-foreground"
+    outline: "border border-border text-foreground",
   };
 
   return (
-    <span className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-semibold transition-colors ${variants[variant]} ${className}`}>
+    <span
+      className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-semibold transition-colors ${variants[variant]} ${className}`}
+    >
       {children}
     </span>
   );

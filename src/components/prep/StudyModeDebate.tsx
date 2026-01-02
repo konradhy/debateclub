@@ -69,7 +69,11 @@ export function StudyModeDebate({
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-blue-500" />
+            <img
+              src="/images/custom/ancient-scroll.svg"
+              alt=""
+              className="h-7 w-7"
+            />
             Opening Statements
           </h3>
           <span className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -89,9 +93,7 @@ export function StudyModeDebate({
                 isEditing={editingId === option.id}
                 onEdit={() => setEditingId(option.id)}
                 onDelete={() => handleDelete("openingOptions", option.id)}
-                onSave={(data) =>
-                  handleEdit("openingOptions", option.id, data)
-                }
+                onSave={(data) => handleEdit("openingOptions", option.id, data)}
                 onCancel={() => setEditingId(null)}
                 initialData={option}
                 formFields={[
@@ -309,7 +311,8 @@ export function StudyModeDebate({
                   label: "Example Quote (optional)",
                   type: "textarea",
                   rows: 2,
-                  placeholder: "Example: 'You're right that X. But what you're missing is Y...'"
+                  placeholder:
+                    "Example: 'You're right that X. But what you're missing is Y...'",
                 },
               ]}
             >
@@ -378,19 +381,25 @@ export function StudyModeDebate({
                         </div>
                       )}
                       {/* Supporting Research Display */}
-                      {frame.evidenceNeeded && frame.evidenceNeeded.length > 0 && (
-                        <div className="space-y-1">
-                          <p className="text-xs font-semibold text-muted-foreground">
-                            Supporting Research:
-                          </p>
-                          {frame.evidenceNeeded.map((evidence: string, idx: number) => (
-                            <div key={idx} className="text-xs text-muted-foreground flex gap-2">
-                              <span>•</span>
-                              <span>{evidence}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                      {frame.evidenceNeeded &&
+                        frame.evidenceNeeded.length > 0 && (
+                          <div className="space-y-1">
+                            <p className="text-xs font-semibold text-muted-foreground">
+                              Supporting Research:
+                            </p>
+                            {frame.evidenceNeeded.map(
+                              (evidence: string, idx: number) => (
+                                <div
+                                  key={idx}
+                                  className="text-xs text-muted-foreground flex gap-2"
+                                >
+                                  <span>•</span>
+                                  <span>{evidence}</span>
+                                </div>
+                              ),
+                            )}
+                          </div>
+                        )}
                     </div>
                   )}
                 </div>
@@ -454,7 +463,8 @@ export function StudyModeDebate({
                   label: "Example Quote (optional)",
                   type: "textarea",
                   rows: 2,
-                  placeholder: "Example: 'You're right that X. But what you're missing is Y...'"
+                  placeholder:
+                    "Example: 'You're right that X. But what you're missing is Y...'",
                 },
               ]}
             >
@@ -682,9 +692,7 @@ export function StudyModeDebate({
                     isEditing={editingId === receipt.id}
                     onEdit={() => setEditingId(receipt.id)}
                     onDelete={() => handleDelete("receipts", receipt.id)}
-                    onSave={(data) =>
-                      handleEdit("receipts", receipt.id, data)
-                    }
+                    onSave={(data) => handleEdit("receipts", receipt.id, data)}
                     onCancel={() => setEditingId(null)}
                     initialData={receipt}
                     formFields={[
@@ -726,7 +734,8 @@ export function StudyModeDebate({
                         label: "Deployment Example (optional)",
                         type: "textarea",
                         rows: 3,
-                        placeholder: "Example: 'Now, you claim X. But according to [source], [fact]. So when you say Y...'"
+                        placeholder:
+                          "Example: 'Now, you claim X. But according to [source], [fact]. So when you say Y...'",
                       },
                       {
                         name: "url",
@@ -779,18 +788,19 @@ export function StudyModeDebate({
                       </div>
 
                       {/* NEW: Expanded section with deployment example */}
-                      {expandedItems[receipt.id] && receipt.deploymentExample && (
-                        <div className="mt-3 animate-in fade-in slide-in-from-top-2 duration-200">
-                          <div className="text-sm bg-orange-50 dark:bg-orange-950/30 p-3 rounded-md border-l-4 border-orange-500">
-                            <div className="text-[10px] font-bold uppercase text-orange-600 dark:text-orange-400 mb-1 tracking-wide">
-                              Deployment Example
+                      {expandedItems[receipt.id] &&
+                        receipt.deploymentExample && (
+                          <div className="mt-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                            <div className="text-sm bg-orange-50 dark:bg-orange-950/30 p-3 rounded-md border-l-4 border-orange-500">
+                              <div className="text-[10px] font-bold uppercase text-orange-600 dark:text-orange-400 mb-1 tracking-wide">
+                                Deployment Example
+                              </div>
+                              <p className="text-muted-foreground leading-relaxed italic">
+                                "{receipt.deploymentExample}"
+                              </p>
                             </div>
-                            <p className="text-muted-foreground leading-relaxed italic">
-                              "{receipt.deploymentExample}"
-                            </p>
                           </div>
-                        </div>
-                      )}
+                        )}
                     </div>
                   </InlineEdit>
                 ))}
@@ -844,7 +854,8 @@ export function StudyModeDebate({
                 label: "Deployment Example (optional)",
                 type: "textarea",
                 rows: 3,
-                placeholder: "Example: 'Now, you claim X. But according to [source], [fact]. So when you say Y...'"
+                placeholder:
+                  "Example: 'Now, you claim X. But according to [source], [fact]. So when you say Y...'",
               },
               {
                 name: "url",
@@ -1017,9 +1028,7 @@ export function StudyModeDebate({
                 isEditing={editingId === option.id}
                 onEdit={() => setEditingId(option.id)}
                 onDelete={() => handleDelete("closingOptions", option.id)}
-                onSave={(data) =>
-                  handleEdit("closingOptions", option.id, data)
-                }
+                onSave={(data) => handleEdit("closingOptions", option.id, data)}
                 onCancel={() => setEditingId(null)}
                 initialData={option}
                 formFields={[

@@ -1,7 +1,6 @@
 import {
   FileText,
   Loader2,
-  Brain,
   Target,
   ShieldAlert,
   BookOpen,
@@ -80,7 +79,11 @@ Example content:
                 </>
               ) : (
                 <>
-                  <Brain className="mr-2 h-4 w-4" />
+                  <img
+                    src="/images/custom/athenaowlsml.svg"
+                    alt=""
+                    className="mr-2 h-7 w-7"
+                  />
                   Extract Insights
                 </>
               )}
@@ -92,7 +95,11 @@ Example content:
         {processedResearch && (
           <div className="space-y-6 mt-6 pt-6 border-t border-border">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Brain className="h-4 w-4 text-primary" />
+              <img
+                src="/images/custom/athenaowlsml.svg"
+                alt=""
+                className="h-10 w-10"
+              />
               <span className="font-medium">AI Analysis:</span>
               <span>{processedResearch.summary}</span>
             </div>
@@ -131,7 +138,9 @@ Example content:
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleSendExtractedItem('argument', arg)}
+                            onClick={() =>
+                              handleSendExtractedItem("argument", arg)
+                            }
                             disabled={sentItems.has(arg.id)}
                           >
                             {sentItems.has(arg.id) ? (
@@ -198,7 +207,9 @@ Example content:
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleSendExtractedItem('receipt', receipt)}
+                          onClick={() =>
+                            handleSendExtractedItem("receipt", receipt)
+                          }
                           disabled={sentItems.has(receipt.id)}
                         >
                           {sentItems.has(receipt.id) ? (
@@ -230,8 +241,8 @@ Example content:
                 <CardHeader className="py-3 bg-blue-500/10">
                   <CardTitle className="text-sm font-bold text-blue-600 flex items-center gap-2">
                     <BookOpen className="h-4 w-4" />
-                    POTENTIAL OPENERS ({processedResearch.potentialOpeners.length}
-                    )
+                    POTENTIAL OPENERS (
+                    {processedResearch.potentialOpeners.length})
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="py-4 space-y-4">
@@ -247,7 +258,9 @@ Example content:
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleSendExtractedItem('opener', opener)}
+                          onClick={() =>
+                            handleSendExtractedItem("opener", opener)
+                          }
                           disabled={sentItems.has(opener.id)}
                         >
                           {sentItems.has(opener.id) ? (
@@ -279,8 +292,8 @@ Example content:
                 <CardHeader className="py-3 bg-yellow-500/10">
                   <CardTitle className="text-sm font-bold text-yellow-600 flex items-center gap-2">
                     <Zap className="h-4 w-4" />
-                    POTENTIAL ZINGERS ({processedResearch.potentialZingers.length}
-                    )
+                    POTENTIAL ZINGERS (
+                    {processedResearch.potentialZingers.length})
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="py-4 space-y-3">
@@ -294,7 +307,9 @@ Example content:
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleSendExtractedItem('zinger', zinger)}
+                          onClick={() =>
+                            handleSendExtractedItem("zinger", zinger)
+                          }
                           disabled={sentItems.has(zinger.id)}
                         >
                           {sentItems.has(zinger.id) ? (
@@ -346,7 +361,9 @@ Example content:
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleSendExtractedItem('counter', counter)}
+                            onClick={() =>
+                              handleSendExtractedItem("counter", counter)
+                            }
                             disabled={sentItems.has(counter.id)}
                           >
                             {sentItems.has(counter.id) ? (
