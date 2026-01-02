@@ -50,7 +50,7 @@ Reference format: [R-1.2.3]
 
 **Recently Completed**: Phase 6 - Evidence Sourcing & Performance Optimization (✅ Complete)
 
-**Relevant DEV_JOURNAL Chapters**: Pre-docs, Ch.1-24
+**Relevant DEV_JOURNAL Chapters**: Pre-docs, Ch.1-25
 
 ---
 
@@ -584,7 +584,7 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Status**: ✅ (Complete)
 
-**Chapters**: Ch.22, Ch.24
+**Chapters**: Ch.22, Ch.24, Ch.25
 
 ---
 
@@ -647,18 +647,18 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 ### 6.4 Instant Feedback System
 
-**Description**: Show preliminary content immediately. START BY asking where do users wait. what 80/20 can i do to make experience better.
+**Description**: Show preliminary content immediately while full content generates
 
-**Status**: ⬜
+**Status**: ✅ (Partial - Analysis only)
 
-**Chapters**: —
+**Chapters**: Ch.25
 
 #### Tasks
 
-- ⬜ **6.4.1** — Generate AI placeholder/"flash" content instantly
-- ⬜ **6.4.2** — Display with clear "preliminary" caveat
-- ⬜ **6.4.3** — Replace with real content when ready
-- ⬜ **6.4.4** — Smooth transition animations
+- ✅ **6.4.1** — Dual-analysis system: Quick Gemini Flash preview (~10s) + Full Claude analysis (~120s) [Ch.25]
+- ✅ **6.4.2** — Progress bar showing full analysis generation status [Ch.25]
+- ✅ **6.4.3** — Toggle between quick and full analysis when both exist [Ch.25]
+- 🚫 **6.4.4** — Extend to prep materials generation (decided not needed - prep is fast enough)
 
 ---
 
@@ -666,16 +666,16 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Description**: Display fields as they populate in real-time
 
-**Status**: ⬜
+**Status**: 🚫 (Cut - Not needed with dual-analysis approach)
 
 **Chapters**: —
 
 #### Tasks
 
-- ⬜ **6.5.1** — Stream partial results as generation completes
-- ⬜ **6.5.2** — Update UI incrementally (don't wait for all fields)
-- ⬜ **6.5.3** — WebSocket or SSE for real-time updates
-- ⬜ **6.5.4** — Loading skeleton for unpopulated fields
+- 🚫 **6.5.1** — Stream partial results as generation completes (decided against - adds complexity without proportional value)
+- 🚫 **6.5.2** — Update UI incrementally (not needed - quick analysis provides immediate value)
+- 🚫 **6.5.3** — WebSocket or SSE for real-time updates (over-engineering)
+- 🚫 **6.5.4** — Loading skeleton for unpopulated fields (dual-analysis solves this better)
 
 ---
 
@@ -683,16 +683,16 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Description**: Run independent tasks concurrently
 
-**Status**: ⬜
+**Status**: ✅
 
-**Chapters**: —
+**Chapters**: Ch.25
 
 #### Tasks
 
-- ⬜ **6.6.1** — Identify which generation steps can run in parallel
-- ⬜ **6.6.2** — Refactor generation pipeline for concurrency
-- ⬜ **6.6.3** — UI shows multiple items generating simultaneously
-- ⬜ **6.6.4** — Progress indicators for each parallel task
+- ✅ **6.6.1** — Parallel execution of quick + full analysis [Ch.25]
+- ✅ **6.6.2** — Both analyses start simultaneously with 500ms delay [Ch.25]
+- ✅ **6.6.3** — UI shows quick analysis while full generates in background [Ch.25]
+- ✅ **6.6.4** — Progress indicator for full analysis generation [Ch.25]
 
 ---
 
@@ -1061,4 +1061,4 @@ Build a feature allowing users to challenge others to debates, either friends vi
 | Phase 3 | Pre-docs | Dec 2025 | Complete |
 | Phase 4 | Dec 2025 | Dec 31, 2025 | Monetization complete (Ch.16-19, Ch.22-23.1) |
 | Phase 5 | Dec 2025 | Dec 31, 2025 | Prep enhancement complete (Ch.20-21) |
-| Phase 6 | Dec 31, 2025 | Jan 1, 2026 | Evidence & research control complete (Ch.22, Ch.24) |
+| Phase 6 | Dec 31, 2025 | Jan 1, 2026 | Evidence & performance complete (Ch.22, Ch.24, Ch.25) |
