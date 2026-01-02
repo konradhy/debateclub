@@ -6,6 +6,16 @@
  */
 
 /**
+ * Interruption mode types for speech plan configuration
+ */
+export type InterruptionMode =
+  | "off"
+  | "friendly"
+  | "debate"
+  | "aggressive"
+  | "relentless";
+
+/**
  * Voice configuration for Vapi assistant.
  */
 export interface VoiceConfig {
@@ -30,12 +40,6 @@ export interface AssistantConfig {
 
   /** LLM temperature (0-1). Higher = more creative. */
   temperature?: number;
-
-  /** Whether the AI can interrupt the user */
-  canInterrupt?: boolean;
-
-  /** Threshold for interruption (lower = more aggressive) */
-  interruptionThreshold?: number;
 }
 
 /**
@@ -111,6 +115,9 @@ export interface ScenarioConfig {
 
   /** Category grouping (e.g., "sales", "entrepreneur") */
   category: string;
+
+  /** Default interruption mode for this scenario */
+  defaultInterruptionMode: InterruptionMode;
 
   /** Pipeline configuration */
   pipeline: PipelineConfig;

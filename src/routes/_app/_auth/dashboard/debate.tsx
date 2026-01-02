@@ -17,6 +17,7 @@ import {
   type DifficultyLevel,
 } from "@/lib/debate";
 import { Timer, SpeakingIndicators } from "@/ui/debate";
+import { getSpeechPlan, getInterruptionModeForDebateStyle } from "@/lib/vapi/speechPlans";
 
 export const Route = createFileRoute("/_app/_auth/dashboard/debate")({
   component: Debate,
@@ -321,6 +322,28 @@ ${opponent.additionalContext}`
       // Build system prompt from scenario config
       const systemPrompt = replacePlaceholders(scenario.assistant.systemPrompt);
 
+      // Determine interruption mode
+      // For debate scenarios, map style to mode dynamically
+      // For other scenarios, use the scenario's default mode
+      const interruptionMode =
+        scenario.category === "debate"
+          ? getInterruptionModeForDebateStyle(opponent.style as string)
+          : scenario.defaultInterruptionMode;
+
+      const speechPlan = getSpeechPlan(interruptionMode);
+
+      // Console logs for testing
+      console.log("🎯 Interruption Mode Selection:", {
+        scenarioCategory: scenario.category,
+        opponentStyle: opponent.style,
+        selectedMode: interruptionMode,
+        speechPlan: {
+          waitSeconds: speechPlan.startSpeakingPlan.waitSeconds,
+          numWordsToInterrupt: speechPlan.stopSpeakingPlan.numWords,
+          backoffSeconds: speechPlan.stopSpeakingPlan.backoffSeconds,
+        },
+      });
+
       // Build dynamic assistant configuration
       const assistantConfig = {
         name: opponent.name,
@@ -350,27 +373,18 @@ ${opponent.additionalContext}`
           model: "nova-2",
           language: "en-US" as const,
           smartFormat: true,
-          endpointing: scenario.assistant.canInterrupt !== false ? 300 : 500, // Longer endpointing if interruption disabled
         },
-        // Interruption settings from scenario config
-        ...(scenario.assistant.canInterrupt !== undefined && {
-          clientMessages: scenario.assistant.canInterrupt
-            ? [
-                "transcript",
-                "hang",
-                "function-call",
-                "speech-update",
-                "metadata",
-                "conversation-update",
-              ]
-            : [
-                "transcript",
-                "hang",
-                "function-call",
-                "metadata",
-                "conversation-update",
-              ],
-        }),
+        // Speech plans control response timing and interruption behavior
+        startSpeakingPlan: speechPlan.startSpeakingPlan,
+        stopSpeakingPlan: speechPlan.stopSpeakingPlan,
+        clientMessages: [
+          "transcript",
+          "hang",
+          "function-call",
+          "speech-update",
+          "metadata",
+          "conversation-update",
+        ],
         // Server URL for webhooks - REQUIRED for transient assistants
         // This tells Vapi where to send transcript and other events
         // We append debateId to ensuring it's available even if metadata propagation fails
@@ -393,8 +407,13 @@ ${opponent.additionalContext}`
         },
       };
 
+      console.log("🎤 Vapi Assistant Config:", {
+        interruptionMode,
+        startSpeakingPlan: assistantConfig.startSpeakingPlan,
+        stopSpeakingPlan: assistantConfig.stopSpeakingPlan,
+      });
       console.log(
-        "Assistant Config:",
+        "📋 Full Assistant Config:",
         JSON.stringify(assistantConfig, null, 2),
       );
 

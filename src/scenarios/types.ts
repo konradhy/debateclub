@@ -1,9 +1,11 @@
 /**
- * Scenario System Type Definitions
+ * Vapi Speech Plan Configurations
  *
- * Defines the structure of scenario configuration files.
- * Each scenario type (debate, sales, entrepreneur, etc.) implements this interface.
+ * Defines startSpeakingPlan and stopSpeakingPlan for each interruption mode.
+ * These control how quickly the AI responds and how easy it is to interrupt.
  */
+
+import type { InterruptionMode } from "@/lib/vapi/speechPlans";
 
 /**
  * Voice configuration for Vapi assistant.
@@ -30,12 +32,6 @@ export interface AssistantConfig {
 
   /** LLM temperature (0-1). Higher = more creative. */
   temperature?: number;
-
-  /** Whether the AI can interrupt the user */
-  canInterrupt?: boolean;
-
-  /** Threshold for interruption (lower = more aggressive) */
-  interruptionThreshold?: number;
 }
 
 /**
@@ -172,6 +168,9 @@ export interface ScenarioConfig {
 
   /** Category grouping (e.g., "sales", "entrepreneur") */
   category: string;
+
+  /** Default interruption mode for this scenario */
+  defaultInterruptionMode: InterruptionMode;
 
   /** Pipeline configuration */
   pipeline: PipelineConfig;

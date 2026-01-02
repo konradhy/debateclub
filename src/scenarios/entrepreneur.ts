@@ -96,6 +96,8 @@ export const InvestorPitchScenario: ScenarioConfig = {
   name: "Entrepreneur - Investor Pitch",
   category: "entrepreneur",
 
+  defaultInterruptionMode: "aggressive",
+
   pipeline: entrepreneurPipeline,
   inputs: entrepreneurInputs,
   analysis: entrepreneurAnalysis,
@@ -163,8 +165,6 @@ YOUR GOAL: Be a realistic investor - experienced, pattern-matching, looking for 
     },
 
     temperature: 0.7,
-    canInterrupt: true, // Investors interrupt with questions
-    interruptionThreshold: 150, // Less aggressive than debate
   },
 };
 
@@ -288,6 +288,8 @@ export const EarlyCustomerSalesScenario: ScenarioConfig = {
   name: "Entrepreneur - Early Customer Sales",
   category: "entrepreneur",
 
+  defaultInterruptionMode: "friendly",
+
   pipeline: entrepreneurPipeline,
   inputs: earlyCustomerSalesInputs,
   analysis: earlyCustomerSalesAnalysis,
@@ -376,7 +378,6 @@ YOUR GOAL: Give them a realistic early-stage sales experience. Be skeptical but 
     },
 
     temperature: 0.7,
-    canInterrupt: false, // Prospects generally listen before objecting
   },
 };
 
@@ -511,6 +512,8 @@ export const CustomerDiscoveryScenario: ScenarioConfig = {
   name: "Entrepreneur - Customer Discovery",
   category: "entrepreneur",
 
+  defaultInterruptionMode: "off",
+
   pipeline: entrepreneurPipeline,
   inputs: customerDiscoveryInputs,
   analysis: customerDiscoveryAnalysis,
@@ -615,7 +618,6 @@ YOUR GOAL: Give them a realistic customer discovery experience. Reward past-focu
     },
 
     temperature: 0.7,
-    canInterrupt: false, // Customer discovery should let them talk
   },
 };
 

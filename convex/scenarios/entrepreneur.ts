@@ -114,6 +114,8 @@ export const InvestorPitchScenario: ScenarioConfig = {
   name: "Entrepreneur - Investor Pitch",
   category: "entrepreneur",
 
+  defaultInterruptionMode: "aggressive",
+
   pipeline: entrepreneurPipeline,
   inputs: entrepreneurInputs,
   analysis: entrepreneurAnalysis,
@@ -155,8 +157,6 @@ YOUR GOAL: Be a realistic investor - experienced, pattern-matching, looking for 
     },
 
     temperature: 0.7,
-    canInterrupt: true, // Investors interrupt with questions
-    interruptionThreshold: 150, // Less aggressive than debate
   },
 };
 

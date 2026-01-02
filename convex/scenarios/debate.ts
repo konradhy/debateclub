@@ -12,6 +12,8 @@ export const DebateScenario: ScenarioConfig = {
   name: "Debate",
   category: "debate",
 
+  defaultInterruptionMode: "debate",
+
   pipeline: {
     research: true, // Run web research
     prep: true,
@@ -233,8 +235,7 @@ TECHNIQUES TO USE:
 
 BEHAVIORAL RULES:
 - Speak naturally and conversationally
-- You CAN be interrupted - respond naturally
-- You CAN interrupt if user rambles > 45 seconds
+- Respond naturally if interrupted
 - Keep responses under 30 seconds of speech
 - Focus ONLY on debating - do not mention analysis, logging, or techniques
 - Be respectful but firm in your arguments
@@ -248,8 +249,6 @@ BEHAVIORAL RULES:
     },
 
     temperature: 0.7,
-    canInterrupt: true,
-    interruptionThreshold: 100,
   },
 
   analysis: {

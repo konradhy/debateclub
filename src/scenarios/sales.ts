@@ -95,6 +95,8 @@ export const ColdProspectScenario: ScenarioConfig = {
   name: "Sales - Cold Prospect",
   category: "sales",
 
+  defaultInterruptionMode: "off",
+
   pipeline: salesPipeline,
   inputs: salesInputs,
   analysis: salesAnalysis,
@@ -162,7 +164,6 @@ YOUR GOAL: Be a realistic cold prospect - skeptical, short on time, needs convin
     },
 
     temperature: 0.7,
-    canInterrupt: false, // Prospects don't typically interrupt
   },
 };
 
@@ -176,6 +177,8 @@ export const DemoFollowupScenario: ScenarioConfig = {
   id: "sales-demo-followup",
   name: "Sales - Demo Follow-up",
   category: "sales",
+
+  defaultInterruptionMode: "friendly",
 
   pipeline: salesPipeline,
   inputs: salesInputs,
@@ -243,7 +246,6 @@ YOUR GOAL: Be a warm prospect with legitimate concerns. You WANT to buy if they 
     },
 
     temperature: 0.7,
-    canInterrupt: false,
   },
 };
 
@@ -348,6 +350,8 @@ export const ContractNegotiationScenario: ScenarioConfig = {
   name: "Sales - Contract Negotiation",
   category: "sales",
 
+  defaultInterruptionMode: "aggressive",
+
   pipeline: salesPipeline,
   inputs: contractNegotiationInputs,
   analysis: contractNegotiationAnalysis,
@@ -420,8 +424,6 @@ YOUR GOAL: Get the best possible deal. Test their ability to hold value and nego
     },
 
     temperature: 0.7,
-    canInterrupt: true,
-    interruptionThreshold: 200,
   },
 };
 

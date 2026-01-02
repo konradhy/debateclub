@@ -122,6 +122,8 @@ export const TreatmentRefusalScenario: ScenarioConfig = {
   name: "Healthcare - Treatment Refusal",
   category: "healthcare",
 
+  defaultInterruptionMode: "off",
+
   pipeline: healthcarePipeline,
   inputs: healthcareInputs,
   analysis: treatmentRefusalAnalysis,
@@ -200,7 +202,6 @@ IMPORTANT: Every competent patient has the right to refuse treatment. You're not
     },
 
     temperature: 0.7,
-    canInterrupt: false, // Patients typically don't interrupt providers mid-sentence
   },
 };
 

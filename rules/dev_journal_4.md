@@ -688,3 +688,225 @@ When toggle views need identical styling, duplicate the rendering code rather th
 - Don't auto-hide quick analysis after full loads (preserve user choice)
 
 ---
+
+
+---
+
+### Chapter 26: Interruption System Rebuild — Vapi Speech Plans Implementation
+**Date**: January 1, 2026  
+**Phase**: 7.1 AI Interruption Protocol  
+**Roadmap**: [R-7.1]
+
+#### Problem Statement
+
+The existing interruption system was non-functional:
+- Used `canInterrupt` and `interruptionThreshold` fields that didn't actually control Vapi behavior
+- Had `endpointing: 300` in transcriber config (not a real Vapi field)
+- System prompts said "interrupt after 45 seconds" but nothing enforced it
+- No user control over interruption behavior
+- All debates felt the same regardless of style selection
+
+**Root cause**: Code pretended to control interruption but wasn't using Vapi's actual API.
+
+---
+
+#### Solution Design
+
+**5 Clear Interruption Modes** using Vapi's real `startSpeakingPlan` and `stopSpeakingPlan`:
+
+| Mode | Wait Time | Words to Interrupt | Feel | Use Case |
+|------|-----------|-------------------|------|----------|
+| Off | 2.5s | 2 | Patient listener | Discovery, interviews |
+| Friendly | 1.2s | 2 | Supportive | Learning, practice |
+| Debate | 0.6s | 2 | Real debate | Standard debate |
+| Aggressive | 0.4s | 4 | Confrontational | Tough opponent |
+| Relentless | 0.3s | 6 | Won't shut up | Gish Gallop |
+
+**Key Insight**: 
+- `waitSeconds` = How fast AI responds after you pause
+- `numWords` = How many words YOU need to interrupt AI
+- `backoffSeconds` = How fast AI recovers after interruption
+
+---
+
+#### Implementation
+
+**Step 1: Removed Dead Code**
+- Deleted `canInterrupt` and `interruptionThreshold` from type definitions (src + convex)
+- Removed from all scenario configs (debate, sales, entrepreneur, healthcare)
+- Removed `endpointing` logic from debate.tsx
+- Removed conditional `clientMessages` logic (now static array)
+- Cleaned up system prompts ("interrupt after 45 seconds" → "respond naturally if interrupted")
+- Updated style instructions (removed "interrupt when you sense weakness")
+
+**Files Modified**: 
+- `src/scenarios/types.ts`, `convex/scenarios/types.ts`
+- All scenario configs in src + convex (8 files)
+- `src/routes/_app/_auth/dashboard/debate.tsx`
+- `src/lib/debate/style-instructions.ts`
+
+**Step 2: Created Speech Plans**
+- New file: `src/lib/vapi/speechPlans.ts`
+- Defined 5 modes with proper Vapi configuration
+- Each mode has `startSpeakingPlan` (response timing) and `stopSpeakingPlan` (interruption behavior)
+- Includes `acknowledgementPhrases` (words that don't trigger interruption) and `interruptionPhrases` (words that do)
+
+**Step 3: Dynamic Style-to-Mode Mapping**
+- Added `getInterruptionModeForDebateStyle()` function
+- Maps debate styles to interruption modes:
+  - friendly → "friendly" mode
+  - aggressive → "aggressive" mode
+  - gish gallop → "relentless" mode
+  - academic → "debate" mode
+  - emotional → "debate" mode
+  - socratic → "friendly" mode
+
+**Step 4: Applied in debate.tsx**
+- For debate scenarios: reads `opponent.style` and maps dynamically
+- For other scenarios: uses scenario's `defaultInterruptionMode`
+- Added comprehensive console logging for testing
+
+---
+
+#### Key Code Patterns
+
+**Speech Plan Structure**:
+```typescript
+{
+  startSpeakingPlan: {
+    waitSeconds: 0.6,
+    smartEndpointingPlan: { provider: "livekit" }
+  },
+  stopSpeakingPlan: {
+    numWords: 2,
+    voiceSeconds: 0.2,
+    backoffSeconds: 1.0,
+    acknowledgementPhrases: ["yeah", "uh-huh", "mm-hmm"],
+    interruptionPhrases: ["wait", "hold", "but", "no", "stop"]
+  }
+}
+```
+
+**Dynamic Mode Selection**:
+```typescript
+const interruptionMode = scenario.category === "debate"
+  ? getInterruptionModeForDebateStyle(opponent.style)
+  : scenario.defaultInterruptionMode;
+
+const speechPlan = getSpeechPlan(interruptionMode);
+```
+
+---
+
+#### Testing Strategy
+
+**Console Logs Added**:
+```javascript
+🎯 Interruption Mode Selection: {
+  scenarioCategory: "debate",
+  opponentStyle: "gish gallop",
+  selectedMode: "relentless",
+  speechPlan: { waitSeconds: 0.3, numWordsToInterrupt: 6 }
+}
+
+🎤 Vapi Assistant Config: {
+  startSpeakingPlan: { ... },
+  stopSpeakingPlan: { ... }
+}
+```
+
+**Test Plan**:
+1. Create opponent with "friendly" style → should see `selectedMode: "friendly"`, easy to interrupt
+2. Create opponent with "gish gallop" style → should see `selectedMode: "relentless"`, hard to interrupt
+3. Create sales opponent → should see `selectedMode: "off"`, very patient
+4. Verify actual behavior matches expected timing and interruption difficulty
+
+---
+
+#### Business Logic Fix
+
+**Critical Issue Caught**: Initial implementation hardcoded all debates to "debate" mode, ignoring the user-selected style field.
+
+**Fix**: Debate scenarios have a user-selectable `style` field (friendly, aggressive, gish-gallop, etc.) that should determine the interruption mode dynamically. Non-debate scenarios (sales, entrepreneur) don't have a style field, so they use the scenario's static `defaultInterruptionMode`.
+
+---
+
+#### Files Changed
+
+**New Files**:
+- `src/lib/vapi/speechPlans.ts` (speech plan configurations + mapping function)
+
+**Modified Files**:
+- `src/scenarios/types.ts` (added `defaultInterruptionMode`, removed dead fields)
+- `convex/scenarios/types.ts` (mirror of src types)
+- `src/scenarios/debate.ts` (added `defaultInterruptionMode: "debate"`)
+- `src/scenarios/sales.ts` (added modes: off, friendly, aggressive)
+- `src/scenarios/entrepreneur.ts` (added modes: aggressive, friendly, off)
+- `convex/scenarios/debate.ts` (mirror of src)
+- `convex/scenarios/sales.ts` (mirror of src)
+- `convex/scenarios/entrepreneur.ts` (mirror of src)
+- `convex/scenarios/healthcare.ts` (added mode: off)
+- `src/routes/_app/_auth/dashboard/debate.tsx` (dynamic mode selection + console logs)
+- `src/lib/debate/style-instructions.ts` (removed "interrupt when" language)
+
+**Total**: 1 new file, 11 modified files
+
+---
+
+#### Lessons Learned
+
+1. **Always check if fields actually work**: The old `canInterrupt` field existed in types but didn't control Vapi behavior
+2. **Read the actual API docs**: Vapi uses `startSpeakingPlan` and `stopSpeakingPlan`, not custom fields
+3. **Business logic matters**: Debate styles should map to interruption modes, not use a static default
+4. **Console logs are essential**: Can't test voice behavior without visibility into what's being sent to Vapi
+
+---
+
+#### Known Limitations
+
+1. **Not tested yet**: Implementation complete but needs real voice testing to verify behavior
+2. **No user override**: Users can't manually select interruption mode (uses style mapping only)
+3. **No UI indication**: Users don't see which interruption mode is active during debate
+4. **Style field required**: Old opponents without style field will fall back to "debate" mode
+
+---
+
+#### Future Enhancements
+
+**Phase 7.2 (Optional)**:
+- User preference: "I prefer aggressive mode for all debates"
+- Per-opponent override: "Make this opponent relentless"
+- Quick toggle during practice: "Make AI more/less aggressive"
+- UI indicator showing active interruption mode
+- Tooltips explaining what each mode does
+
+**Not Recommended**:
+- Don't add more than 5 modes (diminishing returns)
+- Don't make modes user-configurable (too complex)
+- Don't change modes mid-debate (confusing)
+
+---
+
+### Session Handoff
+
+**Status**: Implementation Complete, Testing Pending ⏸️
+
+**Next Action**: 
+1. Test with real voice to verify behavior matches expectations
+2. Check console logs show correct mode selection
+3. Verify interruption difficulty actually changes between modes
+4. Test all 6 debate styles + 3 non-debate scenarios
+
+**Open Questions**:
+- Should we show interruption mode in UI during debate?
+- Should users be able to override the style-to-mode mapping?
+- Do we need more granular control (e.g., custom waitSeconds)?
+- Should "relentless" mode be available for non-Gish-Gallop styles?
+
+**Risks**:
+- Vapi API might not behave exactly as documented
+- Timing values might need calibration based on real usage
+- Users might not understand why interruption difficulty changes
+- Old opponents without style field will use fallback mode
+
+---

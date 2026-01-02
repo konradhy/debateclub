@@ -2,7 +2,7 @@
 
 **Current architecture and codebase structure. Updated as features are added.**
 
-**Last Updated**: January 1, 2026 (Chapter 24 - Phase 6.2 & 6.3 Complete)
+**Last Updated**: January 1, 2026 (Chapter 26 - Phase 7.1 Interruption System)
 
 ---
 
@@ -122,6 +122,15 @@ orator/
 │   │   ├── debate.ts            # Debate scenario with formLayout
 │   │   ├── sales.ts             # 3 sales scenarios
 │   │   └── entrepreneur.ts      # 3 entrepreneur scenarios
+│   │
+│   ├── lib/                     # Frontend utilities
+│   │   ├── debate/              # Debate-specific helpers (Ch.14)
+│   │   │   ├── types.ts         # DebateStyle, DifficultyLevel types
+│   │   │   ├── style-instructions.ts    # Style → personality mapping
+│   │   │   └── difficulty-instructions.ts # Difficulty → skill level
+│   │   ├── vapi/                # Vapi integration (Ch.26, NEW)
+│   │   │   └── speechPlans.ts   # Interruption modes & speech plan configs
+│   │   └── prep-colors.ts       # Prep material color coding
 │   │
 │   └── ui/                      # Reusable UI components (shadcn/ui)
 │       ├── accordion.tsx
@@ -538,6 +547,35 @@ const styleInstructions = getStyleInstructions(opponent.style);
 const difficultyInstructions = getDifficultyInstructions(opponent.difficulty);
 // Both injected into system prompt template
 ```
+
+### 11. Interruption System with Vapi Speech Plans (Ch.26)
+
+**5 Interruption Modes** control AI response timing and interruption difficulty:
+
+| Mode | Wait Time | Words to Interrupt | Use Case |
+|------|-----------|-------------------|----------|
+| Off | 2.5s | 2 | Patient listener (discovery, interviews) |
+| Friendly | 1.2s | 2 | Supportive practice |
+| Debate | 0.6s | 2 | Standard debate back-and-forth |
+| Aggressive | 0.4s | 4 | Confrontational opponent |
+| Relentless | 0.3s | 6 | Gish Gallop (overwhelming) |
+
+**Dynamic Mapping**: Debate styles map to interruption modes:
+```typescript
+const interruptionMode = scenario.category === "debate"
+  ? getInterruptionModeForDebateStyle(opponent.style)
+  : scenario.defaultInterruptionMode;
+
+const speechPlan = getSpeechPlan(interruptionMode);
+// Applied to Vapi assistant config
+```
+
+**Vapi Configuration**:
+- `startSpeakingPlan.waitSeconds` = How fast AI responds after user pauses
+- `stopSpeakingPlan.numWords` = How many words user needs to interrupt AI
+- `stopSpeakingPlan.backoffSeconds` = How fast AI recovers after interruption
+
+**Non-Debate Scenarios**: Use static `defaultInterruptionMode` from scenario config (sales, entrepreneur, healthcare don't have style field).
 
 ### 12. Token Economy Security (Ch.16)
 

@@ -701,34 +701,160 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Goal**: System-wide quality improvements and prompt refinement
 
-**Status**: ⬜
+**Status**: 🔄 (In Progress)
 
-**Chapters**: —
+**Chapters**: Ch.26
 
 ---
 
 ### 7.1 AI Interruption Protocol
 
-**Description**: Revise interruption system with different AI modes
+**Description**: Rebuild interruption system using proper Vapi speech plans
 
-**Status**: ⬜
+**Status**: ✅ (Implementation Complete, Testing Pending)
 
-**Chapters**: —
+**Chapters**: Ch.26
 
 #### Tasks
 
-- ⬜ **7.1.1** — Create interrupting vs non-interrupting AI modes
-- ⬜ **7.1.2** — Adjust canInterrupt boolean in scenario assistant configs
-- ⬜ **7.1.3** — Tune interruptionThreshold settings per mode
-- ⬜ **7.1.4** — Update system prompts with interruption instructions
-- ⬜ **7.1.5** — Default mode with toggle UI
-- ⬜ **7.1.6** — Test interruption behavior across modes
+- ✅ **7.1.1** — Remove dead code (canInterrupt, interruptionThreshold, endpointing) [Ch.26]
+- ✅ **7.1.2** — Create 5 clear interruption modes using Vapi startSpeakingPlan/stopSpeakingPlan [Ch.26]
+- ✅ **7.1.3** — Map debate styles to interruption modes dynamically [Ch.26]
+- ✅ **7.1.4** — Apply speech plans in debate.tsx with console logging [Ch.26]
+- ⬜ **7.1.5** — Test interruption behavior with real voice across all modes
+- ⬜ **7.1.6** — Calibrate timing values based on real usage (optional)
+- ⬜ **7.1.7** — Add UI indicator showing active interruption mode (Phase 7.2 - optional)
+- ⬜ **7.1.8** — User preference override system (Phase 7.2 - optional)
 
 ---
 
+Phase 7.1 Test Plan - Interruption System
+What We're Testing
+Whether the AI's response speed and interruption difficulty actually change based on the debate style you select.
+
+Quick Test (15 minutes)
+Setup
+Start dev server: npm run dev
+Open browser console (F12 → Console tab)
+Create account or login
+Test 1: Friendly Style (Easy Mode)
+Goal: AI should wait ~1.2 seconds before responding, easy to interrupt
+
+Create opponent:
+
+Topic: "Universal Basic Income"
+Position: "con"
+Style: Friendly
+Difficulty: Medium
+Start debate
+
+Check console logs:
+
+🎯 Interruption Mode Selection:
+  opponentStyle: "friendly"
+  selectedMode: "friendly"
+  waitSeconds: 1.2
+  numWordsToInterrupt: 2
+Test behavior:
+
+Say something, then pause mid-thought (1-2 seconds)
+AI should wait patiently, not jump in immediately
+When AI talks, interrupt with "wait" or "but"
+AI should stop easily (2 words is enough)
+Expected: Patient AI that's easy to interrupt
+
+Test 2: Gish Gallop Style (Hard Mode)
+Goal: AI should respond very fast (~0.3s), very hard to interrupt
+
+Create new opponent:
+
+Same topic
+Style: Gish Gallop
+Difficulty: Medium
+Start debate
+
+Check console logs:
+
+🎯 Interruption Mode Selection:
+  opponentStyle: "gish gallop"
+  selectedMode: "relentless"
+  waitSeconds: 0.3
+  numWordsToInterrupt: 6
+Test behavior:
+
+Say something, pause briefly
+AI should jump in almost immediately (0.3s)
+When AI talks, try to interrupt with "wait"
+Should be hard - need 6+ words like "wait hold on stop let me speak"
+Expected: Aggressive AI that won't shut up
+
+Test 3: Sales Scenario (Non-Debate)
+Goal: Verify non-debate scenarios use scenario defaults
+
+Create sales opponent:
+
+Scenario: Sales - Cold Prospect
+(No style field - it's not a debate)
+Start practice
+
+Check console logs:
+
+🎯 Interruption Mode Selection:
+  scenarioCategory: "sales"
+  opponentStyle: undefined
+  selectedMode: "off"
+  waitSeconds: 2.5
+Expected: Very patient AI (2.5s wait)
+
+What Success Looks Like
+Console Logs Show:
+✅ Correct style being read from opponent
+✅ Correct mode being selected
+✅ Correct speech plan values (waitSeconds, numWords)
+Behavior Matches:
+✅ Friendly: Patient, easy to interrupt
+✅ Gish Gallop: Fast, hard to interrupt
+✅ Sales: Very patient
+What Failure Looks Like
+Console Issues:
+❌ selectedMode is always "debate" (not mapping styles)
+❌ opponentStyle is undefined for debate scenarios
+❌ Speech plan values don't match mode
+Behavior Issues:
+❌ All debates feel the same regardless of style
+❌ AI always responds at same speed
+❌ Interruption difficulty doesn't change
+Quick Sanity Check (5 minutes)
+If you're too tired for full testing:
+
+Create one debate opponent with Gish Gallop style
+Start debate
+Check console - should see:
+selectedMode: "relentless"
+waitSeconds: 0.3
+numWordsToInterrupt: 6
+Try to interrupt AI - should be hard
+If console shows correct values, the code is working. Actual behavior testing can wait until you're fresh.
+
+Common Issues to Watch For
+Style field is empty: Old opponents might not have style saved
+Console shows undefined: Style not being read from opponent
+Mode is always "debate": Mapping function not being called
+Vapi config missing speech plans: Not being sent to API
+When You're Fresh
+Test all 6 debate styles:
+
+Friendly → should feel supportive
+Aggressive → should feel confrontational
+Gish Gallop → should feel overwhelming
+Academic → should feel measured
+Emotional → should feel passionate
+Socratic → should ask lots of questions
+The timing and interruption should match the personality.
+
 ### 7.2 Prompt Engineering Review
 
-**Description**: Manual review and calibration of all LLM prompts
+**Description**: Manual review and calibration of all LLM prompts. For this entire phase. Just read it like a man, what makes sense, what isn't. don't use ai here. read. Ai to help organize it sure, but the text only changed by me.  same for 7.3
 
 **Status**: ⬜
 
@@ -758,8 +884,9 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 #### Tasks
 
 - ⬜ **7.3.1** — Better prompts for analysis generation
-- ⬜ **7.3.2** — AI explanations for why techniques worked/failed
-- ⬜ **7.3.3** — Emotional tone detection in exchanges
+- Review each prompt do u think it makes sense. read it like a man. 
+- fix the techniques error
+
 
 ---
 
@@ -817,21 +944,21 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 ### 8.3 Error Handling & Pages
 
-**Description**: Graceful error handling and well-designed error pages
+**Description**: Graceful error handling and well-designed error pages, the goal here isn't overkill. Basic error handling throughtout. Make sure i'm not failing silently and relying on fallbacks anywhere
 
 **Status**: ⬜
 
 **Chapters**: —
 
 #### Tasks
-
+Make sure i'm not failing silently and relying on fallbacks anywhere
 - ⬜ **8.3.1** — Graceful voice failure handling
 - ⬜ **8.3.2** — Clear error messages for users
 - ⬜ **8.3.3** — Design individual error pages per scenario type
 - ⬜ **8.3.4** — Helpful error messages with recovery actions
 - ⬜ **8.3.5** — Visual design for error states
 - ⬜ **8.3.6** — Test error handling across all scenarios
-
+Make sure i'm not failing silently and relying on fallbacks anywhere
 ---
 
 ### 8.4 User Onboarding
@@ -1062,3 +1189,5 @@ Build a feature allowing users to challenge others to debates, either friends vi
 | Phase 4 | Dec 2025 | Dec 31, 2025 | Monetization complete (Ch.16-19, Ch.22-23.1) |
 | Phase 5 | Dec 2025 | Dec 31, 2025 | Prep enhancement complete (Ch.20-21) |
 | Phase 6 | Dec 31, 2025 | Jan 1, 2026 | Evidence & performance complete (Ch.22, Ch.24, Ch.25) |
+| Phase 7 | Jan 1, 2026 | In Progress | Interruption system rebuild (Ch.26) - testing pending |
+
