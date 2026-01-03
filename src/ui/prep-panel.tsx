@@ -83,7 +83,7 @@ export function PrepPanel({
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="h-8 w-8 p-0"
+            className="h-11 w-11 p-0"
           >
             <X className="h-4 w-4" />
           </Button>
@@ -94,7 +94,7 @@ export function PrepPanel({
           {hasPrep ? (
             isDebatePrep ? (
               // --- DEBATE LAYOUT ---
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Left Column: Opening & Closing */}
                 <div className="space-y-4">
                   {selectedOpening && (
@@ -209,7 +209,7 @@ export function PrepPanel({
               </div>
             ) : (
               // --- GENERIC PREP LAYOUT ---
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Left Column: Opening & Closing */}
                 <div className="space-y-4">
                   {openingApproach && (

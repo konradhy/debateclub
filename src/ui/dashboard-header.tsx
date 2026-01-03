@@ -1,20 +1,8 @@
-import { Link, useMatchRoute, useNavigate } from "@tanstack/react-router";
-import {
-    ChevronUp,
-    ChevronDown,
-    LogOut,
-    Settings,
-} from "lucide-react";
+import { Link, useMatchRoute } from "@tanstack/react-router";
+import { LogOut, Menu } from "lucide-react";
 import { cn, useSignOut } from "@/utils/misc";
+import { useState } from "react";
 
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-} from "@/ui/dropdown-menu";
 import { Button } from "@/ui/button";
 import { buttonVariants } from "@/ui/button-util";
 import { User } from "~/types";
@@ -40,7 +28,7 @@ interface DashboardHeaderProps {
 export function DashboardHeader({ user }: DashboardHeaderProps) {
     const signOut = useSignOut();
     const matchRoute = useMatchRoute();
-    const navigate = useNavigate();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Route matching helpers
     const isDashboardPath = matchRoute({ to: DashboardRoute.fullPath });
@@ -50,6 +38,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
     if (!user) return null;
 
     return (
+        <>
         <header
             className="sticky top-0 z-50 flex w-full flex-col border-b"
             style={{
@@ -113,72 +102,82 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
 
                 {/* Right Side: User Menu */}
                 <div className="flex items-center gap-3">
-                    <DropdownMenu modal={false}>
-                        <DropdownMenuTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                className="gap-2 px-2 data-[state=open]:bg-primary/5 hover:bg-primary/5"
-                            >
-                                <div className="flex items-center gap-2">
-                                    {user.avatarUrl ? (
-                                        <img
-                                            className="h-8 w-8 rounded-full object-cover border border-border"
-                                            alt={user.username ?? user.email}
-                                            src={user.avatarUrl}
-                                        />
-                                    ) : (
-                                        <span className="h-8 w-8 rounded-full bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
-                                    )}
+                    {/* Mobile Menu Button */}
+                    <button
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="md:hidden flex items-center justify-center h-11 w-11 rounded-lg hover:bg-primary/5 transition-colors"
+                        aria-label="Open menu"
+                    >
+                        <Menu className="h-5 w-5" style={{ color: colors.primary }} />
+                    </button>
 
-                                    <div className="text-left hidden sm:block">
-                                        <p className="text-sm font-medium leading-none" style={{ color: colors.text }}>
-                                            {user?.username || "User"}
-                                        </p>
-                                    </div>
-                                </div>
-                                <span className="flex flex-col items-center justify-center">
-                                    <ChevronUp className="relative top-[3px] h-[10px] w-[10px] stroke-[2px] text-primary/60" />
-                                    <ChevronDown className="relative bottom-[3px] h-[10px] w-[10px] stroke-[2px] text-primary/60" />
-                                </span>
-                            </Button>
-                        </DropdownMenuTrigger>
-
-                        <DropdownMenuContent
-                            sideOffset={8}
-                            align="end"
-                            className="min-w-56 bg-white p-2 border-border"
-                        >
-                            <DropdownMenuLabel className="flex items-center text-xs font-normal text-muted-foreground px-2 py-1.5">
-                                {user?.email}
-                            </DropdownMenuLabel>
-
-                            <DropdownMenuSeparator className="mx-0 my-1 bg-border" />
-
-                            <DropdownMenuItem
-                                className="group h-9 w-full cursor-pointer justify-between rounded-md px-2 focus:bg-primary/5"
-                                onClick={() => navigate({ to: "/dashboard/settings" })}
-                            >
-                                <span className="text-sm text-primary/80 group-hover:text-primary">
-                                    Settings
-                                </span>
-                                <Settings className="h-4 w-4 text-primary/60 group-hover:text-primary" />
-                            </DropdownMenuItem>
-
-                            <DropdownMenuSeparator className="mx-0 my-1 bg-border" />
-
-                            <DropdownMenuItem
-                                className="group h-9 w-full cursor-pointer justify-between rounded-md px-2 text-red-600 focus:bg-red-50 focus:text-red-700"
-                                onClick={() => signOut()}
-                            >
-                                <span className="text-sm font-medium">
-                                    Log Out
-                                </span>
-                                <LogOut className="h-4 w-4" />
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    {/* Log Out Button */}
+                    <Button
+                        variant="ghost"
+                        onClick={() => signOut()}
+                        className="gap-2 text-sm font-medium"
+                    >
+                        <LogOut className="h-4 w-4" />
+                        Log out
+                    </Button>
                 </div>
             </div>
         </header>
+
+        {/* Mobile Navigation Menu - Bottom Sheet */}
+        {isMobileMenuOpen && (
+            <>
+                {/* Backdrop */}
+                <div
+                    className="fixed inset-0 bg-black/20 z-40 md:hidden"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+
+                {/* Bottom Sheet */}
+                <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t rounded-t-xl shadow-2xl animate-slide-up">
+                    <div className="flex flex-col p-4 gap-2">
+                        <Link
+                            to="/dashboard"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className={cn(
+                                "flex items-center h-11 px-4 rounded-lg text-base font-medium transition-colors",
+                                isDashboardPath
+                                    ? "bg-black/5 text-primary"
+                                    : "text-primary/70 hover:text-primary hover:bg-black/5"
+                            )}
+                        >
+                            Dashboard
+                        </Link>
+                        <Link
+                            to="/dashboard/settings"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className={cn(
+                                "flex items-center h-11 px-4 rounded-lg text-base font-medium transition-colors",
+                                isSettingsPath
+                                    ? "bg-black/5 text-primary"
+                                    : "text-primary/70 hover:text-primary hover:bg-black/5"
+                            )}
+                        >
+                            Settings
+                        </Link>
+                        {user.isAdmin && (
+                            <Link
+                                to="/dashboard/admin"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className={cn(
+                                    "flex items-center h-11 px-4 rounded-lg text-base font-medium transition-colors",
+                                    isAdminPath
+                                        ? "bg-black/5 text-primary"
+                                        : "text-primary/70 hover:text-primary hover:bg-black/5"
+                                )}
+                            >
+                                Admin
+                            </Link>
+                        )}
+                    </div>
+                </div>
+            </>
+        )}
+        </>
     );
 }

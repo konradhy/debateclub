@@ -47,6 +47,9 @@ function PrepScreen() {
   // Deep Research modal state
   const [showDeepResearchModal, setShowDeepResearchModal] = useState(false);
 
+  // Active tab state for mobile dropdown
+  const [activeTab, setActiveTab] = useState("study");
+
   // Get Deep Research token balance
   const deepResearchTokens =
     useQuery(api.tokens.getBalance, {
@@ -328,10 +331,35 @@ function PrepScreen() {
           {/* Content */}
           <div className="flex-1 p-6 overflow-hidden">
             {hasStrategy ? (
-              <Tabs defaultValue="study" className="h-full flex flex-col">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+                {/* Mobile: Dropdown Selector */}
+                <div className="md:hidden mb-4">
+                  <select
+                    value={activeTab}
+                    onChange={(e) => setActiveTab(e.target.value)}
+                    className="w-full h-11 rounded-md border-2 px-3 text-sm font-medium transition-all focus:border-primary/70 focus:ring-0"
+                    style={{ borderColor: colors.border }}
+                  >
+                    <option value="study">Study Mode</option>
+                    {isDebatePrep && (
+                      <>
+                        <option value="brief">Strategic Brief</option>
+                        <option value="quickref">Quick Reference</option>
+                        <option value="research">Research Data</option>
+                        <option value="myresearch">My Research</option>
+                        <option value="chat">Assistant</option>
+                        <option value="gemini-report">Deep Research</option>
+                      </>
+                    )}
+                    {!isDebatePrep && (
+                      <option value="quickref">Quick Reference</option>
+                    )}
+                  </select>
+                </div>
+
                 <TabsList
                   className={cn(
-                    "grid w-full mb-4",
+                    "hidden md:grid w-full mb-4",
                     isDebatePrep ? "grid-cols-7" : "grid-cols-2",
                   )}
                 >
