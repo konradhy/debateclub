@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { convexQuery } from "@convex-dev/react-query";
 import { api } from "@cvx/_generated/api";
-import { Coins, Infinity as InfinityIcon } from "lucide-react";
+// Removed lucide-react imports - using custom SVG icons
 import { cn } from "@/utils/misc";
 
 interface TokenBalanceProps {
@@ -59,7 +59,7 @@ export function TokenBalance({
           className
         )}
       >
-        <Coins className={cn("h-4 w-4", compact && "h-3.5 w-3.5")} />
+        <img src="/images/custom/ancient-coins.svg" alt="" className={cn("h-4 w-4", compact && "h-3.5 w-3.5")} />
         <span>...</span>
       </div>
     );
@@ -75,9 +75,10 @@ export function TokenBalance({
           className
         )}
       >
-        <InfinityIcon
+        <img
+          src="/images/custom/laurel-wreath.svg"
+          alt=""
           className={cn(
-            "text-emerald-600",
             compact ? "h-3.5 w-3.5" : "h-4 w-4"
           )}
         />
@@ -102,10 +103,12 @@ export function TokenBalance({
         className
       )}
     >
-      <Coins
+      <img
+        src="/images/custom/ancient-coins.svg"
+        alt=""
         className={cn(
           compact ? "h-3.5 w-3.5" : "h-4 w-4",
-          hasTokens ? "text-amber-500" : "text-muted-foreground"
+          hasTokens ? "opacity-100" : "opacity-50"
         )}
       />
       <span className="font-medium">{tokenCount}</span>

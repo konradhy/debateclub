@@ -1,11 +1,5 @@
 import {
-  FileText,
   Loader2,
-  Target,
-  ShieldAlert,
-  BookOpen,
-  Zap,
-  Eye,
   AlertTriangle,
   Send,
   Check,
@@ -40,7 +34,7 @@ export function MyResearchTab({
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold flex items-center gap-2">
-              <FileText className="h-5 w-5 text-primary" />
+              <img src="/images/custom/ancient-scroll.svg" alt="" className="h-7 w-7" />
               Paste Your Research Material
             </h3>
             <p className="text-sm text-muted-foreground mt-1">
@@ -78,14 +72,7 @@ Example content:
                   Processing...
                 </>
               ) : (
-                <>
-                  <img
-                    src="/images/custom/athenaowlsml.svg"
-                    alt=""
-                    className="mr-2 h-7 w-7"
-                  />
-                  Extract Insights
-                </>
+                "Extract Insights"
               )}
             </Button>
           </div>
@@ -109,7 +96,7 @@ Example content:
               <Card>
                 <CardHeader className="py-3 bg-green-500/10">
                   <CardTitle className="text-sm font-bold text-green-600 flex items-center gap-2">
-                    <Target className="h-4 w-4" />
+                    <img src="/images/custom/marble-column.svg" alt="" className="h-4 w-4" />
                     EXTRACTED ARGUMENTS (
                     {processedResearch.extractedArguments.length})
                   </CardTitle>
@@ -182,7 +169,7 @@ Example content:
               <Card>
                 <CardHeader className="py-3 bg-orange-500/10">
                   <CardTitle className="text-sm font-bold text-orange-600 flex items-center gap-2">
-                    <ShieldAlert className="h-4 w-4" />
+                    <img src="/images/custom/stamped-document.svg" alt="" className="h-4 w-4" />
                     EXTRACTED RECEIPTS (
                     {processedResearch.extractedReceipts.length})
                   </CardTitle>
@@ -240,7 +227,7 @@ Example content:
               <Card>
                 <CardHeader className="py-3 bg-blue-500/10">
                   <CardTitle className="text-sm font-bold text-blue-600 flex items-center gap-2">
-                    <BookOpen className="h-4 w-4" />
+                    <img src="/images/custom/unfurling-scroll.svg" alt="" className="h-4 w-4" />
                     POTENTIAL OPENERS (
                     {processedResearch.potentialOpeners.length})
                   </CardTitle>
@@ -291,7 +278,7 @@ Example content:
               <Card>
                 <CardHeader className="py-3 bg-yellow-500/10">
                   <CardTitle className="text-sm font-bold text-yellow-600 flex items-center gap-2">
-                    <Zap className="h-4 w-4" />
+                    <img src="/images/custom/divine-lightning.svg" alt="" className="h-4 w-4" />
                     POTENTIAL ZINGERS (
                     {processedResearch.potentialZingers.length})
                   </CardTitle>
@@ -339,7 +326,7 @@ Example content:
               <Card>
                 <CardHeader className="py-3 bg-red-500/10">
                   <CardTitle className="text-sm font-bold text-red-600 flex items-center gap-2">
-                    <Eye className="h-4 w-4" />
+                    <img src="/images/custom/spy-glass.svg" alt="" className="h-4 w-4" />
                     COUNTER-ARGUMENTS TO ADDRESS (
                     {processedResearch.extractedCounterArguments.length})
                   </CardTitle>

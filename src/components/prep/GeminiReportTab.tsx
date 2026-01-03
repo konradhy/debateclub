@@ -1,5 +1,5 @@
 import ReactMarkdown from "react-markdown";
-import { FileSearch, Clock, RefreshCw } from "lucide-react";
+import { Clock, RefreshCw } from "lucide-react";
 
 interface GeminiReportTabProps {
   geminiResearchReport: string | undefined;
@@ -26,7 +26,7 @@ export function GeminiReportTab({
       {geminiResearchReport ? (
         <div className="space-y-4">
           <div className="flex items-center gap-2 pb-2 border-b">
-            <FileSearch className="h-5 w-5 text-primary" />
+            <img src="/images/custom/magnifying-parchment.svg" alt="" className="h-5 w-5" />
             <h3 className="text-lg font-semibold text-primary">
               AI Research Report
             </h3>
@@ -187,7 +187,7 @@ export function GeminiReportTab({
         <div className="flex flex-col items-center justify-center min-h-[400px] px-6">
           <div className="max-w-md text-center space-y-6">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-primary/5">
-              <FileSearch className="w-8 h-8 text-primary" />
+              <img src="/images/custom/magnifying-parchment.svg" alt="" className="w-8 h-8" />
             </div>
 
             <div className="space-y-2">

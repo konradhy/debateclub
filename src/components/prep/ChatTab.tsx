@@ -1,5 +1,5 @@
 import { RefObject } from "react";
-import { MessageSquare, Send, Loader2 } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
 import { Input } from "@/ui/input";
 import { Button } from "@/ui/button";
 import { cn } from "@/utils/misc";
@@ -32,7 +32,7 @@ export function ChatTab({
     <div className="flex flex-col h-[600px] border rounded-lg overflow-hidden">
       {/* Chat Header */}
       <div className="px-4 py-3 bg-secondary/30 border-b flex items-center gap-2">
-        <MessageSquare className="h-5 w-5 text-primary" />
+        <img src="/images/custom/dialog-scroll.svg" alt="" className="h-5 w-5" />
         <div>
           <h3 className="font-semibold text-sm">Research Assistant</h3>
           <p className="text-xs text-muted-foreground">
@@ -48,7 +48,7 @@ export function ChatTab({
       >
         {!messages || messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
-            <MessageSquare className="h-12 w-12 text-muted-foreground/30 mb-4" />
+            <img src="/images/custom/dialog-scroll.svg" alt="" className="h-12 w-12 opacity-30 mb-4" />
             <h4 className="font-medium text-muted-foreground mb-2">
               Start a conversation
             </h4>

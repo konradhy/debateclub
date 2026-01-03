@@ -20,7 +20,7 @@ import { StudyModeGeneric } from "@/components/prep/StudyModeGeneric";
 import { StudyModeDebate } from "@/components/prep/StudyModeDebate";
 import { DeepResearchModal } from "@/components/prep/DeepResearchModal";
 import { EmptyState } from "@/components/prep/EmptyState";
-import { Loader2, MessageSquare, FileSearch, Target } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { cn } from "@/utils/misc";
 import { useState } from "react";
 import { useQuery } from "convex/react";
@@ -359,8 +359,7 @@ function PrepScreen() {
                         value="gemini-report"
                         className="flex items-center gap-1.5"
                       >
-                        <FileSearch className="h-4 w-4" />
-                        Deep Research Report
+                        Deep Research
                       </TabsTrigger>
                     </>
                   )}

@@ -5,7 +5,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/ui/dialog";
-import { FileText, RefreshCw, Sparkles, AlertCircle } from "lucide-react";
+import { RefreshCw, Sparkles, AlertCircle } from "lucide-react";
 
 interface DeepResearchModalProps {
     open: boolean;
@@ -55,7 +55,7 @@ export function DeepResearchModal({
                             className="w-full p-4 text-left rounded-lg border-2 border-border hover:border-primary/50 hover:bg-primary/5 transition-all group disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:bg-transparent"
                         >
                             <div className="flex items-start gap-3">
-                                <FileText className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                                <img src="/images/custom/ancient-scroll.svg" alt="" className="w-5 h-5 mt-0.5 flex-shrink-0" />
                                 <div className="space-y-1">
                                     <div className="font-medium">Generate Report Only</div>
                                     <div className="text-sm text-muted-foreground">

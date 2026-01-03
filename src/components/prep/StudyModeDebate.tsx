@@ -1,9 +1,4 @@
 import {
-  BookOpen,
-  Target,
-  Eye,
-  ShieldAlert,
-  Zap,
   AlertTriangle,
   ExternalLink,
   ChevronDown,
@@ -244,7 +239,7 @@ export function StudyModeDebate({
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Target className="h-5 w-5 text-green-500" />
+            <img src="/images/custom/marble-column.svg" alt="" className="h-7 w-7" />
             Argument Frames
           </h3>
           <span className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -484,7 +479,7 @@ export function StudyModeDebate({
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Eye className="h-5 w-5 text-red-500" />
+            <img src="/images/custom/spy-glass.svg" alt="" className="h-7 w-7" />
             Opponent Intelligence
           </h3>
           <span className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -670,7 +665,7 @@ export function StudyModeDebate({
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold flex items-center gap-2">
-            <ShieldAlert className="h-5 w-5 text-orange-500" />
+            <img src="/images/custom/stamped-document.svg" alt="" className="h-7 w-7" />
             Receipts Arsenal
           </h3>
           <span className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -884,7 +879,7 @@ export function StudyModeDebate({
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Zap className="h-5 w-5 text-yellow-500" />
+            <img src="/images/custom/divine-lightning.svg" alt="" className="h-7 w-7" />
             Zinger Bank
           </h3>
           <span className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -1008,7 +1003,7 @@ export function StudyModeDebate({
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-primary" />
+            <img src="/images/custom/unfurling-scroll.svg" alt="" className="h-7 w-7" />
             Closing Statements
           </h3>
           <span className="text-xs text-muted-foreground uppercase tracking-wider">

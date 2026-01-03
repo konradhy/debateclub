@@ -5,18 +5,12 @@ import { api } from "@cvx/_generated/api";
 import { Id } from "@cvx/_generated/dataModel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import {
-  Trophy,
-  Target,
   AlertTriangle,
   ArrowRight,
   ArrowLeft,
   TrendingUp,
-  MessageSquare,
-  Swords,
   Lightbulb,
-  Zap,
-  Shield,
-  Eye,
+  Trophy,
 } from "lucide-react";
 import { QuickAnalysisView } from "@/components/analysis/QuickAnalysisView";
 import ReactMarkdown from "react-markdown";
@@ -237,7 +231,11 @@ function Analysis() {
                     className="rounded-lg p-2"
                     style={{ backgroundColor: colors.primary }}
                   >
-                    <Zap className="h-6 w-6 text-white" />
+                    <img
+                      src="/images/custom/divine-lightning.svg"
+                      alt=""
+                      className="h-6 w-6"
+                    />
                   </div>
                   <span
                     style={{ color: colors.text, fontFamily: "Georgia, serif" }}
@@ -315,7 +313,11 @@ function Analysis() {
             <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
-                  <Trophy className="h-6 w-6 text-primary" />
+                  <img
+                    src="/images/custom/raised-chalice.svg"
+                    alt=""
+                    className="h-8 w-8"
+                  />
                   Executive Summary
                 </CardTitle>
               </CardHeader>
@@ -336,7 +338,11 @@ function Analysis() {
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-3 rounded-lg border border-green-500/20 bg-green-500/5 p-5">
                     <h4 className="flex items-center gap-2 font-semibold text-green-600 dark:text-green-400">
-                      <TrendingUp className="h-5 w-5" />
+                      <img
+                        src="/images/custom/ancient-coins.svg"
+                        alt=""
+                        className="h-6 w-6"
+                      />
                       Top Strengths
                     </h4>
                     <ul className="space-y-2">
@@ -351,7 +357,11 @@ function Analysis() {
 
                   <div className="space-y-3 rounded-lg border border-orange-500/20 bg-orange-500/5 p-5">
                     <h4 className="flex items-center gap-2 font-semibold text-orange-600 dark:text-orange-400">
-                      <Target className="h-5 w-5" />
+                      <img
+                        src="/images/custom/marble-column.svg"
+                        alt=""
+                        className="h-6 w-6"
+                      />
                       Areas for Improvement
                     </h4>
                     <ul className="space-y-2">
@@ -379,8 +389,12 @@ function Analysis() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Swords className="h-5 w-5 text-primary" />
-                      Win Every Argument Score
+                      <img
+                        src="/images/custom/crossed-swords.svg"
+                        alt=""
+                        className="h-6 w-6"
+                      />
+                      Overall Score
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
@@ -431,7 +445,11 @@ function Analysis() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Swords className="h-5 w-5 text-primary" />
+                      <img
+                        src="/images/custom/crossed-swords.svg"
+                        alt=""
+                        className="h-6 w-6"
+                      />
                       Skills Assessment
                     </CardTitle>
                   </CardHeader>
@@ -512,7 +530,11 @@ function Analysis() {
                   <CardContent className="space-y-5">
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <Shield className="h-4 w-4 text-blue-500" />
+                        <img
+                          src="/images/custom/shield-alt.svg"
+                          alt=""
+                          className="h-5 w-5"
+                        />
                         <h4 className="text-sm font-semibold">
                           Techniques Used
                         </h4>
@@ -540,7 +562,11 @@ function Analysis() {
 
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <Zap className="h-4 w-4 text-purple-500" />
+                        <img
+                          src="/images/custom/divine-lightning.svg"
+                          alt=""
+                          className="h-5 w-5"
+                        />
                         <h4 className="text-sm font-semibold">Traps Set</h4>
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -565,7 +591,11 @@ function Analysis() {
 
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <Eye className="h-4 w-4 text-red-500" />
+                        <img
+                          src="/images/custom/spy-glass.svg"
+                          alt=""
+                          className="h-5 w-5"
+                        />
                         <h4 className="text-sm font-semibold">
                           Weaknesses Exposed
                         </h4>
@@ -593,7 +623,11 @@ function Analysis() {
 
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <Target className="h-4 w-4 text-amber-500" />
+                        <img
+                          src="/images/custom/marble-column.svg"
+                          alt=""
+                          className="h-5 w-5"
+                        />
                         <h4 className="text-sm font-semibold">
                           Unexploited Weaknesses
                         </h4>
@@ -701,7 +735,11 @@ function Analysis() {
                 <CardContent>
                   {analysis.missedOpportunities.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-8 text-center">
-                      <Trophy className="mb-3 h-12 w-12 text-green-500/50" />
+                      <img
+                        src="/images/custom/raised-chalice.svg"
+                        alt=""
+                        className="mb-3 h-12 w-12 opacity-50"
+                      />
                       <p className="font-medium text-green-600 dark:text-green-400">
                         Excellent! No major missed opportunities detected.
                       </p>
@@ -762,7 +800,11 @@ function Analysis() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <MessageSquare className="h-5 w-5 text-primary" />
+                    <img
+                      src="/images/custom/dialog-scroll.svg"
+                      alt=""
+                      className="h-5 w-5"
+                    />
                     Technique Usage
                   </CardTitle>
                 </CardHeader>

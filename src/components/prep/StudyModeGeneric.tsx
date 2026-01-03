@@ -1,4 +1,4 @@
-import { Target, MessageSquare, Zap, ShieldAlert } from "lucide-react";
+// Removed lucide-react imports - using custom SVG icons
 import { Id } from "@cvx/_generated/dataModel";
 import { InlineEdit, AddButton } from "@/ui/inline-edit";
 
@@ -48,7 +48,7 @@ export function StudyModeGeneric({
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Target className="h-5 w-5 text-blue-500" />
+            <img src="/images/custom/marble-column.svg" alt="" className="h-7 w-7" />
             Opening Approach
           </h3>
         </div>
@@ -94,7 +94,7 @@ export function StudyModeGeneric({
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-green-500" />
+            <img src="/images/custom/dialog-scroll.svg" alt="" className="h-7 w-7" />
             Talking Points
           </h3>
           <span className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -170,7 +170,7 @@ export function StudyModeGeneric({
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Zap className="h-5 w-5 text-yellow-500" />
+            <img src="/images/custom/divine-lightning.svg" alt="" className="h-7 w-7" />
             Key Phrases
           </h3>
           <span className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -239,7 +239,7 @@ export function StudyModeGeneric({
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold flex items-center gap-2">
-            <ShieldAlert className="h-5 w-5 text-primary" />
+            <img src="/images/custom/stamped-document.svg" alt="" className="h-7 w-7" />
             Response Map
           </h3>
           <span className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -334,7 +334,7 @@ export function StudyModeGeneric({
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Target className="h-5 w-5 text-primary" />
+            <img src="/images/custom/marble-column.svg" alt="" className="h-7 w-7" />
             Closing Approach
           </h3>
         </div>

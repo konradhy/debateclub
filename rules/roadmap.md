@@ -918,7 +918,7 @@ The timing and interruption should match the personality.
 - ⬜ **8.1.6** — Responsive design for mobile
 - ⬜ **8.1.7** — Accessibility improvements
 - ⬜ **8.1.8** — Fix ux on minor pages, setting, onboarding, login, forget password etc. Fix the thing it does where it will sometimes sign you in but not redirect you to dashboard
-- ⬜ **8.1.10** — Check out convex and tanstack docs and optimize prefetch cashe with appropriate pagination, loading state to make it all snappy and instant and real time. requires u to personally understand so u can guide llm
+- ⬜ **8.1.10** — Check out convex and tanstack docs and optimize prefetch cashe with appropriate pagination, loading state to make it all snappy and instant and real time. requires u to personally understand so u can guide llm. This is especially so for some optimistic updates when select various prep items. It takes so long for the clicks to register
 - ⬜ **8.1.10** — Polished visual design pass
 ---
 
@@ -939,6 +939,7 @@ The timing and interruption should match the personality.
 - ⬜ **8.2.5** — Review scoring rubric logic
 - ⬜ **8.2.6** — Investigate opponent intelligence position flip (pro/con may be reversed)
 - ⬜ **8.2.7** — Fix position assignment logic
+- monitzation doesn't point out when unkonwn models are run... add gemini flash and pro 3 to workflow
 
 ---
 
@@ -1161,7 +1162,7 @@ Create an interview-style practice mode where users can practice handling questi
 ---
 
 ### Multiplayer Mode
-
+Debate Club Arena
 Build a feature allowing users to challenge others to debates, either friends via direct links or random opponents from the platform. The system includes a debate coach that listens in, follows a set debate structure, and generates sharable links so friends or the public can vote on the winner. This mode should be designed to appeal to streamers and influencers who want to showcase their debate skills.
 
 ---

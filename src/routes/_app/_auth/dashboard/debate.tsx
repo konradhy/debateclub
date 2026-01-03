@@ -4,7 +4,7 @@ import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { api } from "@cvx/_generated/api";
 import { useState, useEffect, useRef } from "react";
 import Vapi from "@vapi-ai/web";
-import { BarChart3, FileText, ArrowLeft } from "lucide-react";
+import { BarChart3, ArrowLeft, FileText } from "lucide-react";
 import siteConfig from "~/site.config";
 import { Id } from "@cvx/_generated/dataModel";
 import { PrepPanel } from "@/ui/prep-panel";
