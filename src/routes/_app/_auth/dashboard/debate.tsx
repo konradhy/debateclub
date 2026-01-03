@@ -488,7 +488,7 @@ ${opponent.additionalContext}`
       </header>
 
       {/* Main Content */}
-      <div className="mx-auto max-w-4xl px-6 py-8">
+      <div className="mx-auto max-w-4xl px-4 md:px-6 py-8">
         <div
           className="overflow-hidden rounded-2xl border-2"
           style={{
@@ -499,11 +499,11 @@ ${opponent.additionalContext}`
         >
           {/* Page Header */}
           <div
-            className="p-6 lg:p-8"
+            className="p-4 md:p-6 lg:p-8"
             style={{ borderBottom: `1px solid ${colors.border}` }}
           >
             <h1
-              className="text-2xl font-bold mb-2"
+              className="text-xl md:text-2xl font-bold mb-2"
               style={{ color: colors.text, fontFamily: "Georgia, serif" }}
             >
               {opponent?.name || "Practice Session"}
@@ -519,7 +519,7 @@ ${opponent.additionalContext}`
           </div>
 
           {/* Practice Area */}
-          <div className="flex flex-col items-center p-8 lg:p-12">
+          <div className="flex flex-col items-center p-6 md:p-8 lg:p-12">
             {/* Timer */}
             <Timer seconds={timer} colors={colors} />
 
@@ -533,10 +533,10 @@ ${opponent.additionalContext}`
             {/* Control Buttons */}
             <div className="flex gap-4">
               {!isSessionActive ? (
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <button
                     onClick={handleStart}
-                    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl px-8 text-base font-semibold text-white transition-all hover:brightness-110"
+                    className="w-full sm:w-auto inline-flex h-12 items-center justify-center gap-2 rounded-xl px-8 text-base font-semibold text-white transition-all hover:brightness-110"
                     style={{ backgroundColor: colors.primary }}
                   >
                     Start Practice
@@ -571,7 +571,7 @@ ${opponent.additionalContext}`
                             );
                           });
                       }}
-                      className="inline-flex h-12 items-center justify-center gap-2 rounded-xl px-6 text-sm font-medium border-2 transition-all hover:bg-gray-50"
+                      className="w-full sm:w-auto inline-flex h-12 items-center justify-center gap-2 rounded-xl px-6 text-sm font-medium border-2 transition-all hover:bg-gray-50"
                       style={{ borderColor: colors.border, color: colors.text }}
                     >
                       DEBUG: Show Prompt
@@ -579,10 +579,10 @@ ${opponent.additionalContext}`
                   )}
                 </div>
               ) : (
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <button
                     onClick={handleStop}
-                    className="inline-flex h-12 items-center justify-center rounded-xl px-6 text-base font-medium text-white transition-all hover:brightness-110"
+                    className="w-full sm:w-auto inline-flex h-12 items-center justify-center rounded-xl px-6 text-base font-medium text-white transition-all hover:brightness-110"
                     style={{ backgroundColor: "#DC2626" }}
                   >
                     End Session
@@ -592,7 +592,7 @@ ${opponent.additionalContext}`
                       if (vapiRef.current) vapiRef.current.stop();
                       setIsSessionActive(false);
                     }}
-                    className="inline-flex h-12 items-center justify-center rounded-xl border-2 px-6 text-base font-medium transition-all hover:shadow-md"
+                    className="w-full sm:w-auto inline-flex h-12 items-center justify-center rounded-xl border-2 px-6 text-base font-medium transition-all hover:shadow-md"
                     style={{ borderColor: colors.border, color: colors.text }}
                   >
                     Cancel
@@ -604,9 +604,9 @@ ${opponent.additionalContext}`
             {/* View Analysis Button */}
             {!isSessionActive && debateId && (
               <div className="mt-8">
-                <Link to="/dashboard/analysis" search={{ debateId: debateId }}>
+                <Link to="/dashboard/analysis" search={{ debateId: debateId }} className="block">
                   <button
-                    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl px-8 text-base font-semibold text-white transition-all hover:brightness-110"
+                    className="w-full sm:w-auto inline-flex h-12 items-center justify-center gap-2 rounded-xl px-8 text-base font-semibold text-white transition-all hover:brightness-110"
                     style={{ backgroundColor: colors.primaryLight }}
                   >
                     <BarChart3 className="h-5 w-5" />

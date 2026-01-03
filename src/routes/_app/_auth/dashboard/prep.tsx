@@ -220,7 +220,7 @@ function PrepScreen() {
       <PrepHeader />
 
       {/* Main Content */}
-      <div className="mx-auto max-w-6xl px-6 py-8">
+      <div className="mx-auto max-w-6xl px-4 md:px-6 py-8">
         <div
           className="overflow-hidden rounded-2xl border-2"
           style={{
@@ -231,14 +231,14 @@ function PrepScreen() {
         >
           {/* Page Header */}
           <div
-            className="p-6 lg:p-8"
+            className="p-4 md:p-6 lg:p-8"
             style={{ borderBottom: `1px solid ${colors.border}` }}
           >
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
               <div className="flex flex-col gap-3">
                 <div>
                   <h1
-                    className="text-2xl font-bold"
+                    className="text-xl md:text-2xl font-bold"
                     style={{ color: colors.text, fontFamily: "Georgia, serif" }}
                   >
                     {opponent.name}

@@ -206,29 +206,33 @@ function ContactPage() {
             <div className="space-y-3">
               <Link
                 to="/#features"
-                className="block text-base transition-opacity hover:opacity-70"
+                className="block text-base transition-opacity hover:opacity-70 focus:outline-2 focus:outline-offset-2 focus:outline-gray-400"
                 style={{ color: "#A8B08C" }}
+                aria-label="Learn about features and capabilities"
               >
                 → Features & Capabilities
               </Link>
               <Link
                 to="/#pricing"
-                className="block text-base transition-opacity hover:opacity-70"
+                className="block text-base transition-opacity hover:opacity-70 focus:outline-2 focus:outline-offset-2 focus:outline-gray-400"
                 style={{ color: "#A8B08C" }}
+                aria-label="View pricing information"
               >
                 → Pricing Information
               </Link>
               <Link
                 to="/#how-it-works"
-                className="block text-base transition-opacity hover:opacity-70"
+                className="block text-base transition-opacity hover:opacity-70 focus:outline-2 focus:outline-offset-2 focus:outline-gray-400"
                 style={{ color: "#A8B08C" }}
+                aria-label="Learn how DebateClub works"
               >
                 → How DebateClub Works
               </Link>
               <Link
                 to="/blog"
-                className="block text-base transition-opacity hover:opacity-70"
+                className="block text-base transition-opacity hover:opacity-70 focus:outline-2 focus:outline-offset-2 focus:outline-gray-400"
                 style={{ color: "#A8B08C" }}
+                aria-label="Read blog articles and debate technique guides"
               >
                 → Blog & Technique Guides
               </Link>

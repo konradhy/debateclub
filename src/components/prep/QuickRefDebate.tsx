@@ -22,9 +22,9 @@ export function QuickRefDebate({
   renderComplex,
 }: QuickRefDebateProps) {
   return (
-    <div className="grid grid-cols-12 gap-6 h-full">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
       {/* Left Column: Opening & Closing */}
-      <div className="col-span-4 space-y-6">
+      <div className="lg:col-span-4 space-y-6">
         <Card className="h-auto">
           <CardHeader className="py-3 bg-blue-500/10">
             <CardTitle className="text-sm font-bold text-blue-600">
@@ -75,7 +75,7 @@ export function QuickRefDebate({
       </div>
 
       {/* Middle Column: Arguments & Zingers */}
-      <div className="col-span-4 space-y-6">
+      <div className="lg:col-span-4 space-y-6">
         <Card className="h-auto">
           <CardHeader className="py-3 bg-green-500/10">
             <CardTitle className="text-sm font-bold text-green-600">
@@ -129,7 +129,7 @@ export function QuickRefDebate({
       </div>
 
       {/* Right Column: Receipts & Counters */}
-      <div className="col-span-4 space-y-6">
+      <div className="lg:col-span-4 space-y-6">
         <Card className="h-auto">
           <CardHeader className="py-3 bg-red-500/10">
             <CardTitle className="text-sm font-bold text-red-600">

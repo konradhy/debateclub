@@ -118,12 +118,12 @@ function History() {
       className="min-h-screen"
       style={{ backgroundColor: colors.background }}
     >
-      <div className="mx-auto max-w-5xl px-6 py-10">
+      <div className="mx-auto max-w-5xl px-4 md:px-6 py-10">
         {/* Header */}
-        <div className="mb-8 flex items-start justify-between">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h1
-              className="text-3xl font-bold"
+              className="text-2xl md:text-3xl font-bold"
               style={{ color: colors.text, fontFamily: "Georgia, serif" }}
             >
               Debate History

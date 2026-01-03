@@ -5,12 +5,20 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { api } from "@cvx/_generated/api";
 import { Id } from "@cvx/_generated/dataModel";
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/ui/dialog";
 
 // Color constants matching marketing pages
 const colors = {
@@ -51,28 +59,35 @@ export default function Dashboard() {
   const { data: opponents = [] } = useQuery(
     convexQuery(api.opponents.list, {}),
   );
+  const [deleteDialog, setDeleteDialog] = useState<{
+    isOpen: boolean;
+    opponentId: Id<"opponents"> | null;
+    name: string;
+  }>({
+    isOpen: false,
+    opponentId: null,
+    name: "",
+  });
 
   const deleteOpponent = useMutation({
     mutationFn: useConvexMutation(api.opponents.deleteOpponent),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [["opponents", "list"]] });
+      setDeleteDialog({ isOpen: false, opponentId: null, name: "" });
     },
   });
 
-  const handleDelete = async (opponentId: Id<"opponents">, name: string) => {
-    if (
-      !confirm(
-        `Are you sure you want to delete "${name}"? This will also delete all associated research, prep materials, and chat history. This action cannot be undone.`,
-      )
-    ) {
-      return;
-    }
+  const handleDeleteClick = (opponentId: Id<"opponents">, name: string) => {
+    setDeleteDialog({ isOpen: true, opponentId, name });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteDialog.opponentId) return;
 
     try {
-      await deleteOpponent.mutateAsync({ opponentId });
+      await deleteOpponent.mutateAsync({ opponentId: deleteDialog.opponentId });
     } catch (error) {
       console.error("Error deleting opponent:", error);
-      alert("Failed to delete opponent. Please try again.");
     }
   };
 
@@ -89,7 +104,7 @@ export default function Dashboard() {
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1
-              className="text-3xl font-bold"
+              className="text-2xl md:text-3xl font-bold"
               style={{ color: colors.text, fontFamily: "Georgia, serif" }}
             >
               Your Sessions
@@ -100,7 +115,7 @@ export default function Dashboard() {
           </div>
           <Link to="/dashboard/opponent-profile">
             <button
-              className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium text-white transition-all hover:brightness-110"
+              className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium text-white transition-all hover:brightness-110 focus:outline-2 focus:outline-offset-2 focus:outline-gray-400"
               style={{ backgroundColor: colors.primary }}
             >
               <Plus className="mr-2 h-4 w-4" />
@@ -144,7 +159,7 @@ export default function Dashboard() {
             </p>
             <Link to="/dashboard/debate" className="w-full">
               <button
-                className="w-full rounded-lg border-2 py-2.5 text-sm font-medium transition-all hover:shadow-sm"
+                className="w-full rounded-lg border-2 py-2.5 text-sm font-medium transition-all hover:shadow-sm focus:outline-2 focus:outline-offset-2 focus:outline-gray-400"
                 style={{
                   borderColor: colors.border,
                   color: colors.text,
@@ -178,14 +193,15 @@ export default function Dashboard() {
                     className="text-xs capitalize mt-0.5"
                     style={{ color: colors.textLight }}
                   >
-                    {opponent.style} Style
+                    {opponent.style}<span className="hidden md:inline"> Style</span>
                   </p>
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button
-                      className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-black/5"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-black/5 focus:outline-2 focus:outline-offset-2 focus:outline-gray-400"
                       onClick={(e) => e.stopPropagation()}
+                      aria-label={`Options for ${opponent.name}`}
                     >
                       <MoreVertical
                         className="h-4 w-4"
@@ -198,7 +214,7 @@ export default function Dashboard() {
                       className="text-red-600 focus:text-red-600"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDelete(opponent._id, opponent.name);
+                        handleDeleteClick(opponent._id, opponent.name);
                       }}
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
@@ -219,7 +235,7 @@ export default function Dashboard() {
                 className="w-full"
               >
                 <button
-                  className="w-full rounded-lg py-2.5 text-sm font-medium text-white transition-all hover:brightness-110"
+                  className="w-full rounded-lg py-2.5 text-sm font-medium text-white transition-all hover:brightness-110 focus:outline-2 focus:outline-offset-2 focus:outline-gray-400"
                   style={{ backgroundColor: colors.primaryLight }}
                 >
                   Continue
@@ -235,11 +251,52 @@ export default function Dashboard() {
             to="/dashboard/history"
             className="text-sm transition-opacity hover:opacity-70"
             style={{ color: colors.textMuted }}
+            aria-label="View all session history"
           >
             View session history →
           </Link>
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialog.isOpen}
+        onOpenChange={(isOpen) =>
+          setDeleteDialog({ ...deleteDialog, isOpen })
+        }
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete "{deleteDialog.name}"?</DialogTitle>
+            <DialogDescription>
+              This will delete the opponent and all associated research, prep
+              materials, and chat history. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3 justify-end px-6 pb-6">
+            <button
+              onClick={() =>
+                setDeleteDialog({ isOpen: false, opponentId: null, name: "" })
+              }
+              className="px-4 py-2 rounded-lg border-2 transition-all focus:outline-2 focus:outline-offset-2 focus:outline-gray-400"
+              style={{
+                borderColor: colors.border,
+                color: colors.text,
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDeleteConfirm}
+              disabled={deleteOpponent.isPending}
+              className="px-4 py-2 rounded-lg text-white transition-all hover:brightness-110 disabled:opacity-50 focus:outline-2 focus:outline-offset-2 focus:outline-red-400"
+              style={{ backgroundColor: "#dc2626" }}
+            >
+              {deleteOpponent.isPending ? "Deleting..." : "Delete"}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

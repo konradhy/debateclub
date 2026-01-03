@@ -40,7 +40,11 @@ export function GenerationProgress({ progress }: GenerationProgressProps) {
       {progress &&
         progress.status !== "idle" &&
         progress.status !== "complete" && (
-          <div className="px-6 py-4 bg-secondary/30 border-b border-border">
+          <div
+            className="px-6 py-4 bg-secondary/30 border-b border-border"
+            aria-live="polite"
+            aria-busy="true"
+          >
             <div className="flex items-center justify-center gap-3 mb-4">
               <Loader2 className="h-5 w-5 animate-spin text-primary" />
               <span className="font-medium text-primary">
@@ -56,7 +60,11 @@ export function GenerationProgress({ progress }: GenerationProgressProps) {
 
       {/* Error Display */}
       {progress?.status === "error" && progress.error && (
-        <div className="px-6 py-4 bg-red-500/10 border-b border-red-500/30">
+        <div
+          className="px-6 py-4 bg-red-500/10 border-b border-red-500/30"
+          aria-live="assertive"
+          role="alert"
+        >
           <div className="flex items-center justify-center gap-2 text-red-600 dark:text-red-400">
             <AlertTriangle className="h-5 w-5" />
             <span className="font-medium">Error: {progress.error}</span>

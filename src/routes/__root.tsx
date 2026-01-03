@@ -60,7 +60,16 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <head>
         <HeadContent />
       </head>
-      <body>{children}<Scripts /></body>
+      <body>
+        <a
+          href="#main-content"
+          className="absolute left-0 top-0 -translate-y-full rounded bg-black px-4 py-2 text-white focus:translate-y-0 focus:outline-none"
+        >
+          Skip to main content
+        </a>
+        <div id="main-content">{children}</div>
+        <Scripts />
+      </body>
     </html>
   );
 }

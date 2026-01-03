@@ -192,7 +192,7 @@ function LabeledSelect({
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="flex h-10 w-full rounded-md border-2 bg-white px-3 py-2 text-sm transition-all focus:border-[#7B8A6F] focus:outline-none focus:ring-0"
+        className="flex h-11 w-full rounded-md border-2 bg-white px-3 py-2 text-sm transition-all focus:border-[#7B8A6F] focus:outline-none focus:ring-0"
         style={{ borderColor: colors.border }}
       >
         {options.map((opt) => (

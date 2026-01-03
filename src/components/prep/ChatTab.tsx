@@ -45,6 +45,8 @@ export function ChatTab({
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto p-4 space-y-4 bg-background"
+        aria-live="polite"
+        aria-label="Chat messages"
       >
         {!messages || messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">

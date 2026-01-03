@@ -33,6 +33,8 @@ export function GeminiProgress({ geminiProgress }: GeminiProgressProps) {
               backgroundColor: `${colors.accent}20`,
               borderBottom: `1px solid ${colors.border}`,
             }}
+            aria-live="polite"
+            aria-busy="true"
           >
             <div className="flex flex-col items-center justify-center gap-3 text-center">
               <div className="flex items-center gap-2">
@@ -58,7 +60,11 @@ export function GeminiProgress({ geminiProgress }: GeminiProgressProps) {
 
       {/* Gemini Error Display */}
       {geminiProgress?.status === "error" && geminiProgress.error && (
-        <div className="px-6 py-4 bg-red-500/10 border-b border-red-500/30">
+        <div
+          className="px-6 py-4 bg-red-500/10 border-b border-red-500/30"
+          aria-live="assertive"
+          role="alert"
+        >
           <div className="flex items-center justify-center gap-2 text-red-600 dark:text-red-400">
             <AlertTriangle className="h-5 w-5" />
             <span className="font-medium">
