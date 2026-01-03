@@ -880,7 +880,7 @@ The timing and interruption should match the personality.
 **Chapters**: —
 
 #### Tasks
-
+- Test and see if adding to the different sections actually make a difference. 
 - ⬜ **7.3.1** — Organize and document all prompts by generation stage
 - ⬜ **7.3.2** — Review full prompt chains (research → strategy → outputs)
 - ⬜ **7.3.3** — Calibrate against book methodology
@@ -923,9 +923,9 @@ The timing and interruption should match the personality.
 
 **Description**: Custom icons and visual polish
 
-**Status**: 🔄
+**Status**: ✅
 
-**Chapters**: —
+**Chapters**: — 27, 28
 
 #### Tasks
 
@@ -934,11 +934,11 @@ The timing and interruption should match the personality.
 - ✅ **8.1.3** — Use Affinity to isolate and prepare icons
 - ✅ **8.1.4** — Create comprehensive list of needed icons (16 total content/strategy icons)
 - ✅ **8.1.5** — Replace all Lucide icons with custom icons (content/strategy icons - UI controls remain lucide)
-- ⬜ **8.1.6** — Responsive design for mobile
+- ✅ **8.1.6** — Responsive design for mobile
 - ✅ **8.1.7** — Accessibility improvements
-- ⬜ **8.1.8** — Fix ux on minor pages, setting, onboarding, login, forget password etc. Fix the thing it does where it will sometimes sign you in but not redirect you to dashboard. (hard to replicate the not redirect bug)
+- ✅**8.1.8** — Fix ux on minor pages, setting, onboarding, login, forget password etc. Fix the thing it does where it will sometimes sign you in but not redirect you to dashboard. (hard to replicate the not redirect bug)
 - ✅  **8.1.10** — Check out convex and tanstack docs and optimize prefetch cashe with appropriate pagination, loading state to make it all snappy and instant and real time. requires u to personally understand so u can guide llm. This is especially so for some optimistic updates when select various prep items. It takes so long for the clicks to register
-- ⬜ **8.1.10** — Polished visual design pass
+- ✅ **8.1.10** — Polished visual design pass
 - Rething the history page. 
 ---
 
@@ -973,13 +973,14 @@ The timing and interruption should match the personality.
 
 #### Tasks
 Make sure i'm not failing silently and relying on fallbacks anywhere
+- Handle edge case where the debate is cut short. Like just a ferw sentences. This is done in prompt. 
 - ⬜ **8.3.1** — Graceful voice failure handling
 - ⬜ **8.3.2** — Clear error messages for users
 - ⬜ **8.3.3** — Design individual error pages per scenario type
 - ⬜ **8.3.4** — Helpful error messages with recovery actions
 - ⬜ **8.3.5** — Visual design for error states
 - ⬜ **8.3.6** — Test error handling across all scenarios
-Make sure i'm not failing silently and relying on fallbacks anywhere
+- Make sure i'm not failing silently and relying on fallbacks anywhere
 ---
 
 ### 8.4 User Onboarding

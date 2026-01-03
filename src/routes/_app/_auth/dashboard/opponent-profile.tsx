@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { api } from "@cvx/_generated/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
 import { Textarea } from "@/ui/textarea";
@@ -176,9 +176,21 @@ function LabeledSelect({
   label: string;
   value: string;
   onChange: (value: string) => void;
-  options: Array<{ value: string; label: string }>;
+  options: Array<{ value: string; label: string; mobileLabel?: string }>;
   helperText?: string;
 }) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint in Tailwind
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <div className="flex flex-col gap-1.5">
       <label
@@ -197,7 +209,7 @@ function LabeledSelect({
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
-            {opt.label}
+            {isMobile && opt.mobileLabel ? opt.mobileLabel : opt.label}
           </option>
         ))}
       </select>

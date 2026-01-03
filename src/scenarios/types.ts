@@ -60,7 +60,7 @@ export interface InputFieldConfig {
   rows?: number;
 
   /** Options for select fields */
-  options?: Array<{ value: string; label: string }>;
+  options?: Array<{ value: string; label: string; mobileLabel?: string }>;
 }
 
 /**
