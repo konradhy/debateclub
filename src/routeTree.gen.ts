@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WinEveryArgumentRouteImport } from './routes/win-every-argument'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
@@ -66,6 +68,16 @@ import { Route as AppAuthDashboardLayoutSettingsBillingRouteImport } from './rou
 const WinEveryArgumentRoute = WinEveryArgumentRouteImport.update({
   id: '/win-every-argument',
   path: '/win-every-argument',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -351,6 +363,8 @@ const AppAuthDashboardLayoutSettingsBillingRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/contact': typeof ContactRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/win-every-argument': typeof WinEveryArgumentRoute
   '/blog/ask-the-killer-question': typeof BlogAskTheKillerQuestionRoute
   '/blog/back-it-up': typeof BlogBackItUpRoute
@@ -404,6 +418,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/contact': typeof ContactRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/win-every-argument': typeof WinEveryArgumentRoute
   '/blog/ask-the-killer-question': typeof BlogAskTheKillerQuestionRoute
   '/blog/back-it-up': typeof BlogBackItUpRoute
@@ -456,6 +472,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/contact': typeof ContactRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/win-every-argument': typeof WinEveryArgumentRoute
   '/_app/_auth': typeof AppAuthRouteWithChildren
   '/blog/ask-the-killer-question': typeof BlogAskTheKillerQuestionRoute
@@ -512,6 +530,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/contact'
+    | '/privacy'
+    | '/terms'
     | '/win-every-argument'
     | '/blog/ask-the-killer-question'
     | '/blog/back-it-up'
@@ -565,6 +585,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/contact'
+    | '/privacy'
+    | '/terms'
     | '/win-every-argument'
     | '/blog/ask-the-killer-question'
     | '/blog/back-it-up'
@@ -616,6 +638,8 @@ export interface FileRouteTypes {
     | '/'
     | '/_app'
     | '/contact'
+    | '/privacy'
+    | '/terms'
     | '/win-every-argument'
     | '/_app/_auth'
     | '/blog/ask-the-killer-question'
@@ -672,6 +696,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   ContactRoute: typeof ContactRoute
+  PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
   WinEveryArgumentRoute: typeof WinEveryArgumentRoute
   BlogAskTheKillerQuestionRoute: typeof BlogAskTheKillerQuestionRoute
   BlogBackItUpRoute: typeof BlogBackItUpRoute
@@ -713,6 +739,20 @@ declare module '@tanstack/react-router' {
       path: '/win-every-argument'
       fullPath: '/win-every-argument'
       preLoaderRoute: typeof WinEveryArgumentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -1189,6 +1229,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   ContactRoute: ContactRoute,
+  PrivacyRoute: PrivacyRoute,
+  TermsRoute: TermsRoute,
   WinEveryArgumentRoute: WinEveryArgumentRoute,
   BlogAskTheKillerQuestionRoute: BlogAskTheKillerQuestionRoute,
   BlogBackItUpRoute: BlogBackItUpRoute,

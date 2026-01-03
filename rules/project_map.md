@@ -2,7 +2,7 @@
 
 **Current architecture and codebase structure. Updated as features are added.**
 
-**Last Updated**: January 1, 2026 (Chapter 26 - Phase 7.1 Interruption System)
+**Last Updated**: January 2, 2026 (Chapter 28 - Performance Optimization)
 
 ---
 
@@ -96,10 +96,13 @@ orator/
 │   │   └── TokenBalance.tsx     # Token display component
 │   │
 │   ├── hooks/                   # Custom React hooks
-│   │   └── prep/                # Prep page hooks (Ch.15 refactor)
-│   │       ├── usePrepChat.ts
-│   │       ├── usePrepData.ts
-│   │       └── usePrepHandlers.ts
+│   │   ├── prep/                # Prep page hooks (Ch.15 refactor)
+│   │   │   ├── usePrepChat.ts
+│   │   │   ├── usePrepData.ts
+│   │   │   ├── usePrepHandlers.ts
+│   │   │   └── useOptimisticSelection.ts  # NEW (Ch.28): Optimistic updates
+│   │   ├── usePrefetchOpponent.ts   # NEW (Ch.28): Prefetch opponent data
+│   │   └── usePrefetchHistory.ts    # NEW (Ch.28): Prefetch history data
 │   │
 │   ├── routes/                  # TanStack Router pages (CSR)
 │   │   └── _app/
@@ -599,6 +602,17 @@ Two-tier user control system for research depth:
 - **Implementation**: Factory function for agent creation, intensity instructions injected via prompt, defaults at query level
 - **Philosophy**: Prompt injection > hardcoding. Intensity guidance in prompts is easier to test, modify, and explain than hardcoded behavior.
 
+### 15. Performance Optimization Pattern (Ch.28)
+
+Comprehensive approach to app performance using TanStack Query + Convex:
+- **Optimistic Updates**: Use `onMutate` for instant UI feedback on high-frequency interactions (selections, toggles)
+- **Client-Side Caching**: Configure `staleTime` and `cacheTime` based on data change frequency (static data = 5min, dynamic = 30sec)
+- **Prefetching**: Load data on `onMouseEnter` and `onFocus` for instant navigation
+- **No Polling**: Never use `refetchInterval` with Convex queries (reactive WebSocket subscriptions handle updates)
+- **Cache Strategy**: Use regular `useQuery` with caching instead of `usePaginatedQuery` for better client-side cache support
+
+**Key Insight**: Two types of caching exist - Convex server-side cache (helps all users) + TanStack Query client-side cache (helps individual navigation). Both are needed for optimal performance.
+
 ---
 
 ## Cron Jobs
@@ -695,6 +709,7 @@ npx convex deploy       # Deploy backend
 
 | Date | Change | Chapter |
 |------|--------|---------|
+| Jan 2, 2026 | Performance Optimization - Optimistic updates, caching, prefetching, removed polling | Ch.28 |
 | Jan 1, 2026 | Research Intensity Settings - User control of research depth (Basic/Aggressive/Deep) | Ch.24 |
 | Jan 1, 2026 | Progress Bar Refactoring - Consolidated to "Study Guide" box, eliminated code duplication | Ch.24 |
 | Dec 31, 2025 | Opponent Intelligence Editing - Full CRUD operations, placeholder bug fix | R-5.3 |

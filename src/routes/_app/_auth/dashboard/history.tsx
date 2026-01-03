@@ -45,13 +45,17 @@ export const Route = createFileRoute("/_app/_auth/dashboard/history")({
 });
 
 function History() {
-  const { data: debates = [], isLoading: debatesLoading } = useQuery(
-    convexQuery(api.debates.listUserDebates, {}),
-  );
+  const { data: debates = [], isLoading: debatesLoading } = useQuery({
+    ...convexQuery(api.debates.listUserDebates, {}),
+    staleTime: 2 * 60 * 1000, // 2 minutes - history doesn't change often
+    cacheTime: 10 * 60 * 1000, // 10 minutes
+  });
 
-  const { data: stats, isLoading: statsLoading } = useQuery(
-    convexQuery(api.debates.getPerformanceStats, {}),
-  );
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    ...convexQuery(api.debates.getPerformanceStats, {}),
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    cacheTime: 10 * 60 * 1000, // 10 minutes
+  });
 
   const [selectedDebateId, setSelectedDebateId] =
     useState<Id<"debates"> | null>(null);

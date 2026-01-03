@@ -58,12 +58,14 @@ function Debate() {
   const [isPrepPanelOpen, setIsPrepPanelOpen] = useState(false);
 
   const { opponentId } = Route.useSearch();
-  const { data: opponent } = useQuery(
-    convexQuery(
+  const { data: opponent } = useQuery({
+    ...convexQuery(
       api.opponents.get,
       opponentId ? { opponentId: opponentId as any } : "skip",
     ),
-  );
+    staleTime: 10 * 60 * 1000, // 10 minutes - opponent doesn't change during debate
+    cacheTime: 30 * 60 * 1000, // 30 minutes
+  });
 
   // Dynamic Debate Settings - NO FALLBACKS
   const topic = opponent?.topic;

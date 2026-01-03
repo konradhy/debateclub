@@ -703,7 +703,7 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 
 **Status**: 🔄 (In Progress)
 
-**Chapters**: Ch.26
+**Chapters**: Ch.26, Ch.28
 
 ---
 
@@ -852,9 +852,28 @@ Emotional → should feel passionate
 Socratic → should ask lots of questions
 The timing and interruption should match the personality.
 
-### 7.2 Prompt Engineering Review
+### 7.2 Performance Optimization
 
-**Description**: Manual review and calibration of all LLM prompts. For this entire phase. Just read it like a man, what makes sense, what isn't. don't use ai here. read. Ai to help organize it sure, but the text only changed by me.  same for 7.3
+**Description**: Optimize caching, prefetching, and UI responsiveness
+
+**Status**: ✅ (Complete)
+
+**Chapters**: Ch.28
+
+#### Tasks
+
+- ✅ **7.2.1** — Implement optimistic updates for prep page selections [Ch.28]
+- ✅ **7.2.2** — Remove unnecessary polling from progress queries [Ch.28]
+- ✅ **7.2.3** — Add TanStack Query cache configuration to all queries [Ch.28]
+- ✅ **7.2.4** — Implement prefetching for dashboard → prep navigation [Ch.28]
+- ✅ **7.2.5** — Implement prefetching for dashboard → history navigation [Ch.28]
+- ✅ **7.2.6** — Switch dashboard from usePaginatedQuery to cached useQuery [Ch.28]
+
+---
+
+### 7.3 Prompt Engineering Review
+
+**Description**: Manual review and calibration of all LLM prompts. For this entire phase. Just read it like a man, what makes sense, what isn't. don't use ai here. read. Ai to help organize it sure, but the text only changed by me.  same for 7.4
 
 **Status**: ⬜
 
@@ -862,18 +881,18 @@ The timing and interruption should match the personality.
 
 #### Tasks
 
-- ⬜ **7.2.1** — Organize and document all prompts by generation stage
-- ⬜ **7.2.2** — Review full prompt chains (research → strategy → outputs)
-- ⬜ **7.2.3** — Calibrate against book methodology
-- ⬜ **7.2.4** — Calibrate against common sense and user feedback
-- ⬜ **7.2.5** — Refine strategy generation prompts (priority)
-- ⬜ **7.2.6** — Improve opening statement prompts
-- ⬜ **7.2.7** — Improve receipts and zingers prompts
-- ⬜ **7.2.8** — Document prompt purpose and expected outputs
+- ⬜ **7.3.1** — Organize and document all prompts by generation stage
+- ⬜ **7.3.2** — Review full prompt chains (research → strategy → outputs)
+- ⬜ **7.3.3** — Calibrate against book methodology
+- ⬜ **7.3.4** — Calibrate against common sense and user feedback
+- ⬜ **7.3.5** — Refine strategy generation prompts (priority)
+- ⬜ **7.3.6** — Improve opening statement prompts
+- ⬜ **7.3.7** — Improve receipts and zingers prompts
+- ⬜ **7.3.8** — Document prompt purpose and expected outputs
 
 ---
 
-### 7.3 Analysis Improvements
+### 7.4 Analysis Improvements
 
 **Description**: Enhanced post-debate analysis quality
 
@@ -883,7 +902,7 @@ The timing and interruption should match the personality.
 
 #### Tasks
 
-- ⬜ **7.3.1** — Better prompts for analysis generation
+- ⬜ **7.4.1** — Better prompts for analysis generation
 - Review each prompt do u think it makes sense. read it like a man. 
 - fix the techniques error
 
@@ -916,10 +935,11 @@ The timing and interruption should match the personality.
 - ✅ **8.1.4** — Create comprehensive list of needed icons (16 total content/strategy icons)
 - ✅ **8.1.5** — Replace all Lucide icons with custom icons (content/strategy icons - UI controls remain lucide)
 - ⬜ **8.1.6** — Responsive design for mobile
-- ⬜ **8.1.7** — Accessibility improvements
-- ⬜ **8.1.8** — Fix ux on minor pages, setting, onboarding, login, forget password etc. Fix the thing it does where it will sometimes sign you in but not redirect you to dashboard
-- ⬜ **8.1.10** — Check out convex and tanstack docs and optimize prefetch cashe with appropriate pagination, loading state to make it all snappy and instant and real time. requires u to personally understand so u can guide llm. This is especially so for some optimistic updates when select various prep items. It takes so long for the clicks to register
+- ✅ **8.1.7** — Accessibility improvements
+- ⬜ **8.1.8** — Fix ux on minor pages, setting, onboarding, login, forget password etc. Fix the thing it does where it will sometimes sign you in but not redirect you to dashboard. (hard to replicate the not redirect bug)
+- ✅  **8.1.10** — Check out convex and tanstack docs and optimize prefetch cashe with appropriate pagination, loading state to make it all snappy and instant and real time. requires u to personally understand so u can guide llm. This is especially so for some optimistic updates when select various prep items. It takes so long for the clicks to register
 - ⬜ **8.1.10** — Polished visual design pass
+- Rething the history page. 
 ---
 
 ### 8.2 Bug Fixes & Investigations

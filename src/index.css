@@ -9,27 +9,27 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0, 0%, 98%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --background: 28 20% 96%; /* #F5F3EF - warm cream */
+    --foreground: 40 20% 16%; /* #2A2A20 - dark text */
+    --card: 30 25% 98%; /* #FAFAF8 - off-white cards */
+    --card-foreground: 40 20% 16%; /* #2A2A20 - dark text */
+    --popover: 30 25% 98%; /* #FAFAF8 - off-white */
+    --popover-foreground: 40 20% 16%; /* #2A2A20 - dark text */
+    --primary: 80 15% 24%; /* #3C4A32 - deep olive */
+    --primary-foreground: 30 25% 98%; /* #FAFAF8 - light text on primary */
+    --secondary: 28 20% 96%; /* #F5F3EF - warm cream */
+    --secondary-foreground: 80 15% 24%; /* #3C4A32 - olive text */
+    --muted: 30 15% 91%; /* #E8E4DA - border color */
+    --muted-foreground: 40 10% 36%; /* #5C5C54 - muted text */
+    --accent: 75 15% 62%; /* #A8B08C - sage accent */
+    --accent-foreground: 40 20% 16%; /* #2A2A20 - dark text on accent */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --border: 30 15% 91%; /* #E8E4DA - border */
+    --input: 30 15% 91%; /* #E8E4DA - input border */
+    --ring: 80 15% 24%; /* #3C4A32 - focus ring */
     --radius: 0.5rem;
-    --muted-grid: rgba(0, 0, 0, 0.1);
+    --muted-grid: rgba(60, 74, 50, 0.1); /* olive grid */
   }
 
   .dark {

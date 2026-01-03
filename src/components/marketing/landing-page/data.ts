@@ -261,5 +261,7 @@ export const footerLinks = {
   company: [
     { label: "About", href: "/win-every-argument" },
     { label: "Contact", href: "/contact" },
+    { label: "Terms of Service", href: "/terms" },
+    { label: "Privacy Policy", href: "/privacy" },
   ],
 };

@@ -1,7 +1,7 @@
 /**
  * Debate Scenario Configuration
  *
- * The original OratorPrep scenario using Mehdi Hasan's debate methodology.
+ * The original DebateClub scenario using Mehdi Hasan's debate methodology.
  * Uses DebatePrepPage with full debate-specific prep materials.
  */
 

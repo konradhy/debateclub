@@ -19,13 +19,13 @@ export const ResendPasswordReset = Resend({
   }) {
     const resend = new ResendAPI(provider.apiKey);
     const { error } = await resend.emails.send({
-      from: AUTH_EMAIL ?? "OratorPrep <onboarding@resend.dev>",
+      from: AUTH_EMAIL ?? "DebateClub <noreply@updates.midassuite.com>",
       to: [email],
-      subject: `Reset your OratorPrep password`,
-      react: VerificationCodeEmail({ 
-        code: token, 
+      subject: `Reset your DebateClub password`,
+      react: VerificationCodeEmail({
+        code: token,
         expires,
-        purpose: "password reset" 
+        purpose: "password reset"
       }),
     });
 

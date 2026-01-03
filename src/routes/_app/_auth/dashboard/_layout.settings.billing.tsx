@@ -83,7 +83,7 @@ function BillingPage() {
     }
 
     if (params.get("subscribe") === "success") {
-      setSuccessMessage("Welcome to Debate Club! You now have unlimited access.");
+      setSuccessMessage("Welcome to DebateClub! You now have unlimited access.");
       setTimeout(() => setSuccessMessage(""), 5000);
       window.history.replaceState({}, "", window.location.pathname);
     } else if (params.get("subscribe") === "canceled") {

@@ -36,7 +36,7 @@ export const createAllProducts = internalAction({
     // 5 Tokens Pack
     const product5 = await stripe.products.create({
       name: "5 Practice Sessions",
-      description: "5 AI practice sessions for OratorPrep",
+      description: "5 AI practice sessions for DebateClub",
       metadata: {
         type: "token_pack",
         tokens: "5",
@@ -54,7 +54,7 @@ export const createAllProducts = internalAction({
     // 15 Tokens Pack
     const product15 = await stripe.products.create({
       name: "15 Practice Sessions",
-      description: "15 AI practice sessions for OratorPrep (Popular)",
+      description: "15 AI practice sessions for DebateClub (Popular)",
       metadata: {
         type: "token_pack",
         tokens: "15",
@@ -72,7 +72,7 @@ export const createAllProducts = internalAction({
     // 50 Tokens Pack
     const product50 = await stripe.products.create({
       name: "50 Practice Sessions",
-      description: "50 AI practice sessions for OratorPrep (Best Value)",
+      description: "50 AI practice sessions for DebateClub (Best Value)",
       metadata: {
         type: "token_pack",
         tokens: "50",
@@ -93,7 +93,7 @@ export const createAllProducts = internalAction({
 
     // Monthly Pro Subscription
     const productMonthly = await stripe.products.create({
-      name: "OratorPrep Pro - Monthly",
+      name: "DebateClub Pro - Monthly",
       description: "Unlimited AI practice sessions, monthly billing",
       metadata: {
         type: "subscription",
@@ -114,7 +114,7 @@ export const createAllProducts = internalAction({
 
     // Annual Pro Subscription
     const productAnnual = await stripe.products.create({
-      name: "OratorPrep Pro - Annual",
+      name: "DebateClub Pro - Annual",
       description: "Unlimited AI practice sessions, annual billing (2 months free)",
       metadata: {
         type: "subscription",

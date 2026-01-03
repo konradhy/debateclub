@@ -1,5 +1,5 @@
 import { convexAuth } from "@convex-dev/auth/server";
-import GitHub from "@auth/core/providers/github";
+import Google from "@auth/core/providers/google";
 import { Password } from "@convex-dev/auth/providers/Password";
 import { ResendOTP } from "./otp/ResendOTP";
 import { ResendPasswordReset } from "./otp/ResendPasswordReset";
@@ -10,10 +10,6 @@ export const { auth, signIn, signOut, store } = convexAuth({
       reset: ResendPasswordReset,
       verify: ResendOTP,
     }),
-    GitHub({
-      authorization: {
-        params: { scope: "user:email" },
-      },
-    }),
+    Google,
   ],
 });

@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 // Force re-push
 import { internalQuery, mutation, query } from "./_generated/server";
+import { paginationOptsValidator } from "convex/server";
 import { api } from "./_generated/api";
 import { auth } from "./auth";
 
@@ -65,7 +66,7 @@ export const create = mutation({
       if (!canCreate.canCreate) {
         throw new Error(
           canCreate.reason ||
-            "Cannot create opponent: too many incomplete practice sessions for your token balance",
+          "Cannot create opponent: too many incomplete practice sessions for your token balance",
         );
       }
     }
@@ -93,6 +94,24 @@ export const list = query({
       .collect();
 
     return opponents;
+  },
+});
+
+export const listPaginated = query({
+  args: {
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) {
+      return { page: [], isDone: true, continueCursor: "" };
+    }
+
+    return await ctx.db
+      .query("opponents")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .order("desc")
+      .paginate(args.paginationOpts);
   },
 });
 

@@ -6,6 +6,8 @@ import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { api } from "@cvx/_generated/api";
 import { Id } from "@cvx/_generated/dataModel";
 import { useState } from "react";
+import { usePrefetchOpponent } from "@/hooks/usePrefetchOpponent";
+import { usePrefetchHistory } from "@/hooks/usePrefetchHistory";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,9 +58,21 @@ export const Route = createFileRoute("/_app/_auth/dashboard/_layout/")({
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
-  const { data: opponents = [] } = useQuery(
-    convexQuery(api.opponents.list, {}),
-  );
+  const prefetchOpponent = usePrefetchOpponent();
+  const prefetchHistory = usePrefetchHistory();
+
+  // Use regular query with TanStack Query cache for instant navigation
+  const { data: allOpponents = [] } = useQuery({
+    ...convexQuery(api.opponents.list, {}),
+    staleTime: 2 * 60 * 1000, // 2 minutes - dashboard doesn't change often
+    cacheTime: 10 * 60 * 1000, // 10 minutes - keep in cache
+  });
+
+  // Client-side pagination: show 9 initially, then all
+  const [showAll, setShowAll] = useState(false);
+  const opponents = showAll ? allOpponents : allOpponents.slice(0, 9);
+  const hasMore = !showAll && allOpponents.length > 9;
+
   const [deleteDialog, setDeleteDialog] = useState<{
     isOpen: boolean;
     opponentId: Id<"opponents"> | null;
@@ -96,8 +110,6 @@ export default function Dashboard() {
       className="min-h-screen"
       style={{ backgroundColor: colors.background }}
     >
-
-
       {/* Main Content */}
       <div className="mx-auto max-w-5xl px-6 py-10">
         {/* Page Header */}
@@ -193,7 +205,7 @@ export default function Dashboard() {
                     className="text-xs capitalize mt-0.5"
                     style={{ color: colors.textLight }}
                   >
-                    {opponent.style}<span className="hidden md:inline"> Style</span>
+                    {opponent.style}Style
                   </p>
                 </div>
                 <DropdownMenu>
@@ -233,6 +245,8 @@ export default function Dashboard() {
                 to="/dashboard/prep"
                 search={{ opponentId: opponent._id }}
                 className="w-full"
+                onMouseEnter={() => prefetchOpponent(opponent._id)}
+                onFocus={() => prefetchOpponent(opponent._id)}
               >
                 <button
                   className="w-full rounded-lg py-2.5 text-sm font-medium text-white transition-all hover:brightness-110 focus:outline-2 focus:outline-offset-2 focus:outline-gray-400"
@@ -245,6 +259,37 @@ export default function Dashboard() {
           ))}
         </div>
 
+        {/* Load More Button */}
+        {hasMore && (
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => setShowAll(true)}
+              className="inline-flex h-10 items-center justify-center rounded-lg px-6 text-sm font-medium transition-all hover:opacity-80 focus:outline-2 focus:outline-offset-2 focus:outline-gray-400"
+              style={{
+                backgroundColor: colors.cardBg,
+                border: `2px solid ${colors.border}`,
+                color: colors.text,
+              }}
+            >
+              Load More ({allOpponents.length - 9} more)
+            </button>
+          </div>
+        )}
+
+        {showAll && allOpponents.length > 9 && (
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => setShowAll(false)}
+              className="text-sm transition-opacity hover:opacity-70"
+              style={{
+                color: colors.textMuted,
+              }}
+            >
+              Show Less
+            </button>
+          </div>
+        )}
+
         {/* History link at bottom */}
         <div className="mt-8 text-center">
           <Link
@@ -252,6 +297,8 @@ export default function Dashboard() {
             className="text-sm transition-opacity hover:opacity-70"
             style={{ color: colors.textMuted }}
             aria-label="View all session history"
+            onMouseEnter={prefetchHistory}
+            onFocus={prefetchHistory}
           >
             View session history →
           </Link>
@@ -261,9 +308,7 @@ export default function Dashboard() {
       {/* Delete Confirmation Dialog */}
       <Dialog
         open={deleteDialog.isOpen}
-        onOpenChange={(isOpen) =>
-          setDeleteDialog({ ...deleteDialog, isOpen })
-        }
+        onOpenChange={(isOpen) => setDeleteDialog({ ...deleteDialog, isOpen })}
       >
         <DialogContent className="max-w-md">
           <DialogHeader>

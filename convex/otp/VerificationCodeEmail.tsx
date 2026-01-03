@@ -24,7 +24,7 @@ export function VerificationCodeEmail({
         <Head />
         <Container className="container px-20 font-sans">
           <Heading className="text-xl font-bold mb-4">
-            {isPwdReset ? "Reset your OratorPrep password" : "Sign in to OratorPrep"}
+            {isPwdReset ? "Reset your DebateClub password" : "Sign in to DebateClub"}
           </Heading>
           <Text className="text-sm">
             {isPwdReset

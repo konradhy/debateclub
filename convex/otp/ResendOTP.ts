@@ -19,11 +19,9 @@ export const ResendOTP = Email({
   }) {
     const resend = new ResendAPI(provider.apiKey);
     const { error } = await resend.emails.send({
-      // TODO: Update with your app name and email address
-      from: AUTH_EMAIL ?? "Convex SaaS <onboarding@resend.dev>",
+      from: AUTH_EMAIL ?? "DebateClub <noreply@updates.midassuite.com>",
       to: [email],
-      // TODO: Update with your app name
-      subject: `Sign in to Convex SaaS`,
+      subject: `Sign in to DebateClub`,
       react: VerificationCodeEmail({ code: token, expires }),
     });
 

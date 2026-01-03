@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { Id } from "@cvx/_generated/dataModel";
+import { useOptimisticSelection } from "./useOptimisticSelection";
 
 // Field types that can be edited/added/deleted
 type OpponentField =
@@ -104,6 +105,11 @@ export function usePrepHandlers({
   setIsSendingChat,
 }: UsePrepHandlersProps) {
   // ============================================
+  // OPTIMISTIC SELECTION MUTATION
+  // ============================================
+  const { mutate: updateSelectionOptimistic } = useOptimisticSelection(opponentId);
+
+  // ============================================
   // LOCAL STATE
   // ============================================
   const [isGenerating, setIsGenerating] = useState(false);
@@ -128,14 +134,15 @@ export function usePrepHandlers({
   }, []);
 
   const handleSelectionUpdate = useCallback(
-    async (updates: any) => {
+    (updates: any) => {
       if (!opponentId) return;
-      await updateSelection({
+      // Use optimistic mutation instead of awaiting
+      updateSelectionOptimistic({
         opponentId: opponentId as Id<"opponents">,
         ...updates,
       });
     },
-    [opponentId, updateSelection],
+    [opponentId, updateSelectionOptimistic],
   );
 
   const toggleFrame = useCallback(

@@ -1,30 +1,35 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
-import { Logo } from "@/ui/logo";
 import { useConvexAuth } from "convex/react";
 
 const HOME_PATH = "/";
 
 const QUOTES = [
   {
-    quote: "There is nothing impossible to they who will try.",
-    author: "Alexander the Great",
-  },
-  {
-    quote: "The only way to do great work is to love what you do.",
-    author: "Steve Jobs",
-  },
-  {
-    quote: "The best way to predict the future is to create it.",
-    author: "Peter Drucker",
+    quote: "The best way to win an argument is to start by being right.",
+    author: "Jill Lepore",
   },
   {
     quote:
-      "The only limit to our realization of tomorrow will be our doubts of today.",
-    author: "Franklin D. Roosevelt",
+      "In matters of style, swim with the current; in matters of principle, stand like a rock.",
+    author: "Thomas Jefferson",
   },
   {
-    quote: "The only thing we have to fear is fear itself.",
-    author: "Franklin D. Roosevelt",
+    quote: "The aim of argument should not be victory, but progress.",
+    author: "Joseph Joubert",
+  },
+  {
+    quote:
+      "It is better to debate a question without settling it than to settle a question without debating it.",
+    author: "Joseph Joubert",
+  },
+  {
+    quote:
+      "The most important thing in communication is hearing what isn't said.",
+    author: "Peter Drucker",
+  },
+  {
+    quote: "Rhetoric is the art of ruling the minds of men.",
+    author: "Plato",
   },
 ];
 
@@ -46,12 +51,20 @@ function LoginLayout() {
           to={HOME_PATH}
           className="z-10 flex h-10 flex-col items-center justify-center gap-2"
         >
-          <Logo />
+          <img
+            src="/images/logotext.png"
+            alt="DebateClub"
+            className="h-8 w-auto"
+          />
         </Link>
       </div>
       <div className="relative hidden h-full w-[50%] flex-col justify-between overflow-hidden bg-card p-10 lg:flex">
-        <Link to={HOME_PATH} className="z-10 flex h-10 w-10 items-center gap-1">
-          <Logo />
+        <Link to={HOME_PATH} className="z-10 flex items-center gap-1">
+          <img
+            src="/images/logotext.png"
+            className="h-8 w-auto"
+            alt="DebateClub"
+          />
         </Link>
 
         <div className="z-10 flex flex-col items-start gap-2">
