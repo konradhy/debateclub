@@ -4,10 +4,11 @@ import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { api } from "@cvx/_generated/api";
 import { useState, useEffect, useRef } from "react";
 import Vapi from "@vapi-ai/web";
-import { BarChart3, ArrowLeft, FileText } from "lucide-react";
+import { BarChart3, ArrowLeft, FileText, Settings } from "lucide-react";
 import siteConfig from "~/site.config";
 import { Id } from "@cvx/_generated/dataModel";
 import { PrepPanel } from "@/ui/prep-panel";
+import { OpponentConfigPanel } from "@/ui/opponent-config-panel";
 import { SCENARIOS } from "@/scenarios";
 import { colors } from "@/lib/prep-colors";
 import {
@@ -42,6 +43,9 @@ function Debate() {
   const { mutateAsync: completeDebate } = useMutation({
     mutationFn: useConvexMutation(api.debates.completeWithClientDuration),
   });
+  const { mutateAsync: updateBasicSettings } = useMutation({
+    mutationFn: useConvexMutation(api.opponents.updateBasicSettings),
+  });
 
   const vapiRef = useRef<Vapi | null>(null);
   const [isSessionActive, setIsSessionActive] = useState(false);
@@ -56,6 +60,7 @@ function Debate() {
 
   const [hasStarted, setHasStarted] = useState(false);
   const [isPrepPanelOpen, setIsPrepPanelOpen] = useState(false);
+  const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
 
   const { opponentId } = Route.useSearch();
   const { data: opponent } = useQuery({
@@ -459,6 +464,39 @@ ${opponent.additionalContext}`
     }
   };
 
+  const handleSaveAndRestart = async (updates: {
+    style?: string;
+    difficulty?: string;
+    position?: string;
+  }) => {
+    if (!opponent?._id) return;
+
+    try {
+      // 1. Stop debate if active
+      if (isSessionActive && vapiRef.current) {
+        await vapiRef.current.stop();
+        setIsSessionActive(false);
+      }
+
+      // 2. Update opponent settings in database
+      await updateBasicSettings({
+        opponentId: opponent._id,
+        ...updates,
+      });
+
+      // 3. Wait a moment for state to settle and opponent query to refetch
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // 4. Start new debate with updated settings
+      // The opponent data will be refetched automatically by the query
+      // so handleStart will use the new settings
+      await handleStart();
+    } catch (error) {
+      console.error("Failed to save and restart:", error);
+      throw error;
+    }
+  };
+
   return (
     <div
       className="min-h-screen"
@@ -647,6 +685,18 @@ ${opponent.additionalContext}`
         </div>
       </div>
 
+      {/* Floating Config Button - Bottom Left */}
+      {opponent && (
+        <button
+          onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)}
+          className="fixed bottom-6 left-6 z-30 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
+          style={{ backgroundColor: colors.primary }}
+          aria-label="Toggle opponent config"
+        >
+          <Settings className="h-6 w-6" />
+        </button>
+      )}
+
       {/* Floating Prep Materials Button */}
       {opponent && (
         <button
@@ -658,6 +708,15 @@ ${opponent.additionalContext}`
           <FileText className="h-6 w-6" />
         </button>
       )}
+
+      {/* Opponent Config Panel */}
+      <OpponentConfigPanel
+        isOpen={isConfigPanelOpen}
+        onClose={() => setIsConfigPanelOpen(false)}
+        opponent={opponent}
+        isDebateActive={isSessionActive}
+        onSaveAndRestart={handleSaveAndRestart}
+      />
 
       {/* Prep Materials Panel */}
       <PrepPanel

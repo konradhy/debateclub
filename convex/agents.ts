@@ -9,6 +9,8 @@ const openrouter = createOpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
 });
 
+//TODO should have a second tool that analyses the docs ands saves them in the array instead of asking it do it it and the end of the day. Then enhance that array to include richer things like how it relates to the debate, key stats 
+
 /**
  * Creates a new prep agent instance with custom settings.
  * @param articlesPerSearch - Number of articles to retrieve per search (default: 5)

@@ -115,8 +115,18 @@ export function QuickRefDebate({
                 >
                   <p className="text-sm font-medium">"{zinger.text}"</p>
                   <p className="text-[10px] text-muted-foreground uppercase mt-1">
-                    {renderComplex(zinger.context)}
+                    {typeof zinger.context === "object" ? zinger.context.trigger : renderComplex(zinger.context)}
                   </p>
+                  {zinger.tone && zinger.riskLevel && (
+                    <div className="flex gap-1 mt-1">
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-700">
+                        {zinger.tone}
+                      </span>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                        {zinger.riskLevel} Risk
+                      </span>
+                    </div>
+                  )}
                 </div>
               ))
             ) : (

@@ -721,10 +721,10 @@ A voice-based AI debate training platform that teaches users Mehdi Hasan's prove
 - ✅ **7.1.2** — Create 5 clear interruption modes using Vapi startSpeakingPlan/stopSpeakingPlan [Ch.26]
 - ✅ **7.1.3** — Map debate styles to interruption modes dynamically [Ch.26]
 - ✅ **7.1.4** — Apply speech plans in debate.tsx with console logging [Ch.26]
-- ⬜ **7.1.5** — Test interruption behavior with real voice across all modes
-- ⬜ **7.1.6** — Calibrate timing values based on real usage (optional)
-- ⬜ **7.1.7** — Add UI indicator showing active interruption mode (Phase 7.2 - optional)
-- ⬜ **7.1.8** — User preference override system (Phase 7.2 - optional)
+- ✅ **7.1.5** — Test interruption behavior with real voice across all modes (idk, might be a little slow)
+- ✅ **7.1.6** — Calibrate timing values based on real usage (optional)
+- ✅ **7.1.7** — Add UI indicator showing active interruption mode (Phase 7.2 - optional) we show config
+- ✅ **7.1.8** — User preference override system (Phase 7.2 - optional)
 
 ---
 
@@ -880,13 +880,13 @@ The timing and interruption should match the personality.
 **Chapters**: —
 
 #### Tasks
-- Test and see if adding to the different sections actually make a difference. 
-- ⬜ **7.3.1** — Organize and document all prompts by generation stage
-- ⬜ **7.3.2** — Review full prompt chains (research → strategy → outputs)
+- ⬜ Test and see if adding to the different sections actually make a difference. 
+- ✅ **7.3.1** — Organize and document all prompts by generation stage
+- ✅ **7.3.2** — Review full prompt chains (research → strategy → outputs)
 - ⬜ **7.3.3** — Calibrate against book methodology
 - ⬜ **7.3.4** — Calibrate against common sense and user feedback
 - ⬜ **7.3.5** — Refine strategy generation prompts (priority)
-- ⬜ **7.3.6** — Improve opening statement prompts
+- ✅ **7.3.6** — Improve opening statement prompts
 - ⬜ **7.3.7** — Improve receipts and zingers prompts
 - ⬜ **7.3.8** — Document prompt purpose and expected outputs
 
@@ -951,7 +951,7 @@ The timing and interruption should match the personality.
 **Chapters**: —
 
 #### Tasks
-
+- On the generation page, this business of two parallel things no longer looks good, look into the code, get rid of that top shelf
 - ⬜ **8.2.1** — Investigate scenario context fields (some appear unused in prompts)
 - ⬜ **8.2.2** — Fix ignored scenario fields
 - ⬜ **8.2.3** — Calibrate Win Every Argument score (too generous, sometimes 11/10)
@@ -974,6 +974,7 @@ The timing and interruption should match the personality.
 #### Tasks
 Make sure i'm not failing silently and relying on fallbacks anywhere
 - Handle edge case where the debate is cut short. Like just a ferw sentences. This is done in prompt. 
+- on the debate page if you try to create a debate but you don't have a subscription we should redirect you to the billing page. In fact. If you aren' subscribed you can't even get past the creat opponent stage you are redirected to the billing page with your opponent settings saved.
 - ⬜ **8.3.1** — Graceful voice failure handling
 - ⬜ **8.3.2** — Clear error messages for users
 - ⬜ **8.3.3** — Design individual error pages per scenario type
@@ -1011,6 +1012,8 @@ Make sure i'm not failing silently and relying on fallbacks anywhere
 **description** go through every function starting with high abuse ones first. And ensure that the right auth and access is occuring. Prefer internal functions when you can, and be careful the wrong person can't access.
 - ⬜ **8.5.1** —
 
+
+8.7 - Free trial should let you get one debate, not more than 5 minutes. then redirect to pprpaite billing
 
 ## Phase 9: SEO & Indexability
 
@@ -1127,7 +1130,16 @@ Make sure i'm not failing silently and relying on fallbacks anywhere
 
 ---
 
+
+Midterm
+- Social Share
+- Free trial lets you only get 5 minutes. 
+-
+
 ## Long-Term Features
+
+
+
 
 ### Analysis Page Enhancements
 
@@ -1182,7 +1194,10 @@ Create an interview-style practice mode where users can practice handling questi
 
 ---
 
+### Super Charge Opponent by piping in a strategic brief for her side. 
+
 ### Multiplayer Mode
+
 Debate Club Arena
 Build a feature allowing users to challenge others to debates, either friends via direct links or random opponents from the platform. The system includes a debate coach that listens in, follows a set debate structure, and generates sharable links so friends or the public can vote on the winner. This mode should be designed to appeal to streamers and influencers who want to showcase their debate skills.
 

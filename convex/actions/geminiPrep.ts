@@ -218,24 +218,26 @@ For each finding, include specific sources, dates, and verifiable claims. Cover 
             userId: opponent.userId,
             topic: args.topic,
             position: args.position,
-            research: articles,
             strategicBrief,
+            researchSynthesis: null, // No research synthesis in gemini prep
+            research: articles, // Raw articles for frames
           }),
           ctx.runAction(internal.actions.prepGeneration.generateReceipts, {
             opponentId: args.opponentId,
             userId: opponent.userId,
             topic: args.topic,
             position: args.position,
-            research: articles,
             strategicBrief,
+            researchSynthesis: null, // No research synthesis in gemini prep
+            research: articles, // Raw articles for receipts
           }),
           ctx.runAction(internal.actions.prepGeneration.generateZingers, {
             opponentId: args.opponentId,
             userId: opponent.userId,
             topic: args.topic,
             position: args.position,
-            research: articles,
             strategicBrief,
+            researchSynthesis: null, // No research synthesis in gemini prep
           }),
           ctx.runAction(internal.actions.prepGeneration.generateClosings, {
             opponentId: args.opponentId,
@@ -243,14 +245,15 @@ For each finding, include specific sources, dates, and verifiable claims. Cover 
             topic: args.topic,
             position: args.position,
             strategicBrief,
+            researchSynthesis: null, // No research synthesis in gemini prep
           }),
           ctx.runAction(internal.actions.prepGeneration.generateOpponentIntel, {
             opponentId: args.opponentId,
             userId: opponent.userId,
             topic: args.topic,
             position: args.position,
-            research: articles,
             strategicBrief,
+            researchSynthesis: null, // No research synthesis in gemini prep
           }),
         ]);
 

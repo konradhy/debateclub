@@ -375,7 +375,7 @@ function History() {
             </div>
           ) : (
             <div className="space-y-4">
-              {debates.map((debate) => (
+              {debates.reverse().map((debate) => (
                 <div
                   key={debate._id}
                   className="rounded-lg border-2 p-5 transition-shadow hover:shadow-md"

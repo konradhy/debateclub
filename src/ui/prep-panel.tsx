@@ -149,7 +149,9 @@ export function PrepPanel({
                         {selectedZingers.map((zinger: any) => (
                           <div key={zinger.id} className="p-2 bg-yellow-500/5 rounded border border-yellow-500/20">
                             <p className="text-xs font-medium">"{zinger.text}"</p>
-                            <p className="text-[9px] text-muted-foreground uppercase mt-0.5">{renderComplex(zinger.context)}</p>
+                            <p className="text-[9px] text-muted-foreground uppercase mt-0.5">
+                              {typeof zinger.context === "object" ? zinger.context.trigger : renderComplex(zinger.context)}
+                            </p>
                           </div>
                         ))}
                       </CardContent>

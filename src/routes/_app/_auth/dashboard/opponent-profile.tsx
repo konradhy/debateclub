@@ -560,7 +560,7 @@ function OpponentProfile() {
     name: "",
     topic: "",
     position: "pro",
-    style: "aggressive",
+    style: "academic",
     difficulty: "medium",
   });
 
@@ -583,7 +583,7 @@ function OpponentProfile() {
       name: "",
       topic: "",
       position: "pro",
-      style: "aggressive",
+      style: "academic",
       difficulty: "medium",
     });
   };
@@ -615,7 +615,7 @@ function OpponentProfile() {
         name: formData.name.trim(),
         topic: formData.topic.trim(),
         position: formData.position || "pro",
-        style: formData.style || "aggressive",
+        style: formData.style || "academic",
         difficulty: formData.difficulty || "medium",
         scenarioType,
         prepType: scenario?.pipeline?.prepType || "debate",
@@ -870,7 +870,7 @@ function OpponentProfile() {
                   <input
                     type="hidden"
                     name="style"
-                    value={formData.style || "aggressive"}
+                    value={formData.style || "academic"}
                   />
                   <input
                     type="hidden"

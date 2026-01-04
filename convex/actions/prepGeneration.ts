@@ -14,8 +14,19 @@ import {
   RESEARCH_SYNTHESIS_PROMPT,
   STRATEGIC_BRIEF_PROMPT,
 } from "../lib/promptTemplates";
+import {
+  OPENING_STATEMENTS_SCHEMA,
+  ARGUMENT_FRAMES_SCHEMA,
+  RECEIPTS_ARSENAL_SCHEMA,
+  ZINGER_BANK_SCHEMA,
+  CLOSING_STATEMENTS_SCHEMA,
+  OPPONENT_INTEL_SCHEMA,
+  USER_RESEARCH_PROCESSING_SCHEMA,
+  RESEARCH_SYNTHESIS_SCHEMA,
+} from "../lib/schemas/prepSchemas";
 import type { ActionCtx } from "../_generated/server";
 import type { Id } from "../_generated/dataModel";
+import type { JsonSchema } from "../lib/openrouter";
 
 const SITE_URL = "https://orator.app"; // Placeholder
 
@@ -24,6 +35,7 @@ async function generateWithPrompt(
   userId: Id<"users">,
   opponentId: Id<"opponents">,
   prompt: string,
+  schema: JsonSchema,
   model = AI_MODELS.PREP_GENERATION,
 ) {
   const apiKey = process.env.OPENROUTER_API_KEY;
@@ -42,6 +54,8 @@ async function generateWithPrompt(
       SITE_URL,
       3,
       model,
+      undefined, // maxTokens
+      schema, // Use structured outputs with JSON schema
     );
 
     const content = response.choices[0]?.message?.content;
@@ -50,6 +64,7 @@ async function generateWithPrompt(
       throw new Error("No content generated - API call failed");
     }
 
+    // With structured outputs, the response is already valid JSON matching the schema
     try {
       return JSON.parse(content);
     } catch (e) {
@@ -72,52 +87,18 @@ export const generateOpenings = internalAction({
     topic: v.string(),
     position: v.string(),
     strategicBrief: v.optional(v.string()),
+    researchSynthesis: v.optional(v.any()),
   },
   returns: v.array(v.any()),
   handler: async (ctx, args) => {
+    const researchContext = args.researchSynthesis ? JSON.stringify(args.researchSynthesis) : "No research synthesis available.";
     const prompt = OPENING_STATEMENT_PROMPT.replace(
       "{strategicBrief}",
       args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
-    );
+    ).replace("{research}", researchContext);
 
-    const apiKey = process.env.OPENROUTER_API_KEY;
-    if (!apiKey) {
-      console.error("[generateOpenings] OPENROUTER_API_KEY is not set");
-      throw new Error("OPENROUTER_API_KEY is not set");
-    }
-
-    try {
-      const response = await callOpenRouterForPrep(
-        ctx,
-        args.userId,
-        args.opponentId,
-        apiKey,
-        [{ role: "system", content: prompt }],
-        SITE_URL,
-        3,
-        AI_MODELS.PREP_GENERATION,
-      );
-
-      const content = response.choices[0]?.message?.content;
-      if (!content) {
-        console.error("[generateOpenings] No content in response");
-        throw new Error("No content generated");
-      }
-
-      try {
-        const data = JSON.parse(content);
-        return data.openings || [];
-      } catch (e) {
-        console.error(
-          "[generateOpenings] Failed to parse JSON:",
-          content.substring(0, 500),
-        );
-        throw new Error("Failed to parse generated JSON");
-      }
-    } catch (error) {
-      console.error("[generateOpenings] Error calling OpenRouter:", error);
-      throw error;
-    }
+    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt, OPENING_STATEMENTS_SCHEMA);
+    return data.openings || [];
   },
 });
 
@@ -127,18 +108,28 @@ export const generateFrames = internalAction({
     userId: v.id("users"),
     topic: v.string(),
     position: v.string(),
-    research: v.array(v.any()),
     strategicBrief: v.optional(v.string()),
+    researchSynthesis: v.optional(v.any()),
+    research: v.optional(v.array(v.any())), // Raw research for condensed summaries
   },
   returns: v.array(v.any()),
   handler: async (ctx, args) => {
-    const researchContext = JSON.stringify(args.research);
+    // Research synthesis (clean, structured)
+    const synthesisContext = args.researchSynthesis ? JSON.stringify(args.researchSynthesis) : "No research synthesis available.";
+
+    // Condensed raw research (titles + brief summaries)
+    const rawResearchContext = args.research ?
+      args.research.map(article =>
+        `Title: ${article.title || 'Untitled'}\nSource: ${article.url || 'Unknown source'}\nSummary: ${(article.content || '').substring(0, 300)}...`
+      ).join('\n\n') :
+      "No raw research available.";
+
     const prompt = ARGUMENT_FRAMES_PROMPT.replace(
       "{strategicBrief}",
       args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
-    ).replace("{research}", researchContext);
+    ).replace("{research}", synthesisContext).replace("{rawResearch}", rawResearchContext);
 
-    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt);
+    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt, ARGUMENT_FRAMES_SCHEMA);
     return data.frames || [];
   },
 });
@@ -149,18 +140,28 @@ export const generateReceipts = internalAction({
     userId: v.id("users"),
     topic: v.string(),
     position: v.string(),
-    research: v.array(v.any()),
     strategicBrief: v.optional(v.string()),
+    researchSynthesis: v.optional(v.any()),
+    research: v.optional(v.array(v.any())), // Raw research for detailed content
   },
   returns: v.array(v.any()),
   handler: async (ctx, args) => {
-    const researchContext = JSON.stringify(args.research);
+    // Research synthesis (clean, structured)
+    const synthesisContext = args.researchSynthesis ? JSON.stringify(args.researchSynthesis) : "No research synthesis available.";
+
+    // Extended raw research (titles + detailed content for stats/quotes)
+    const rawResearchContext = args.research ?
+      args.research.map(article =>
+        `Title: ${article.title || 'Untitled'}\nSource: ${article.url || 'Unknown source'}\nContent: ${(article.content || '').substring(0, 2000)}...`
+      ).join('\n\n') :
+      "No raw research available.";
+
     const prompt = RECEIPTS_ARSENAL_PROMPT.replace(
       "{strategicBrief}",
       args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
-    ).replace("{research}", researchContext);
+    ).replace("{research}", synthesisContext).replace("{rawResearch}", rawResearchContext);
 
-    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt);
+    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt, RECEIPTS_ARSENAL_SCHEMA);
     return data.receipts || [];
   },
 });
@@ -171,18 +172,18 @@ export const generateZingers = internalAction({
     userId: v.id("users"),
     topic: v.string(),
     position: v.string(),
-    research: v.array(v.any()),
     strategicBrief: v.optional(v.string()),
+    researchSynthesis: v.optional(v.any()),
   },
   returns: v.array(v.any()),
   handler: async (ctx, args) => {
-    const researchContext = JSON.stringify(args.research);
+    const researchContext = args.researchSynthesis ? JSON.stringify(args.researchSynthesis) : "No research synthesis available.";
     const prompt = ZINGER_BANK_PROMPT.replace(
       "{strategicBrief}",
       args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
     ).replace("{research}", researchContext);
 
-    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt);
+    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt, ZINGER_BANK_SCHEMA);
     return data.zingers || [];
   },
 });
@@ -194,15 +195,17 @@ export const generateClosings = internalAction({
     topic: v.string(),
     position: v.string(),
     strategicBrief: v.optional(v.string()),
+    researchSynthesis: v.optional(v.any()),
   },
   returns: v.array(v.any()),
   handler: async (ctx, args) => {
+    const researchContext = args.researchSynthesis ? JSON.stringify(args.researchSynthesis) : "No research synthesis available.";
     const prompt = CLOSING_STATEMENT_PROMPT.replace(
       "{strategicBrief}",
       args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
-    );
+    ).replace("{research}", researchContext);
 
-    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt);
+    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt, CLOSING_STATEMENTS_SCHEMA);
     return data.closings || [];
   },
 });
@@ -213,12 +216,12 @@ export const generateOpponentIntel = internalAction({
     userId: v.id("users"),
     topic: v.string(),
     position: v.string(),
-    research: v.array(v.any()),
     strategicBrief: v.optional(v.string()),
+    researchSynthesis: v.optional(v.any()),
   },
   returns: v.array(v.any()),
   handler: async (ctx, args) => {
-    const researchContext = JSON.stringify(args.research);
+    const researchContext = args.researchSynthesis ? JSON.stringify(args.researchSynthesis) : "No research synthesis available.";
     const opponentPosition = args.position === "pro" ? "con" : "pro";
 
     const prompt = OPPONENT_INTEL_PROMPT
@@ -231,8 +234,16 @@ export const generateOpponentIntel = internalAction({
       )
       .replace("{research}", researchContext);
 
-    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt);
-    return data.opponentIntel || [];
+    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt, OPPONENT_INTEL_SCHEMA);
+    const opponentIntel = data.opponentIntel || [];
+
+    // Ensure each intel object has the required counters field
+    const validatedIntel = opponentIntel.map((intel: any) => ({
+      ...intel,
+      counters: intel.counters || [] // Add empty counters array if missing
+    }));
+
+    return validatedIntel;
   },
 });
 
@@ -312,6 +323,7 @@ export const processUserResearch = internalAction({
       args.userId,
       args.opponentId,
       prompt,
+      USER_RESEARCH_PROCESSING_SCHEMA,
       AI_MODELS.RESEARCH_PROCESSING,
     );
 
@@ -390,7 +402,14 @@ export const generateResearchSynthesis = internalAction({
       args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
     ).replace("{research}", researchSummary);
 
-    const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt, AI_MODELS.PREP_GENERATION);
+    const data = await generateWithPrompt(
+      ctx,
+      args.userId,
+      args.opponentId,
+      prompt,
+      RESEARCH_SYNTHESIS_SCHEMA,
+      AI_MODELS.PREP_GENERATION
+    );
 
     // Extract the synthesis object from the response
     const synthesis = data.synthesis || data;
@@ -442,11 +461,11 @@ ${args.prepMaterials.argumentFrames.map((f, i) => `${i + 1}. ${f.label}: ${f.sum
 
 RECEIPTS (${args.prepMaterials.receipts.length} total across categories):
 ${Object.entries(
-  args.prepMaterials.receipts.reduce((acc: Record<string, any[]>, r: any) => {
-    acc[r.category] = (acc[r.category] || []).concat(r);
-    return acc;
-  }, {} as Record<string, any[]>)
-).map(([cat, receipts]) => `- ${cat} (${(receipts as any[]).length}): ${(receipts as any[]).slice(0, 2).map((r: any) => r.content.substring(0, 80) + '...').join(' | ')}`).join('\n')}
+      args.prepMaterials.receipts.reduce((acc: Record<string, any[]>, r: any) => {
+        acc[r.category] = (acc[r.category] || []).concat(r);
+        return acc;
+      }, {} as Record<string, any[]>)
+    ).map(([cat, receipts]) => `- ${cat} (${(receipts as any[]).length}): ${(receipts as any[]).slice(0, 2).map((r: any) => r.content.substring(0, 80) + '...').join(' | ')}`).join('\n')}
 
 ZINGERS (${args.prepMaterials.zingers.length} zingers):
 ${args.prepMaterials.zingers.slice(0, 5).map((z, i) => `${i + 1}. ${z.text} (${z.type || 'N/A'})`).join('\n')}
@@ -455,7 +474,7 @@ CLOSING OPTIONS (${args.prepMaterials.closingOptions.length} options):
 ${args.prepMaterials.closingOptions.map((c, i) => `${i + 1}. ${c.type}: ${c.preview}`).join('\n')}
 
 OPPONENT INTEL (${args.prepMaterials.opponentIntel.length} likely arguments):
-${args.prepMaterials.opponentIntel.map((intel, i) => `${i + 1}. "${intel.argument}" (${intel.likelihood})\n   Weakness: ${intel.weakness}\n   Counters prepared: ${intel.counters.length}`).join('\n')}
+${args.prepMaterials.opponentIntel.map((intel, i) => `${i + 1}. "${intel.argument}" (${intel.likelihood})\n   Weakness: ${intel.weakness}\n   Counters prepared: ${intel.counters?.length || 0}`).join('\n')}
 `;
 
     // Build the prompt by replacing placeholders

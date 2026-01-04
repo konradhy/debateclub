@@ -18,11 +18,9 @@ const schema = defineSchema({
     stripeCustomerId: v.optional(v.string()),
 
     // Research settings
-    researchIntensity: v.optional(v.union(
-      v.literal("basic"),
-      v.literal("aggressive"),
-      v.literal("deep"),
-    )),
+    researchIntensity: v.optional(
+      v.union(v.literal("basic"), v.literal("aggressive"), v.literal("deep")),
+    ),
     articlesPerSearch: v.optional(v.number()),
   }).index("email", ["email"]),
   debates: defineTable({
@@ -209,31 +207,30 @@ const schema = defineSchema({
         v.object({
           id: v.string(),
           category: v.string(),
-          type: v.optional(v.string()), // Added
+          type: v.optional(v.string()),
           source: v.string(),
-          sourceCredibility: v.optional(v.string()), // Added
+          sourceCredibility: v.optional(v.string()),
           url: v.optional(v.string()),
-          year: v.optional(v.string()), // Added
+          year: v.optional(v.string()),
           content: v.string(),
-          context: v.optional(v.string()), // Added
-          deployment: v.any(), // Changed to any to accept object
+          context: v.optional(v.string()),
+          deployment: v.any(),
           deploymentExample: v.optional(v.string()),
-          vulnerabilities: v.optional(v.string()), // Added
+          vulnerabilities: v.optional(v.string()),
         }),
       ),
     ),
-    // No selection for receipts (they are all available in Quick Ref)
 
     zingers: v.optional(
       v.array(
         v.object({
           id: v.string(),
           text: v.string(),
-          type: v.optional(v.string()), // Added
-          context: v.any(), // Changed to any to accept object
-          tone: v.optional(v.string()), // Added
-          riskLevel: v.optional(v.string()), // Added
-          riskMitigation: v.optional(v.string()), // Added
+          type: v.optional(v.string()),
+          context: v.any(),
+          tone: v.optional(v.string()),
+          riskLevel: v.optional(v.string()),
+          riskMitigation: v.optional(v.string()),
         }),
       ),
     ),
@@ -408,7 +405,7 @@ const schema = defineSchema({
         topStrengths: v.array(v.string()), // exactly 3
         topImprovements: v.array(v.string()), // exactly 3
         verdict: v.string(), // one sentence
-      })
+      }),
     ),
 
     // Technique Scorecard (category-based, not per-technique) - DEBATE ONLY
@@ -615,24 +612,26 @@ const schema = defineSchema({
       v.literal("openrouter"),
       v.literal("vapi"),
       v.literal("firecrawl"),
-      v.literal("gemini")
+      v.literal("gemini"),
     ),
     cost: v.number(), // USD cents
     debateId: v.optional(v.id("debates")),
     opponentId: v.optional(v.id("opponents")), // for prep/research
     userId: v.id("users"),
-    phase: v.optional(v.union(
-      v.literal("research"),
-      v.literal("prep"),
-      v.literal("debate"),
-      v.literal("analysis")
-    )), // Track which phase of the workflow this cost belongs to
+    phase: v.optional(
+      v.union(
+        v.literal("research"),
+        v.literal("prep"),
+        v.literal("debate"),
+        v.literal("analysis"),
+      ),
+    ), // Track which phase of the workflow this cost belongs to
     details: v.object({
       // OpenRouter
       model: v.optional(v.string()),
       inputTokens: v.optional(v.number()),
       outputTokens: v.optional(v.number()),
-      // Vapi  
+      // Vapi
       duration: v.optional(v.number()), // seconds
       // Firecrawl
       requests: v.optional(v.number()), // number of pages scraped

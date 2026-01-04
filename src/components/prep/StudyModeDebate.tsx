@@ -905,21 +905,49 @@ export function StudyModeDebate({
                   rows: 2,
                 },
                 {
-                  name: "context",
-                  label: "Context/Usage",
+                  name: "type",
+                  label: "Type",
+                  type: "text",
+                  required: true,
+                },
+                {
+                  name: "context.trigger",
+                  label: "Trigger (when to use)",
                   type: "textarea",
                   required: true,
                   rows: 2,
                 },
                 {
-                  name: "type",
-                  label: "Type (optional)",
-                  type: "text",
+                  name: "context.setup",
+                  label: "Setup (optional)",
+                  type: "textarea",
+                  rows: 2,
+                },
+                {
+                  name: "context.aftermath",
+                  label: "Aftermath (how to capitalize)",
+                  type: "textarea",
+                  required: true,
+                  rows: 2,
                 },
                 {
                   name: "tone",
-                  label: "Tone (optional)",
+                  label: "Tone",
                   type: "text",
+                  required: true,
+                },
+                {
+                  name: "riskLevel",
+                  label: "Risk Level (Low/Medium/High)",
+                  type: "text",
+                  required: true,
+                },
+                {
+                  name: "riskMitigation",
+                  label: "Risk Mitigation",
+                  type: "textarea",
+                  required: true,
+                  rows: 2,
                 },
               ]}
             >
@@ -932,24 +960,43 @@ export function StudyModeDebate({
                 )}
                 onClick={() => toggleZinger(zinger.id)}
               >
-                <div className="mb-2">
-                  <p className="font-bold text-lg leading-tight text-primary">
+                <div className="mb-3">
+                  <p className="font-bold text-lg leading-tight text-primary mb-2">
                     "{zinger.text}"
                   </p>
-                </div>
-                <div className="flex items-end justify-between">
-                  <p className="text-xs text-muted-foreground italic max-w-[85%]">
-                    {renderComplex(zinger.context)}
-                  </p>
-                  <Heart
-                    className={cn(
-                      "h-5 w-5 transition-colors",
-                      opponent.selectedZingerIds?.includes(zinger.id)
-                        ? "fill-yellow-500 text-yellow-500"
-                        : "text-muted-foreground group-hover:text-yellow-500",
+                  <div className="space-y-1 text-xs">
+                    <p className="text-muted-foreground">
+                      <span className="font-semibold">Trigger:</span>{" "}
+                      {typeof zinger.context === "object" ? zinger.context.trigger : renderComplex(zinger.context)}
+                    </p>
+                    {typeof zinger.context === "object" && zinger.context.setup && (
+                      <p className="text-muted-foreground">
+                        <span className="font-semibold">Setup:</span> {zinger.context.setup}
+                      </p>
                     )}
-                  />
+                    <div className="flex gap-2 items-center mt-2">
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-700">
+                        {zinger.tone || "No tone"}
+                      </span>
+                      <span className={cn(
+                        "text-[10px] px-2 py-0.5 rounded",
+                        zinger.riskLevel === "High" ? "bg-red-500/20 text-red-700" :
+                        zinger.riskLevel === "Medium" ? "bg-orange-500/20 text-orange-700" :
+                        "bg-green-500/20 text-green-700"
+                      )}>
+                        {zinger.riskLevel || "Unknown"} Risk
+                      </span>
+                    </div>
+                  </div>
                 </div>
+                <Heart
+                  className={cn(
+                    "h-5 w-5 transition-colors absolute top-3 right-3",
+                    opponent.selectedZingerIds?.includes(zinger.id)
+                      ? "fill-yellow-500 text-yellow-500"
+                      : "text-muted-foreground group-hover:text-yellow-500",
+                  )}
+                />
               </div>
             </InlineEdit>
           ))}
@@ -969,21 +1016,49 @@ export function StudyModeDebate({
                   rows: 2,
                 },
                 {
-                  name: "context",
-                  label: "Context/Usage",
+                  name: "type",
+                  label: "Type",
+                  type: "text",
+                  required: true,
+                },
+                {
+                  name: "context.trigger",
+                  label: "Trigger (when to use)",
                   type: "textarea",
                   required: true,
                   rows: 2,
                 },
                 {
-                  name: "type",
-                  label: "Type (optional)",
-                  type: "text",
+                  name: "context.setup",
+                  label: "Setup (optional)",
+                  type: "textarea",
+                  rows: 2,
+                },
+                {
+                  name: "context.aftermath",
+                  label: "Aftermath (how to capitalize)",
+                  type: "textarea",
+                  required: true,
+                  rows: 2,
                 },
                 {
                   name: "tone",
-                  label: "Tone (optional)",
+                  label: "Tone",
                   type: "text",
+                  required: true,
+                },
+                {
+                  name: "riskLevel",
+                  label: "Risk Level (Low/Medium/High)",
+                  type: "text",
+                  required: true,
+                },
+                {
+                  name: "riskMitigation",
+                  label: "Risk Mitigation",
+                  type: "textarea",
+                  required: true,
+                  rows: 2,
                 },
               ]}
             >

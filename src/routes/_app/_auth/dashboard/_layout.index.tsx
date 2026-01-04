@@ -64,14 +64,15 @@ export default function Dashboard() {
   // Use regular query with TanStack Query cache for instant navigation
   const { data: allOpponents = [] } = useQuery({
     ...convexQuery(api.opponents.list, {}),
-    staleTime: 2 * 60 * 1000, // 2 minutes - dashboard doesn't change often
-    cacheTime: 10 * 60 * 1000, // 10 minutes - keep in cache
+    staleTime: 15 * 60 * 1000, // 15 minutes - rely on Convex reactivity for freshness
+    cacheTime: 60 * 60 * 1000, // 1 hour - keep in cache longer
   });
 
   // Client-side pagination: show 9 initially, then all
   const [showAll, setShowAll] = useState(false);
-  const opponents = showAll ? allOpponents : allOpponents.slice(0, 9);
-  const hasMore = !showAll && allOpponents.length > 9;
+  const sortedOpponents = [...allOpponents].sort((a, b) => b._creationTime - a._creationTime);
+  const opponents = showAll ? sortedOpponents : sortedOpponents.slice(0, 9);
+  const hasMore = !showAll && sortedOpponents.length > 9;
 
   const [deleteDialog, setDeleteDialog] = useState<{
     isOpen: boolean;
@@ -271,12 +272,12 @@ export default function Dashboard() {
                 color: colors.text,
               }}
             >
-              Load More ({allOpponents.length - 9} more)
+              Load More ({sortedOpponents.length - 9} more)
             </button>
           </div>
         )}
 
-        {showAll && allOpponents.length > 9 && (
+        {showAll && sortedOpponents.length > 9 && (
           <div className="mt-6 text-center">
             <button
               onClick={() => setShowAll(false)}

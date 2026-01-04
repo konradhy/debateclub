@@ -641,3 +641,35 @@ export const updateGenericPrepInternal = internalMutation({
     return null;
   },
 });
+
+/**
+ * Update basic opponent settings (style, difficulty, position).
+ * Used by the opponent config panel to adjust debate behavior.
+ */
+export const updateBasicSettings = mutation({
+  args: {
+    opponentId: v.id("opponents"),
+    style: v.optional(v.string()),
+    difficulty: v.optional(v.string()),
+    position: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    const opponent = await ctx.db.get(args.opponentId);
+    if (!opponent || opponent.userId !== userId) {
+      throw new Error("Not found or unauthorized");
+    }
+
+    const updates: Record<string, string> = {};
+    if (args.style !== undefined) updates.style = args.style;
+    if (args.difficulty !== undefined) updates.difficulty = args.difficulty;
+    if (args.position !== undefined) updates.position = args.position;
+
+    await ctx.db.patch(args.opponentId, updates);
+    return await ctx.db.get(args.opponentId);
+  },
+});

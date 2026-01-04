@@ -137,7 +137,7 @@ export const generateStrategy = action({
 
       ${intensityInstructions}
 
-      We are in the year 2025.
+      We are in the year 2026.
       ${opponent.opponentPastStatements ? `Also look for information about statements made by or about this opponent: ${opponent.opponentPastStatements}` : ""}
       ${opponent.userResearch ? `The debater has provided this research context to consider: ${opponent.userResearch.substring(0, 1000)}...` : ""}
     `;
@@ -249,30 +249,33 @@ export const generateStrategy = action({
           topic: args.topic,
           position: args.position,
           strategicBrief,
+          researchSynthesis,
         }),
         ctx.runAction(internal.actions.prepGeneration.generateFrames, {
           opponentId: args.opponentId,
           userId: opponent.userId,
           topic: args.topic,
           position: args.position,
-          research,
           strategicBrief,
+          researchSynthesis,
+          research, // Add raw research for condensed summaries
         }),
         ctx.runAction(internal.actions.prepGeneration.generateReceipts, {
           opponentId: args.opponentId,
           userId: opponent.userId,
           topic: args.topic,
           position: args.position,
-          research,
           strategicBrief,
+          researchSynthesis,
+          research, // Add raw research for detailed content
         }),
         ctx.runAction(internal.actions.prepGeneration.generateZingers, {
           opponentId: args.opponentId,
           userId: opponent.userId,
           topic: args.topic,
           position: args.position,
-          research,
           strategicBrief,
+          researchSynthesis,
         }),
         ctx.runAction(internal.actions.prepGeneration.generateClosings, {
           opponentId: args.opponentId,
@@ -280,14 +283,15 @@ export const generateStrategy = action({
           topic: args.topic,
           position: args.position,
           strategicBrief,
+          researchSynthesis,
         }),
         ctx.runAction(internal.actions.prepGeneration.generateOpponentIntel, {
           opponentId: args.opponentId,
           userId: opponent.userId,
           topic: args.topic,
           position: args.position,
-          research,
           strategicBrief,
+          researchSynthesis,
         }),
       ]);
 
