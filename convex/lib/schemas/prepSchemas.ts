@@ -52,8 +52,12 @@ export interface ClosingStatement {
     type: string;
     content: string;
     preview: string;
-    emotionalPeak: string;
-    callToAction: string;
+    wordCount: number;
+    emotionalArc?: string;
+    deliveryGuidance?: string;
+    quoteSource?: string;
+    storyConnection?: string;
+    actionRequested?: string;
 }
 
 export interface Counter {
@@ -336,16 +340,32 @@ export const CLOSING_STATEMENTS_SCHEMA: JsonSchema = {
                             type: "string",
                             description: "Brief preview/summary of this closing approach"
                         },
-                        emotionalPeak: {
-                            type: "string",
-                            description: "The emotional climax moment of this closing"
+                        wordCount: {
+                            type: "number",
+                            description: "Word count of the content"
                         },
-                        callToAction: {
+                        emotionalArc: {
                             type: "string",
-                            description: "What you want the audience to do/think/feel after this closing"
+                            description: "The emotional journey this closing creates (optional)"
+                        },
+                        deliveryGuidance: {
+                            type: "string",
+                            description: "Guidance on tone, pacing, and delivery (optional)"
+                        },
+                        quoteSource: {
+                            type: "string",
+                            description: "Source of quote if this is a quote-based closing (optional)"
+                        },
+                        storyConnection: {
+                            type: "string",
+                            description: "Connection to story elements if this is anecdote-based (optional)"
+                        },
+                        actionRequested: {
+                            type: "string",
+                            description: "Specific action requested from audience if call-to-action (optional)"
                         }
                     },
-                    required: ["id", "type", "content", "preview", "emotionalPeak", "callToAction"],
+                    required: ["id", "type", "content", "preview", "wordCount"],
                     additionalProperties: false
                 }
             }

@@ -61,6 +61,7 @@ import type * as prepChat from "../prepChat.js";
 import type * as prepProgress from "../prepProgress.js";
 import type * as r2 from "../r2.js";
 import type * as research from "../research.js";
+import type * as researchArticles from "../researchArticles.js";
 import type * as scenarios_debate from "../scenarios/debate.js";
 import type * as scenarios_entrepreneur from "../scenarios/entrepreneur.js";
 import type * as scenarios_healthcare from "../scenarios/healthcare.js";
@@ -134,6 +135,7 @@ declare const fullApi: ApiFromModules<{
   prepProgress: typeof prepProgress;
   r2: typeof r2;
   research: typeof research;
+  researchArticles: typeof researchArticles;
   "scenarios/debate": typeof scenarios_debate;
   "scenarios/entrepreneur": typeof scenarios_entrepreneur;
   "scenarios/healthcare": typeof scenarios_healthcare;

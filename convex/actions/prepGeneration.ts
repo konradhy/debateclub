@@ -1,6 +1,7 @@
 "use node";
 import { internalAction } from "../_generated/server";
 import { v } from "convex/values";
+import { internal } from "../_generated/api";
 import { callOpenRouterForPrep } from "../lib/openrouterWithCosts";
 import { AI_MODELS } from "../lib/aiConfig";
 import {
@@ -196,17 +197,64 @@ export const generateClosings = internalAction({
     position: v.string(),
     strategicBrief: v.optional(v.string()),
     researchSynthesis: v.optional(v.any()),
+    openingStatement: v.optional(v.any()),
   },
   returns: v.array(v.any()),
   handler: async (ctx, args) => {
     const researchContext = args.researchSynthesis ? JSON.stringify(args.researchSynthesis) : "No research synthesis available.";
+    const openingContext = args.openingStatement ? JSON.stringify(args.openingStatement, null, 2) : "No opening statement available.";
+
     const prompt = CLOSING_STATEMENT_PROMPT.replace(
       "{strategicBrief}",
       args.strategicBrief || `Your debater is arguing ${args.position.toUpperCase()} on "${args.topic}".`,
-    ).replace("{research}", researchContext);
+    ).replace("{research}", researchContext)
+      .replace("{openingStatement}", openingContext);
 
     const data = await generateWithPrompt(ctx, args.userId, args.opponentId, prompt, CLOSING_STATEMENTS_SCHEMA);
     return data.closings || [];
+  },
+});
+
+/**
+ * Generates opening and closing statements sequentially.
+ * Opening is generated first, then passed to closing for narrative synthesis.
+ */
+export const generateOpeningAndClosing = internalAction({
+  args: {
+    opponentId: v.id("opponents"),
+    userId: v.id("users"),
+    topic: v.string(),
+    position: v.string(),
+    strategicBrief: v.optional(v.string()),
+    researchSynthesis: v.optional(v.any()),
+  },
+  returns: v.object({
+    openings: v.array(v.any()),
+    closings: v.array(v.any()),
+  }),
+  handler: async (ctx, args) => {
+    // Step 1: Generate opening statements
+    const openings: Array<any> = await ctx.runAction(internal.actions.prepGeneration.generateOpenings, {
+      opponentId: args.opponentId,
+      userId: args.userId,
+      topic: args.topic,
+      position: args.position,
+      strategicBrief: args.strategicBrief,
+      researchSynthesis: args.researchSynthesis,
+    });
+
+    // Step 2: Generate closing statements with opening context
+    const closings: Array<any> = await ctx.runAction(internal.actions.prepGeneration.generateClosings, {
+      opponentId: args.opponentId,
+      userId: args.userId,
+      topic: args.topic,
+      position: args.position,
+      strategicBrief: args.strategicBrief,
+      researchSynthesis: args.researchSynthesis,
+      openingStatement: openings[0], // Pass first opening for synthesis
+    });
+
+    return { openings, closings };
   },
 });
 

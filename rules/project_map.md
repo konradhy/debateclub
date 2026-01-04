@@ -2,7 +2,7 @@
 
 **Current architecture and codebase structure. Updated as features are added.**
 
-**Last Updated**: January 2, 2026 (Chapter 28 - Performance Optimization)
+**Last Updated**: January 3, 2026 (Chapter 30 - OpenRouter Structured Outputs Migration)
 
 ---
 
@@ -37,13 +37,29 @@ orator/
 │   │   └── research.ts          # Firecrawl web research
 │   ├── lib/                     # Shared utilities
 │   │   ├── aiConfig.ts          # Centralized AI model configuration
+│   │   ├── costCalculator.ts    # OpenRouter cost calculation
 │   │   ├── firecrawl.ts         # Firecrawl v2 API client
 │   │   ├── geminiDeepResearch.ts # Gemini Deep Research API
 │   │   ├── geminiSearch.ts      # Gemini Search for source extraction
 │   │   ├── monetization.ts      # Token pricing/limits constants
 │   │   ├── openrouter.ts        # OpenRouter API client
-│   │   ├── promptTemplates.ts   # AI prompt templates
-│   │   ├── researchIntensity.ts # Research intensity instruction helper (Ch.24, NEW)
+│   │   ├── openrouterWithCosts.ts # OpenRouter wrapper with cost tracking
+│   │   ├── promptTemplates/     # AI prompt templates (organized by type)
+│   │   │   ├── index.ts         # Exports all prompts
+│   │   │   ├── openingStatement.ts
+│   │   │   ├── argumentFrames.ts
+│   │   │   ├── receiptsArsenal.ts
+│   │   │   ├── zingerBank.ts
+│   │   │   ├── closingStatement.ts
+│   │   │   ├── opponentIntel.ts
+│   │   │   ├── userResearchProcessing.ts
+│   │   │   ├── researchSynthesis.ts
+│   │   │   ├── strategicBrief.ts
+│   │   │   ├── debateCoach.ts
+│   │   │   └── quickCoach.ts
+│   │   ├── schemas/             # JSON Schemas for structured outputs (Ch.30, NEW)
+│   │   │   └── prepSchemas.ts   # 8 schemas for prep generation
+│   │   ├── researchIntensity.ts # Research intensity instruction helper (Ch.24)
 │   │   ├── scoring.ts           # Hasan score calculation
 │   │   └── strategicBrief.ts    # Strategic Brief builder (Ch.7)
 │   ├── scenarios/               # Backend scenario configurations
@@ -481,28 +497,43 @@ When deleting an opponent, related data is cascade-deleted:
 - `prepChat` documents
 - `geminiResearchProgress` documents
 
-### 6. OpenRouter Structured Outputs
+### 6. OpenRouter Structured Outputs (Ch.30)
 
-For reliable AI JSON responses, use structured outputs:
+All strategic prep generation uses OpenRouter structured outputs for guaranteed schema compliance.
 
+**8 Schemas** (`convex/lib/schemas/prepSchemas.ts`):
+- `OPENING_STATEMENTS_SCHEMA` - 3-5 opening options
+- `ARGUMENT_FRAMES_SCHEMA` - 4-6 argument frames
+- `RECEIPTS_ARSENAL_SCHEMA` - 8-12 evidence items
+- `ZINGER_BANK_SCHEMA` - 6-10 zingers
+- `CLOSING_STATEMENTS_SCHEMA` - 3-5 closing options
+- `OPPONENT_INTEL_SCHEMA` - 4-6 predicted arguments
+- `USER_RESEARCH_PROCESSING_SCHEMA` - Extracted research insights
+- `RESEARCH_SYNTHESIS_SCHEMA` - Research synthesis report
+
+**Usage Pattern**:
 ```typescript
-import { callOpenRouter, JsonSchema } from "../lib/openrouter";
+import { ZINGER_BANK_SCHEMA } from "../lib/schemas/prepSchemas";
+import { callOpenRouterForPrep } from "../lib/openrouterWithCosts";
 
-const schema: JsonSchema = {
-  name: "response_name",
-  strict: true,
-  schema: {
-    type: "object",
-    properties: { ... },
-    required: [...],
-    additionalProperties: false,
-  },
-};
-
-const response = await callOpenRouter(
-  apiKey, messages, siteUrl, 3, model, maxTokens, schema
+const response = await callOpenRouterForPrep(
+  ctx, userId, opponentId, apiKey, messages, siteUrl,
+  3, model, undefined,
+  ZINGER_BANK_SCHEMA  // Schema enforces structure
 );
+
+// Response guaranteed to match schema
+const data = JSON.parse(response.choices[0]?.message?.content);
 ```
+
+**Strict Mode Decision**:
+- All schemas use `strict: false` to allow optional fields
+- `strict: true` requires ALL properties in `required` array (too restrictive)
+- Accept ~1% formatting risk for flexibility
+
+**Intentionally NOT using structured outputs**:
+- `generateStrategicBrief` - returns markdown, not JSON
+- `prepChatAction` - returns plain text chat responses
 
 ### 7. Strategic Brief Pattern (Ch.7)
 

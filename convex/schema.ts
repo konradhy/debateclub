@@ -75,6 +75,42 @@ const schema = defineSchema({
     ),
     timestamp: v.number(),
   }).index("by_opponent", ["opponentId"]),
+  researchArticles: defineTable({
+    opponentId: v.id("opponents"),
+    threadId: v.string(), // Agent thread ID for tracking
+
+    // Article metadata
+    title: v.string(),
+    url: v.string(),
+    source: v.string(), // e.g., "nytimes.com"
+    publishedDate: v.optional(v.string()),
+
+    // Agent analysis (done at save time)
+    relevanceScore: v.number(), // 1-10
+    category: v.union(
+      v.literal("receipt"),
+      v.literal("opponent_intel"),
+      v.literal("story"),
+      v.literal("counter_argument"),
+      v.literal("general")
+    ),
+    keyFinding: v.string(), // The ONE most important fact/quote
+    specificEvidence: v.string(), // Exact stat, study name, or quote
+    strategicValue: v.string(), // How to deploy in debate
+    weaknesses: v.optional(v.string()), // Credibility issues
+
+    // Raw content (for later reference)
+    content: v.string(), // Full article content
+    summary: v.string(), // Agent-generated summary
+
+    // Metadata
+    savedAt: v.number(),
+    searchQuery: v.optional(v.string()), // What search found this
+  })
+    .index("by_opponent", ["opponentId"])
+    .index("by_thread", ["threadId"])
+    .index("by_opponent_and_category", ["opponentId", "category"])
+    .index("by_opponent_and_relevance", ["opponentId", "relevanceScore"]),
   opponents: defineTable({
     userId: v.id("users"),
     name: v.string(),

@@ -234,16 +234,17 @@ export const generateStrategy = action({
       opponentIntel;
 
     try {
-      // Run all 6 generation functions in parallel
-      [
-        openingOptions,
-        argumentFrames,
-        receipts,
-        zingers,
-        closingOptions,
-        opponentIntel,
+      // Run 5 generation functions in parallel:
+      // - Opening + Closing (sequential within this action)
+      // - 4 other materials (parallel)
+      const [
+        openingAndClosing,
+        argumentFramesResult,
+        receiptsResult,
+        zingersResult,
+        opponentIntelResult,
       ] = await Promise.all([
-        ctx.runAction(internal.actions.prepGeneration.generateOpenings, {
+        ctx.runAction(internal.actions.prepGeneration.generateOpeningAndClosing, {
           opponentId: args.opponentId,
           userId: opponent.userId,
           topic: args.topic,
@@ -277,14 +278,6 @@ export const generateStrategy = action({
           strategicBrief,
           researchSynthesis,
         }),
-        ctx.runAction(internal.actions.prepGeneration.generateClosings, {
-          opponentId: args.opponentId,
-          userId: opponent.userId,
-          topic: args.topic,
-          position: args.position,
-          strategicBrief,
-          researchSynthesis,
-        }),
         ctx.runAction(internal.actions.prepGeneration.generateOpponentIntel, {
           opponentId: args.opponentId,
           userId: opponent.userId,
@@ -294,6 +287,14 @@ export const generateStrategy = action({
           researchSynthesis,
         }),
       ]);
+
+      // Extract openings and closings from the combined result
+      openingOptions = openingAndClosing.openings;
+      closingOptions = openingAndClosing.closings;
+      argumentFrames = argumentFramesResult;
+      receipts = receiptsResult;
+      zingers = zingersResult;
+      opponentIntel = opponentIntelResult;
 
       console.log("[generateStrategy] Parallel generation phase complete");
     } catch (error) {
